@@ -1,0 +1,48 @@
+{
+  "package": {
+    "name": "myst-agentic-workflow",
+    "version": "1.0.0",
+    "repository": "https://github.com/vladSirin/myst-agentic-workflow",
+    "writeModeEnabled": true,
+    "license": "MIT"
+  },
+  "manifestSchema": {
+    "schemaVersion": 3,
+    "ownership": ["package", "overlay", "project", "local"],
+    "overlays": ["core", "ue-perforce", "myst-project", "tool-capability"],
+    "mergeStrategies": {
+      "copy": "installer owns whole file; whole-file sha256",
+      "full-file-override": "overlay replaces a core file; whole-file sha256",
+      "generated-block": "installer owns one marked block; block-scoped hash only",
+      "append-fragment": "installer owns one named appended fragment; block-scoped hash only",
+      "manual-only": "tracked for awareness; never written by installer"
+    },
+    "hashScopeRule": {
+      "copy|full-file-override": "hashPolicy=sha256, contentHash=whole file, blockHash=null",
+      "generated-block|append-fragment": "hashPolicy=block-scoped, contentHash=null, blockHash=bytes between markers",
+      "manual-only(tracked)": "hashPolicy=sha256 report-only, blockHashPolicy=not-applicable",
+      "manual-only(localOnly)": "hashPolicy=not-applicable, contentHash=null",
+      "self": "manifest self-entry hashPolicy=self-excluded",
+      "validation": "REJECT any generated-block/append-fragment entry carrying a whole-file contentHash"
+    },
+    "baselineStates": ["submitted", "scaffold-cleanup", "packaging-plan", "default", "local-only", "future-package"],
+    "depotRevisionBinding": "every managed VC file records depotRevision; drift preflight fails if headRev differs",
+    "requiredFileFields": [
+      "path", "tool", "owner", "ownerOverlay", "sourceTemplate", "sourceCommit",
+      "contentHash", "hashPolicy", "blockHash", "blockHashPolicy", "depotRevision",
+      "mergeStrategy", "localOnly", "upstreamDerived", "upstreamLicense",
+      "writablePolicy", "baselineState", "pendingChangelist", "conflictReport", "lastCheckedAt"
+    ]
+  },
+  "upstream": {
+    "mattpocockSkills": {
+      "repository": "https://github.com/mattpocock/skills",
+      "trackedBranch": "main",
+      "pinnedCommit": "e74f0061bb67222181640effa98c675bdb2fdaa7",
+      "license": "MIT",
+      "licenseAuditedAt": "2026-05-19T00:00:00+08:00",
+      "redistributionAllowed": true,
+      "attributionRequirement": "SPDX MIT. Audited at pinned commit e74f0061bb67222181640effa98c675bdb2fdaa7. Must preserve the verbatim notice 'Copyright (c) 2026 Matt Pocock' and the full MIT permission notice in all copies or substantial portions of redistributed files."
+    }
+  }
+}
