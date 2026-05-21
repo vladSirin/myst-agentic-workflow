@@ -84,9 +84,8 @@ MIT. Includes content adapted from [`mattpocock/skills`](https://github.com/matt
 ## Contributing
 
 This package was extracted from a live UE5/Perforce project (`Myst_Proto`) under
-plan v1.6. The full design rationale is recorded in the consumer's
-[`Docs/adr/0001-extract-reusable-core-decisions.md`](https://github.com/vladSirin/myst-agentic-workflow/blob/main/docs/adr-0001-extract-reusable-core-decisions.md)
-(when published).
+plan v1.6. The full design rationale is recorded in
+[`docs/adr-0001-extract-reusable-core-decisions.md`](docs/adr-0001-extract-reusable-core-decisions.md).
 
 For improvements: clone, edit, run `scripts/run-*-tests.ps1`, open a PR. The
 package's contract with consumers is the manifest schema (v3) and the installer
