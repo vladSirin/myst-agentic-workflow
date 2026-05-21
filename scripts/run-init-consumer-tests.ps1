@@ -65,7 +65,7 @@ Remove-Item -Recurse -Force $t -ErrorAction SilentlyContinue
 $t = New-TempTarget
 $null = Invoke-PS (Join-Path $pkg 'scripts\init-consumer.ps1') @(
     '-TargetRoot', $t, '-PackageRoot', $pkg, '-ProjectName', 'StubTest',
-    '-VersionControl', 'perforce', '-Tools', 'all', '-Overlays', 'core,ue-perforce'
+    '-VersionControl', 'perforce', '-Tools', 'all', '-Overlays', 'core,perforce,ue'
 )
 $claudeMd = Join-Path $t 'CLAUDE.md'
 $p4ignore = Join-Path $t '.p4ignore'
@@ -113,6 +113,38 @@ if ($r.Code -eq 0) {
 } else {
     Bad 'compare-with-package exit 0' "exit=$($r.Code)"
 }
+Remove-Item -Recurse -Force $t -ErrorAction SilentlyContinue
+
+# --- Test 6: perforce-only (non-UE Perforce consumer) ---
+$t = New-TempTarget
+$r = Invoke-PS (Join-Path $pkg 'scripts\init-consumer.ps1') @(
+    '-TargetRoot', $t, '-PackageRoot', $pkg, '-ProjectName', 'FilmStudio',
+    '-VersionControl', 'perforce', '-Tools', 'all', '-Overlays', 'core,perforce'
+)
+if ($r.Code -eq 0) { Ok 'init-consumer: perforce-only (no ue)' }
+else { Bad 'init-consumer: perforce-only' "exit=$($r.Code)`n$($r.Out)" }
+$m = Get-Content -Raw (Join-Path $t 'Docs\agents\scaffold-manifest.json') | ConvertFrom-Json
+$ueEntries = @($m.files | Where-Object { $_.ownerOverlay -eq 'ue' })
+if ($ueEntries.Count -eq 0) { Ok 'perforce-only excludes ue entries' }
+else { Bad 'perforce-only excludes ue entries' "got $($ueEntries.Count) ue entries" }
+$pfEntries = @($m.files | Where-Object { $_.ownerOverlay -eq 'perforce' })
+if ($pfEntries.Count -gt 0) { Ok ("perforce-only includes {0} perforce entries" -f $pfEntries.Count) }
+else { Bad 'perforce-only includes perforce entries' 'got 0' }
+Remove-Item -Recurse -Force $t -ErrorAction SilentlyContinue
+
+# --- Test 7: legacy ue-perforce alias expands to perforce + ue ---
+$t = New-TempTarget
+$r = Invoke-PS (Join-Path $pkg 'scripts\init-consumer.ps1') @(
+    '-TargetRoot', $t, '-PackageRoot', $pkg, '-ProjectName', 'LegacyAlias',
+    '-VersionControl', 'perforce', '-Tools', 'all', '-Overlays', 'core,ue-perforce'
+)
+if ($r.Code -eq 0) { Ok 'init-consumer accepts legacy ue-perforce alias' }
+else { Bad 'init-consumer ue-perforce alias' "exit=$($r.Code)`n$($r.Out)" }
+$m = Get-Content -Raw (Join-Path $t 'Docs\agents\scaffold-manifest.json') | ConvertFrom-Json
+$hasPerforce = @($m.files | Where-Object { $_.ownerOverlay -eq 'perforce' }).Count -gt 0
+$hasUe       = @($m.files | Where-Object { $_.ownerOverlay -eq 'ue'       }).Count -gt 0
+if ($hasPerforce -and $hasUe) { Ok 'ue-perforce alias expanded to both overlays' }
+else { Bad 'ue-perforce alias expanded' "perforce=$hasPerforce ue=$hasUe" }
 Remove-Item -Recurse -Force $t -ErrorAction SilentlyContinue
 
 # --- Summary ---

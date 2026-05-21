@@ -6,6 +6,12 @@
 **Context**: Agentic-scaffold-migration package, Extract Reusable Core phase (plan v1.6 lines 804–815)
 **Related**: [`plan_agentic_scaffolding_packaging_WIP.md`](../../Myst_Proto/Docs/plan_agentic_scaffolding_packaging_WIP.md), [issue 07](../../.scratch/agentic-scaffold-migration/issues/07-extract-reusable-core.md)
 
+**Amendment 2026-05-22 (v1.2.0)**: The `ue-perforce` overlay referenced below
+was split into `perforce` (CL-by-CL workflow, review/submit, version-control
+rules — applies to any Perforce consumer) and `ue` (UE-specific build commands,
+UE `.p4ignore` patterns). The `ue-perforce` name remains accepted as a legacy
+alias that expands to `perforce,ue` at install time. See CHANGELOG v1.2.0.
+
 ---
 
 ## Context

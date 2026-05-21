@@ -33,7 +33,7 @@ $TargetRoot = (p4 -F %clientRoot% info)   # the Perforce client root
     -TargetRoot $TargetRoot `
     -PackageRoot $PkgRoot `
     -Tools all `
-    -Overlays 'core,ue-perforce' `
+    -Overlays 'core,perforce,ue' `
     -Mode Write `
     -UsePerforce `
     -Changelist new
@@ -172,7 +172,7 @@ PS> $PkgRoot    = 'c:\Tools\myst-agentic-workflow'
 
 # 4. Dry-run first.
 PS> & "$PkgRoot/scripts/install.ps1" -TargetRoot $TargetRoot -PackageRoot $PkgRoot `
-       -Tools all -Overlays 'core,ue-perforce' -Mode DryRun
+       -Tools all -Overlays 'core,perforce,ue' -Mode DryRun
 ...
   WRITE PHASE  (DryRun)
   ==============================================================
@@ -187,7 +187,7 @@ File(s) not opened on this client.
 
 # 6. Write mode with -UsePerforce -Changelist new.
 PS> & "$PkgRoot/scripts/install.ps1" -TargetRoot $TargetRoot -PackageRoot $PkgRoot `
-       -Tools all -Overlays 'core,ue-perforce' -Mode Write -UsePerforce -Changelist new
+       -Tools all -Overlays 'core,perforce,ue' -Mode Write -UsePerforce -Changelist new
 Write mode requested -- running Skeleton preflight as gate...
 Preflight green (10/10). Proceeding with write phase.
 ...

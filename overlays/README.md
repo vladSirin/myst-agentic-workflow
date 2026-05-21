@@ -1,12 +1,19 @@
-# overlays/ (skeleton — not yet populated)
+# overlays/
 
-Optional content layered on top of reusable core. **Population is the next gated
-phase (Extract Reusable Core), not part of the skeleton.**
+Optional content layered on top of the reusable core. Each overlay is opt-in
+via `-Overlays <names>` at install time.
 
-- `ue-perforce/` — Perforce changelist workflow, review/submit protocol,
-  CL-by-CL verification, build/submit commands, UE editor verification, `.p4ignore`
-  fragment. Installs only when the `ue-perforce` overlay is selected.
+- `perforce/` — generic Perforce workflow: CL-by-CL verification, review-and-submit
+  protocol, version-control conventions. Applies to any Perforce project regardless
+  of engine/toolchain.
+- `ue/` — Unreal-Engine specific: build/sync/submit commands, UE `.p4ignore`
+  patterns (`Binaries/`, `Intermediate/`, `Saved/`). Pair with `perforce` for
+  UE+P4 projects.
 - `myst-project/` — Myst-only content (project paths, FrogEvent usage, AngelScript
   conventions, project-specific reviewers). Stays project-local unless generalized.
 
-A core-only install must never emit Perforce/UE-specific files.
+**Legacy alias**: `ue-perforce` (v1.0.0 – v1.1.0) is accepted by `init-consumer.ps1`
+and expands to `perforce,ue`. New consumers should pick `perforce` and/or `ue`
+explicitly.
+
+A core-only install (no overlays) must never emit Perforce/UE/Myst-specific files.

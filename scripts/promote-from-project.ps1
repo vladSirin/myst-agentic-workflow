@@ -4,7 +4,7 @@
 param(
     [Parameter(Mandatory=$true)]  [string] $TargetRoot,
     [Parameter(Mandatory=$true)]  [string[]] $Paths,
-    [ValidateSet("reusable-core","ue-perforce-overlay","myst-project-overlay","reject-local")]
+    [ValidateSet("reusable-core","perforce-overlay","ue-overlay","ue-perforce-overlay","myst-project-overlay","reject-local")]
     [string[]] $Classification = @(),
     [ValidateSet("DryRun","Write")] [string] $Mode = "DryRun",
     [string] $PackageRoot = $null,
@@ -28,15 +28,17 @@ if (($Paths.Count -ne $Classification.Count) -or ($Classification.Count -eq 0)) 
 Each path requires a classification. Provide -Classification for each -Path.
 
 Valid classifications:
-  reusable-core           — generic, no Myst/P4 assumptions; move into templates/
-  ue-perforce-overlay     — UE/P4 specific; move into overlays/ue-perforce/
+  reusable-core           — generic, no project/VC assumptions; move into templates/
+  perforce-overlay        — Perforce-specific (CL workflow); move into overlays/perforce/
+  ue-overlay              — Unreal-Engine specific (build, p4ignore); move into overlays/ue/
   myst-project-overlay    — this-project specific; move into overlays/myst-project/
+  ue-perforce-overlay     — DEPRECATED v1.2.0; use perforce-overlay or ue-overlay
   reject-local            — intentionally project-local; record reason in reject log
 
 Usage:
   ./promote-from-project.ps1 -TargetRoot <path> `
     -Paths "file1.md","file2.md" `
-    -Classification "reusable-core","ue-perforce-overlay" `
+    -Classification "reusable-core","perforce-overlay" `
     -Mode DryRun
 "@
     exit 2

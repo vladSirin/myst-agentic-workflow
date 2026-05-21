@@ -22,7 +22,7 @@ $tests = @(
     @{ Name='project-owned via owner=project';     Entry=Mk @{ owner='project'; ownerOverlay='myst-project' }; Expected='project-owned' }
     @{ Name='package-core via core+package';       Entry=Mk @{ ownerOverlay='core'; owner='package'; mergeStrategy='copy' }; Expected='package-core' }
     @{ Name='overlay via myst-project';            Entry=Mk @{ ownerOverlay='myst-project'; owner='overlay'; mergeStrategy='copy' }; Expected='overlay' }
-    @{ Name='overlay via ue-perforce';             Entry=Mk @{ ownerOverlay='ue-perforce'; owner='overlay'; mergeStrategy='copy' }; Expected='overlay' }
+    @{ Name='overlay via perforce';                Entry=Mk @{ ownerOverlay='perforce'; owner='overlay'; mergeStrategy='copy' }; Expected='overlay' }
     @{ Name='overlay via tool-capability';         Entry=Mk @{ ownerOverlay='tool-capability'; owner='overlay'; mergeStrategy='manual-only' }; Expected='project-owned' }  # manual-only wins
 )
 foreach ($t in $tests) {

@@ -54,7 +54,7 @@ myst-agentic-workflow/
 │   ├── perforce-consumer.md       # UE+P4 addendum
 │   └── adr-0001-extract-reusable-core-decisions.md
 ├── templates/{common,codex,claude,opencode}/
-├── overlays/{ue-perforce,myst-project}/
+├── overlays/{perforce,ue,myst-project}/
 ├── scripts/
 │   ├── init-consumer.ps1          # generate bootstrap manifest from template
 │   ├── install.ps1                # DryRun default; Write preflight-gated
@@ -69,7 +69,7 @@ myst-agentic-workflow/
 
 ## Status
 
-**v1.1.0** — one-command install added. 81/81 tests green across 9 suites.
+**v1.2.0** — overlay split: `perforce` (CL workflow) vs `ue` (UE-specific) so non-UE Perforce consumers aren't forced to take UE-build assumptions. 86/86 tests green across 9 suites.
 
 - Marker Specification: implemented + 14/14 pathological fixtures pass.
 - Install failure/recovery: implemented + 10/10 journal tests pass.

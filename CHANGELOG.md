@@ -2,6 +2,45 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [1.2.0] - 2026-05-22 — Overlay split: `perforce` vs `ue`
+
+### Changed
+- **Overlay rename**: `ue-perforce` split into two overlays:
+  - `perforce/` — generic Perforce CL-by-CL workflow, review-and-submit
+    protocol, version-control conventions. Applies to *any* Perforce
+    consumer (film/VFX, non-UE game engines, generic enterprise Perforce
+    projects).
+  - `ue/` — Unreal-Engine specific: sync-build-submit commands, UE-pattern
+    p4ignore fragment (`Binaries/`, `Intermediate/`, `Saved/`).
+- Manifest schema overlay enum: `["core","ue-perforce","myst-project",
+  "tool-capability"]` → `["core","perforce","ue","myst-project",
+  "tool-capability"]`.
+- `setup.ps1` auto-detection: now picks `core,perforce,ue` only when both
+  `.p4ignore` AND a `*.uproject` are present (recursively up to 1 level).
+  Plain Perforce projects (no .uproject) get `core,perforce` — no UE bias.
+
+### Backward compatibility
+- `init-consumer.ps1 -Overlays 'ue-perforce'` (legacy v1.0.0 – v1.1.0)
+  still works; expands to `perforce,ue` at install time.
+- Existing v1.x consumers (e.g., the Myst_Proto live install) keep their
+  recorded `ownerOverlay='ue-perforce'` — no manifest migration required.
+- `promote-from-project.ps1` accepts new classifications `perforce-overlay`
+  and `ue-overlay`; the legacy `ue-perforce-overlay` is still in the
+  ValidateSet but marked DEPRECATED in the help text.
+
+### Added
+- 5 new tests in `run-init-consumer-tests.ps1` covering perforce-only path
+  (no UE) and the legacy `ue-perforce` alias expansion.
+
+### Why
+- v1.0.0 / v1.1.0 conflated "Perforce workflow" with "Unreal Engine on
+  Perforce". A film/VFX team, a Unity team on Perforce, or any non-UE
+  Perforce project hitting `setup.ps1` got UE-specific build commands and
+  `.p4ignore` patterns they didn't need. The split lets each consumer pick
+  exactly what applies.
+
+Tests: 86/86 across 9 suites (was 81/81 in v1.1.0).
+
 ## [1.1.0] - 2026-05-22 — One-command install
 
 ### Added

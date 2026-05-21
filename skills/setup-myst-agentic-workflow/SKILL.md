@@ -14,8 +14,8 @@ description: Install or update the agentic-workflow scaffold into a target proje
    - Codex: `AGENTS.md`, `.Codex/`
    - Claude Code: `CLAUDE.md`, `.claude/`
    - OpenCode: `opencode.json`, `.opencode/`, `AGENTS.md`
-2. **Ask scope**: one tool or all detected; which overlays (`core`, `ue-perforce`,
-   `myst-project`).
+2. **Ask scope**: one tool or all detected; which overlays (`core`, `perforce`,
+   `ue`, `myst-project`).
 3. **Dry-run**: call `scripts/install.ps1 -Mode DryRun` and present the planned
    add / update / skip / project-owned / unverifiable report. **Stop here in the
    skeleton phase.**

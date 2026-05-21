@@ -91,6 +91,13 @@ $selectedTools = if ($Tools -eq 'all') { @('codex','claude','opencode','common')
                  else { @(($Tools -split ',') | ForEach-Object { $_.Trim().ToLower() }) }
 $selectedOverlays = @(($Overlays -split ',') | ForEach-Object { $_.Trim().ToLower() })
 
+# Legacy alias: 'ue-perforce' (v1.0.0 - v1.1.0) expands to 'perforce' + 'ue'.
+if ($selectedOverlays -contains 'ue-perforce') {
+    $selectedOverlays = @($selectedOverlays | Where-Object { $_ -ne 'ue-perforce' })
+    if ($selectedOverlays -notcontains 'perforce') { $selectedOverlays += 'perforce' }
+    if ($selectedOverlays -notcontains 'ue')       { $selectedOverlays += 'ue' }
+}
+
 # tool-capability is implicit metadata; always include.
 if ($selectedOverlays -notcontains 'tool-capability') {
     $selectedOverlays += 'tool-capability'

@@ -67,7 +67,7 @@ change, with no risk:
     -TargetRoot $TargetRoot `
     -PackageRoot $PkgRoot `
     -Tools all `
-    -Overlays 'core,myst-project,ue-perforce' `
+    -Overlays 'core,perforce,ue,myst-project' `
     -Mode DryRun
 ```
 
@@ -83,7 +83,7 @@ If the dry-run output is what you want, switch to `-Mode Write` — **use the sa
     -TargetRoot $TargetRoot `
     -PackageRoot $PkgRoot `
     -Tools all `
-    -Overlays 'core,myst-project,ue-perforce' `
+    -Overlays 'core,perforce,ue,myst-project' `
     -Mode Write
 ```
 

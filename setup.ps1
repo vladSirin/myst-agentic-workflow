@@ -70,9 +70,15 @@ if ([string]::IsNullOrWhiteSpace($VersionControl)) {
     }
 }
 
-# --- Default overlays per VC type ---
+# --- Default overlays per VC type + UE detection ---
 if ([string]::IsNullOrWhiteSpace($Overlays)) {
-    $Overlays = if ($VersionControl -eq 'perforce') { 'core,ue-perforce' } else { 'core' }
+    $parts = @('core')
+    if ($VersionControl -eq 'perforce') { $parts += 'perforce' }
+    # UE detection: .uproject in TargetRoot (top-level or one subdir deep, the
+    # common UE pattern of <Root>/<GameName>/<GameName>.uproject).
+    $uproj = @(Get-ChildItem -Path $TargetRoot -Filter '*.uproject' -File -ErrorAction SilentlyContinue -Depth 1) | Select-Object -First 1
+    if ($uproj) { $parts += 'ue' }
+    $Overlays = $parts -join ','
 }
 
 # --- Banner ---
