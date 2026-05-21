@@ -182,7 +182,7 @@ foreach ($entry in $InstalledManifest.files) {
 ###############################################################################
 # Missing package files (in manifest scope but template not populated)
 ###############################################################################
-$missingPackageFiles = ($InstalledManifest.files | Where-Object {
+$missingPackageFiles = @($InstalledManifest.files | Where-Object {
     $_.owner -in @("package","overlay") -and $_.sourceCommit -eq "pending-package"
 }).Count
 

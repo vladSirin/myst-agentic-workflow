@@ -22,26 +22,22 @@ runtime by a consumer — install once, use forever.
 - **Perforce integration** (`-UsePerforce -Changelist new`) for UE/P4 consumers;
   filesystem-only consumers run the same scripts without P4.
 
-## Install
-
-See [`docs/install.md`](docs/install.md) for the full guide. The TL;DR:
+## Install — one command
 
 ```powershell
-$PkgRoot    = 'c:/path/to/myst-agentic-workflow'
-$TargetRoot = 'c:/path/to/your-project'
-
-# 1. Dry-run first
-& "$PkgRoot/scripts/install.ps1" `
-    -TargetRoot $TargetRoot -PackageRoot $PkgRoot `
-    -Tools all -Overlays 'core' -Mode DryRun
-
-# 2. If the dry-run looks right, write mode (preflight-gated)
-& "$PkgRoot/scripts/install.ps1" `
-    -TargetRoot $TargetRoot -PackageRoot $PkgRoot `
-    -Tools all -Overlays 'core' -Mode Write
+git clone https://github.com/vladSirin/myst-agentic-workflow
+& ./myst-agentic-workflow/setup.ps1 -TargetRoot c:/path/to/your-project
 ```
 
-For Perforce/UE consumers, see [`docs/perforce-consumer.md`](docs/perforce-consumer.md).
+`setup.ps1` auto-detects your project's version control (Perforce / git /
+filesystem) and overlay needs, bootstraps the manifest, shows a dry-run, and
+prompts before writing. Add `-Yes` to skip the prompt for unattended runs.
+
+For full control, the bootstrap and install steps are also exposed
+separately — see [`docs/install.md`](docs/install.md) for the
+update / promote / upstream-sync flows, and
+[`docs/perforce-consumer.md`](docs/perforce-consumer.md) for UE/Perforce
+specifics.
 
 ## Layout
 
@@ -49,26 +45,31 @@ For Perforce/UE consumers, see [`docs/perforce-consumer.md`](docs/perforce-consu
 myst-agentic-workflow/
 ├── README.md
 ├── CHANGELOG.md
-├── package-manifest.json          # schema v3
+├── LICENSE
+├── package-manifest.json          # schema v3 + package metadata
+├── manifest-template.json         # canonical entry list for new consumers
+├── setup.ps1                      # one-command install (bootstrap + write)
 ├── docs/                          # consumer-facing guides
 │   ├── install.md                 # ~500-line install/update/promote guide
-│   └── perforce-consumer.md       # UE+P4 addendum
+│   ├── perforce-consumer.md       # UE+P4 addendum
+│   └── adr-0001-extract-reusable-core-decisions.md
 ├── templates/{common,codex,claude,opencode}/
 ├── overlays/{ue-perforce,myst-project}/
 ├── scripts/
+│   ├── init-consumer.ps1          # generate bootstrap manifest from template
 │   ├── install.ps1                # DryRun default; Write preflight-gated
 │   ├── compare-with-package.ps1   # cross-repo drift + conflict report
 │   ├── diff-installed.ps1         # local drift report
 │   ├── promote-from-project.ps1   # promote local improvements upstream
 │   ├── check-mattpocock-updates.ps1
 │   ├── run-skeleton-preflight.ps1 # 10-point write-mode gate
-│   └── run-*-tests.ps1            # 8 test suites, 65 tests total
+│   └── run-*-tests.ps1            # 9 test suites, 81 tests total
 └── fixtures/                      # E2E install fixtures
 ```
 
 ## Status
 
-**v1.0.0** — first stable release. 65/65 tests green across 8 suites.
+**v1.1.0** — one-command install added. 81/81 tests green across 9 suites.
 
 - Marker Specification: implemented + 14/14 pathological fixtures pass.
 - Install failure/recovery: implemented + 10/10 journal tests pass.

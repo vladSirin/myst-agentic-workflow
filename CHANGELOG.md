@@ -2,6 +2,37 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [1.1.0] - 2026-05-22 — One-command install
+
+### Added
+- `setup.ps1` at repo root: one-command install for new adopters. Auto-detects
+  version control (Perforce / git / filesystem), picks sensible overlay
+  defaults, bootstraps the manifest, runs a dry-run, prompts before writing.
+  `-Yes` skips the prompt for unattended runs.
+- `scripts/init-consumer.ps1`: generates a fresh consumer's bootstrap
+  scaffold-manifest from `manifest-template.json`. Filters by selected
+  `-Tools` and `-Overlays`, injects the consumer's `installedProject` block,
+  resolves `sourceCommit` to the package's git HEAD. Refuses to overwrite
+  existing manifest unless `-Force`.
+- `manifest-template.json` at repo root: canonical entry-list template
+  derived from the live installed scaffold (85 entries, project-specific
+  state stripped). The starting point that init-consumer copies + filters.
+- `scripts/run-init-consumer-tests.ps1`: 16-test suite covering
+  init-consumer round-trip and full setup.ps1 flow.
+- init-consumer pre-creates marker stubs for `generated-block` /
+  `append-fragment` entries (`CLAUDE.md`, `AGENTS.md`, `.p4ignore`) so
+  install.ps1 can populate blocks on first write without manual file creation.
+
+### Fixed
+- `install.ps1:185` — `Where-Object` returned `$null` (not empty array) when
+  no entries matched the `pending-package` filter, causing
+  `PropertyNotFoundStrict` on `.Count` in strict mode. Wrapped in `@(...)`.
+  Surfaced after v1.0.0 since every entry now has a real sourceCommit.
+
+### Changed
+- README install section: replaced 12-line two-step example with the
+  one-command `setup.ps1` flow. Old form still documented in install.md.
+
 ## [1.0.0] - 2026-05-21 — First stable release
 
 Plan v1.6 complete. Package is coherent and ready for adoption.
