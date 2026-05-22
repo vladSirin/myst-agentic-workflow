@@ -2,6 +2,40 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [1.5.0] - 2026-05-22 — `/update` and `/promote` slash commands
+
+### Added
+- Slash commands `/update` and `/promote` installed into every consumer
+  across all three tools (`.claude/commands/`, `.Codex/commands/`,
+  `.opencode/commands/`). Agent instructions for how to drive
+  `update.ps1` / `promote.ps1` from inside Claude Code, Codex, or OpenCode.
+- 6 new entries in `manifest-template.json` (2 commands × 3 tools), so
+  fresh consumers get them automatically via `setup.ps1`. Existing
+  consumers receive them on next `update.ps1` run.
+
+### Why
+- v1.4.0 added the PowerShell wrappers (`setup.ps1` / `update.ps1` /
+  `promote.ps1`) but they only worked when a human typed them at a
+  terminal. Inside an agent context, the user had to either drop to a
+  shell or instruct the agent step-by-step.
+- The slash commands give the agent a direct invocation path: when the
+  user says "sync the scaffold" or "promote this upstream", the agent
+  reads the command file and runs the right script with the right flags.
+
+### Slash-command behavior
+- `/update`: agent finds the package clone (via `package.source` in the
+  consumer manifest), runs `update.ps1 -TargetRoot <this>`, surfaces the
+  dry-run output, waits for user confirmation, applies the result. Maps
+  preflight failure modes to actionable next steps.
+- `/promote`: agent identifies modified files (via `p4 opened` /
+  `git status` / asking the user), runs `promote.ps1 -TargetRoot <this>
+  -Paths <files>`, surfaces the dry-run + roundtrip-verify result, waits
+  for confirmation, then walks the user through the git commit/push/PR
+  steps in the package.
+
+Tests: still 95/95 across 10 suites (no test surface affected; the
+slash commands are markdown instructions, not script logic).
+
 ## [1.4.1] - 2026-05-22 — Comprehensive intro README
 
 ### Changed
