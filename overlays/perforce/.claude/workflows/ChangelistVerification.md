@@ -72,3 +72,16 @@ If the user has enabled strict mode (`enable-strict-mode.ps1`), this rule is enf
 If the user has said something ambiguous like "submit those", treat that as "you can prepare to submit, but still ask explicitly which CL and confirm before each one."
 
 If the hook isn't installed (strict mode not enabled), the rule still applies — just unenforced. Same protocol; same expected behavior; you just have to remember.
+
+---
+
+## Powermode (v1.8.1)
+
+For autonomous multi-CL work (e.g., `/goal`-driven bugfix sprints), the user may grant batch approval via `enable-powermode.ps1 -SubmitCount N -DurationMinutes M`. While powermode is active, the per-CL gate is bypassed up to N submits or until the clock runs out — whichever comes first.
+
+**When you see `POWERMODE: allowing submit of CL <N> (remaining: M; expires: T)` in tool output**, that's the hook signaling powermode is being burned. You can submit without creating a marker. Two things to do:
+
+1. **Still surface each CL to the user** — powermode bypasses the *gate*, not the protocol. The user granted you a quota because they trust you to drive the work; honor that by being transparent about what each CL contains.
+2. **Watch the remaining counter** — when it hits 1, the next submit is your last freebie. After that, the per-CL gate is back.
+
+If powermode wasn't enabled but you think it should be (because the user explicitly said "go ahead, do all of them"), don't assume — pause and ask whether to enable powermode for the rest of the task.

@@ -160,6 +160,102 @@ if ($rcode -eq 0) {
 }
 Remove-Item -Recurse -Force $t -ErrorAction SilentlyContinue
 
+# --- Test 9-15: powermode (count + time) ---
+$enablePM  = Join-Path $pkg 'enable-powermode.ps1'
+$disablePM = Join-Path $pkg 'disable-powermode.ps1'
+
+# Test 9: enable-powermode writes a valid marker
+$t = New-Fixture
+$r = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $enablePM -TargetRoot $t -SubmitCount 3 -DurationMinutes 10 -Reason 'test' -Yes 2>&1
+$rcode = $LASTEXITCODE
+$markerPath = Join-Path $t '.scratch\.powermode.marker'
+if ($rcode -eq 0 -and (Test-Path $markerPath)) {
+    $pm = Get-Content -Raw $markerPath | ConvertFrom-Json
+    if ($pm.submitsRemaining -eq 3 -and $pm.reason -eq 'test') {
+        Ok 'enable-powermode writes valid marker (count=3, reason set)'
+    } else {
+        Bad 'enable-powermode marker contents' "got remaining=$($pm.submitsRemaining) reason=$($pm.reason)"
+    }
+} else {
+    Bad 'enable-powermode exits 0 + writes marker' "exit=$rcode marker present=$(Test-Path $markerPath)"
+}
+
+# Test 10: powermode allows submit; decrements count
+$r = Invoke-Hook $blockHook '{"tool_name":"Bash","tool_input":{"command":"p4 submit -c 555"}}' $t
+if ($r.Code -eq 0) {
+    $pm = Get-Content -Raw $markerPath | ConvertFrom-Json
+    if ($pm.submitsRemaining -eq 2) {
+        Ok 'powermode allows submit + decrements counter (3 -> 2)'
+    } else {
+        Bad 'powermode decrements counter' "expected 2 got $($pm.submitsRemaining)"
+    }
+} else {
+    Bad 'powermode allows submit' "exit=$($r.Code) out=$($r.Out)"
+}
+
+# Test 11: powermode exhaustion deletes marker
+$null = Invoke-Hook $blockHook '{"tool_name":"Bash","tool_input":{"command":"p4 submit -c 556"}}' $t
+$r = Invoke-Hook $blockHook '{"tool_name":"Bash","tool_input":{"command":"p4 submit -c 557"}}' $t
+if ($r.Code -eq 0 -and -not (Test-Path $markerPath)) {
+    Ok 'powermode exhaustion deletes marker after 3rd submit'
+} else {
+    Bad 'powermode exhaustion' "exit=$($r.Code) marker present=$(Test-Path $markerPath)"
+}
+
+# Test 12: after exhaustion, hook blocks again
+$r = Invoke-Hook $blockHook '{"tool_name":"Bash","tool_input":{"command":"p4 submit -c 558"}}' $t
+if ($r.Code -eq 2) { Ok 'hook blocks again after powermode exhaustion' }
+else { Bad 'hook blocks again after exhaustion' "exit=$($r.Code)" }
+Remove-Item -Recurse -Force $t -ErrorAction SilentlyContinue
+
+# Test 13: expired powermode is ignored
+$t = New-Fixture
+$scratch = Join-Path $t '.scratch'
+New-Item -ItemType Directory -Path $scratch -Force | Out-Null
+$pastIso = (Get-Date).ToUniversalTime().AddMinutes(-5).ToString("yyyy-MM-ddTHH:mm:ss") + 'Z'
+$expiredPm = @{ enabled = $true; submitsRemaining = 10; expiresAt = $pastIso; reason = 'expired' } | ConvertTo-Json
+Set-Content -LiteralPath (Join-Path $scratch '.powermode.marker') -Value $expiredPm -Encoding UTF8
+$r = Invoke-Hook $blockHook '{"tool_name":"Bash","tool_input":{"command":"p4 submit -c 600"}}' $t
+if ($r.Code -eq 2) {
+    Ok 'expired powermode marker is ignored (hook blocks)'
+} else {
+    Bad 'expired powermode ignored' "exit=$($r.Code) (expected 2)"
+}
+if (-not (Test-Path (Join-Path $scratch '.powermode.marker'))) {
+    Ok 'expired marker is cleaned up by hook'
+} else {
+    Bad 'expired marker cleaned up' 'still present'
+}
+Remove-Item -Recurse -Force $t -ErrorAction SilentlyContinue
+
+# Test 14: disable-powermode removes the marker
+$t = New-Fixture
+$null = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $enablePM -TargetRoot $t -SubmitCount 5 -Yes 2>&1
+$markerPath = Join-Path $t '.scratch\.powermode.marker'
+if (Test-Path $markerPath) {
+    $null = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $disablePM -TargetRoot $t -Yes 2>&1
+    if (-not (Test-Path $markerPath)) {
+        Ok 'disable-powermode removes the marker'
+    } else {
+        Bad 'disable-powermode removes the marker' 'marker still present'
+    }
+} else {
+    Bad 'disable-powermode test setup' 'marker not created by enable-powermode'
+}
+Remove-Item -Recurse -Force $t -ErrorAction SilentlyContinue
+
+# Test 15: status mode (no write) reports correctly
+$t = New-Fixture
+$null = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $enablePM -TargetRoot $t -SubmitCount 7 -Reason 'status-test' -Yes 2>&1
+$r = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $enablePM -TargetRoot $t -Status 2>&1
+$out = $r | Out-String
+if ($out -match 'ACTIVE' -and $out -match 'submitsRemaining\s*:\s*7' -and $out -match 'status-test') {
+    Ok 'enable-powermode -Status reports active state'
+} else {
+    Bad 'enable-powermode -Status output' "missing expected fields: $out"
+}
+Remove-Item -Recurse -Force $t -ErrorAction SilentlyContinue
+
 Write-Host ''
 Write-Host '=============================================================='
 Write-Host ("Strict-mode tests: {0} passed, {1} failed" -f $pass, $fail)

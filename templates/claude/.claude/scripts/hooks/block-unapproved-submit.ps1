@@ -36,7 +36,7 @@ $raw = [Console]::In.ReadToEnd()
 if ([string]::IsNullOrWhiteSpace($raw)) { exit 0 }
 
 try {
-    $event = $raw | ConvertFrom-Json
+    $evt = $raw | ConvertFrom-Json
 } catch {
     # Malformed input -- don't block (fail open on parsing issues; the hook
     # exists to enforce a specific rule, not to be a general gate).
@@ -45,13 +45,13 @@ try {
 
 # Only inspect Bash tool calls
 $toolName = $null
-if ($event.PSObject.Properties.Match('tool_name').Count -gt 0) { $toolName = $event.tool_name }
+if ($evt.PSObject.Properties.Match('tool_name').Count -gt 0) { $toolName = $evt.tool_name }
 if ($toolName -ne 'Bash') { exit 0 }
 
 $cmd = $null
-if ($event.PSObject.Properties.Match('tool_input').Count -gt 0 -and
-    $event.tool_input.PSObject.Properties.Match('command').Count -gt 0) {
-    $cmd = [string]$event.tool_input.command
+if ($evt.PSObject.Properties.Match('tool_input').Count -gt 0 -and
+    $evt.tool_input.PSObject.Properties.Match('command').Count -gt 0) {
+    $cmd = [string]$evt.tool_input.command
 }
 if ([string]::IsNullOrWhiteSpace($cmd)) { exit 0 }
 
@@ -73,8 +73,50 @@ $cl = $m.Groups['cl'].Value
 # Determine project root. PreToolUse hooks run from the project root (Claude
 # Code sets cwd), but accept CLAUDE_PROJECT_DIR override if set.
 $root = if ($env:CLAUDE_PROJECT_DIR) { $env:CLAUDE_PROJECT_DIR } else { (Get-Location).Path }
-$markerPath = Join-Path $root ".scratch\.approved-cl-$cl.marker"
 
+# 1) Powermode: batch approval marker bypasses per-CL gate when within quota.
+#    .scratch/.powermode.marker is a JSON file with submitsRemaining and
+#    expiresAt. Either limit tripping deactivates powermode (marker deleted).
+$powermodePath = Join-Path $root '.scratch\.powermode.marker'
+if (Test-Path -LiteralPath $powermodePath) {
+    try {
+        $pmRaw = Get-Content -Raw -LiteralPath $powermodePath
+        $pm    = $pmRaw | ConvertFrom-Json
+        $now   = (Get-Date).ToUniversalTime()
+        $expired = $false
+        if ($pm.PSObject.Properties.Match('expiresAt').Count -gt 0 -and $pm.expiresAt) {
+            try { $expires = [datetime]::Parse($pm.expiresAt).ToUniversalTime() } catch { $expires = $now.AddSeconds(-1) }
+            if ($now -ge $expires) { $expired = $true }
+        }
+        $countOk = $true
+        if ($pm.PSObject.Properties.Match('submitsRemaining').Count -gt 0 -and $pm.submitsRemaining -is [int]) {
+            if ($pm.submitsRemaining -le 0) { $countOk = $false }
+        }
+        if ((-not $expired) -and $countOk) {
+            # Decrement count if applicable; delete marker if quota exhausted.
+            if ($pm.PSObject.Properties.Match('submitsRemaining').Count -gt 0 -and $pm.submitsRemaining -is [int]) {
+                $pm.submitsRemaining = $pm.submitsRemaining - 1
+                if ($pm.submitsRemaining -le 0) {
+                    Remove-Item -LiteralPath $powermodePath -Force -ErrorAction SilentlyContinue
+                } else {
+                    $pm | ConvertTo-Json | Set-Content -LiteralPath $powermodePath -Encoding UTF8
+                }
+            }
+            # Log to stderr so the agent sees powermode was used (informational, not blocking).
+            [Console]::Error.WriteLine("POWERMODE: allowing submit of CL $cl (remaining: $($pm.submitsRemaining); expires: $($pm.expiresAt))")
+            exit 0
+        }
+        # Expired or quota-exhausted -- delete marker so we don't keep checking.
+        Remove-Item -LiteralPath $powermodePath -Force -ErrorAction SilentlyContinue
+    } catch {
+        # Malformed powermode marker -- fail closed (treat as no powermode) and
+        # log for visibility.
+        [Console]::Error.WriteLine("WARN: powermode marker at $powermodePath unparseable; treating as not in powermode.")
+    }
+}
+
+# 2) Per-CL approval marker.
+$markerPath = Join-Path $root ".scratch\.approved-cl-$cl.marker"
 if (Test-Path -LiteralPath $markerPath) {
     # Approved. Allow the submit. The PostToolUse companion hook will delete
     # the marker so it can't be reused.

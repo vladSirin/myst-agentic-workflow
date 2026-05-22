@@ -2,6 +2,49 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [1.8.1] - 2026-05-23 — Powermode (batch-approval bypass for autonomous work)
+
+### Added
+- **Powermode** — time + count-bounded bypass for the per-CL approval gate.
+  Designed for autonomous `/goal`-driven multi-CL work where the per-CL
+  beat is friction without value (bugfix sprints, doc cleanups, bulk
+  refactors).
+- **`enable-powermode.ps1`** (top-level): writes
+  `.scratch/.powermode.marker` with `submitsRemaining`, `expiresAt`,
+  `reason`. Defaults: 5 submits / 60 minutes. Validates bounds (caps at
+  100 submits / 8 hours, warns if exceeded). Supports `-Status` mode.
+- **`disable-powermode.ps1`** (top-level): removes the marker. Idempotent.
+- **Hook update**: `block-unapproved-submit.ps1` now checks powermode
+  first. If active and within both limits, allows + decrements counter
+  + writes back. Either limit tripping (count -> 0, or now >= expiresAt)
+  deletes the marker. Per-CL approval gate remains as the fallback.
+- **Visibility**: hook prints
+  `POWERMODE: allowing submit of CL N (remaining: M; expires: T)` to
+  stderr on each use, so it's not silent in the agent's context.
+
+### Changed
+- `ChangelistVerification.md` (perforce overlay, both Claude + Codex):
+  added "Powermode (v1.8.1)" section documenting expected agent behavior
+  when powermode is active (still surface CL contents; honor the user's
+  trust; pause + ask if user said "do all" but powermode isn't on).
+- `block-unapproved-submit.ps1`, `cleanup-approved-cl.ps1`: rename
+  `$event` -> `$evt` (PowerShell automatic-variable lint warning).
+
+### Why
+- v1.8.0's per-CL gate is the right friction for normal sessions but
+  wrong for `/goal`-driven autonomous work. User reported:
+  "we also need a powermode that can directly commit multiple CLs
+  without a user's approval, like bugfixing etc."
+- Picked count + time both (vs. count only / time only / no-code-toggle)
+  because both limits as belt-and-suspenders rule out the failure mode
+  of forgetting to disable. Either trip = back to strict.
+
+Tests: 121/121 across 12 suites (was 113/113 in v1.8.0). Strict-mode
+suite grew from 12 to 20 tests covering: enable writes marker, allows +
+decrements, exhaustion deletes marker, blocks after exhaustion, expired
+marker ignored + cleaned up, disable removes marker, status reports
+correctly.
+
 ## [1.8.0] - 2026-05-23 — Strict mode (CL-by-CL hook enforcement)
 
 ### Added

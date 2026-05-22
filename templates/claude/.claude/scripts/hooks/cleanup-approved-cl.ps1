@@ -10,10 +10,10 @@ $ErrorActionPreference = 'SilentlyContinue'
 
 $raw = [Console]::In.ReadToEnd()
 if ([string]::IsNullOrWhiteSpace($raw)) { exit 0 }
-try { $event = $raw | ConvertFrom-Json } catch { exit 0 }
+try { $evt = $raw | ConvertFrom-Json } catch { exit 0 }
 
-if ($event.tool_name -ne 'Bash') { exit 0 }
-$cmd = [string]$event.tool_input.command
+if ($evt.tool_name -ne 'Bash') { exit 0 }
+$cmd = [string]$evt.tool_input.command
 if ([string]::IsNullOrWhiteSpace($cmd)) { exit 0 }
 
 $rxSubmit = [regex] '\bp4\s+(?:[^|;&]*\s+)?submit\s+-c\s+(?<cl>\d+)\b'
