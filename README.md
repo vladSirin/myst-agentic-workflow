@@ -36,20 +36,29 @@ came from.
 - **Perforce integration** (`-UsePerforce -Changelist new`) for UE/P4 consumers;
   filesystem-only consumers run the same scripts without P4.
 
-## Install — one command
+## Three one-command lifecycle scripts
 
 ```powershell
 git clone https://github.com/vladSirin/myst-agentic-workflow
-& ./myst-agentic-workflow/setup.ps1 -TargetRoot c:/path/to/your-project
+$Pkg = "$PWD/myst-agentic-workflow"
+
+# 1. First-time install (bootstrap manifest + write)
+& "$Pkg/setup.ps1"   -TargetRoot c:/path/to/your-project [-Yes]
+
+# 2. Sync upstream changes into your project
+& "$Pkg/update.ps1"  -TargetRoot c:/path/to/your-project [-Yes]
+
+# 3. Promote a local improvement back to the package
+& "$Pkg/promote.ps1" -TargetRoot c:/path/to/your-project `
+                     -Paths '.claude/skills/diagnose.md' [-Yes]
 ```
 
-`setup.ps1` auto-detects your project's version control (Perforce / git /
-filesystem) and overlay needs, bootstraps the manifest, shows a dry-run, and
-prompts before writing. Add `-Yes` to skip the prompt for unattended runs.
+All three auto-detect what they need (overlays / tools / version control)
+from the consumer's existing manifest. All three dry-run first, then prompt
+before writing. `-Yes` skips the prompt for unattended runs.
 
-For full control, the bootstrap and install steps are also exposed
-separately — see [`docs/install.md`](docs/install.md) for the
-update / promote / upstream-sync flows, and
+For full control, the underlying scripts are exposed separately — see
+[`docs/install.md`](docs/install.md) for the step-by-step paths,
 [`docs/perforce-consumer.md`](docs/perforce-consumer.md) for UE/Perforce
 specifics.
 
@@ -62,7 +71,9 @@ myst-agentic-workflow/
 ├── LICENSE
 ├── package-manifest.json          # schema v3 + package metadata
 ├── manifest-template.json         # canonical entry list for new consumers
-├── setup.ps1                      # one-command install (bootstrap + write)
+├── setup.ps1                      # one-command first-time install
+├── update.ps1                     # one-command upstream sync
+├── promote.ps1                    # one-command promote local -> package
 ├── docs/                          # consumer-facing guides
 │   ├── install.md                 # ~500-line install/update/promote guide
 │   ├── perforce-consumer.md       # UE+P4 addendum
@@ -83,7 +94,7 @@ myst-agentic-workflow/
 
 ## Status
 
-**v1.3.0** — provenance honesty: `overlays/myst-project/` now clearly labelled as a reference overlay, not generic content. Main README acknowledges single-project extraction. No code changes. 86/86 tests green across 9 suites.
+**v1.4.0** — three top-level lifecycle commands (`setup.ps1`, `update.ps1`, `promote.ps1`) covering install / sync / promote. Auto-derives configuration from the consumer's manifest. 95/95 tests green across 10 suites.
 
 - Marker Specification: implemented + 14/14 pathological fixtures pass.
 - Install failure/recovery: implemented + 10/10 journal tests pass.

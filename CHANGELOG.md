@@ -2,6 +2,36 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [1.4.0] - 2026-05-22 — One-command update + promote (lifecycle complete)
+
+### Added
+- `update.ps1` at repo root: one-command upstream sync. Runs `git pull` (skip
+  with `-NoPull`), runs `compare-with-package` (aborts on conflicts), dry-runs
+  install, prompts (or `-Yes`), writes via `InstallJournal`. Auto-wraps in
+  `-UsePerforce -Changelist new` when the consumer's manifest declares
+  `versionControl='perforce'`. Tools and overlays are read from the consumer's
+  manifest — no flag duplication.
+- `promote.ps1` at repo root: one-command promotion of local improvements
+  back to the package. Auto-infers classification per path from the
+  consumer's manifest (`owner=package,overlay=core` → `reusable-core`;
+  `overlay=perforce` → `perforce-overlay`; etc.). Dry-run + confirm + write.
+  Explicit `-Classification` for files not yet in the manifest.
+- `scripts/run-wrapper-tests.ps1`: 9-test suite covering both wrappers —
+  no-op update, manifest-derived flags, classification inference, error
+  on un-inferable paths, explicit-classification path.
+
+### Changed
+- `docs/install.md` sections 2-4 rewritten to lead with the one-command
+  paths (`setup.ps1`, `update.ps1`, `promote.ps1`). The step-by-step
+  scripts are still documented as "advanced" paths for CI integration and
+  debugging — they were the only docs in v1.0/v1.1, so the rewrite resolves
+  a long-standing inconsistency with the README.
+- README now lists all three lifecycle commands together: setup / update /
+  promote. The package's user-facing surface is exactly these three scripts
+  for the common case.
+
+Tests: 95/95 across 10 suites (was 86/86 in v1.3.0).
+
 ## [1.3.0] - 2026-05-22 — Provenance honesty
 
 ### Changed

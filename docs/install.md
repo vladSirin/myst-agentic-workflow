@@ -26,72 +26,101 @@ The example project throughout this guide is `Acme_Game` with docs at
 
 ## 2. First-time install
 
-### 2.1 Bootstrapping an empty target
+### 2.1 The one-command path (recommended)
 
-If your project has no `scaffold-manifest.json` yet, copy the template from the
-package and substitute your project values:
+For most adopters, `setup.ps1` is all you need:
 
 ```powershell
 $PkgRoot    = 'c:/path/to/myst-agentic-workflow'
 $TargetRoot = 'c:/path/to/Acme_Game'
 
-# Create the manifest skeleton (a minimal v3 manifest with installedProject set):
-$skeleton = @{
-    schemaVersion = 3
-    installedProject = @{
-        name         = 'Acme_Game'
-        docsRoot     = 'Docs'
-        gameDocsRoot = 'Acme_Game/Docs'
-    }
-    files = @()
-    upstreams = @{}
-    toolCapabilities = @{}
-} | ConvertTo-Json -Depth 5
-New-Item -ItemType Directory -Path "$TargetRoot/Docs/agents" -Force | Out-Null
-Set-Content -LiteralPath "$TargetRoot/Docs/agents/scaffold-manifest.json" -Value $skeleton -Encoding UTF8
+& "$PkgRoot/setup.ps1" -TargetRoot $TargetRoot
 ```
 
-Now the runtime preflight will load. On first run **expect preflight check 5
-("no unmanaged scaffold-like files") to flag any files that already exist
-under managed roots without manifest entries** — bootstrap is a one-time
-exemption; either delete those files first or land an initial manifest that
-records them. See §6.1 for the full preflight reference.
+`setup.ps1` orchestrates three steps with sensible defaults:
 
-### 2.2 Dry-run first
+1. **Detect** version control (`perforce` if `.p4ignore` or a P4 client root,
+   `git` if `.git`, else `filesystem`) and overlay shape (`core`,
+   plus `perforce` if VC=perforce, plus `ue` if a `*.uproject` is present
+   in the target).
+2. **Bootstrap** a `Docs/agents/scaffold-manifest.json` from
+   `manifest-template.json` — no hand-editing required. Marker stubs for
+   `CLAUDE.md` / `AGENTS.md` / `.p4ignore` are pre-created so the first
+   write can populate block content.
+3. **Install** — runs the preflight gate, dry-runs first, prompts for
+   confirmation (`-Yes` to skip), then writes via `InstallJournal`.
 
-Always dry-run before any write. The dry-run shows exactly which files would
-change, with no risk:
+For unattended runs:
+
+```powershell
+& "$PkgRoot/setup.ps1" -TargetRoot $TargetRoot -Yes
+```
+
+For explicit control over project metadata:
+
+```powershell
+& "$PkgRoot/setup.ps1" `
+    -TargetRoot     $TargetRoot `
+    -ProjectName    'Acme_Game' `
+    -GameDocsRoot   'Acme_Game/Docs' `
+    -VersionControl perforce `
+    -Tools          all `
+    -Overlays       'core,perforce,ue' `
+    -Yes
+```
+
+### 2.2 The step-by-step path (advanced)
+
+If you want explicit control over each step, the three underlying scripts are
+exposed directly. Use this path when integrating with CI, scripting a
+multi-project rollout, or debugging.
+
+**Bootstrap the manifest:**
+
+```powershell
+& "$PkgRoot/scripts/init-consumer.ps1" `
+    -TargetRoot     $TargetRoot `
+    -PackageRoot    $PkgRoot `
+    -ProjectName    'Acme_Game' `
+    -GameDocsRoot   'Acme_Game/Docs' `
+    -VersionControl perforce `
+    -Tools          all `
+    -Overlays       'core,perforce,ue'
+```
+
+`init-consumer.ps1` is idempotent-by-refusal: it errors out if a manifest
+already exists (pass `-Force` to overwrite).
+
+**Dry-run install:**
 
 ```powershell
 & "$PkgRoot/scripts/install.ps1" `
-    -TargetRoot $TargetRoot `
-    -PackageRoot $PkgRoot `
-    -Tools all `
-    -Overlays 'core,perforce,ue,myst-project' `
-    -Mode DryRun
+    -TargetRoot   $TargetRoot `
+    -PackageRoot  $PkgRoot `
+    -Tools        all `
+    -Overlays     'core,perforce,ue' `
+    -Mode         DryRun
 ```
 
-Output ends in a **WRITE PHASE** section showing per-file changes (or "NO
+Output ends with a **WRITE PHASE** section listing per-file changes (or "NO
 CHANGES" if disk already matches templates).
 
-### 2.3 Write mode
-
-If the dry-run output is what you want, switch to `-Mode Write` — **use the same flags as the dry-run** so what you saw is what you write:
+**Write mode:**
 
 ```powershell
 & "$PkgRoot/scripts/install.ps1" `
-    -TargetRoot $TargetRoot `
-    -PackageRoot $PkgRoot `
-    -Tools all `
-    -Overlays 'core,perforce,ue,myst-project' `
-    -Mode Write
+    -TargetRoot   $TargetRoot `
+    -PackageRoot  $PkgRoot `
+    -Tools        all `
+    -Overlays     'core,perforce,ue' `
+    -Mode         Write
 ```
 
-The runtime **preflight gate** (`run-skeleton-preflight.ps1`) runs first. If
-it does not return 10/10, write mode is refused. See
-[§6 Troubleshooting](#6-troubleshooting) for what each preflight check means.
+The **preflight gate** (`run-skeleton-preflight.ps1`) runs first. If it fails
+write mode is refused. See [§6 Troubleshooting](#6-troubleshooting) for what
+each preflight check means.
 
-If preflight is green, the install uses `InstallJournal`:
+When preflight passes, the install uses `InstallJournal`:
 
 1. Acquires an exclusive lock at `.scratch/agentic-scaffold-install.lock`.
 2. Stages each write to a sibling `<target>.agentic-stage` temp file.
@@ -101,16 +130,48 @@ If preflight is green, the install uses `InstallJournal`:
    and revokes the journal (no half-installed state).
 
 For Perforce consumers add `-UsePerforce -Changelist new` — see the
-[Perforce consumer guide](perforce-consumer.md).
+[Perforce consumer guide](perforce-consumer.md). (`setup.ps1` does this
+automatically when VC=perforce.)
 
 ---
 
 ## 3. Update from upstream
 
-When the package is updated (new template versions land in `PackageRoot`),
-check what would change in your project:
+### 3.1 The one-command path
 
 ```powershell
+& "$PkgRoot/update.ps1" -TargetRoot $TargetRoot
+```
+
+`update.ps1` orchestrates four steps:
+
+1. **`git pull`** in `$PkgRoot` (skip with `-NoPull` if you've already pulled
+   or are testing against a local change).
+2. **`compare-with-package`** — read-only drift report. Aborts the update if
+   any `conflict` outcomes appear (both sides moved; needs manual resolution).
+3. **Dry-run install** with the tools and overlays read from the consumer's
+   own manifest. You see exactly what would change.
+4. **Confirm + write** — prompts for `[y/N]` unless you pass `-Yes`. Writes
+   via `InstallJournal`; wraps in `-UsePerforce -Changelist new` automatically
+   if the consumer's manifest declares `versionControl='perforce'`.
+
+For unattended runs:
+
+```powershell
+& "$PkgRoot/update.ps1" -TargetRoot $TargetRoot -Yes
+```
+
+When the resulting Perforce CL looks right, `p4 submit -c <CL#>`. When it's a
+git/filesystem target, `git diff` and commit normally.
+
+### 3.2 The step-by-step path (advanced)
+
+If you want explicit control or just to inspect drift:
+
+```powershell
+cd $PkgRoot
+git pull
+
 & "$PkgRoot/scripts/compare-with-package.ps1" `
     -TargetRoot $TargetRoot `
     -PackageRoot $PkgRoot
@@ -121,8 +182,8 @@ Outcomes per entry:
 | Outcome | Meaning | What to do |
 |---|---|---|
 | `clean` | disk matches package template | nothing |
-| `downstream-edit` | you've edited the disk; package unchanged | decide: keep your edit (run `promote-from-project` later) or run `install -Mode Write` to revert to package |
-| `upstream-update` | package has changed since your last install; disk hasn't | run `install -Mode Write` to adopt the upstream change |
+| `downstream-edit` | you've edited the disk; package unchanged | decide: keep your edit (run `promote.ps1` later) or run `install -Mode Write` to revert to package |
+| `upstream-update` | package has changed since your last install; disk hasn't | run `install -Mode Write` (or `update.ps1`) to adopt the upstream change |
 | `conflict` | both disk and upstream moved | manual reconciliation needed; see [§6.4](#64-conflict-outcomes) |
 
 `compare-with-package.ps1` exits **0** when there are zero conflicts and
@@ -137,8 +198,45 @@ yours or the upstream's).
 
 ## 4. Promote a local improvement
 
-If you've edited a file under your project's installed scaffold and the change
-should be reusable across projects, promote it upstream:
+### 4.1 The one-command path
+
+If you've improved a file in your project and the change should benefit any
+adopter of the package:
+
+```powershell
+& "$PkgRoot/promote.ps1" `
+    -TargetRoot $TargetRoot `
+    -Paths 'Docs/MustRead/MustRead_agentic_workflow.md'
+```
+
+`promote.ps1` does the work:
+
+1. **Auto-infers classification** for each path from the consumer's manifest:
+   `owner=package,overlay=core` → `reusable-core`; `overlay=perforce` →
+   `perforce-overlay`; `overlay=ue` → `ue-overlay`; `overlay=myst-project` →
+   `myst-project-overlay`. (`-Classification` overrides explicitly.)
+2. **Dry-run** the promotion, showing which package path each file would land
+   at and any roundtrip issues.
+3. **Confirm + write** — prompts unless `-Yes`. Writes to the package working
+   tree with `-Force` (see §4.3 for why).
+
+After it completes, the package working tree at `$PkgRoot` has your change.
+Commit + push as usual:
+
+```powershell
+cd $PkgRoot
+git diff
+git checkout -b improve-mustread
+git add -A
+git commit -m "improve: clarify MustRead step 3"
+git push -u origin improve-mustread
+gh pr create --fill
+```
+
+For paths that aren't already in the consumer's manifest (a brand-new file),
+`promote.ps1` errors out and asks you to pass `-Classification` explicitly.
+
+### 4.2 The step-by-step path (advanced)
 
 ```powershell
 & "$PkgRoot/scripts/promote-from-project.ps1" `
@@ -151,7 +249,7 @@ should be reusable across projects, promote it upstream:
 
 Drop the `-Mode DryRun` and add `-Mode Write -Force` to actually write.
 
-### 4.1 Why `-Force` is currently required
+### 4.3 Why `-Force` is currently required
 
 A real promotion always changes the package source (that's why you're
 promoting). The script's "upstream divergence" check can't distinguish that
@@ -161,7 +259,7 @@ has published `sourceCommit` values, the conservative behavior is to require
 `-Force` for any write. That tells the script "I have inspected the diff and
 accept it."
 
-### 4.2 What promotion does
+### 4.4 What promotion does
 
 For each file:
 
@@ -178,7 +276,7 @@ For each file:
    equal the original. Refuses on mismatch (ambiguity guard).
 5. Atomically writes via `InstallJournal` (same crash-safety as install).
 
-### 4.3 PackageRoot in a Perforce depot — known limitation
+### 4.5 PackageRoot in a Perforce depot — known limitation
 
 `promote-from-project.ps1` does **not** currently support `-UsePerforce` for
 the package side. If `PackageRoot` is itself in a Perforce client workspace,
@@ -189,7 +287,7 @@ package CL yourself afterward. This will be addressed in a future iteration
 when the package goes live on GitHub (at which point the upstream side
 typically isn't Perforce-managed anyway).
 
-### 4.4 Refusing local-only / project-owned
+### 4.6 Refusing local-only / project-owned
 
 Some files are intentionally never promoted:
 
