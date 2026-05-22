@@ -6,6 +6,20 @@ This is the **source of truth**. Consuming projects receive a generated, install
 copy (checked into their own version control). The package is not required at
 runtime by a consumer — install once, use forever.
 
+## Provenance
+
+This package was **extracted from a single project** — `Myst_Proto`, a UE5/Perforce
+game project — and offered as a starting point for other consumers. The core
+scaffolding (`templates/` + `overlays/perforce/` + `overlays/ue/`) is generic.
+The repo also ships `overlays/myst-project/` as a worked example of a
+project-specific overlay; **adopters should not install that overlay** unless
+they ARE Myst_Proto. See [`overlays/myst-project/README.md`](overlays/myst-project/README.md).
+
+The pragmatic framing: this is one team's reusable infrastructure, MIT-licensed
+for others to adopt, fork, and adapt. It is not pretending to be a
+provenance-free generic framework — the `myst-` prefix is honest about where it
+came from.
+
 ## What you get
 
 - A consistent set of **agents, skills, workflows, and slash commands** across all
@@ -69,7 +83,7 @@ myst-agentic-workflow/
 
 ## Status
 
-**v1.2.0** — overlay split: `perforce` (CL workflow) vs `ue` (UE-specific) so non-UE Perforce consumers aren't forced to take UE-build assumptions. 86/86 tests green across 9 suites.
+**v1.3.0** — provenance honesty: `overlays/myst-project/` now clearly labelled as a reference overlay, not generic content. Main README acknowledges single-project extraction. No code changes. 86/86 tests green across 9 suites.
 
 - Marker Specification: implemented + 14/14 pathological fixtures pass.
 - Install failure/recovery: implemented + 10/10 journal tests pass.

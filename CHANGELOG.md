@@ -2,6 +2,35 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [1.3.0] - 2026-05-22 — Provenance honesty
+
+### Changed
+- `README.md` adds a **Provenance** section acknowledging the package was
+  extracted from a single project (`Myst_Proto`). The MIT license, generic
+  core, and reusable scripts stand; the `myst-` prefix is honest about
+  origin, not aspirational marketing.
+- `overlays/myst-project/README.md` (new) clearly labels the overlay as a
+  reference example: **adopters should not install it** unless they are
+  the Myst_Proto project. Documents exactly which files are Myst-only and
+  shows how to write your own project-specific overlay.
+
+### Why
+- Public MIT repo + name containing `myst-` + an `overlays/myst-project/`
+  directory was an intellectually inconsistent presentation. The package
+  claimed to be generic; the contents said otherwise.
+- Two paths to resolve: rewrite the content to be truly generic
+  (premature without a second consumer's requirements to design against),
+  or be honest about provenance. v1.3.0 picks honesty.
+- A future v2.0 may extract `overlays/myst-project/` to a separate repo
+  once a second project adopts the package and provides real evidence
+  about what's portable vs Myst-specific.
+
+### Not changed
+- No code, scripts, manifest, or templates touched.
+- `setup.ps1` auto-detection already never picks `myst-project` — adopters
+  have to opt in explicitly.
+- 86/86 tests still green.
+
 ## [1.2.0] - 2026-05-22 — Overlay split: `perforce` vs `ue`
 
 ### Changed
