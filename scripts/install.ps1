@@ -156,6 +156,16 @@ foreach ($entry in $InstalledManifest.files) {
 
     # Package-owned (copy/full-file-override or block-scoped with populated hash)
     if ($entry.owner -in @("package","overlay") -and $entry.writablePolicy -in @("installer-owned","generated-block-only")) {
+        if ($entry.hashPolicy -eq "runtime-mutable") {
+            # runtime-mutable: tool rewrites the file in-session. Seed on first install
+            # (when target missing), but never overwrite an existing file thereafter.
+            if (-not $exists) {
+                $report += ,@($entry.path, "seed-runtime-mutable", $entry.mergeStrategy, "file absent; will seed from template on first install")
+            } else {
+                $report += ,@($entry.path, "runtime-mutable", $entry.mergeStrategy, "tool-managed at runtime; install does not overwrite")
+            }
+            continue
+        }
         if (-not $exists) {
             $report += ,@($entry.path, "MISSING", $entry.mergeStrategy, "package-owned file absent from target")
         } elseif ($entry.hashPolicy -eq "block-scoped") {
@@ -228,7 +238,11 @@ foreach ($entry in $InstalledManifest.files) {
     $rendered = Get-EntryRendered -Entry $entry -PackageRoot $PackageRoot -TargetRoot $TargetRoot -Vars $Vars
     if ($null -eq $rendered) { continue }
     $tgt = Join-Path $TargetRoot $entry.path
-    $current = if (Test-Path -LiteralPath $tgt) { Read-NormalizedText -Path $tgt } else { '' }
+    $exists = Test-Path -LiteralPath $tgt
+    # runtime-mutable: seed on first install only; never overwrite existing content
+    # (tool may have mutated it at runtime; we don't know what to merge to).
+    if ($entry.hashPolicy -eq 'runtime-mutable' -and $exists) { continue }
+    $current = if ($exists) { Read-NormalizedText -Path $tgt } else { '' }
     if ($rendered -ne $current) {
         $gid = if ($entry.PSObject.Properties.Match('generatedBlockId').Count -gt 0) { $entry.generatedBlockId } else { $null }
         $aid = if ($entry.PSObject.Properties.Match('appendFragmentId').Count -gt 0) { $entry.appendFragmentId } else { $null }

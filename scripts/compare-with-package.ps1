@@ -85,6 +85,13 @@ foreach ($entry in $m.files) {
         continue
     }
 
+    # runtime-mutable: tool rewrites the file in-session (opencode.json permission block).
+    # Install seeds it on first run; subsequent drift is expected. Don't hash, don't diff.
+    if ($entry.hashPolicy -eq 'runtime-mutable') {
+        [void]$results.Add([pscustomobject]@{ Path=$entry.path; Bucket=$bucket; Outcome='runtime-mutable'; Detail='tool-managed at runtime; hash check bypassed by policy' })
+        continue
+    }
+
     $rendered = $null
     $renderErr = $null
     try { $rendered = Get-EntryRendered -Entry $entry -PackageRoot $PackageRoot -TargetRoot $TargetRoot -Vars $Vars }

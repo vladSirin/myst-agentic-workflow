@@ -127,17 +127,35 @@ writable on the client even without `p4 edit`. JSON config files like
 won't show up in `p4 opened` because no checkout happened. But the file on
 disk no longer matches the depot.
 
-**Detection**: `compare-with-package.ps1` will report the file as
-`downstream-edit` (its hash differs from what the package would render).
+**Resolved in v1.7.0** for the common tool-mutation case via the
+`runtime-mutable` hashPolicy. The manifest entry for `opencode.json` (and any
+similar file) sets `hashPolicy: "runtime-mutable"`. The installer treats such
+files as:
 
-**Resolution**:
+- **Seed-once**: written from the template on first install (target absent).
+- **Never overwrite**: subsequent installs leave the file alone.
+- **Skipped by preflight check 2** — no false-positive hash mismatch.
+- **Reported by compare as `runtime-mutable` outcome** — not as
+  `downstream-edit`, doesn't count toward conflicts.
 
-- If the edit is intentional: `p4 edit <file>; p4 submit` (or
-  `promote-from-project.ps1` if it should land in the upstream package).
-- If accidental: `p4 sync -f <file>` to force-restore from depot.
+This resolves OpenCode's runtime-permission-block mutation cleanly. The file
+stays writable, the tool mutates it freely, and the package never asserts
+its content should match the template after the first seed.
+
+**For unintentional drift** (a developer edits the file by hand and didn't
+mean to): use `p4 sync -f opencode.json` to force-restore from depot,
+or `p4 edit opencode.json` then revert via your editor. The `runtime-mutable`
+policy doesn't help here — it intentionally trusts disk state — so be
+careful with hand-edits of files marked `runtime-mutable`.
+
+**For intentional package-side improvements** (the template itself should
+change): edit `templates/opencode/opencode.json` in the package repo, push,
+then `update.ps1` won't help (it won't overwrite). Manual `p4 edit` + paste
++ `p4 submit` is the path until we add a `--force-reseed` flag (not yet).
 
 This is not specific to this package; it's a general Perforce gotcha. The
-package surfaces it via the drift comparator.
+v1.7.0 policy handles the runtime-mutation case; the manual-hand-edit case
+still requires Perforce hygiene.
 
 ---
 

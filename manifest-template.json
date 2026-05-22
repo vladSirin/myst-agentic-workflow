@@ -1292,7 +1292,7 @@
             "ownerOverlay": "core",
             "sourceTemplate": "templates/opencode/opencode.json",
             "sourceCommit": "<resolved-by-init-consumer>",
-            "hashPolicy": "sha256",
+            "hashPolicy": "runtime-mutable",
             "mergeStrategy": "copy",
             "localOnly": false,
             "writablePolicy": "installer-owned",

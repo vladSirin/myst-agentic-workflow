@@ -70,6 +70,7 @@ $hash_bad = @()
 foreach ($e in $m.files) {
     if ($e.localOnly) { continue }
     if ($e.hashPolicy -eq 'self-excluded') { continue }
+    if ($e.hashPolicy -eq 'runtime-mutable') { continue }
     $fp = Join-Path $TargetRoot $e.path
     if (-not (Test-Path -LiteralPath $fp)) { continue }
     if ($e.hashPolicy -eq 'sha256') {

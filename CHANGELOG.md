@@ -2,6 +2,56 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [1.7.0] - 2026-05-22 — `runtime-mutable` hashPolicy fixes opencode.json drift
+
+### Added
+- **`runtime-mutable` hashPolicy** for files tools mutate at runtime
+  (canonical case: OpenCode's `opencode.json` permission block, which the
+  tool rewrites in-session when a user grants a permission). Schema
+  documented in `package-manifest.json`'s `hashScopeRule.runtime-mutable`.
+- Semantics:
+  - **Install seeds** the file from the template on first install
+    (target absent).
+  - **Subsequent installs never overwrite** — preserves runtime state.
+  - **Preflight check 2 skips** entries with this policy — no false-positive
+    hash mismatch.
+  - **Compare reports `runtime-mutable`** outcome (its own bucket, not
+    `downstream-edit`); does not count toward conflicts.
+- `scripts/run-runtime-mutable-tests.ps1`: 6-test suite covering bootstrap
+  manifest carries the policy, first install seeds, runtime mutation
+  preserved across second install, compare outcome is `runtime-mutable`
+  (not `downstream-edit`), preflight check 2 passes.
+
+### Changed
+- `manifest-template.json`: `opencode.json` entry now has
+  `hashPolicy: "runtime-mutable"` (was `sha256`).
+- `scripts/install.ps1`:
+  - Dry-run analysis: reports `runtime-mutable` (file present) or
+    `seed-runtime-mutable` (file absent) instead of `clean` / `DRIFT`.
+  - Write phase: skip overwrite if `hashPolicy='runtime-mutable'` and file
+    exists; first-install seeding still happens.
+- `scripts/run-skeleton-preflight.ps1`: check 2 skips `runtime-mutable`
+  entries (added to the existing skip list alongside `localOnly` and
+  `self-excluded`).
+- `scripts/compare-with-package.ps1`: short-circuits to
+  `Outcome=runtime-mutable` for entries with the policy, bypassing the
+  hash comparison.
+- README: gotcha #1 (`opencode.json +w` pitfall) updated to "Resolved in
+  v1.7.0" with a new "What runtime-mutable means" section.
+- docs/perforce-consumer.md §5: rewritten to document the policy as the
+  resolution path, plus the remaining manual-edit case.
+
+### Why
+- The `opencode.json` `+w` always-writable pitfall was the longest-running
+  documented limitation (since v1.0). Preflight check 2 failed every time;
+  compare reported perpetual `downstream-edit`. The friction blocked
+  `update.ps1` in real-world use cases.
+- Option C from the design discussion (vs. mark localOnly, mark manual-only,
+  or JSON-aware partial hashing) was picked: cheapest, most extensible to
+  future runtime-mutated files, keeps the entry visible in reports.
+
+Tests: 101/101 across 11 suites (was 95/95 in v1.6.0).
+
 ## [1.6.0] - 2026-05-22 — Rename slash commands to avoid collisions
 
 ### Changed (BREAKING for v1.5.0 consumers)

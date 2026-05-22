@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-95%2F95-brightgreen)](#) [![version](https://img.shields.io/badge/version-v1.6.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-101%2F101-brightgreen)](#) [![version](https://img.shields.io/badge/version-v1.7.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -169,7 +169,7 @@ You don't — `update.ps1` runs `git pull` for you by default. Pass `-NoPull` if
 
 ## Gotchas (known limitations)
 
-- **`opencode.json` is `+w` (always-writable).** OpenCode mutates it at runtime when you grant permissions in-session. `compare-with-package` will report it as `downstream-edit` perpetually. Documented in [`docs/perforce-consumer.md` §5](docs/perforce-consumer.md). `compare` exits 0 on `downstream-edit` (only `conflict` is exit 1), so this doesn't break CI.
+- **`opencode.json` is `+w` (always-writable).** OpenCode mutates it at runtime when you grant permissions in-session. **Resolved in v1.7.0** via the `runtime-mutable` hashPolicy — the file is now seeded by install on first run, never overwritten after, and reported as `runtime-mutable` (not `downstream-edit`) by compare. Preflight check 2 skips it. See [§ runtime-mutable below](#what-runtime-mutable-means).
 
 - **Preflight check 10 (default-change clean).** Write-mode refuses if your P4 default changelist contains *any* files — including unrelated work from other workstreams. Move them to a named CL or revert before `install.ps1 -Mode Write`. `setup.ps1` and `update.ps1` surface this as a clear error pointing at the offending files.
 
@@ -219,7 +219,20 @@ myst-agentic-workflow/
 
 ## Status
 
-**v1.6.0** — `/update-myst-skills` and `/promote-myst-skills` slash commands installed into every consumer (`.claude/`, `.Codex/`, `.opencode/`) so agents can drive the lifecycle wrappers directly. Renamed from v1.5.0's generic `/update` and `/promote` to avoid collisions. 95/95 tests across 10 suites.
+**v1.7.0** — `runtime-mutable` hashPolicy resolves the long-standing `opencode.json` `+w` drift issue: files tools mutate at runtime are seeded once and never overwritten, never reported as drift. 101/101 tests across 11 suites.
+
+## What `runtime-mutable` means
+
+Some files are package-templated but get rewritten by the tool at runtime — `opencode.json`'s `permission` block is the canonical case (OpenCode mutates it when you grant a permission in-session). These files can't be hash-tracked the normal way without perpetually reporting drift.
+
+The `hashPolicy: "runtime-mutable"` policy says:
+- **Install seeds the file from the template on first run** (when the target is absent).
+- **Subsequent installs never overwrite it** — the runtime mutations are preserved.
+- **Preflight check 2 skips the hash check** — no false-positive drift.
+- **Compare reports the entry with outcome `runtime-mutable`** (its own bucket, not `downstream-edit` or `clean`); does not count toward conflicts.
+- **Promote refuses** to push runtime-mutated content upstream (the disk content is user-state, not package content).
+
+Mark any tool-managed-at-runtime file with this policy in `manifest-template.json`. Currently used only for `opencode.json`; reusable for any future file with the same property.
 
 See [CHANGELOG.md](CHANGELOG.md) for the version history.
 
