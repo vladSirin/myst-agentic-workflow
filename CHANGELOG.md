@@ -2,6 +2,27 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [1.4.1] - 2026-05-22 — Comprehensive intro README
+
+### Changed
+- `README.md` fully rewritten as a proper landing page, modelled on
+  [mattpocock/skills](https://github.com/mattpocock/skills): hero with
+  status badges, 60-second quickstart, six pain points (with the skills/
+  scripts that solve each), categorized reference (lifecycle commands,
+  skills, workflows, agents, overlays), FAQ, and known gotchas.
+- Pain-points section names the actual problems this package solves:
+  three-CLI drift, Bible-file corruption risk, half-installed scaffolds,
+  drift detection, stuck improvements, Perforce + multi-developer chaos.
+
+### Why
+- v1.0–1.4 had a thin README that listed features. New adopters had no
+  fast way to decide whether the package solved their problem.
+- The mattpocock/skills README is a strong reference for this category
+  of repo. Adopting that structure makes the package more discoverable
+  for anyone arriving via the upstream-skills ecosystem.
+
+Docs-only release. No code, scripts, manifest, or templates changed.
+
 ## [1.4.0] - 2026-05-22 — One-command update + promote (lifecycle complete)
 
 ### Added
