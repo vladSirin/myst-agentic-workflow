@@ -2,6 +2,42 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [1.6.0] - 2026-05-22 — Rename slash commands to avoid collisions
+
+### Changed (BREAKING for v1.5.0 consumers)
+- `/update`  → `/update-myst-skills`
+- `/promote` → `/promote-myst-skills`
+
+Renamed for collision-avoidance: `/update` and `/promote` are dangerously
+generic — every tool ecosystem has those words attached to built-ins or
+adjacent packages, and users couldn't tell at a glance which scaffold
+the command would touch.
+
+The new names follow the [mattpocock/skills](https://github.com/mattpocock/skills)
+convention of suffixing with the package identifier (compare their
+`/setup-matt-pocock-skills`). Verbose but unambiguous.
+
+Internal references updated:
+- 6 command files renamed (2 commands × 3 tools).
+- `manifest-template.json`: 6 entries' `path` and `sourceTemplate` updated.
+- Command bodies updated (their cross-references to each other).
+- README slash-command reference table updated.
+
+### Migration for v1.5.0 consumers
+If you installed v1.5.0 between today and a few minutes ago and want to
+upgrade cleanly:
+
+1. Run `update.ps1` against your consumer. It picks up the renamed entries
+   and writes the new files alongside the old.
+2. The old `update.md` / `promote.md` files become orphan-but-tracked in
+   your `.claude/commands/` etc. — delete them manually (or `p4 delete`
+   if Perforce-tracked). They aren't in the v1.6.0 manifest.
+
+Realistically nobody had v1.5.0 in production yet (it shipped <1 hour ago),
+so this rename is effectively a free do-over.
+
+Tests: still 95/95 across 10 suites.
+
 ## [1.5.0] - 2026-05-22 — `/update` and `/promote` slash commands
 
 ### Added

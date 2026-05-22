@@ -1462,11 +1462,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".claude/commands/update.md",
+            "path": ".claude/commands/update-myst-skills.md",
             "tool": "claude",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/claude/.claude/commands/update.md",
+            "sourceTemplate": "templates/claude/.claude/commands/update-myst-skills.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -1478,11 +1478,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".claude/commands/promote.md",
+            "path": ".claude/commands/promote-myst-skills.md",
             "tool": "claude",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/claude/.claude/commands/promote.md",
+            "sourceTemplate": "templates/claude/.claude/commands/promote-myst-skills.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -1494,11 +1494,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".Codex/commands/update.md",
+            "path": ".Codex/commands/update-myst-skills.md",
             "tool": "codex",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/codex/.Codex/commands/update.md",
+            "sourceTemplate": "templates/codex/.Codex/commands/update-myst-skills.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -1510,11 +1510,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".Codex/commands/promote.md",
+            "path": ".Codex/commands/promote-myst-skills.md",
             "tool": "codex",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/codex/.Codex/commands/promote.md",
+            "sourceTemplate": "templates/codex/.Codex/commands/promote-myst-skills.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -1526,11 +1526,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".opencode/commands/update.md",
+            "path": ".opencode/commands/update-myst-skills.md",
             "tool": "opencode",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/opencode/.opencode/commands/update.md",
+            "sourceTemplate": "templates/opencode/.opencode/commands/update-myst-skills.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -1542,11 +1542,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".opencode/commands/promote.md",
+            "path": ".opencode/commands/promote-myst-skills.md",
             "tool": "opencode",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/opencode/.opencode/commands/promote.md",
+            "sourceTemplate": "templates/opencode/.opencode/commands/promote-myst-skills.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",

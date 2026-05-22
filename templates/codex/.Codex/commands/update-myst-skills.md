@@ -1,4 +1,4 @@
-# /update — Sync upstream package changes into this project
+# /update-myst-skills — Sync upstream package changes into this project
 
 Pull the latest [`myst-agentic-workflow`](https://github.com/vladSirin/myst-agentic-workflow)
 package changes and apply them to this project.
@@ -64,5 +64,5 @@ Read the error. Common cases:
 
 ## Related
 
-- `/promote` — push local improvements back to the package.
+- `/promote-myst-skills` — push local improvements back to the package.
 - `docs/install.md` §3 in the package — full update workflow documentation.

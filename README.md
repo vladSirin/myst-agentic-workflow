@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-95%2F95-brightgreen)](#) [![version](https://img.shields.io/badge/version-v1.5.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-95%2F95-brightgreen)](#) [![version](https://img.shields.io/badge/version-v1.6.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -92,8 +92,8 @@ Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) at pinned
 
 | Skill | Use it when |
 |---|---|
-| [`/update`](templates/claude/.claude/commands/update.md) | **(v1.5.0)** Sync upstream package changes into this project. Agent wrapper around `update.ps1`. |
-| [`/promote`](templates/claude/.claude/commands/promote.md) | **(v1.5.0)** Push a local improvement back to the upstream package. Agent wrapper around `promote.ps1`. |
+| [`/update-myst-skills`](templates/claude/.claude/commands/update-myst-skills.md) | **(v1.6.0)** Sync upstream package changes into this project. Agent wrapper around `update.ps1`. |
+| [`/promote-myst-skills`](templates/claude/.claude/commands/promote-myst-skills.md) | **(v1.6.0)** Push a local improvement back to the upstream package. Agent wrapper around `promote.ps1`. |
 | [`/diagnose`](templates/claude/.claude/skills/diagnose.md) | A bug or perf regression needs structured reproduction → minimisation → hypothesis → fix. |
 | [`/tdd`](templates/claude/.claude/skills/tdd.md) | Building a feature or fixing a bug with red-green-refactor. One vertical slice at a time. |
 | [`/grill-with-docs`](templates/claude/.claude/skills/grill-with-docs.md) | Before any non-trivial change: stress-test the plan against the project's domain language, update CONTEXT.md and ADRs inline. |
@@ -219,7 +219,7 @@ myst-agentic-workflow/
 
 ## Status
 
-**v1.5.0** — `/update` and `/promote` slash commands installed into every consumer (`.claude/`, `.Codex/`, `.opencode/`) so agents can drive the lifecycle wrappers directly. 95/95 tests across 10 suites.
+**v1.6.0** — `/update-myst-skills` and `/promote-myst-skills` slash commands installed into every consumer (`.claude/`, `.Codex/`, `.opencode/`) so agents can drive the lifecycle wrappers directly. Renamed from v1.5.0's generic `/update` and `/promote` to avoid collisions. 95/95 tests across 10 suites.
 
 See [CHANGELOG.md](CHANGELOG.md) for the version history.
 

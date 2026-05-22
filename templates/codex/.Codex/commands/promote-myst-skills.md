@@ -1,4 +1,4 @@
-# /promote — Push a local improvement back to the upstream package
+# /promote-myst-skills — Push a local improvement back to the upstream package
 
 When the user has improved a workflow / skill / template file locally and
 the change should benefit any other project that adopts the package, run
@@ -95,5 +95,5 @@ Common cases:
 
 ## Related
 
-- `/update` — pull upstream changes into this project.
+- `/update-myst-skills` — pull upstream changes into this project.
 - `docs/install.md` §4 in the package — full promote workflow documentation.
