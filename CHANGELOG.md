@@ -2,6 +2,57 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [1.8.0] - 2026-05-23 — Strict mode (CL-by-CL hook enforcement)
+
+### Added
+- **`enable-strict-mode.ps1`** top-level script: opt-in installer for
+  Claude Code hooks that enforce workflow rules at the tool level (not
+  just advisory). Writes/merges the hook wiring into
+  `.claude/settings.local.json` (per-machine, not VC-tracked).
+  Idempotent re-runs. `-Disable` removes the hooks.
+- **`templates/claude/.claude/scripts/hooks/block-unapproved-submit.ps1`**:
+  PreToolUse hook that blocks `p4 submit -c <N>` unless
+  `.scratch/.approved-cl-<N>.marker` is present at the project root.
+  Exit 2 with explanatory message to the agent on block.
+- **`templates/claude/.claude/scripts/hooks/cleanup-approved-cl.ps1`**:
+  PostToolUse companion. Deletes the marker file after submit so each
+  approval is one-shot (can't be reused).
+- `scripts/run-strict-mode-tests.ps1`: 12-test suite covering hook
+  ignores non-Bash, ignores non-submit Bash, blocks unapproved submit
+  with correct exit 2 + message, allows when marker present, cleanup
+  removes marker, enable-strict-mode writes valid settings.local.json,
+  idempotent re-runs, -Disable removes hooks.
+
+### Changed
+- `overlays/perforce/.claude/workflows/ChangelistVerification.md` (and
+  Codex mirror): added "Strict-mode hook (when enabled)" section
+  documenting the marker dance — what the agent should do when blocked
+  (surface CL, ask user, create marker, retry submit).
+- `manifest-template.json`: 2 new entries for the hook scripts (claude-only
+  for now; OpenCode/Codex don't have an equivalent PreToolUse mechanism).
+
+### Why
+- Workflows were advisory: the agent reads `.claude/workflows/*.md` at
+  session start, but nothing prevents bypass. Real-world agents drift —
+  they submit without asking, batch CLs together, skip the review step.
+  User reports this happens "from time to time."
+- Claude Code hooks are the actual enforcement layer. The package now
+  uses them for the single most-violated rule (CL-by-CL). Future
+  versions may add hooks for the other rules.
+- Opt-in via a separate script (not auto-enabled in setup.ps1) because
+  hooks live in `.claude/settings.local.json` which is per-machine, not
+  shared across the team. Some users may not want strict enforcement.
+
+### What it doesn't enforce yet
+- `RawMaterialsProtection` (Docs/_Raw read-only) — could add a PreToolUse
+  hook on Edit/Write blocking paths under that dir. Not in v1.8.0.
+- `ReviewAndSubmit` (must invoke reviewer agent before submit) — harder
+  to enforce mechanically; defer.
+- `AutoPlanMode` for non-trivial tasks — Claude Code has built-in plan
+  mode; can't easily force via hook. Future work.
+
+Tests: 113/113 across 12 suites (was 101/101 in v1.7.0).
+
 ## [1.7.0] - 2026-05-22 — `runtime-mutable` hashPolicy fixes opencode.json drift
 
 ### Added

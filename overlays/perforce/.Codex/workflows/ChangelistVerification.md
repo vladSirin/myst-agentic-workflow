@@ -51,3 +51,24 @@ The **ONLY** exception is when the user **explicitly** states one of:
 If you execute multiple changelist steps without stopping for verification between each, you have violated this requirement.
 
 **Workflow**: `CL1 → Verify → CL2 → Verify → CL3 → Verify` (NEVER: `CL1 → CL2 → CL3 → Done`)
+
+---
+
+## Strict-mode hook (when enabled)
+
+If the user has enabled strict mode (`enable-strict-mode.ps1`), this rule is enforced at the tool level. A PreToolUse hook blocks any `p4 submit -c <N>` unless `.scratch/.approved-cl-<N>.marker` is present at the project root.
+
+**The marker dance** — when the hook blocks you:
+
+1. **Don't retry blindly.** The block is the protocol asserting itself; you skipped a step.
+2. **Surface the CL to the user**: description (`p4 describe -c <N>`), file list (`p4 opened -c <N>`), and the diff if non-trivial. Keep it focused — what's in the CL, why, and any risks.
+3. **Ask explicitly**: "Approve CL `<N>` for submit?" — wait for an explicit "yes / approve / go ahead" or equivalent. Implicit instructions ("submit it", "ship it") still need this confirmation beat.
+4. **Create the marker** after user approves:
+   ```powershell
+   New-Item -ItemType File -Path '.scratch/.approved-cl-<N>.marker' -Force | Out-Null
+   ```
+5. **Run the submit**: `p4 submit -c <N>`. The hook now allows it, and a paired PostToolUse hook deletes the marker so each approval is one-shot.
+
+If the user has said something ambiguous like "submit those", treat that as "you can prepare to submit, but still ask explicitly which CL and confirm before each one."
+
+If the hook isn't installed (strict mode not enabled), the rule still applies — just unenforced. Same protocol; same expected behavior; you just have to remember.

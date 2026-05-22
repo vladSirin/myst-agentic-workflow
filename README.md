@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-101%2F101-brightgreen)](#) [![version](https://img.shields.io/badge/version-v1.7.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-113%2F113-brightgreen)](#) [![version](https://img.shields.io/badge/version-v1.8.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -219,7 +219,28 @@ myst-agentic-workflow/
 
 ## Status
 
-**v1.7.0** — `runtime-mutable` hashPolicy resolves the long-standing `opencode.json` `+w` drift issue: files tools mutate at runtime are seeded once and never overwritten, never reported as drift. 101/101 tests across 11 suites.
+**v1.8.0** — Strict mode: optional Claude Code hook that blocks `p4 submit` unless preceded by an explicit user approval (matches the CL-by-CL HARD RULE). Opt-in via `enable-strict-mode.ps1`. 113/113 tests across 12 suites.
+
+## Strict mode (v1.8.0)
+
+The workflow markdown files in `.claude/workflows/` are advisory by default — they describe rules but don't enforce them. Strict mode adds a Claude Code `PreToolUse` hook that **blocks** the most-violated rule (CL-by-CL HARD RULE) at the tool level.
+
+```powershell
+& "$Pkg/enable-strict-mode.ps1" -TargetRoot c:/path/to/your-project
+```
+
+After enabling, any `p4 submit -c <N>` is blocked unless `.scratch/.approved-cl-<N>.marker` exists. The flow becomes:
+
+1. Agent prepares a CL.
+2. Agent surfaces the CL contents to you.
+3. You explicitly approve.
+4. Agent creates the marker file.
+5. Agent runs `p4 submit -c <N>` — hook allows it.
+6. Paired PostToolUse hook deletes the marker (one-shot approval).
+
+The hook scripts ship with the package; `setup.ps1` installs them. `enable-strict-mode.ps1` writes/merges the wiring into `.claude/settings.local.json` (which is per-machine and not version-controlled). Re-running is idempotent; `-Disable` removes the hooks.
+
+Future versions may add hooks for other rules (RawMaterialsProtection, ReviewAndSubmit, etc.). Currently only the unapproved-submit block is enforced.
 
 ## What `runtime-mutable` means
 
