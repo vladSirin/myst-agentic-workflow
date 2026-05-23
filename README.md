@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-101%2F101-brightgreen)](#) [![version](https://img.shields.io/badge/version-v1.9.1-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-172%2F172-brightgreen)](#) [![version](https://img.shields.io/badge/version-v1.9.2-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -219,7 +219,7 @@ myst-agentic-workflow/
 
 ## Status
 
-**v1.9.0** — Removed v1.8.0/v1.8.1 strict-mode + powermode (over-engineered for the actual drift rate; the cost/benefit ratio was bad). Workflow rules return to advisory-only via the markdown files in `.claude/workflows/`. 101/101 tests across 11 suites.
+**v1.9.2** — Cross-tool parity audit: `PlanPriority.md` added to OpenCode (was missing). New `run-parity-tests.ps1` with explicit parity matrix + documented deviations catches future cross-tool drift. 172/172 tests across 12 suites.
 
 ## What `runtime-mutable` means
 

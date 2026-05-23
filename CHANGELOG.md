@@ -2,6 +2,45 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [1.9.2] - 2026-05-23 — Cross-tool parity audit + automated drift detection
+
+### Added
+- **`scripts/run-parity-tests.ps1`** — verifies cross-tool parity via an
+  explicit matrix listing each logical item and where it should live in
+  each tool's template dir (Claude / Codex / OpenCode). Documented
+  deviations are allow-listed with a one-line justification each.
+  Unknown files in tool dirs (not in matrix, not deviation) fail.
+- **`templates/opencode/.opencode/workflows/PlanPriority.md`** — was
+  missing from OpenCode while Claude + Codex had it. Generic rule
+  (don't write new plans before searching existing) that applies to
+  OpenCode too. Added; manifest entry added to `manifest-template.json`.
+
+### Documented (parity matrix + deviations)
+- **3-way parity**: 9 skills, 2 workflows (AgenticWorkflow, PlanPriority),
+  1 agent (radical-design-critic), 2 slash commands (update-myst-skills,
+  promote-myst-skills), UE overlay's sync-build-submit command,
+  myst-project's design skill + architecture-reviewer agent.
+- **2-way parity (Claude + Codex, OpenCode opts out)**: perforce
+  overlay workflows (ChangelistVerification, ReviewAndSubmit,
+  VersionControlRule), myst-project workflows (Design/Document/Script/
+  RawMaterialsProtection), angelscriptrules.
+- **Tool-specific**: CLAUDE.md (Claude bible), AGENTS.md (Codex+OpenCode
+  share at consumer root), OpenCode-only convenience commands
+  (design, roundtable wrappers around the same-name skills).
+
+### Why
+- User asked: "are we synced between Claude, Codex and Opencode?
+  If not make sure they are synced and will keep synced in the future."
+- Audit found: recent v1.9.1 changes synced correctly across tools that
+  had each file. But `PlanPriority.md` was missing in OpenCode -- a
+  silent unintended drift never previously detected.
+- The fix: explicit matrix-based parity test that makes the cross-tool
+  layout legible. Future drift either fits the matrix (and passes), or
+  needs an explicit deviation entry (forcing the maintainer to justify
+  the asymmetry).
+
+Tests: 172/172 across 12 suites (was 101/101 in v1.9.1; +71 parity tests).
+
 ## [1.9.1] - 2026-05-23 — Clarify .scratch/ is version-controlled (docs-only)
 
 ### Changed

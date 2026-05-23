@@ -1556,6 +1556,22 @@
             "upstreamDerived": true,
             "upstreamLicense": null,
             "blockHashPolicy": "not-applicable"
+        },
+        {
+            "path": ".opencode/workflows/PlanPriority.md",
+            "tool": "opencode",
+            "owner": "package",
+            "ownerOverlay": "core",
+            "sourceTemplate": "templates/opencode/.opencode/workflows/PlanPriority.md",
+            "sourceCommit": "<resolved-by-init-consumer>",
+            "hashPolicy": "sha256",
+            "mergeStrategy": "copy",
+            "localOnly": false,
+            "writablePolicy": "installer-owned",
+            "baselineState": "scaffold-cleanup",
+            "upstreamDerived": false,
+            "upstreamLicense": null,
+            "blockHashPolicy": "not-applicable"
         }
     ],
     "notes": [
