@@ -4,7 +4,9 @@
 
 ## Purpose
 
-Move local markdown issues through the repo's status workflow.
+Move issues through the repo's status workflow. Issues live as markdown
+files under `.scratch/<feature-slug>/` and **are version-controlled** —
+see `Docs/agents/issue-tracker.md` for the VC policy.
 
 ## Project setup
 

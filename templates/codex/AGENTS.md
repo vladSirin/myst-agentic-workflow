@@ -72,7 +72,7 @@ Custom subagents available via the Agent tool. Codex routes to these automatical
 | `/roundtable` | Multi-perspective design discussion with different expert viewpoints |
 | `/to-prd` | Turns current context into a PRD under `.scratch/<feature>/PRD.md` |
 | `/to-issues` | Breaks PRDs/plans into vertical-slice issues under `.scratch/<feature>/issues/` |
-| `/triage` | Moves local markdown issues through the repo status workflow |
+| `/triage` | Moves issues through the repo status workflow (issues live as version-controlled markdown under `.scratch/`) |
 | `/tdd` | Implements one behavior-tested vertical slice at a time |
 | `/diagnose` | Debugs bugs/regressions by building a reproducible feedback loop first |
 | `/improve-codebase-architecture` | Finds architecture improvements informed by project docs |

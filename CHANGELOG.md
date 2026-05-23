@@ -2,6 +2,44 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [1.9.1] - 2026-05-23 — Clarify .scratch/ is version-controlled (docs-only)
+
+### Changed
+- `templates/common/docs/agents/issue-tracker.md`: title renamed
+  "Issue tracker: Local markdown" -> "Issue tracker: Repo markdown".
+  Added an explicit "Version-control policy" section that states
+  files under `.scratch/<feature-slug>/` **are version-controlled** and
+  should be submitted with their related work. Distinguishes from
+  genuinely local-only state (e.g., `.claude/settings.local.json`).
+- `templates/{claude,codex,opencode}/.{claude,Codex,opencode}/skills/triage*`:
+  description "Move local markdown issues" -> "Move issues" with an
+  explicit pointer to the VC policy.
+- `templates/claude/CLAUDE.md` + `templates/codex/AGENTS.md`: slash-
+  command reference table line for `/triage` no longer calls the issues
+  "local markdown"; clarifies they're version-controlled under
+  `.scratch/`.
+- `templates/opencode/.opencode/skills/to-prd/SKILL.md`: description
+  "local markdown issue tracker" -> "in-repo issue tracker
+  (version-controlled markdown under .scratch/)".
+
+### Why
+- User report: agents reading "local markdown" in the issue-tracker doc
+  and triage skill descriptions get confused about whether `.scratch/`
+  files should be submitted to Perforce. Actual practice across 15+
+  CLs in the live consumer is to submit them; the word "local" in the
+  framework docs read as the opposite.
+- The framing "Local markdown" was originally meant in the sense
+  "issues live as files in the repo rather than a remote tracker like
+  Jira" -- but "local" colloquially means "not version-controlled" to
+  most readers, including LLMs. Renaming + adding an explicit VC policy
+  removes the ambiguity.
+
+### Not changed
+- No code, scripts, manifest schema, or templates beyond the doc-text
+  edits.
+- The `.scratch/` directory convention itself stays the same.
+- Tests: still 101/101 across 11 suites.
+
 ## [1.9.0] - 2026-05-23 — Remove strict mode + powermode (course correction)
 
 ### Removed

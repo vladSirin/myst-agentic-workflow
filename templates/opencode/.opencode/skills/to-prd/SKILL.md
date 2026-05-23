@@ -1,6 +1,6 @@
 ---
 name: to-prd
-description: Turn the current conversation context into a PRD and publish it to this repo's local markdown issue tracker. Use when the user asks to create a PRD, product requirements, or capture a feature plan.
+description: Turn the current conversation context into a PRD and publish it to this repo's in-repo issue tracker (version-controlled markdown under .scratch/). Use when the user asks to create a PRD, product requirements, or capture a feature plan.
 compatibility: opencode
 ---
 

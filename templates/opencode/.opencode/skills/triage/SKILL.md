@@ -1,6 +1,6 @@
 ---
 name: triage
-description: Move local markdown issues through this repo's Status workflow. Use when the user wants to classify, review, update, or prepare issues for agent or human work.
+description: Move issues through this repo's Status workflow. Issues live as version-controlled markdown under .scratch/<feature-slug>/. Use when the user wants to classify, review, update, or prepare issues for agent or human work.
 compatibility: opencode
 ---
 
