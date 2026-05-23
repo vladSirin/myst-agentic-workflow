@@ -26,9 +26,21 @@ function RawSha($p) {
     return 'sha256:' + [BitConverter]::ToString($s.ComputeHash($b)).Replace('-','').ToLowerInvariant()
 }
 function P4HeadRev($depotPath) {
-    $r = & p4 fstat -T headRev $depotPath 2>$null
-    foreach ($line in $r) { if ($line -match 'headRev\s+(\d+)') { return [int]$Matches[1] } }
-    return $null
+    # Tolerate native errors (file not in depot, session issues). Returns null
+    # for any missing/unknowable head rev rather than crashing under
+    # $ErrorActionPreference='Stop'. Callers compare against manifest's
+    # depotRevision -- null-vs-null is the expected case for files staged as
+    # `p4 add` but not yet submitted.
+    $prev = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+    try {
+        $r = & p4 fstat -T headRev $depotPath 2>$null
+        foreach ($line in $r) { if ($line -match 'headRev\s+(\d+)') { return [int]$Matches[1] } }
+        return $null
+    } catch {
+        return $null
+    } finally {
+        $ErrorActionPreference = $prev
+    }
 }
 
 $manifestPath = Join-Path $TargetRoot $ManifestRelativePath

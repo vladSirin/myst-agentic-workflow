@@ -2,6 +2,34 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [2.0.1] - 2026-05-23 — install.ps1 fixes (surfaced during v2.0.0 live install)
+
+### Fixed
+- **`scripts/run-skeleton-preflight.ps1` P4HeadRev**: was crashing on
+  `p4 fstat` when target file didn't exist in depot (e.g., files staged
+  for `p4 add` but not yet submitted). `$ErrorActionPreference='Stop'` +
+  native command non-zero exit promoted to a terminating error.
+  Wrapped the fstat call in try/catch with local
+  `$ErrorActionPreference='Continue'`; null is now returned correctly
+  for missing/unknowable head revs.
+- **`scripts/install.ps1` Update-ManifestForChanges scope**: the
+  scriptblock callback passed to `Complete-JournalCommit` ran in a
+  scope where `Update-ManifestForChanges` (dot-sourced into install.ps1's
+  script scope) wasn't visible. The new fix dot-sources
+  `lib/ManifestUpdate.ps1` at the call site inside the scriptblock,
+  guaranteeing the function is bound regardless of caller scope.
+
+### Why
+- Both bugs surfaced during the v2.0.0 live install against
+  UE_Blank_Proto -- the first end-to-end run of `update.ps1` against
+  a real Perforce consumer with new files being added (not just
+  edited). The fixture tests + previous installs only exercised edits
+  on existing files; new-file paths weren't covered.
+
+### Not changed
+- Same content, same skills, same parity tests. Only install.ps1 +
+  preflight script behavior. 184/184 tests still pass.
+
 ## [2.0.0] - 2026-05-23 — Full upstream sync (skill philosophy shift)
 
 ### MAJOR: Philosophy shift

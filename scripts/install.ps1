@@ -348,7 +348,14 @@ $( ($readOnly | Select-Object -First 5 | ForEach-Object { '  - ' + $_.Path }) -j
             foreach ($c in $Changes) { Add-JournalStage -JournalPath $jrnPath -Target $c.Target -Content $c.Rendered }
             $manifestPathForAction = $InstalledManifestPath
             $changesForAction      = @($Changes)
-            $manifestUpdate = { Update-ManifestForChanges -ManifestPath $manifestPathForAction -Changes $changesForAction }.GetNewClosure()
+            # The scriptblock runs inside Complete-JournalCommit's scope,
+            # where Update-ManifestForChanges isn't visible. Dot-source the
+            # lib at the call site to make the function callable in any scope.
+            $manifestUpdateLib = Join-Path $PSScriptRoot 'lib\ManifestUpdate.ps1'
+            $manifestUpdate = {
+                . $manifestUpdateLib
+                Update-ManifestForChanges -ManifestPath $manifestPathForAction -Changes $changesForAction
+            }.GetNewClosure()
             Complete-JournalCommit -JournalPath $jrnPath -ManifestUpdateAction $manifestUpdate
 
             # Post-commit: p4 add the now-created files.
