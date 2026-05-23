@@ -2,6 +2,51 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [2.1.1] - 2026-05-24 — Preflight tolerates pending-CL state
+
+### Fixed
+- **Preflight check 4 (depotRevision == headRev) no longer flags
+  open-for-add files as drift.** When a file is staged in a pending CL
+  via `p4 add` / `p4 branch` / `p4 move/add`, its headRev is `null`
+  (depot doesn't know about it yet) while the manifest may already list
+  it with `depotRevision=1`. Previous behavior reported this as drift
+  and refused `install.ps1 -Mode Write`.
+- **Preflight check 5 (no unmanaged scaffold files) no longer flags
+  open-for-delete files as unmanaged.** A file removed from the manifest
+  but still open-for-delete in a pending CL is intentionally being
+  removed; it remains in `p4 have` until submit. Previous behavior
+  reported this as unmanaged and refused write mode.
+
+### Why
+- The v2.0.0 / v2.1.0 structural CLs (45 file deletes + 28 file adds)
+  could not run through `install.ps1 -Mode Write` because preflight
+  rejected them — the very state preflight exists to safeguard. Both
+  CLs landed via a surgical manual `p4 add`/`p4 delete` workaround that
+  bypassed the installer's atomic-rename + journal-rollback. This is
+  the exact case that needs the most protection, so the gate was
+  defeating its own purpose.
+- Distinguishing "new-in-this-CL" / "pending-delete" from real drift
+  requires consulting `p4 opened`. The fix runs that query once at
+  preflight start and exempts entries with the matching pending action.
+
+### Added
+- `scripts/run-pending-opens-tests.ps1` — six scenarios:
+  - A. Baseline (no opens, head matches manifest) → PASS 10/10
+  - B. Pending add → PASS 10/10 (was: FAIL check 4)
+  - C. Pending delete → PASS 10/10 (was: FAIL check 5)
+  - D. Mixed structural CL → PASS 10/10
+  - E. Real drift (no opens) → FAIL check 4 (no false negative)
+  - F. Real unmanaged (no opens) → FAIL check 5 (no false negative)
+- `scripts/fake-p4.ps1` — test-only p4 shim that seeds info / opened /
+  have / fstat output via environment variables. Prepended to PATH for
+  the duration of each test; never touches the live depot.
+
+### Note
+- The exemptions are scoped: only `add`/`branch`/`move/add` skip check
+  4, and only `delete`/`move/delete` skip check 5. `edit` opens are
+  unaffected (an edited file still has a real headRev that must match
+  the manifest's depotRevision).
+
 ## [2.1.0] - 2026-05-23 — Match upstream skill structure: `<name>/SKILL.md`
 
 ### Changed (structural)

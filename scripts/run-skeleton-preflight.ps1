@@ -62,6 +62,24 @@ try {
     }
 } catch { $p4Available = $false }
 
+# Build a one-shot map of files open in any pending CL: depot-relative path
+# -> action (add/edit/delete/branch/move/add/move/delete/integrate). Checks 4
+# and 5 consult this to distinguish "new-in-this-CL" / "pending-delete" from
+# real drift / real unmanaged files. Empty hashtable when p4 unavailable.
+$pendingOpens = @{}
+if ($p4Available) {
+    $prev = $ErrorActionPreference; $ErrorActionPreference = 'SilentlyContinue'
+    $opened = (& cmd /c "p4 opened 2>nul")
+    $ErrorActionPreference = $prev
+    foreach ($line in $opened) {
+        # Format: //UEPrototype/main/<rel>#<rev> - <action> [default change|change <CL>] (<type>)
+        # <action> may contain '/' (move/add, move/delete) — capture greedy-friendly.
+        if ($line -match '^//UEPrototype/main/(\S+)#\d+\s+-\s+(\S+)\s') {
+            $pendingOpens[$Matches[1]] = $Matches[2]
+        }
+    }
+}
+
 Write-Output "=============================================================="
 Write-Output "Skeleton-phase preflight  (plan v1.6 lines 793-802)"
 Write-Output "Target: $TargetRoot"
@@ -107,13 +125,21 @@ if ($bad3.Count -eq 0) { Ok '3. no generated-block/append-fragment carries whole
 else { Bad '3. no generated-block/append-fragment carries whole-file hash' (($bad3.path) -join '; ') }
 
 # 4. Every managed file's depotRevision matches current headRev.
+#    Exemption: files open-for-add/branch/move-add in a pending CL have no
+#    headRev yet (depot doesn't know about them until submit). Manifest may
+#    already list them with depotRevision=1 (or null); skip head comparison.
 if (-not $p4Available) {
     Skip '4. depotRevision == headRev for all managed' 'p4 client not reachable'
 } else {
     $drift = @()
+    $pendingAddActions = @('add','branch','move/add')
     foreach ($e in $m.files) {
         if ($e.localOnly) { continue }
         if ($e.hashPolicy -eq 'self-excluded') { continue }
+        $relKey = $e.path.Replace('\','/')
+        if ($pendingOpens.ContainsKey($relKey) -and $pendingAddActions -contains $pendingOpens[$relKey]) {
+            continue
+        }
         $head = P4HeadRev ("//UEPrototype/main/" + $e.path)
         if ($null -eq $head) {
             if ($null -ne $e.depotRevision) { $drift += "$($e.path) (manifest=$($e.depotRevision) head=missing)" }
@@ -126,19 +152,25 @@ if (-not $p4Available) {
 }
 
 # 5. No unmanaged scaffold-like files in the depot.
+#    Exemption: depot files open-for-delete/move-delete in a pending CL are
+#    deliberately being removed; the manifest no longer references them, and
+#    that's the correct state. Don't flag them as unmanaged.
 if (-not $p4Available) {
     Skip '5. no unmanaged scaffold-like files (depot-tracked)' 'p4 client not reachable'
 } else {
     $managedRoots = @('.claude','.Codex','.opencode','Docs/agents','Docs/MustRead')
     $manifestPaths = @{}
     foreach ($e in $m.files) { $manifestPaths[$e.path.Replace('\','/')] = $true }
+    $pendingDeleteActions = @('delete','move/delete')
     $unmanaged = @()
     foreach ($root in $managedRoots) {
         $have = & p4 have ("//UEPrototype/main/" + $root + "/...") 2>$null
         foreach ($line in $have) {
             if ($line -match '^//UEPrototype/main/(\S+)#\d+') {
                 $rel = $Matches[1]
-                if (-not $manifestPaths.ContainsKey($rel)) { $unmanaged += $rel }
+                if ($manifestPaths.ContainsKey($rel)) { continue }
+                if ($pendingOpens.ContainsKey($rel) -and $pendingDeleteActions -contains $pendingOpens[$rel]) { continue }
+                $unmanaged += $rel
             }
         }
     }
