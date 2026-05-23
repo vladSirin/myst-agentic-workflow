@@ -83,8 +83,8 @@ if ($r.Code -eq 0) { Ok 'setup.ps1 -Yes round-trip exits 0' }
 else { Bad 'setup.ps1 -Yes round-trip exits 0' "exit=$($r.Code)`n$($r.Out)" }
 
 $sentinels = @(
-    @{ Tool='codex';    Path=(Join-Path $t '.Codex\skills\diagnose.md') }
-    @{ Tool='claude';   Path=(Join-Path $t '.claude\skills\diagnose.md') }
+    @{ Tool='codex';    Path=(Join-Path $t '.Codex\skills\diagnose\SKILL.md') }
+    @{ Tool='claude';   Path=(Join-Path $t '.claude\skills\diagnose\SKILL.md') }
     @{ Tool='opencode'; Path=(Join-Path $t '.opencode\skills\diagnose\SKILL.md') }
 )
 foreach ($s in $sentinels) {

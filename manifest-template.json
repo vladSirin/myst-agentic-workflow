@@ -167,7 +167,7 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".claude/skills/design.md",
+            "path": ".claude/skills/design/SKILL.md",
             "tool": "claude",
             "owner": "overlay",
             "ownerOverlay": "myst-project",
@@ -183,11 +183,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".claude/skills/diagnose.md",
+            "path": ".claude/skills/diagnose/SKILL.md",
             "tool": "claude",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/claude/.claude/skills/diagnose.md",
+            "sourceTemplate": "templates/claude/.claude/skills/diagnose/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -199,11 +199,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".claude/skills/grill-with-docs.md",
+            "path": ".claude/skills/grill-with-docs/SKILL.md",
             "tool": "claude",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/claude/.claude/skills/grill-with-docs.md",
+            "sourceTemplate": "templates/claude/.claude/skills/grill-with-docs/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -215,11 +215,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".claude/skills/improve-codebase-architecture.md",
+            "path": ".claude/skills/improve-codebase-architecture/SKILL.md",
             "tool": "claude",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/claude/.claude/skills/improve-codebase-architecture.md",
+            "sourceTemplate": "templates/claude/.claude/skills/improve-codebase-architecture/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -231,11 +231,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".claude/skills/roundtable.md",
+            "path": ".claude/skills/roundtable/SKILL.md",
             "tool": "claude",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/claude/.claude/skills/roundtable.md",
+            "sourceTemplate": "templates/claude/.claude/skills/roundtable/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -247,11 +247,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".claude/skills/tdd.md",
+            "path": ".claude/skills/tdd/SKILL.md",
             "tool": "claude",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/claude/.claude/skills/tdd.md",
+            "sourceTemplate": "templates/claude/.claude/skills/tdd/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -263,11 +263,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".claude/skills/to-issues.md",
+            "path": ".claude/skills/to-issues/SKILL.md",
             "tool": "claude",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/claude/.claude/skills/to-issues.md",
+            "sourceTemplate": "templates/claude/.claude/skills/to-issues/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -279,11 +279,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".claude/skills/to-prd.md",
+            "path": ".claude/skills/to-prd/SKILL.md",
             "tool": "claude",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/claude/.claude/skills/to-prd.md",
+            "sourceTemplate": "templates/claude/.claude/skills/to-prd/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -295,11 +295,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".claude/skills/triage.md",
+            "path": ".claude/skills/triage/SKILL.md",
             "tool": "claude",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/claude/.claude/skills/triage.md",
+            "sourceTemplate": "templates/claude/.claude/skills/triage/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -311,11 +311,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".claude/skills/zoom-out.md",
+            "path": ".claude/skills/zoom-out/SKILL.md",
             "tool": "claude",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/claude/.claude/skills/zoom-out.md",
+            "sourceTemplate": "templates/claude/.claude/skills/zoom-out/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -571,7 +571,7 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".Codex/skills/design.md",
+            "path": ".Codex/skills/design/SKILL.md",
             "tool": "codex",
             "owner": "overlay",
             "ownerOverlay": "myst-project",
@@ -587,11 +587,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".Codex/skills/diagnose.md",
+            "path": ".Codex/skills/diagnose/SKILL.md",
             "tool": "codex",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/codex/.Codex/skills/diagnose.md",
+            "sourceTemplate": "templates/codex/.Codex/skills/diagnose/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -603,11 +603,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".Codex/skills/grill-with-docs.md",
+            "path": ".Codex/skills/grill-with-docs/SKILL.md",
             "tool": "codex",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/codex/.Codex/skills/grill-with-docs.md",
+            "sourceTemplate": "templates/codex/.Codex/skills/grill-with-docs/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -619,11 +619,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".Codex/skills/improve-codebase-architecture.md",
+            "path": ".Codex/skills/improve-codebase-architecture/SKILL.md",
             "tool": "codex",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/codex/.Codex/skills/improve-codebase-architecture.md",
+            "sourceTemplate": "templates/codex/.Codex/skills/improve-codebase-architecture/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -635,11 +635,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".Codex/skills/roundtable.md",
+            "path": ".Codex/skills/roundtable/SKILL.md",
             "tool": "codex",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/codex/.Codex/skills/roundtable.md",
+            "sourceTemplate": "templates/codex/.Codex/skills/roundtable/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -651,11 +651,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".Codex/skills/tdd.md",
+            "path": ".Codex/skills/tdd/SKILL.md",
             "tool": "codex",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/codex/.Codex/skills/tdd.md",
+            "sourceTemplate": "templates/codex/.Codex/skills/tdd/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -667,11 +667,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".Codex/skills/to-issues.md",
+            "path": ".Codex/skills/to-issues/SKILL.md",
             "tool": "codex",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/codex/.Codex/skills/to-issues.md",
+            "sourceTemplate": "templates/codex/.Codex/skills/to-issues/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -683,11 +683,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".Codex/skills/to-prd.md",
+            "path": ".Codex/skills/to-prd/SKILL.md",
             "tool": "codex",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/codex/.Codex/skills/to-prd.md",
+            "sourceTemplate": "templates/codex/.Codex/skills/to-prd/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -699,11 +699,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".Codex/skills/triage.md",
+            "path": ".Codex/skills/triage/SKILL.md",
             "tool": "codex",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/codex/.Codex/skills/triage.md",
+            "sourceTemplate": "templates/codex/.Codex/skills/triage/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -715,11 +715,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".Codex/skills/zoom-out.md",
+            "path": ".Codex/skills/zoom-out/SKILL.md",
             "tool": "codex",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/codex/.Codex/skills/zoom-out.md",
+            "sourceTemplate": "templates/codex/.Codex/skills/zoom-out/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -1574,11 +1574,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".claude/skills/caveman.md",
+            "path": ".claude/skills/caveman/SKILL.md",
             "tool": "claude",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/claude/.claude/skills/caveman.md",
+            "sourceTemplate": "templates/claude/.claude/skills/caveman/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -1590,11 +1590,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".Codex/skills/caveman.md",
+            "path": ".Codex/skills/caveman/SKILL.md",
             "tool": "codex",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/codex/.Codex/skills/caveman.md",
+            "sourceTemplate": "templates/codex/.Codex/skills/caveman/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -1622,11 +1622,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".claude/skills/grill-me.md",
+            "path": ".claude/skills/grill-me/SKILL.md",
             "tool": "claude",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/claude/.claude/skills/grill-me.md",
+            "sourceTemplate": "templates/claude/.claude/skills/grill-me/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -1638,11 +1638,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".Codex/skills/grill-me.md",
+            "path": ".Codex/skills/grill-me/SKILL.md",
             "tool": "codex",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/codex/.Codex/skills/grill-me.md",
+            "sourceTemplate": "templates/codex/.Codex/skills/grill-me/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -1670,11 +1670,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".claude/skills/handoff.md",
+            "path": ".claude/skills/handoff/SKILL.md",
             "tool": "claude",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/claude/.claude/skills/handoff.md",
+            "sourceTemplate": "templates/claude/.claude/skills/handoff/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -1686,11 +1686,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".Codex/skills/handoff.md",
+            "path": ".Codex/skills/handoff/SKILL.md",
             "tool": "codex",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/codex/.Codex/skills/handoff.md",
+            "sourceTemplate": "templates/codex/.Codex/skills/handoff/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -1718,11 +1718,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".claude/skills/write-a-skill.md",
+            "path": ".claude/skills/write-a-skill/SKILL.md",
             "tool": "claude",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/claude/.claude/skills/write-a-skill.md",
+            "sourceTemplate": "templates/claude/.claude/skills/write-a-skill/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -1734,11 +1734,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".Codex/skills/write-a-skill.md",
+            "path": ".Codex/skills/write-a-skill/SKILL.md",
             "tool": "codex",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/codex/.Codex/skills/write-a-skill.md",
+            "sourceTemplate": "templates/codex/.Codex/skills/write-a-skill/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",

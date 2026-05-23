@@ -2,6 +2,54 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [2.1.0] - 2026-05-23 — Match upstream skill structure: `<name>/SKILL.md`
+
+### Changed (structural)
+- **All skills restructured from flat `<name>.md` to subdirectory
+  `<name>/SKILL.md`** to match upstream mattpocock/skills canonical
+  format (referenced in their `.claude-plugin/plugin.json`).
+- 26 Claude + Codex template files moved:
+  - `templates/claude/.claude/skills/<name>.md` →
+    `templates/claude/.claude/skills/<name>/SKILL.md`
+  - `templates/codex/.Codex/skills/<name>.md` →
+    `templates/codex/.Codex/skills/<name>/SKILL.md`
+- 2 myst-project overlay files moved too:
+  - `overlays/myst-project/.claude/skills/design.md` →
+    `overlays/myst-project/.claude/skills/design/SKILL.md`
+  - `overlays/myst-project/.Codex/skills/design.md` →
+    `overlays/myst-project/.Codex/skills/design/SKILL.md`
+- OpenCode was already in subdir form (`templates/opencode/.opencode/
+  skills/<name>/SKILL.md`); no change for that tool.
+- 28 manifest entries updated: `path` + `sourceTemplate` rewrite.
+- Parity matrix updated to expect the new paths.
+- 4 test paths updated in `run-init-consumer-tests.ps1` and
+  `run-wrapper-tests.ps1` (referenced the old `diagnose.md` location).
+
+### Why
+- User reported `/handoff` wasn't visible in Claude Code. Upstream
+  installs skills to `~/.claude/skills/<name>/SKILL.md` (subdir per
+  skill, with a SKILL.md inside). Our package was writing
+  `.claude/skills/<name>.md` flat — Claude Code's skill discovery
+  expects the subdir form for the YAML-frontmatter style used by
+  upstream's recent skills.
+- Now the three tools align with each other (all use subdir form) and
+  with upstream's installer pattern, so future upstream syncs are
+  simpler (no format translation step).
+
+### Note on slash commands
+- Skills (in `.claude/skills/<name>/SKILL.md`) are invoked via the
+  Skill tool / natural language ("use the handoff skill"). They do
+  NOT appear in Claude Code's `/` dropdown.
+- The `/` dropdown only shows files in `.claude/commands/`. Our 2
+  slash commands (`/update-myst-skills`, `/promote-myst-skills`) and
+  the `sync-build-submit` UE overlay command live there.
+- If you want a productivity skill (handoff, caveman, etc.) to appear
+  in `/`, that would require creating a `.claude/commands/<name>.md`
+  wrapper — not done in v2.1.0; can be added if real demand surfaces.
+
+Tests: 184/184 across 12 suites (no test count change; just paths
+updated in 4 test files).
+
 ## [2.0.1] - 2026-05-23 — install.ps1 fixes (surfaced during v2.0.0 live install)
 
 ### Fixed
