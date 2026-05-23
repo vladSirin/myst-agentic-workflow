@@ -54,34 +54,6 @@ If you execute multiple changelist steps without stopping for verification betwe
 
 ---
 
-## Strict-mode hook (when enabled)
+## Implementation note
 
-If the user has enabled strict mode (`enable-strict-mode.ps1`), this rule is enforced at the tool level. A PreToolUse hook blocks any `p4 submit -c <N>` unless `.scratch/.approved-cl-<N>.marker` is present at the project root.
-
-**The marker dance** — when the hook blocks you:
-
-1. **Don't retry blindly.** The block is the protocol asserting itself; you skipped a step.
-2. **Surface the CL to the user**: description (`p4 describe -c <N>`), file list (`p4 opened -c <N>`), and the diff if non-trivial. Keep it focused — what's in the CL, why, and any risks.
-3. **Ask explicitly**: "Approve CL `<N>` for submit?" — wait for an explicit "yes / approve / go ahead" or equivalent. Implicit instructions ("submit it", "ship it") still need this confirmation beat.
-4. **Create the marker** after user approves:
-   ```powershell
-   New-Item -ItemType File -Path '.scratch/.approved-cl-<N>.marker' -Force | Out-Null
-   ```
-5. **Run the submit**: `p4 submit -c <N>`. The hook now allows it, and a paired PostToolUse hook deletes the marker so each approval is one-shot.
-
-If the user has said something ambiguous like "submit those", treat that as "you can prepare to submit, but still ask explicitly which CL and confirm before each one."
-
-If the hook isn't installed (strict mode not enabled), the rule still applies — just unenforced. Same protocol; same expected behavior; you just have to remember.
-
----
-
-## Powermode (v1.8.1)
-
-For autonomous multi-CL work (e.g., `/goal`-driven bugfix sprints), the user may grant batch approval via `enable-powermode.ps1 -SubmitCount N -DurationMinutes M`. While powermode is active, the per-CL gate is bypassed up to N submits or until the clock runs out — whichever comes first.
-
-**When you see `POWERMODE: allowing submit of CL <N> (remaining: M; expires: T)` in tool output**, that's the hook signaling powermode is being burned. You can submit without creating a marker. Two things to do:
-
-1. **Still surface each CL to the user** — powermode bypasses the *gate*, not the protocol. The user granted you a quota because they trust you to drive the work; honor that by being transparent about what each CL contains.
-2. **Watch the remaining counter** — when it hits 1, the next submit is your last freebie. After that, the per-CL gate is back.
-
-If powermode wasn't enabled but you think it should be (because the user explicitly said "go ahead, do all of them"), don't assume — pause and ask whether to enable powermode for the rest of the task.
+This rule is advisory — it lives as documentation the agent reads at session start. The package briefly experimented with hook-based enforcement (v1.8.0/v1.8.1) but rolled it back in v1.9.0 as over-engineered for the actual drift rate. If you find yourself violating the rule frequently, address it via stronger workflow language or a per-turn reminder, not via hard hook blocks.

@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-121%2F121-brightgreen)](#) [![version](https://img.shields.io/badge/version-v1.8.1-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-101%2F101-brightgreen)](#) [![version](https://img.shields.io/badge/version-v1.9.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -219,55 +219,7 @@ myst-agentic-workflow/
 
 ## Status
 
-**v1.8.1** — Powermode: time + count-bounded batch approval for autonomous `/goal`-driven multi-CL work. Strict mode stays on by default; powermode is an opt-in bypass with explicit limits. 121/121 tests across 12 suites.
-
-## Strict mode (v1.8.0)
-
-The workflow markdown files in `.claude/workflows/` are advisory by default — they describe rules but don't enforce them. Strict mode adds a Claude Code `PreToolUse` hook that **blocks** the most-violated rule (CL-by-CL HARD RULE) at the tool level.
-
-```powershell
-& "$Pkg/enable-strict-mode.ps1" -TargetRoot c:/path/to/your-project
-```
-
-After enabling, any `p4 submit -c <N>` is blocked unless `.scratch/.approved-cl-<N>.marker` exists. The flow becomes:
-
-1. Agent prepares a CL.
-2. Agent surfaces the CL contents to you.
-3. You explicitly approve.
-4. Agent creates the marker file.
-5. Agent runs `p4 submit -c <N>` — hook allows it.
-6. Paired PostToolUse hook deletes the marker (one-shot approval).
-
-The hook scripts ship with the package; `setup.ps1` installs them. `enable-strict-mode.ps1` writes/merges the wiring into `.claude/settings.local.json` (which is per-machine and not version-controlled). Re-running is idempotent; `-Disable` removes the hooks.
-
-Future versions may add hooks for other rules (RawMaterialsProtection, ReviewAndSubmit, etc.). Currently only the unapproved-submit block is enforced.
-
-### Powermode (v1.8.1) — batch approval for autonomous work
-
-The per-CL gate is the right friction for normal sessions but wrong for `/goal`-driven autonomous work where the agent burns through a sequence of CLs. Powermode is an opt-in **bounded** bypass:
-
-```powershell
-# Grant 5 submits over the next 30 minutes for a bugfix sprint
-& "$Pkg/enable-powermode.ps1" -SubmitCount 5 -DurationMinutes 30 -Reason "bugfix"
-
-# The agent now runs uninterrupted until either limit trips
-/goal fix all the typos in the workflow docs
-
-# Marker auto-deletes when count hits 0 or expiry passes
-# Disable early:
-& "$Pkg/disable-powermode.ps1"
-
-# Check status anytime:
-& "$Pkg/enable-powermode.ps1" -Status
-```
-
-**Belt + suspenders**: both limits (count + clock) must hold for the bypass to apply. Either trip deactivates it. No way to enable indefinitely — `SubmitCount` and `DurationMinutes` are both required-by-default with sane caps (warns at 100 submits / 8 hours).
-
-The hook prints `POWERMODE: allowing submit of CL N (remaining: M; expires: T)` to stderr on each use so it's visible in the agent's context, not silent.
-
-**When to use powermode**: autonomous `/goal` flows, doc-fix sprints, bulk refactors where the work is pre-planned and the per-CL beat is friction without value.
-
-**When not to use powermode**: anything that touches production-critical code, schema migrations, anything where you actually want to eyeball each CL. Default to per-CL.
+**v1.9.0** — Removed v1.8.0/v1.8.1 strict-mode + powermode (over-engineered for the actual drift rate; the cost/benefit ratio was bad). Workflow rules return to advisory-only via the markdown files in `.claude/workflows/`. 101/101 tests across 11 suites.
 
 ## What `runtime-mutable` means
 

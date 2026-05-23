@@ -2,6 +2,66 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [1.9.0] - 2026-05-23 — Remove strict mode + powermode (course correction)
+
+### Removed
+- `enable-strict-mode.ps1` (was the v1.8.0 entry point)
+- `enable-powermode.ps1` + `disable-powermode.ps1` (v1.8.1 batch-approval
+  bypass)
+- `templates/claude/.claude/scripts/hooks/block-unapproved-submit.ps1`
+- `templates/claude/.claude/scripts/hooks/cleanup-approved-cl.ps1`
+- `scripts/run-strict-mode-tests.ps1` (20 tests covering the removed
+  feature)
+- 2 hook entries in `manifest-template.json` (consumers re-installing will
+  no longer pull the hook scripts)
+- README sections on strict mode + powermode
+- "Strict-mode hook" + "Powermode" sections in
+  `ChangelistVerification.md` (perforce overlay, both Claude + Codex);
+  replaced with a brief "Implementation note" linking this CHANGELOG entry
+
+### Why
+- v1.8.0 (strict mode) and v1.8.1 (powermode) were built in response to a
+  user report that agents drift "from time to time" from the CL-by-CL
+  HARD RULE. The mechanism was a Claude Code PreToolUse hook that blocked
+  `p4 submit -c <N>` unless an approval marker file was present.
+- On honest review: cost-vs-benefit was bad. Strict mode adds 3+ round-
+  trips per CL (ask → approve → marker → submit) for every submit, to
+  prevent ~1 wrong submit per N sessions. Powermode is a second system
+  that bypasses the first system — classic over-engineering smell
+  (workaround-for-the-workaround).
+- Lighter alternatives that achieve ~80% of the value at ~10% of the
+  complexity:
+  1. Tighter workflow markdown with clearer "STOP AND ASK" language
+  2. UserPromptSubmit hook that injects a 1-line reminder of active
+     workflow rules every turn (no blocking; keeps rules visible)
+  3. Relying on the user to interrupt the agent ("no, show me first")
+- The CL-by-CL rule stays in `ChangelistVerification.md` as advisory
+  guidance. It was always advisory by default; v1.9.0 just removes the
+  hook layer that tried to enforce it.
+
+### Migration for v1.8.x consumers
+1. Run `enable-strict-mode.ps1 -Disable -Yes` to remove the hook wiring
+   from `.claude/settings.local.json` (this script still works for
+   removal even after v1.9.0 ships, until you `git pull` the package —
+   keep a copy if needed).
+2. After updating to v1.9.0, the hook script files in
+   `.claude/scripts/hooks/` become orphan-but-tracked. Delete them
+   manually (or `p4 delete` for Perforce consumers). They're no longer
+   in the v1.9.0 manifest.
+3. The `.claude/settings.local.json` PreToolUse + PostToolUse blocks
+   referencing the now-deleted scripts will cause Claude Code to log
+   "hook command not found" warnings. Remove those blocks manually or
+   reset the file.
+
+### What stays
+- All other v1.x features intact: runtime-mutable hashPolicy (v1.7.0),
+  init-consumer + setup/update/promote lifecycle (v1.1.0-v1.4.x),
+  overlay split (v1.2.0), slash commands (v1.6.0), etc.
+
+Tests: 101/101 across 11 suites (was 121/121 in v1.8.1; the 20 strict-mode
++ powermode test cases removed with the feature, returning to the v1.7.0
+test surface plus the wrapper + init-consumer additions made since).
+
 ## [1.8.1] - 2026-05-23 — Powermode (batch-approval bypass for autonomous work)
 
 ### Added
