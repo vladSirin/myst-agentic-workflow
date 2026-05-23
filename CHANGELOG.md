@@ -2,6 +2,100 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [2.0.0] - 2026-05-23 — Full upstream sync (skill philosophy shift)
+
+### MAJOR: Philosophy shift
+
+v1.x shipped **minimal pointer skills** — 20-30 line entry files that
+mostly said "read CONTEXT.md, follow project patterns." That was a
+deliberate adaptation when we extracted the package at upstream commit
+`e74f0061`. The assumption was that agents would faithfully read
+CONTEXT.md + domain.md + ADRs for context.
+
+v2.0.0 adopts upstream's **rich instruction set** approach. Each skill
+is now a complete, self-contained instruction set (80-150 lines) that
+doesn't depend on the agent reading sibling docs to produce good output.
+More resilient to weaker models, more explicit about process and
+vocabulary, more aligned with upstream maintenance going forward.
+
+### Added (4 new productivity skills)
+- **`/caveman`** — Ultra-compressed communication mode. Cuts token usage
+  ~75% by dropping filler while keeping technical accuracy.
+- **`/grill-me`** — Interview the user relentlessly about a plan or design
+  until each branch of the decision tree resolves. Lighter than
+  `/grill-with-docs` (no documentation updates).
+- **`/handoff`** — Compact the current conversation into a handoff doc
+  so another agent can continue the work. Useful for context-limit
+  scenarios and agent-to-agent transitions.
+- **`/write-a-skill`** — Create new skills with proper structure,
+  progressive disclosure, bundled resources.
+
+Each shipped in 3 tool formats (Claude flat `.md`, Codex flat `.md`,
+OpenCode subdir `SKILL.md`). 12 new manifest entries, 4 new parity matrix
+rows (3-way parity).
+
+### Changed (8 engineering skills upgraded)
+All replaced with their upstream rich versions:
+- `/diagnose` (22 → 117 lines): full reproduce → minimise → hypothesise
+  → fix process
+- `/grill-with-docs` (23 → 88): full grilling protocol with
+  CONTEXT.md/ADR update mechanics; references new
+  `Docs/agents/grill-with-docs-context-format.md`
+- `/improve-codebase-architecture` (21 → 81 + 4 sibling reference files):
+  full Glossary (Module/Interface/Depth/Seam/Adapter/Leverage/Locality),
+  4-step Process, HTML report mechanism with Tailwind+Mermaid CDN
+- `/tdd` (22 → 109): full red-green-refactor loop with good-vs-bad
+  test discussion
+- `/to-issues` (26 → 83): vertical-slice issue breakdown protocol
+- `/to-prd` (24 → 76): PRD template + synthesis-vs-interview rules
+- `/triage` (31 → 103): state-machine triage with role conventions,
+  needs-info templates, agent-brief format
+- `/zoom-out` (20 → 7): upstream is much smaller; we replaced our
+  expanded version with theirs. **This is the one case where we lost
+  content**; recoverable from git history if needed.
+
+### Added (5 reference files)
+Shared by all tools via `templates/common/docs/agents/`:
+- `ica/LANGUAGE.md` — full ICA vocabulary definitions
+- `ica/DEEPENING.md` — refactoring patterns (shallow → deep)
+- `ica/INTERFACE-DESIGN.md` — interface design guidance
+- `ica/HTML-REPORT.md` — HTML output format spec (Tailwind+Mermaid)
+- `grill-with-docs-context-format.md` — CONTEXT.md template
+  reference (upstream trimmed at commit `e7df78b`)
+
+### Changed (upstream tracking)
+- `package-manifest.json`: `upstream.mattpocockSkills.pinnedCommit`
+  bumped from `e74f0061` to `b8be62f`. Records the new baseline for
+  future `check-mattpocock-updates.ps1` runs.
+- `manifest-template.json`: same bump for installed consumer alignment.
+
+### What stayed
+- Our 2 workflows (`AgenticWorkflow.md`, `PlanPriority.md`) — package-
+  specific, not from upstream.
+- All overlay content (`perforce`, `ue`, `myst-project`) — package-
+  specific.
+- All lifecycle scripts (`setup.ps1`, `update.ps1`, `promote.ps1`) and
+  the manifest schema — package-specific.
+- The 2 slash commands (`/update-myst-skills`, `/promote-myst-skills`)
+  — package-specific.
+
+### Migration notes for v1.x consumers
+- `update.ps1` will land all the new content. Expect a large CL.
+- Skill outputs will be noticeably more structured going forward
+  (HTML reports for ICA, explicit process steps, vocabulary discipline).
+- Custom adaptations made to v1.x skill content will be overwritten.
+  If you'd customized any of the 8 upgraded skills, the changes are
+  gone — capture them as PRDs / ADRs in your project before updating.
+
+### Why a major bump
+This is a deliberate philosophy switch. v1.x ships minimal pointers;
+v2.0 ships rich instruction sets. Same skill names, same slash commands,
+but the agent-facing content is 5x larger and more directive. Anyone
+who pinned v1.x for content stability should NOT auto-update to v2.0.
+
+Tests: 184/184 across 12 suites (was 172/172 in v1.9.2). 12 new parity
+rows.
+
 ## [1.9.2] - 2026-05-23 — Cross-tool parity audit + automated drift detection
 
 ### Added

@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-172%2F172-brightgreen)](#) [![version](https://img.shields.io/badge/version-v1.9.2-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-184%2F184-brightgreen)](#) [![version](https://img.shields.io/badge/version-v2.0.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -219,7 +219,7 @@ myst-agentic-workflow/
 
 ## Status
 
-**v1.9.2** — Cross-tool parity audit: `PlanPriority.md` added to OpenCode (was missing). New `run-parity-tests.ps1` with explicit parity matrix + documented deviations catches future cross-tool drift. 172/172 tests across 12 suites.
+**v2.0.0** — Full upstream sync from mattpocock/skills. **Philosophy shift**: skills move from "minimal pointer" (22-line entry points) to "rich instruction set" (upstream's verbose well-structured versions). Adds 4 productivity skills (`/caveman`, `/grill-me`, `/handoff`, `/write-a-skill`); upgrades 8 engineering skills; adds 5 reference files (ICA vocabulary + CONTEXT-FORMAT). Pinned commit bumped `e74f0061` → `b8be62f`. 184/184 tests across 12 suites.
 
 ## What `runtime-mutable` means
 

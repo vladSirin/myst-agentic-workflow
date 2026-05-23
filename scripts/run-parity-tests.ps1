@@ -39,6 +39,12 @@ $matrix = @(
     @{ Id='skill:triage';                         Claude='templates/claude/.claude/skills/triage.md';                         Codex='templates/codex/.Codex/skills/triage.md';                         OpenCode='templates/opencode/.opencode/skills/triage/SKILL.md' }
     @{ Id='skill:zoom-out';                       Claude='templates/claude/.claude/skills/zoom-out.md';                       Codex='templates/codex/.Codex/skills/zoom-out.md';                       OpenCode='templates/opencode/.opencode/skills/zoom-out/SKILL.md' }
 
+    # Productivity skills (4, three-way parity, added in v2.0.0)
+    @{ Id='skill:caveman';                        Claude='templates/claude/.claude/skills/caveman.md';                        Codex='templates/codex/.Codex/skills/caveman.md';                        OpenCode='templates/opencode/.opencode/skills/caveman/SKILL.md' }
+    @{ Id='skill:grill-me';                       Claude='templates/claude/.claude/skills/grill-me.md';                       Codex='templates/codex/.Codex/skills/grill-me.md';                       OpenCode='templates/opencode/.opencode/skills/grill-me/SKILL.md' }
+    @{ Id='skill:handoff';                        Claude='templates/claude/.claude/skills/handoff.md';                        Codex='templates/codex/.Codex/skills/handoff.md';                        OpenCode='templates/opencode/.opencode/skills/handoff/SKILL.md' }
+    @{ Id='skill:write-a-skill';                  Claude='templates/claude/.claude/skills/write-a-skill.md';                  Codex='templates/codex/.Codex/skills/write-a-skill.md';                  OpenCode='templates/opencode/.opencode/skills/write-a-skill/SKILL.md' }
+
     # Workflows (2, three-way parity)
     @{ Id='workflow:AgenticWorkflow';             Claude='templates/claude/.claude/workflows/AgenticWorkflow.md';             Codex='templates/codex/.Codex/workflows/AgenticWorkflow.md';             OpenCode='templates/opencode/.opencode/workflows/AgenticWorkflow.md' }
     @{ Id='workflow:PlanPriority';                Claude='templates/claude/.claude/workflows/PlanPriority.md';                Codex='templates/codex/.Codex/workflows/PlanPriority.md';                OpenCode='templates/opencode/.opencode/workflows/PlanPriority.md' }

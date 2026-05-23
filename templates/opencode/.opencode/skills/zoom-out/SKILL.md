@@ -1,11 +1,7 @@
 ---
 name: zoom-out
-description: Give a higher-level map of an unfamiliar code area before making local changes. Use when the user asks to zoom out, understand an area, or get broader context.
+description: Tell the agent to zoom out and give broader context or a higher-level perspective. Use when you're unfamiliar with a section of code or need to understand how it fits into the bigger picture.
 compatibility: opencode
 ---
 
-# Zoom Out
-
-Read `Docs/MustRead/MustRead_agentic_workflow.md` and `Docs/agents/domain.md`. Read `CONTEXT.md` if it exists.
-
-Map relevant modules, callers, data flow, verification hooks, open questions, and likely HITL checks.
+I don't know this area of code well. Go up a layer of abstraction. Give me a map of all the relevant modules and callers, using the project's domain glossary vocabulary.

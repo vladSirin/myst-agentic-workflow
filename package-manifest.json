@@ -1,7 +1,7 @@
 {
   "package": {
     "name": "myst-agentic-workflow",
-    "version": "1.9.2",
+    "version": "2.0.0",
     "repository": "https://github.com/vladSirin/myst-agentic-workflow",
     "writeModeEnabled": true,
     "license": "MIT"
@@ -39,7 +39,8 @@
     "mattpocockSkills": {
       "repository": "https://github.com/mattpocock/skills",
       "trackedBranch": "main",
-      "pinnedCommit": "e74f0061bb67222181640effa98c675bdb2fdaa7",
+      "pinnedCommit": "b8be62ffacb0118fa3eaa29a0923c87c8c11985c",
+      "previousPinnedCommit": "e74f0061bb67222181640effa98c675bdb2fdaa7",
       "license": "MIT",
       "licenseAuditedAt": "2026-05-19T00:00:00+08:00",
       "redistributionAllowed": true,
