@@ -2,6 +2,36 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [2.4.0] - 2026-05-24 — Unreal Engine MCP rule (ue overlay)
+
+### Added
+- **`unrealmcprules.md`** (Claude rules dir) / **`UnrealMCPRule.md`**
+  (OpenCode workflows dir) — a new file in the `ue` overlay that fires
+  when agents are about to operate on Unreal Engine assets, Blueprints,
+  levels, actors, materials, or the editor. Trigger conditions: file
+  extensions (`.uasset`, `.umap`), asset paths (`/Game/...`), asset
+  prefixes (`BP_`/`WBP_`/`SM_`/`MI_`/`M_`/`T_`/`A_`/`NS_`/`DA_`),
+  keywords ("blueprint", "actor", "level", etc.).
+- The rule's core mechanism: it tells agents the
+  `mcp__unreal-engine__*` tools are **deferred** in the host harness
+  (Claude Code surfaces them by name; schemas aren't preloaded), and
+  to call `ToolSearch` first to load the schemas before invoking. Maps
+  trigger → tool → action in a table so agents reach for MCP instead
+  of falling back to `Read`/`Grep` on binary `.uasset` files.
+
+### Why
+- Surfaced during a UE_Blank_Proto session where agents repeatedly fell
+  back to `Read`/`Grep` on `.uasset` files (binary; output is useless)
+  instead of using the MCP tools because the MCP tools were never being
+  loaded into the agent's available toolset. The rule is the bridge
+  between awareness ("there's an MCP for this") and capability ("load
+  the schemas, then call them").
+
+### For consumers
+- Consumers using the `ue` overlay (set during `init-consumer.ps1` or
+  via `update.ps1`) get this rule automatically on next install. Other
+  overlays unaffected.
+
 ## [2.3.0] - 2026-05-24 — PreImplementationGate workflow + AutoPlanMode rewrite
 
 ### Added
