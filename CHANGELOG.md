@@ -2,6 +2,46 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [2.3.0] - 2026-05-24 — PreImplementationGate workflow + AutoPlanMode rewrite
+
+### Added
+- **`PreImplementationGate.md`** workflow (Claude + Codex + OpenCode):
+  fires when an agent is about to draft a 2+ CL implementation plan
+  and verifies that the project has a PRD + ready-for-agent issue(s)
+  for the work. If not, the agent STOPS and offers two options:
+  (a) `/to-prd` to create one, or (b) explicit deviation noted in the
+  CL description. Narrowly-scoped gate; doesn't fire on small fixes.
+
+### Changed (BEHAVIOR CHANGE — read before upgrading)
+- **`AutoPlanMode.md` rewritten** and **reclassified**. Previously the
+  file was treated as a per-project reference (mergeStrategy: manual-only,
+  writablePolicy: report-only, ownerOverlay: tool-capability) — the
+  installer never overwrote consumer customizations. With v2.3.0 the
+  file is package-canonical (mergeStrategy: copy, writablePolicy:
+  installer-owned, ownerOverlay: core), so `install.ps1 -Mode Write`
+  WILL overwrite any consumer-local AutoPlanMode customizations.
+- The content was also rewritten to replace the previous "ANY tool,
+  ZERO EXCEPTIONS" rule (which was universally ignored in practice)
+  with realistic "use plan mode when X / skip when Y" triggers based
+  on actual practice.
+
+### Migration note for existing consumers
+If you have a local `AutoPlanMode.md` you've customized, save a copy
+before running `/update-myst-skills` to v2.3.0. The installer will
+overwrite it. You can re-apply your customizations after, or fork the
+file as a project-local workflow with a different name.
+
+### Why
+- Surfaced during a consumer-side workflow audit (UE_Blank_Proto CLs
+  1049/1050/1051) where the AutoPlanMode rule turned out to be ignored
+  by every agent (including by me, the project agent). When a rule is
+  universally violated it stops being a rule. The rewrite captures what
+  agents actually do: plan-mode for multi-file work, skip for reads /
+  single edits / lookups inside an already-planned task.
+- `PreImplementationGate` is a narrow gate addressing the pattern where
+  agents collapse Discussion → Implementation, skipping PRD/Issues/
+  Triage. It's advisory but specific.
+
 ## [2.2.0] - 2026-05-24 — Link DesignWorkflow + AgenticWorkflow; PlanPriority dual-search
 
 ### Changed
