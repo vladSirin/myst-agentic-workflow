@@ -2,6 +2,41 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [2.2.0] - 2026-05-24 — Link DesignWorkflow + AgenticWorkflow; PlanPriority dual-search
+
+### Changed
+- **`AgenticWorkflow.md`**: added a "Scope and relationship to
+  DesignWorkflow" block describing three flow shapes (game-design +
+  implementation / pure code / pure game design no code). When game
+  design is involved, the Discussion phase is **extended** via
+  `DesignWorkflow.md`; the PRD phase here references the finalized
+  design doc.
+- **`PlanPriority.md`**: search now covers BOTH `{{game_docs_root}}/`
+  (1a, for DesignWorkflow-shape work) and `.scratch/` (1b, for
+  AgenticWorkflow-shape work). Documents how 1a and 1b sequence into
+  each other instead of being parallel choices — finding one but not
+  the other is a signal about pipeline position, not a sign the other
+  location is wrong to look in.
+
+### Why
+- The previous shape of these two workflows looked like competing
+  alternatives — DesignWorkflow routed to `{{game_docs_root}}/`,
+  AgenticWorkflow routed to `.scratch/`, and a user couldn't tell which
+  applied. Surfaced during a consumer-side workflow audit (UE_Blank_Proto
+  CLs 1049/1050/1051). Right model: they're sequential, with
+  DesignWorkflow as the extended Discussion phase when game-design
+  thinking is involved.
+- PlanPriority used to search only `{{game_docs_root}}/`, leaving
+  `.scratch/` invisible to plan discovery. Agents picked whichever they
+  saw first → drift accumulated. Dual-search closes that gap.
+
+### Note
+- This release ships only the universally-applicable subset of the
+  consumer-side audit. Several related improvements (a
+  `PreImplementationGate.md` workflow rule, a rewritten
+  `AutoPlanMode.md`, an Unreal Engine MCP rule) remain consumer-local
+  pending follow-up manifest surgery to unblock their promotion.
+
 ## [2.1.1] - 2026-05-24 — Preflight tolerates pending-CL state
 
 ### Fixed

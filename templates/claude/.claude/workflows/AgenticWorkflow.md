@@ -1,8 +1,33 @@
 # Agentic Workflow
 
+## Scope and relationship to DesignWorkflow
+
+This workflow is the **end-to-end shape** for non-trivial work: discussion → captured intent (PRD) → planned slices (issues) → triaged → built → verified → submitted.
+
+For work involving **game design** (mechanics, UX, levels, player experience), the Discussion phase is **extended** via [DesignWorkflow.md](DesignWorkflow.md) — that produces a finalized design doc in `{{game_docs_root}}/`, and the PRD phase here references it. For pure code / system / bugfix work, Discussion can stay in chat and you jump straight to PRD (`/to-prd`).
+
+Three flow shapes the project supports:
+
+| Work shape | Flow |
+|---|---|
+| **Game design + implementation** | `DesignWorkflow` → finalized doc → **this workflow** (PRD → Issues → Triage → Implement → Verify → Review/Submit), with PRD referencing the design doc |
+| **Pure code / system / bugfix** | **This workflow** directly; Discussion happens in chat |
+| **Pure game design, no code** | `DesignWorkflow` only — no PRD/issues needed |
+
+Examples that go straight to this workflow (no DesignWorkflow Discussion):
+
+- Refactor or extend a subsystem (Flow, Objective, FrogEvent integration, etc.)
+- Fix a bug or regression
+- Build a tool, pipeline, or CI mechanism
+- Integrate a new plugin or library
+
+If you're not sure which shape: would the deliverable be read primarily by a game designer / LD → use `DesignWorkflow` first. Read primarily by an engineer → jump straight here.
+
+---
+
 ## Mandatory workflow for non-trivial work
 
-When a user asks for non-trivial product, design, architecture, bugfix, feature, or implementation work, use this workflow unless the user explicitly asks for a narrower action.
+When a user asks for non-trivial in-scope (see above) work, use this workflow unless the user explicitly asks for a narrower action.
 
 ```text
 Discussion -> PRD -> Issues -> Triage -> Implement -> Verify -> Review/Submit
@@ -12,12 +37,12 @@ Discussion -> PRD -> Issues -> Triage -> Implement -> Verify -> Review/Submit
 
 Before creating or updating PRDs, issues, or workflow state, read:
 
-- `Docs/MustRead/MustRead_agentic_workflow.md`
-- `Docs/agents/issue-tracker.md`
-- `Docs/agents/triage-labels.md`
-- `Docs/agents/domain.md`
+- `{{docs_root}}/MustRead/MustRead_agentic_workflow.md`
+- `{{docs_root}}/agents/issue-tracker.md`
+- `{{docs_root}}/agents/triage-labels.md`
+- `{{docs_root}}/agents/domain.md`
 
-If `CONTEXT.md` exists, read it before naming domain concepts. If relevant ADRs exist under `Docs/adr/`, read them before proposing architecture changes.
+If `CONTEXT.md` exists, read it before naming domain concepts. If relevant ADRs exist under `{{docs_root}}/adr/`, read them before proposing architecture changes.
 
 ## Stage rules
 
@@ -39,7 +64,7 @@ Avoid specific file paths or code snippets in issue bodies because they go stale
 
 ### 4. Triage
 
-Use the status model in `Docs/agents/triage-labels.md`.
+Use the status model in `{{docs_root}}/agents/triage-labels.md`.
 
 - `ready-for-agent`: agent can implement and verify every required check without human judgment.
 - `ready-for-human`: human-in-the-loop work or verification is required.
