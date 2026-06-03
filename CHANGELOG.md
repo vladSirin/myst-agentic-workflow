@@ -2,6 +2,20 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [2.4.1] - 2026-06-01 — Refresh workspace-setup generated block
+
+### Fixed
+- `templates/claude/CLAUDE.md` and `templates/codex/AGENTS.md` workspace-setup
+  block was stale: removed the dead `VersionControlRule.md` reference (that
+  workflow was deleted), added `unrealmcprules.md` (rule) and
+  `PreImplementationGate.md` (workflow), and updated the skills/commands
+  listings to the folder-based `<name>/SKILL.md` layout (14 skills, 7 commands).
+
+### Removed
+- `overlays/perforce/.claude/workflows/VersionControlRule.md` and
+  `overlays/perforce/.Codex/workflows/VersionControlRule.md` — the workflow was
+  retired; deleting the overlay source stops installs from restoring it.
+
 ## [2.4.0] - 2026-05-24 — Unreal Engine MCP rule (ue overlay)
 
 ### Added
