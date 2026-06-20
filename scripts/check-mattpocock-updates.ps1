@@ -1,13 +1,30 @@
 # check-mattpocock-updates.ps1 — myst-agentic-workflow upstream checker (skeleton phase)
 # Compares pinned mattpocock/skills commit against remote HEAD. Read-only.
+#
+# Defaults are resolved from package-manifest.json (upstream.mattpocockSkills) so the
+# pinned commit has a single source of truth. Explicit params override the manifest.
 param(
-    [Parameter(Mandatory=$false)] [string] $Repo = "https://github.com/mattpocock/skills",
-    [Parameter(Mandatory=$false)] [string] $Branch = "main",
-    [Parameter(Mandatory=$false)] [string] $PinnedCommit = "e74f0061bb67222181640effa98c675bdb2fdaa7"
+    [Parameter(Mandatory=$false)] [string] $Repo,
+    [Parameter(Mandatory=$false)] [string] $Branch,
+    [Parameter(Mandatory=$false)] [string] $PinnedCommit,
+    [Parameter(Mandatory=$false)] [string] $ManifestPath = (Join-Path $PSScriptRoot "..\package-manifest.json")
 )
 
 $ErrorActionPreference = 'Stop'
-$ScriptVersion = "0.1.0-skeleton"
+$ScriptVersion = "0.2.0-skeleton"
+
+# --- Resolve defaults from the manifest (single source of truth for the pin) ---
+$manifestUpstream = $null
+if (Test-Path $ManifestPath) {
+    try {
+        $manifestUpstream = (Get-Content $ManifestPath -Raw | ConvertFrom-Json).upstream.mattpocockSkills
+    } catch {
+        Write-Output "WARNING: Could not parse manifest at $ManifestPath ($_). Falling back to built-in defaults."
+    }
+}
+if (-not $Repo)         { $Repo         = if ($manifestUpstream.repository)   { $manifestUpstream.repository }   else { "https://github.com/mattpocock/skills" } }
+if (-not $Branch)       { $Branch       = if ($manifestUpstream.trackedBranch) { $manifestUpstream.trackedBranch } else { "main" } }
+if (-not $PinnedCommit) { $PinnedCommit = if ($manifestUpstream.pinnedCommit)  { $manifestUpstream.pinnedCommit }  else { "e74f0061bb67222181640effa98c675bdb2fdaa7" } }
 
 Write-Output "=============================================================="
 Write-Output "check-mattpocock-updates.ps1  v$ScriptVersion"
