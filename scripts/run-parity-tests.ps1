@@ -45,9 +45,11 @@ $matrix = @(
     @{ Id='skill:handoff';                        Claude='templates/claude/.claude/skills/handoff/SKILL.md';                        Codex='templates/codex/.Codex/skills/handoff/SKILL.md';                        OpenCode='templates/opencode/.opencode/skills/handoff/SKILL.md' }
     @{ Id='skill:write-a-skill';                  Claude='templates/claude/.claude/skills/write-a-skill/SKILL.md';                  Codex='templates/codex/.Codex/skills/write-a-skill/SKILL.md';                  OpenCode='templates/opencode/.opencode/skills/write-a-skill/SKILL.md' }
 
-    # Workflows (2, three-way parity)
+    # Workflows (4: AgenticWorkflow/PlanPriority/PreImplementationGate three-way; AutoPlanMode two-way)
     @{ Id='workflow:AgenticWorkflow';             Claude='templates/claude/.claude/workflows/AgenticWorkflow.md';             Codex='templates/codex/.Codex/workflows/AgenticWorkflow.md';             OpenCode='templates/opencode/.opencode/workflows/AgenticWorkflow.md' }
     @{ Id='workflow:PlanPriority';                Claude='templates/claude/.claude/workflows/PlanPriority.md';                Codex='templates/codex/.Codex/workflows/PlanPriority.md';                OpenCode='templates/opencode/.opencode/workflows/PlanPriority.md' }
+    @{ Id='workflow:PreImplementationGate';       Claude='templates/claude/.claude/workflows/PreImplementationGate.md';       Codex='templates/codex/.Codex/workflows/PreImplementationGate.md';       OpenCode='templates/opencode/.opencode/workflows/PreImplementationGate.md' }
+    @{ Id='workflow:AutoPlanMode';                Claude='templates/claude/.claude/workflows/AutoPlanMode.md';                Codex='templates/codex/.Codex/workflows/AutoPlanMode.md';                OpenCode=$null }
 
     # Agent (1, three-way parity)
     @{ Id='agent:radical-design-critic';          Claude='templates/claude/.claude/agents/radical-design-critic.md';          Codex='templates/codex/.Codex/agents/radical-design-critic.md';          OpenCode='templates/opencode/.opencode/agents/radical-design-critic.md' }
@@ -67,10 +69,11 @@ $matrix = @(
     # Perforce overlay workflows (Claude + Codex; OpenCode opts out per deviation)
     @{ Id='overlay:perforce/ChangelistVerification'; Claude='overlays/perforce/.claude/workflows/ChangelistVerification.md'; Codex='overlays/perforce/.Codex/workflows/ChangelistVerification.md'; OpenCode=$null }
     @{ Id='overlay:perforce/ReviewAndSubmit';        Claude='overlays/perforce/.claude/workflows/ReviewAndSubmit.md';        Codex='overlays/perforce/.Codex/workflows/ReviewAndSubmit.md';        OpenCode=$null }
-    @{ Id='overlay:perforce/VersionControlRule';     Claude='overlays/perforce/.claude/workflows/VersionControlRule.md';     Codex='overlays/perforce/.Codex/workflows/VersionControlRule.md';     OpenCode=$null }
 
-    # UE overlay (three-way parity for sync-build-submit; p4ignore is overlay-root not per-tool)
+    # UE overlay (sync-build-submit three-way; UnrealMCPRule three-way with per-tool layout:
+    # Claude/Codex carry it as rules/unrealmcprules.md, OpenCode as workflows/UnrealMCPRule.md)
     @{ Id='overlay:ue/sync-build-submit';         Claude='overlays/ue/.claude/commands/sync-build-submit.md';                 Codex='overlays/ue/.Codex/commands/sync-build-submit.md';                OpenCode='overlays/ue/.opencode/commands/sync-build-submit.md' }
+    @{ Id='overlay:ue/UnrealMCPRule';             Claude='overlays/ue/.claude/rules/unrealmcprules.md';                       Codex='overlays/ue/.Codex/rules/unrealmcprules.md';                      OpenCode='overlays/ue/.opencode/workflows/UnrealMCPRule.md' }
 
     # Myst-project overlay (Claude + Codex; OpenCode minimal)
     @{ Id='overlay:myst/architecture-reviewer';   Claude='overlays/myst-project/.claude/agents/architecture-reviewer.md';   Codex='overlays/myst-project/.Codex/agents/architecture-reviewer.md';   OpenCode='overlays/myst-project/.opencode/agents/architecture-reviewer.md' }
@@ -92,7 +95,7 @@ $deviations = @{
     'bible:AGENTS'                        = 'AGENTS.md is shared between Codex and OpenCode; one file at consumer root serves both. Claude has its own CLAUDE.md.'
     'overlay:perforce/ChangelistVerification' = 'OpenCode does not mirror Claude/Codex workflow files one-for-one (see toolCapabilities deviation). Perforce rules carried via AGENTS.md.'
     'overlay:perforce/ReviewAndSubmit'    = 'OpenCode does not mirror Claude/Codex workflow files one-for-one (see toolCapabilities deviation).'
-    'overlay:perforce/VersionControlRule' = 'OpenCode does not mirror Claude/Codex workflow files one-for-one (see toolCapabilities deviation).'
+    'workflow:AutoPlanMode'               = 'AutoPlanMode targets the Claude/Codex plan-mode capability (manifest ownerOverlay=tool-capability, capabilityProfile=claude-plan-mode). OpenCode has no equivalent plan-mode workflow.'
     'overlay:myst/angelscriptrules'       = 'OpenCode does not use Claude/Codex rules/* convention; project rules carried via AGENTS.md or skill descriptions.'
     'overlay:myst/DesignWorkflow'         = 'OpenCode does not mirror Claude/Codex workflow files one-for-one (see toolCapabilities deviation).'
     'overlay:myst/DocumentStandard'       = 'OpenCode does not mirror Claude/Codex workflow files one-for-one (see toolCapabilities deviation).'

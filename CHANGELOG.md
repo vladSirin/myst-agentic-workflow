@@ -2,6 +2,34 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [2.4.2] - 2026-06-20 — Restore cross-tool parity; complete v2.4.x file bookkeeping
+
+### Fixed
+- **Parity test (`run-parity-tests.ps1`) now green (89/0).** v2.3.0 and v2.4.0
+  shipped new files without registering them in the parity matrix, and v2.4.1
+  retired `VersionControlRule.md` without removing its matrix row. Reconciled
+  the matrix with disk:
+  - Added `workflow:PreImplementationGate` (three-way: Claude/Codex/OpenCode).
+  - Added `workflow:AutoPlanMode` (two-way: Claude/Codex; OpenCode `$null`
+    with a deviation — it targets the Claude/Codex plan-mode capability and
+    OpenCode has no equivalent).
+  - Added `overlay:ue/UnrealMCPRule` (three-way, per-tool layout: Claude/Codex
+    `rules/unrealmcprules.md`, OpenCode `workflows/UnrealMCPRule.md`).
+  - Removed the retired `overlay:perforce/VersionControlRule` row + deviation.
+- **`manifest-template.json` reconciled with disk.** v2.4.1 deleted the
+  `VersionControlRule.md` sources but left two dangling `files[]` entries whose
+  `sourceTemplate` pointed at the deleted files (broke `compare`/`promote`
+  against the real repo). Removed both. Registered the previously-unregistered
+  active files so they actually install: `PreImplementationGate.md` (3 tools)
+  and `unrealmcprules.md` / `UnrealMCPRule.md` (3 tools).
+
+### Notes
+- All 12 test suites pass (182 tests).
+- Known follow-up (not addressed here): the two `AutoPlanMode` entries still
+  carry a placeholder `sourceTemplate` under `profiles/` (a non-existent dir),
+  flagged by their `tool-capability` / `capabilityProfile` design as
+  "needs rewrite before packaging." Left intact pending that rewrite.
+
 ## [2.4.1] - 2026-06-01 — Refresh workspace-setup generated block
 
 ### Fixed
