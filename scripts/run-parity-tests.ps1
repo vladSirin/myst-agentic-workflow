@@ -30,6 +30,8 @@ function Bad($n, $why)  { Write-Host ("[FAIL] {0}: {1}" -f $n,$why); $script:fai
 $matrix = @(
     # Skills (9, three-way parity)
     @{ Id='skill:diagnose';                       Claude='templates/claude/.claude/skills/diagnose/SKILL.md';                       Codex='templates/codex/.Codex/skills/diagnose/SKILL.md';                       OpenCode='templates/opencode/.opencode/skills/diagnose/SKILL.md' }
+    # diagnose companion script (faithful vendoring incl. non-.md companions, ADR-0002) — three-way
+    @{ Id='skill:diagnose/hitl-loop-script';      Claude='templates/claude/.claude/skills/diagnose/scripts/hitl-loop.template.sh';   Codex='templates/codex/.Codex/skills/diagnose/scripts/hitl-loop.template.sh';   OpenCode='templates/opencode/.opencode/skills/diagnose/scripts/hitl-loop.template.sh' }
     @{ Id='skill:grill-with-docs';                Claude='templates/claude/.claude/skills/grill-with-docs/SKILL.md';                Codex='templates/codex/.Codex/skills/grill-with-docs/SKILL.md';                OpenCode='templates/opencode/.opencode/skills/grill-with-docs/SKILL.md' }
     @{ Id='skill:improve-codebase-architecture';  Claude='templates/claude/.claude/skills/improve-codebase-architecture/SKILL.md';  Codex='templates/codex/.Codex/skills/improve-codebase-architecture/SKILL.md';  OpenCode='templates/opencode/.opencode/skills/improve-codebase-architecture/SKILL.md' }
     @{ Id='skill:roundtable';                     Claude='templates/claude/.claude/skills/roundtable/SKILL.md';                     Codex='templates/codex/.Codex/skills/roundtable/SKILL.md';                     OpenCode='templates/opencode/.opencode/skills/roundtable/SKILL.md' }
@@ -74,6 +76,8 @@ $matrix = @(
     # Claude/Codex carry it as rules/unrealmcprules.md, OpenCode as workflows/UnrealMCPRule.md)
     @{ Id='overlay:ue/sync-build-submit';         Claude='overlays/ue/.claude/commands/sync-build-submit.md';                 Codex='overlays/ue/.Codex/commands/sync-build-submit.md';                OpenCode='overlays/ue/.opencode/commands/sync-build-submit.md' }
     @{ Id='overlay:ue/UnrealMCPRule';             Claude='overlays/ue/.claude/rules/unrealmcprules.md';                       Codex='overlays/ue/.Codex/rules/unrealmcprules.md';                      OpenCode='overlays/ue/.opencode/workflows/UnrealMCPRule.md' }
+    # diagnose UE/Perforce companion: faithful-base + overlay tailoring (ADR-0002) — three-way
+    @{ Id='overlay:ue/diagnose-UE-NOTES';         Claude='overlays/ue/.claude/skills/diagnose/UE-NOTES.md';                   Codex='overlays/ue/.Codex/skills/diagnose/UE-NOTES.md';                  OpenCode='overlays/ue/.opencode/skills/diagnose/UE-NOTES.md' }
 
     # Myst-project overlay (Claude + Codex; OpenCode minimal)
     @{ Id='overlay:myst/architecture-reviewer';   Claude='overlays/myst-project/.claude/agents/architecture-reviewer.md';   Codex='overlays/myst-project/.Codex/agents/architecture-reviewer.md';   OpenCode='overlays/myst-project/.opencode/agents/architecture-reviewer.md' }

@@ -2,7 +2,34 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
-## [2.4.2] - 2026-06-20 — Restore cross-tool parity; complete v2.4.x file bookkeeping
+## [2.5.0] - 2026-06-21 — Faithful-base + overlay model (ADR-0002); diagnose prototype
+
+### Added
+- **ADR-0002** (`docs/adr-0002-vendor-and-overlay-not-fork.md`): records the
+  decision to stay current with upstream via **vendor-and-overlay**, not a git
+  fork or submodule. Staying current is a *curation* problem, not a *storage*
+  problem; fork/submodule can't represent our 3-tool transform and would block
+  per-file curation. Base is vendored faithfully + complete; project tailoring
+  lives in overlays. Documents the engine gap that `append-fragment` can't
+  idempotently append to a `copy`-owned skill file (hence same-dir companions
+  for skill tailoring).
+- **`ue` overlay companion** `skills/diagnose/UE-NOTES.md` (three-way: Claude/
+  Codex/OpenCode) carrying the UE5/Perforce adaptation of the diagnosis loop
+  (automation specs / `-ExecCmds` headless runs / `p4` bisection / editor HITL
+  into `.scratch/`). Registered in `manifest-template.json` + parity matrix.
+
+### Fixed
+- **`diagnose` restored to the faithful upstream discipline.** Our copy had been
+  truncated to a 22-line stub that amputated the entire six-phase loop
+  (build-feedback-loop → reproduce → hypothesise → instrument → fix+regression →
+  cleanup). Re-vendored the complete upstream skill (Claude/Codex `<command-name>`
+  form, OpenCode frontmatter form) as the faithful base, with a generic footer
+  pointing at same-dir overlay addenda. This is the first worked example of the
+  ADR-0002 model: faithful base in core, project specifics in the `ue` overlay.
+
+### Notes
+- Prototype validating the faithful-base + overlay split before the broader
+  re-vendor. All 12 test suites pass.
 
 ### Fixed
 - **Parity test (`run-parity-tests.ps1`) now green (89/0).** v2.3.0 and v2.4.0
