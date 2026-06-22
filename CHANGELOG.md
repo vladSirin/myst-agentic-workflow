@@ -2,7 +2,29 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
-## [2.6.0] - 2026-06-22 — Phase A: vendor adopted siblings (domain-modeling, grilling, teach)
+## [2.7.0] - 2026-06-22 — ADR-0003: skills adopt upstream's verbatim frontmatter format
+
+### Changed
+- **Skill format converged to upstream verbatim** (ADR-0003). `SKILL.md` is now
+  upstream's YAML frontmatter (`name`/`description`/`disable-model-invocation`/
+  `argument-hint`) + body — Claude/Codex byte-identical to upstream, OpenCode
+  adds only `compatibility: opencode`. The house `# H1`-as-description +
+  `<command-name>` convention is **dropped** (the command name is the skill
+  directory name in all three tools; `<command-name>` was never a real field).
+- Re-wrapped the already-merged skills to this format: `diagnosing-bugs`,
+  `domain-modeling`, `grilling`, `teach`. Converted the local-only `roundtable`
+  to frontmatter (content preserved; OpenCode keeps its condensed body).
+- This makes "faithful" include **format** — Claude Code now gets upstream's
+  user/model-invoked split natively (answers the `disable-model-invocation`
+  question), and `compare-with-package.ps1` shows clean diffs vs upstream.
+
+### Notes
+- Per-tool support verified: Claude Code honors frontmatter + invocation flags
+  natively (dir = command); Codex discovery is via AGENTS.md (frontmatter is
+  harmless metadata); OpenCode is frontmatter-aware via opencode.json.
+- Open sub-decision (Phase B): how a `ue`-overlay companion (`diagnosing-bugs/
+  UE-NOTES.md`) is surfaced now that the verbatim base carries no footer pointer.
+- 13/13 suites pass; install idempotent.
 
 ### Added
 - **`domain-modeling`** (engineering) — active domain-model discipline, vendored

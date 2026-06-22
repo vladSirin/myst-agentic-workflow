@@ -139,7 +139,3 @@ Glossaries, in particular, are an essential reference. Once one is created, it s
 ## `NOTES.md`
 
 The user will sometimes express preferences of how they want to be taught, or things you should keep in mind. This is the place to record those preferences, so you can refer back to them when designing lessons or working with the user.
-
----
-
-*This project may ship adaptation notes for this skill alongside this file (any `*-NOTES.md` in this directory). When present, apply them — they tailor the discipline above to this codebase's tools and version control.*
