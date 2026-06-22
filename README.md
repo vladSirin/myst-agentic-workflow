@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-184%2F184-brightgreen)](#) [![version](https://img.shields.io/badge/version-v2.1.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-13%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v2.11.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -95,14 +95,17 @@ Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) at pinned
 | [`/update-myst-skills`](templates/claude/.claude/commands/update-myst-skills.md) | **(v1.6.0)** Sync upstream package changes into this project. Agent wrapper around `update.ps1`. |
 | [`/promote-myst-skills`](templates/claude/.claude/commands/promote-myst-skills.md) | **(v1.6.0)** Push a local improvement back to the upstream package. Agent wrapper around `promote.ps1`. |
 | [`/diagnosing-bugs`](templates/claude/.claude/skills/diagnosing-bugs/SKILL.md) | A bug or perf regression needs structured reproduction → minimisation → hypothesis → fix. |
-| [`/tdd`](templates/claude/.claude/skills/tdd.md) | Building a feature or fixing a bug with red-green-refactor. One vertical slice at a time. |
-| [`/grill-with-docs`](templates/claude/.claude/skills/grill-with-docs.md) | Before any non-trivial change: stress-test the plan against the project's domain language, update CONTEXT.md and ADRs inline. |
-| [`/to-prd`](templates/claude/.claude/skills/to-prd.md) | Turn the current conversation into a PRD under `.scratch/<feature>/PRD.md`. |
-| [`/to-issues`](templates/claude/.claude/skills/to-issues.md) | Break a PRD or plan into independently-grabbable vertical-slice issues. |
-| [`/triage`](templates/claude/.claude/skills/triage.md) | Move issues through the lifecycle state machine. |
-| [`/zoom-out`](templates/claude/.claude/skills/zoom-out.md) | Map an unfamiliar code area before making local changes. |
-| [`/improve-codebase-architecture`](templates/claude/.claude/skills/improve-codebase-architecture.md) | Find deepening opportunities; informed by CONTEXT.md and docs/adr/. |
-| [`/roundtable`](templates/claude/.claude/skills/roundtable.md) | Multi-perspective design discussion when one viewpoint isn't enough. |
+| [`/tdd`](templates/claude/.claude/skills/tdd/SKILL.md) | Building a feature or fixing a bug with red-green-refactor. One vertical slice at a time. |
+| [`/grill-with-docs`](templates/claude/.claude/skills/grill-with-docs/SKILL.md) | Before any non-trivial change: stress-test the plan against the project's domain language, update CONTEXT.md and ADRs inline. |
+| [`/domain-modeling`](templates/claude/.claude/skills/domain-modeling/SKILL.md) | Actively build/sharpen the domain model — challenge terms, write the glossary and ADRs inline. |
+| [`/to-prd`](templates/claude/.claude/skills/to-prd/SKILL.md) | Turn the current conversation into a PRD under `.scratch/<feature>/PRD.md`. |
+| [`/to-issues`](templates/claude/.claude/skills/to-issues/SKILL.md) | Break a PRD or plan into independently-grabbable vertical-slice issues. |
+| [`/triage`](templates/claude/.claude/skills/triage/SKILL.md) | Move issues through the lifecycle state machine. |
+| [`/improve-codebase-architecture`](templates/claude/.claude/skills/improve-codebase-architecture/SKILL.md) | Find deepening opportunities; informed by CONTEXT.md and docs/adr/. |
+| [`/codebase-design`](templates/claude/.claude/skills/codebase-design/SKILL.md) | Shared vocabulary for designing deep modules and seams. |
+| [`/roundtable`](templates/claude/.claude/skills/roundtable/SKILL.md) | Multi-perspective design discussion when one viewpoint isn't enough. |
+
+The full skill set (20, verbatim from upstream HEAD `6eeb81b`) installs under each tool dir — see [`CHANGELOG.md`](CHANGELOG.md) for the complete list; this table is a representative subset.
 
 ### Workflows (always-on rules)
 
@@ -130,7 +133,7 @@ Tools and rules layered on top of the core for specific environments.
 
 | Overlay | When | What it adds |
 |---|---|---|
-| `core` | always | The 9 skills + 2 workflows + 1 agent above. The portable layer. |
+| `core` | always | The core skills + workflows + agent above. The portable layer. |
 | `perforce` | `setup.ps1` auto-adds if `.p4ignore` or in P4 client | 3 Perforce workflows (CL-by-CL, review/submit, VC conventions). |
 | `ue` | `setup.ps1` auto-adds if `*.uproject` present | UE sync-build-submit slash command + UE-pattern `.p4ignore` fragment. |
 | `myst-project` | **never auto-added**; reference example | Original Myst_Proto-specific content. See [overlay README](overlays/myst-project/README.md). |
@@ -141,7 +144,7 @@ Tools and rules layered on top of the core for specific environments.
 No. Pass `-Tools` to select a subset, e.g. `setup.ps1 -TargetRoot ... -Tools claude`. The other tool directories simply aren't written. You can add tools later by re-running `setup.ps1` with a broader `-Tools` flag and `-Force`.
 
 **Do I need Perforce?**
-No. `setup.ps1` defaults to `filesystem` mode when it sees no `.p4ignore`. The 9 skills + 2 core workflows are version-control-agnostic. The Perforce-specific workflows only install if you opt in (auto-detected or explicit `-Overlays perforce`).
+No. `setup.ps1` defaults to `filesystem` mode when it sees no `.p4ignore`. The core skills + workflows are version-control-agnostic. The Perforce-specific workflows only install if you opt in (auto-detected or explicit `-Overlays perforce`).
 
 **Do I need Unreal Engine?**
 No. UE-specific content (sync-build-submit, UE p4ignore patterns) only installs if a `*.uproject` is detected. A film/VFX team on Perforce, or a Unity team on Perforce, gets `perforce` workflows without UE bias.
@@ -197,9 +200,11 @@ myst-agentic-workflow/
 ├── docs/
 │   ├── install.md                 # full install/update/promote/upstream-sync guide
 │   ├── perforce-consumer.md       # UE+P4 addendum
-│   └── adr-0001-extract-reusable-core-decisions.md
+│   ├── adr-0001-extract-reusable-core-decisions.md
+│   ├── adr-0002-vendor-and-overlay-not-fork.md
+│   └── adr-0003-verbatim-skill-format.md
 ├── templates/{common,codex,claude,opencode}/
-│   └── ...                        # the 9 skills + 2 workflows + 1 agent, per-tool
+│   └── ...                        # the core skills + workflows + agent, per-tool
 ├── overlays/
 │   ├── perforce/                  # CL workflow, review-and-submit, VC rules
 │   ├── ue/                        # sync-build-submit, UE p4ignore fragment
@@ -212,13 +217,13 @@ myst-agentic-workflow/
 │   ├── promote-from-project.ps1   # underlying promote primitive
 │   ├── check-mattpocock-updates.ps1
 │   ├── run-skeleton-preflight.ps1 # 10-point write-mode gate
-│   └── run-*-tests.ps1            # 10 test suites, 95 tests total
+│   └── run-*-tests.ps1            # 13 test suites (incl. parity + link-existence lint)
 └── fixtures/                      # E2E install fixtures
 ```
 
 ## Status
 
-**v2.0.0** — Full upstream sync from mattpocock/skills. **Philosophy shift**: skills move from "minimal pointer" (22-line entry points) to "rich instruction set" (upstream's verbose well-structured versions). Adds 4 productivity skills (`/caveman`, `/grill-me`, `/handoff`, `/write-a-skill`); upgrades 8 engineering skills; adds 5 reference files (ICA vocabulary + CONTEXT-FORMAT). Pinned commit bumped `e74f0061` → `b8be62f`. 184/184 tests across 12 suites.
+**v2.11.0** — Converged to upstream `mattpocock/skills` HEAD (`6eeb81b`). Skills are now vendored **verbatim** (upstream YAML frontmatter; Claude/Codex byte-identical, OpenCode adds only `compatibility`); project specifics live in overlays, never in the base (see [ADR-0002](docs/adr-0002-vendor-and-overlay-not-fork.md), [ADR-0003](docs/adr-0003-verbatim-skill-format.md)). Removed `zoom-out`/`caveman`/`write-a-skill`; renamed `diagnose` → `diagnosing-bugs`; vendored new skills (`codebase-design`, `domain-modeling`, `grilling`, `teach`, `writing-great-skills`, `implement`, `setup-matt-pocock-skills`, `resolving-merge-conflicts`, …). 20 skills, 13 test suites green. Full history in [CHANGELOG.md](CHANGELOG.md).
 
 ## What `runtime-mutable` means
 

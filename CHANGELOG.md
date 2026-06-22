@@ -2,7 +2,31 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
-## [2.11.0] - 2026-06-22 — Phase C: converge the pin to upstream HEAD (`6eeb81b`)
+## [2.11.1] - 2026-06-22 — Post-convergence cleanup
+
+### Fixed
+- **README** refreshed to 2.11.0 reality: version badge `v2.1.0` → `v2.11.0`;
+  tests badge de-bricked; 7 dead flat skill links (`skills/<name>.md`) repointed
+  to `skills/<name>/SKILL.md`; removed the `/zoom-out` row; rewrote the stale
+  `v2.0.0` Status block (now describes the HEAD convergence); fixed skill/suite
+  counts and the `docs/` ADR tree (adds adr-0002/0003).
+- **`MustRead_agentic_workflow.md`** — dropped the removed `/zoom-out` reference.
+- **Manifest dangling `sourceTemplate`s** (pre-existing) repointed to real files:
+  `AutoPlanMode` (was `profiles/…`, which never existed) → `templates/…/workflows/`;
+  `design` overlay (was flat `design.md`) → `design/SKILL.md`.
+
+### Known follow-ups (flagged, not changed)
+- `manifest-template.json` entry for `Docs/agents/scaffold-manifest.json` still
+  points at a non-existent source — a half-built "install a manifest copy"
+  feature; decide create-or-remove.
+- Top-level `skills/setup-myst-agentic-workflow/` is an unreferenced "skeleton"
+  self-install skill, superseded by `setup.ps1`; decide keep/update/remove.
+- Bibles (CLAUDE.md/AGENTS.md) skill listings don't yet enumerate the 10 new
+  core skills (overlay entries there are correct, not phantom).
+
+### Notes
+- 13/13 suites pass. Audit confirmed: no orphan remote branches; no residual
+  manifest entries for removed skills.
 
 ### Changed
 - **Pin bumped `b8be62f` → `6eeb81b`** in both `package-manifest.json` and

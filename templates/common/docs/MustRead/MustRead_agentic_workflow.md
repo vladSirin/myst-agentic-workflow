@@ -1,6 +1,6 @@
 # Agentic Workflow Guide
 
-**MUST_READ**: Read this guide before using `/to-prd`, `/to-issues`, `/triage`, `/tdd`, `/diagnosing-bugs`, `/improve-codebase-architecture`, `/zoom-out`, or `/grill-with-docs` in this repo.
+**MUST_READ**: Read this guide before using `/to-prd`, `/to-issues`, `/triage`, `/tdd`, `/diagnosing-bugs`, `/improve-codebase-architecture`, or `/grill-with-docs` in this repo.
 
 This guide explains the recommended human workflow for turning discussion into tracked, verifiable work.
 
