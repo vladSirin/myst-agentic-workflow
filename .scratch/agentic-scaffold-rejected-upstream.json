@@ -1,0 +1,34 @@
+[
+  {
+    "_comment": "Curation memory for mattpocock/skills upstream sync (ADR-0002 principle #6). Records skill-level adopt/keep/skip decisions so future syncs don't re-litigate them. check-mattpocock-updates.ps1 reads hunk-level entries (with hunkContentHash); the skill-decision entries below are documentation for human/agent curation and are ignored by the hunk matcher.",
+    "type": "schema-note"
+  },
+
+  { "type": "skill-decision", "decision": "keep-ours", "target": "zoom-out", "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461", "date": "2026-06-22",
+    "reason": "Upstream deleted it as maintainer curation, not obsolescence. Mapping an unfamiliar code area before local changes is still valuable for our consumers. Keep with this documented reason (ADR-0002: deviate-with-reason)." },
+  { "type": "skill-decision", "decision": "keep-ours", "target": "caveman", "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461", "date": "2026-06-22",
+    "reason": "Upstream removed it; we keep the ultra-compressed output mode (useful, self-contained, no upstream dependency)." },
+  { "type": "skill-decision", "decision": "keep-ours", "target": "write-a-skill", "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461", "date": "2026-06-22",
+    "reason": "Upstream replaced it with writing-great-skills (a reference-style rewrite). We keep write-a-skill as an actionable command; see writing-great-skills (defer) below." },
+
+  { "type": "skill-decision", "decision": "skip", "target": "ask-matt", "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461", "date": "2026-06-22",
+    "reason": "Matt-Pocock-personal/branded router (aihero.dev, /setup-matt-pocock-skills); routes to skills we don't carry. Out of scope." },
+  { "type": "skill-decision", "decision": "skip", "target": "edit-article", "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461", "date": "2026-06-22",
+    "reason": "Personal writing tool. Out of scope for an AAA UE5/Perforce engineering scaffold." },
+  { "type": "skill-decision", "decision": "skip", "target": "obsidian-vault", "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461", "date": "2026-06-22",
+    "reason": "Personal note-taking tool. Out of scope." },
+  { "type": "skill-decision", "decision": "skip", "target": "resolving-merge-conflicts", "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461", "date": "2026-06-22",
+    "reason": "Git-only (hunks/--abort); our VC overlay is Perforce. Low payoff; revisit only if a git overlay is added." },
+  { "type": "skill-decision", "decision": "skip", "target": "implement", "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461", "date": "2026-06-22",
+    "reason": "Thin PRD-implementation stub covered by our AgenticWorkflow stages 5-7; its git-centric 'commit to current branch' clashes with our Perforce changelist discipline." },
+  { "type": "skill-decision", "decision": "skip", "target": "prototype", "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461", "date": "2026-06-22",
+    "reason": "High-value half is web-bound (React/Tailwind/?variant=); no UE/Perforce relevance. Not currently carried." },
+  { "type": "skill-decision", "decision": "skip", "target": "decision-mapping", "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461", "date": "2026-06-22",
+    "reason": "Upstream marks it in-progress (unstable) and it hard-depends on prototype + domain-modeling. Revisit after it graduates." },
+  { "type": "skill-decision", "decision": "skip", "target": "codebase-design", "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461", "date": "2026-06-22",
+    "reason": "Redundant: our improve-codebase-architecture already inlines this glossary + principles. Pure vocabulary layer nothing of ours would reference." },
+  { "type": "skill-decision", "decision": "defer", "target": "writing-great-skills", "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461", "date": "2026-06-22",
+    "reason": "Genuine successor to write-a-skill and a deeper rewrite (completion criteria, invocation-cost discipline), but adopting = rename + genre change + vendoring GLOSSARY.md across 3 tools. Keep write-a-skill for now; revisit as a deliberate upgrade." },
+
+  { "type": "schema-note", "_adopted": "domain-modeling, grilling, teach are ADOPT (Phase 2), so are intentionally NOT in this reject list. diagnose -> diagnosing-bugs already converged to HEAD (v2.5.0)." }
+]

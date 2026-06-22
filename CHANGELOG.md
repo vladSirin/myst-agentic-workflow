@@ -2,7 +2,26 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
-## [2.5.0] - 2026-06-22 — Faithful-base + overlay model (ADR-0002); diagnosing-bugs prototype
+## [2.5.1] - 2026-06-22 — Curation guardrails (ADR-0002 principles #4, #6)
+
+### Added
+- **Link-existence lint** `scripts/run-linkcheck-tests.ps1` (13th test suite):
+  resolves every relative companion/cross-link in skills, workflows, and
+  commands against the package tree; skips consumer artifacts (`CONTEXT.md`,
+  `docs/adr/*`, `Docs/*`, `{{var}}`, `/src/*`, `.scratch/*`). Makes the
+  dangling-reference bug class un-reshippable (principle #4). Known not-yet-
+  reconciled drifts live in an `$allow` backlog (20 entries) that shrinks as
+  Phase-1 re-vendors land.
+- **Rejection memory** `.scratch/agentic-scaffold-rejected-upstream.json`
+  (principle #6): records skill-level keep/skip/defer decisions vs upstream
+  HEAD (`6eeb81b`) so future syncs don't re-litigate them — keep
+  zoom-out/caveman/write-a-skill (documented reasons); skip
+  ask-matt/edit-article/obsidian-vault/resolving-merge-conflicts/implement/
+  prototype/decision-mapping/codebase-design; defer writing-great-skills.
+  `check-mattpocock-updates.ps1` already reads this path.
+
+### Notes
+- Guardrails for the curated convergence-to-HEAD program. All 13 suites pass.
 
 ### Added
 - **ADR-0002** (`docs/adr-0002-vendor-and-overlay-not-fork.md`): records the
