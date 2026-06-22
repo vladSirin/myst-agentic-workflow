@@ -114,7 +114,6 @@ Rules the agent follows autonomously. Loaded every session.
 | `PlanPriority.md` | core | **HARD RULE**: Always use existing plans before creating new ones. |
 | `ChangelistVerification.md` | perforce overlay | **HARD RULE**: CL-by-CL execution, never batched. Stop between CLs for verification. |
 | `ReviewAndSubmit.md` | perforce overlay | Pre-submit protocol with What/Why/Notes CL description standard and reviewer routing. |
-| `VersionControlRule.md` | perforce overlay | Perforce checkout/submit conventions, file ownership rules. |
 
 ### Agents
 

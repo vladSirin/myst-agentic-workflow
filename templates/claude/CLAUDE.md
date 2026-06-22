@@ -17,10 +17,8 @@ OpenCode is also supported as a secondary agentic tool. Its configuration lives 
 │   ├── sync-build-submit.md       — Full sync → build → submit pipeline
 │   ├── update-myst-skills.md      — Pull upstream scaffold-package changes into this project
 │   ├── promote-myst-skills.md     — Push local scaffold improvements back to the package
-│   ├── caveman.md                 — /caveman: ultra-compressed output mode
 │   ├── grill-me.md                — /grill-me: stress-test a plan via relentless Q&A
 │   ├── handoff.md                 — /handoff: compact the session into a handoff doc
-│   └── write-a-skill.md           — /write-a-skill: scaffold a new skill
 ├── rules/           # Auto-loaded rules (triggered by model decisions)
 │   ├── angelscriptrules.md        — AngelScript coding conventions
 │   └── unrealmcprules.md          — Use Unreal Engine MCP tools for /Game assets (not Read/Grep)
@@ -35,12 +33,9 @@ OpenCode is also supported as a secondary agentic tool. Its configuration lives 
 │   ├── tdd/                       — /tdd: One behavior-tested vertical slice at a time
 │   ├── diagnosing-bugs/                  — /diagnosing-bugs: Reproducible debugging loop
 │   ├── improve-codebase-architecture/ — /improve-codebase-architecture: doc-informed refactors
-│   ├── zoom-out/                  — /zoom-out: Map an unfamiliar area before changes
 │   ├── grill-with-docs/           — /grill-with-docs: Stress-test plans vs project docs
-│   ├── caveman/                   — /caveman: ultra-compressed output mode
 │   ├── grill-me/                  — /grill-me: relentless plan interview
 │   ├── handoff/                   — /handoff: compact the session into a handoff doc
-│   └── write-a-skill/             — /write-a-skill: scaffold a new skill
 └── workflows/       # Mandatory workflow rules (agent reads on every session)
     ├── AutoPlanMode.md             — Enter plan mode for non-trivial tasks
     ├── PreImplementationGate.md    — HARD RULE: PRD/issues/triage before any multi-CL plan
@@ -95,12 +90,11 @@ Custom subagents available via the Agent tool. Claude routes to these automatica
 | `/tdd` | Implements one behavior-tested vertical slice at a time |
 | `/diagnosing-bugs` | Debugs bugs/regressions by building a reproducible feedback loop first |
 | `/improve-codebase-architecture` | Finds architecture improvements informed by project docs |
-| `/zoom-out` | Maps an unfamiliar code area before local changes |
 | `/grill-with-docs` | Stress-tests plans and updates context/ADR docs as decisions solidify |
-| `/caveman` | Ultra-compressed output mode (drops filler, keeps technical accuracy) |
 | `/grill-me` | Relentless plan/design interview until shared understanding |
 | `/handoff` | Compacts the session into a handoff document for another agent |
-| `/write-a-skill` | Scaffolds a new agent skill with proper structure |
+
+> Some skills ship project addenda as `*-NOTES.md` in the skill directory (e.g. UE/Perforce notes for `diagnosing-bugs` when the `ue` overlay is installed). When present, read them alongside the skill.
 
 ### Commands (User-invocable)
 
@@ -110,7 +104,6 @@ Custom subagents available via the Agent tool. Claude routes to these automatica
 | `/update-myst-skills` | Pull upstream scaffold-package changes into this project |
 | `/promote-myst-skills` | Push local scaffold improvements back to the package |
 
-`caveman`, `grill-me`, `handoff`, and `write-a-skill` also have command wrappers that invoke the same-named skills.
 
 ### Rules (Auto-triggered)
 

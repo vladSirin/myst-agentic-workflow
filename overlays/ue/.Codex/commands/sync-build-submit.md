@@ -171,4 +171,4 @@ Report the final submitted CL number.
 
 - If binaries haven't changed (nothing to reconcile), report that and skip CL creation
 - Watch for "also opened by" warnings during reconcile — inform the user
-- This workflow follows the project's VersionControlRule.md requirements
+- This workflow follows the perforce overlay's ReviewAndSubmit / ChangelistVerification requirements (when that overlay is installed).
