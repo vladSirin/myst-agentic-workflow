@@ -1,7 +1,7 @@
 {
   "package": {
     "name": "myst-agentic-workflow",
-    "version": "2.10.0",
+    "version": "2.11.0",
     "repository": "https://github.com/vladSirin/myst-agentic-workflow",
     "writeModeEnabled": true,
     "license": "MIT"
@@ -39,12 +39,12 @@
     "mattpocockSkills": {
       "repository": "https://github.com/mattpocock/skills",
       "trackedBranch": "main",
-      "pinnedCommit": "b8be62ffacb0118fa3eaa29a0923c87c8c11985c",
-      "previousPinnedCommit": "e74f0061bb67222181640effa98c675bdb2fdaa7",
+      "pinnedCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461",
+      "previousPinnedCommit": "b8be62ffacb0118fa3eaa29a0923c87c8c11985c",
       "license": "MIT",
       "licenseAuditedAt": "2026-05-19T00:00:00+08:00",
       "redistributionAllowed": true,
-      "attributionRequirement": "SPDX MIT. Audited at pinned commit e74f0061bb67222181640effa98c675bdb2fdaa7. Must preserve the verbatim notice 'Copyright (c) 2026 Matt Pocock' and the full MIT permission notice in all copies or substantial portions of redistributed files."
+      "attributionRequirement": "SPDX MIT. Audited at pinned commit 6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461. Must preserve the verbatim notice 'Copyright (c) 2026 Matt Pocock' and the full MIT permission notice in all copies or substantial portions of redistributed files."
     }
   }
 }
