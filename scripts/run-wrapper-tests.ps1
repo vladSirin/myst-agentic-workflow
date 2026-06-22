@@ -53,11 +53,11 @@ $t = New-TempTarget
 $null = Invoke-PS (Join-Path $pkg 'setup.ps1') @('-TargetRoot',$t,'-ProjectName','P1','-Yes')
 
 # Mark a tracked file as locally modified
-$localFile = Join-Path $t '.claude\skills\diagnose\SKILL.md'
+$localFile = Join-Path $t '.claude\skills\diagnosing-bugs\SKILL.md'
 Add-Content -Path $localFile -Value "`n# Test marker $(Get-Date -Format 'HHmmss')"
 
 $r = Invoke-PS (Join-Path $pkg 'promote.ps1') @(
-    '-TargetRoot', $t, '-Paths', '.claude/skills/diagnose/SKILL.md', '-Yes'
+    '-TargetRoot', $t, '-Paths', '.claude/skills/diagnosing-bugs/SKILL.md', '-Yes'
 )
 if ($r.Code -eq 0) { Ok 'promote.ps1 -Yes exit 0' }
 else { Bad 'promote.ps1 -Yes exit 0' "exit=$($r.Code)`n$($r.Out)" }
@@ -65,12 +65,12 @@ if ($r.Out -match 'reusable-core\s+\(inferred\)') { Ok 'promote.ps1 inferred cla
 else { Bad 'promote.ps1 inferred classification' 'inference marker not present' }
 
 # Verify package file got the change
-$pkgFile = Join-Path $pkg 'templates\claude\.claude\skills\diagnose\SKILL.md'
+$pkgFile = Join-Path $pkg 'templates\claude\.claude\skills\diagnosing-bugs\SKILL.md'
 if (Select-String -Path $pkgFile -Pattern 'Test marker' -Quiet) { Ok 'promote.ps1 wrote change to package tree' }
 else { Bad 'promote.ps1 wrote change' 'package file does not show marker' }
 
 # Cleanup: restore the package file
-Restore-PackageFile 'templates/claude/.claude/skills/diagnose/SKILL.md'
+Restore-PackageFile 'templates/claude/.claude/skills/diagnosing-bugs/SKILL.md'
 Remove-Item -Recurse -Force $t -ErrorAction SilentlyContinue
 
 # --- Test 4: promote.ps1 errors clearly when classification cannot be inferred ---

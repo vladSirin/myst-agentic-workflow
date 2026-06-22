@@ -151,11 +151,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".claude/skills/diagnose/UE-NOTES.md",
+            "path": ".claude/skills/diagnosing-bugs/UE-NOTES.md",
             "tool": "claude",
             "owner": "overlay",
             "ownerOverlay": "ue",
-            "sourceTemplate": "overlays/ue/.claude/skills/diagnose/UE-NOTES.md",
+            "sourceTemplate": "overlays/ue/.claude/skills/diagnosing-bugs/UE-NOTES.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -215,11 +215,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".claude/skills/diagnose/SKILL.md",
+            "path": ".claude/skills/diagnosing-bugs/SKILL.md",
             "tool": "claude",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/claude/.claude/skills/diagnose/SKILL.md",
+            "sourceTemplate": "templates/claude/.claude/skills/diagnosing-bugs/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -231,11 +231,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".claude/skills/diagnose/scripts/hitl-loop.template.sh",
+            "path": ".claude/skills/diagnosing-bugs/scripts/hitl-loop.template.sh",
             "tool": "claude",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/claude/.claude/skills/diagnose/scripts/hitl-loop.template.sh",
+            "sourceTemplate": "templates/claude/.claude/skills/diagnosing-bugs/scripts/hitl-loop.template.sh",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -603,11 +603,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".Codex/skills/diagnose/UE-NOTES.md",
+            "path": ".Codex/skills/diagnosing-bugs/UE-NOTES.md",
             "tool": "codex",
             "owner": "overlay",
             "ownerOverlay": "ue",
-            "sourceTemplate": "overlays/ue/.Codex/skills/diagnose/UE-NOTES.md",
+            "sourceTemplate": "overlays/ue/.Codex/skills/diagnosing-bugs/UE-NOTES.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -667,11 +667,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".Codex/skills/diagnose/SKILL.md",
+            "path": ".Codex/skills/diagnosing-bugs/SKILL.md",
             "tool": "codex",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/codex/.Codex/skills/diagnose/SKILL.md",
+            "sourceTemplate": "templates/codex/.Codex/skills/diagnosing-bugs/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -683,11 +683,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".Codex/skills/diagnose/scripts/hitl-loop.template.sh",
+            "path": ".Codex/skills/diagnosing-bugs/scripts/hitl-loop.template.sh",
             "tool": "codex",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/codex/.Codex/skills/diagnose/scripts/hitl-loop.template.sh",
+            "sourceTemplate": "templates/codex/.Codex/skills/diagnosing-bugs/scripts/hitl-loop.template.sh",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -1071,11 +1071,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".opencode/skills/diagnose/UE-NOTES.md",
+            "path": ".opencode/skills/diagnosing-bugs/UE-NOTES.md",
             "tool": "opencode",
             "owner": "overlay",
             "ownerOverlay": "ue",
-            "sourceTemplate": "overlays/ue/.opencode/skills/diagnose/UE-NOTES.md",
+            "sourceTemplate": "overlays/ue/.opencode/skills/diagnosing-bugs/UE-NOTES.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -1119,11 +1119,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".opencode/skills/diagnose/SKILL.md",
+            "path": ".opencode/skills/diagnosing-bugs/SKILL.md",
             "tool": "opencode",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/opencode/.opencode/skills/diagnose/SKILL.md",
+            "sourceTemplate": "templates/opencode/.opencode/skills/diagnosing-bugs/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -1135,11 +1135,11 @@
             "blockHashPolicy": "not-applicable"
         },
         {
-            "path": ".opencode/skills/diagnose/scripts/hitl-loop.template.sh",
+            "path": ".opencode/skills/diagnosing-bugs/scripts/hitl-loop.template.sh",
             "tool": "opencode",
             "owner": "package",
             "ownerOverlay": "core",
-            "sourceTemplate": "templates/opencode/.opencode/skills/diagnose/scripts/hitl-loop.template.sh",
+            "sourceTemplate": "templates/opencode/.opencode/skills/diagnosing-bugs/scripts/hitl-loop.template.sh",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",

@@ -2,7 +2,7 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
-## [2.5.0] - 2026-06-21 — Faithful-base + overlay model (ADR-0002); diagnose prototype
+## [2.5.0] - 2026-06-22 — Faithful-base + overlay model (ADR-0002); diagnosing-bugs prototype
 
 ### Added
 - **ADR-0002** (`docs/adr-0002-vendor-and-overlay-not-fork.md`): records the
@@ -13,23 +13,39 @@ All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
   lives in overlays. Documents the engine gap that `append-fragment` can't
   idempotently append to a `copy`-owned skill file (hence same-dir companions
   for skill tailoring).
-- **`ue` overlay companion** `skills/diagnose/UE-NOTES.md` (three-way: Claude/
-  Codex/OpenCode) carrying the UE5/Perforce adaptation of the diagnosis loop
-  (automation specs / `-ExecCmds` headless runs / `p4` bisection / editor HITL
-  into `.scratch/`). Registered in `manifest-template.json` + parity matrix.
+- **`ue` overlay companion** `skills/diagnosing-bugs/UE-NOTES.md` (three-way:
+  Claude/Codex/OpenCode) carrying the UE5/Perforce adaptation of the diagnosis
+  loop (automation specs / `-ExecCmds` headless runs / `p4` bisection / editor
+  HITL into `.scratch/`). Registered in `manifest-template.json` + parity matrix.
+
+### Changed
+- **`diagnose` → `diagnosing-bugs`** (skill dir, `<command-name>` / frontmatter
+  `name`, manifest paths, parity IDs, CLAUDE.md/AGENTS.md tables, AgenticWorkflow
+  + MustRead refs, README). **Breaking:** the command is now `/diagnosing-bugs`.
+  Rationale: upstream-inherited skills track upstream naming faithfully to avoid
+  drift; upstream renamed this skill to `diagnosing-bugs` at HEAD (`6eeb81b`).
 
 ### Fixed
-- **`diagnose` restored to the faithful upstream discipline.** Our copy had been
-  truncated to a 22-line stub that amputated the entire six-phase loop
-  (build-feedback-loop → reproduce → hypothesise → instrument → fix+regression →
-  cleanup). Re-vendored the complete upstream skill (Claude/Codex `<command-name>`
-  form, OpenCode frontmatter form) as the faithful base, with a generic footer
-  pointing at same-dir overlay addenda. This is the first worked example of the
-  ADR-0002 model: faithful base in core, project specifics in the `ue` overlay.
+- **`diagnosing-bugs` restored to the faithful upstream discipline** (was a
+  22-line stub that amputated the whole six-phase loop). Adopted the upstream
+  **HEAD (`6eeb81b`)** version faithfully — including its improvements over our
+  pin (`b8be62f`): the "tighten the loop" guidance, the **red-capable completion
+  criterion** for Phase 1, and **Phase 2 "Reproduce + minimise"**. Vendored its
+  `scripts/hitl-loop.template.sh` companion too (closes the dangling-companion
+  defect ADR-0002 targets). First worked example of the model: faithful base in
+  core (Claude/Codex `<command-name>`, OpenCode frontmatter), project specifics
+  in the `ue` overlay.
 
 ### Notes
+- **Provenance:** `diagnosing-bugs` is the first skill synced to upstream HEAD
+  (`6eeb81b`), ahead of the package pin (`b8be62f`) which stays put until a
+  deliberate full sync. This is intentional per-skill faithful tracking, not
+  drift.
 - Prototype validating the faithful-base + overlay split before the broader
-  re-vendor. All 12 test suites pass.
+  re-vendor. All 12 test suites pass; install lands base + companion + script and
+  is idempotent.
+
+## [2.4.2] - 2026-06-20 — Restore cross-tool parity; complete v2.4.x file bookkeeping
 
 ### Fixed
 - **Parity test (`run-parity-tests.ps1`) now green (89/0).** v2.3.0 and v2.4.0

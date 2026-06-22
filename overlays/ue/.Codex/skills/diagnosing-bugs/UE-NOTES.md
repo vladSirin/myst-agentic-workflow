@@ -1,6 +1,6 @@
 # Diagnose — UE5 / Perforce project notes
 
-Project-specific adaptation of the `/diagnose` discipline for this Unreal Engine 5 + Perforce codebase. Read this alongside the base skill — it does **not** replace the six phases, it tailors them to this project's tools and version control.
+Project-specific adaptation of the `/diagnosing-bugs` discipline for this Unreal Engine 5 + Perforce codebase. Read this alongside the base skill — it does **not** replace the six phases, it tailors them to this project's tools and version control.
 
 ## Phase 1 — feedback loops in this project
 
@@ -24,4 +24,4 @@ The base skill's web-flavoured examples (curl, Playwright, `git bisect`) rarely 
 
 ## Project docs
 
-The base skill refers to "the project's domain glossary" — in this project that is `Docs/agents/domain.md`. Read it for the domain model before diagnosing.
+The base skill reads `CONTEXT.md` for the domain model — in this project that is `Docs/agents/domain.md`. Read it for the domain model before diagnosing.
