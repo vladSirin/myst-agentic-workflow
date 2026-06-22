@@ -2,7 +2,23 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
-## [2.11.1] - 2026-06-22 — Post-convergence cleanup
+## [2.11.2] - 2026-06-23 — Action the cleanup follow-ups
+
+### Removed
+- **`manifest-template.json`** — dropped the dangling `Docs/agents/scaffold-manifest.json`
+  entry (half-built feature, source never existed). **Zero dangling `sourceTemplate`s now.**
+- **`skills/setup-myst-agentic-workflow/`** — removed the unreferenced "skeleton"
+  self-install skill (superseded by `setup.ps1`); the top-level `skills/` dir is gone.
+
+### Added / Changed
+- **Bibles** (CLAUDE.md + AGENTS.md) now list all 20 core skills in both the
+  directory map and the Skills table (was missing the 10 new ones; overlay
+  entries were already correct, not phantom).
+- **README** — complete grouped skill list (all 20) + a new **"Divergence from
+  upstream (and why)"** section documenting renames/removals/skips/overlays.
+
+### Notes
+- 13/13 suites pass. Cleanup complete; CLAUDE.md/AGENTS.md skill lines stay in sync.
 
 ### Fixed
 - **README** refreshed to 2.11.0 reality: version badge `v2.1.0` → `v2.11.0`;

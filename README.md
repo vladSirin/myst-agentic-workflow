@@ -88,24 +88,53 @@ The three commands you'll actually run.
 
 ### Skills (per-tool, installed under `.claude/`, `.Codex/`, `.opencode/`)
 
-Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) at pinned commit `6eeb81b`, MIT-licensed, attribution preserved.
+Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) at pinned commit `6eeb81b`, MIT-licensed, attribution preserved. **20 skills**, vendored **verbatim** (upstream YAML frontmatter; Claude/Codex byte-identical, OpenCode adds only `compatibility`). Every link below resolves to `templates/<tool>/.<tool>/skills/<name>/SKILL.md`.
+
+**Engineering**
 
 | Skill | Use it when |
 |---|---|
-| [`/update-myst-skills`](templates/claude/.claude/commands/update-myst-skills.md) | **(v1.6.0)** Sync upstream package changes into this project. Agent wrapper around `update.ps1`. |
-| [`/promote-myst-skills`](templates/claude/.claude/commands/promote-myst-skills.md) | **(v1.6.0)** Push a local improvement back to the upstream package. Agent wrapper around `promote.ps1`. |
-| [`/diagnosing-bugs`](templates/claude/.claude/skills/diagnosing-bugs/SKILL.md) | A bug or perf regression needs structured reproduction → minimisation → hypothesis → fix. |
-| [`/tdd`](templates/claude/.claude/skills/tdd/SKILL.md) | Building a feature or fixing a bug with red-green-refactor. One vertical slice at a time. |
-| [`/grill-with-docs`](templates/claude/.claude/skills/grill-with-docs/SKILL.md) | Before any non-trivial change: stress-test the plan against the project's domain language, update CONTEXT.md and ADRs inline. |
-| [`/domain-modeling`](templates/claude/.claude/skills/domain-modeling/SKILL.md) | Actively build/sharpen the domain model — challenge terms, write the glossary and ADRs inline. |
-| [`/to-prd`](templates/claude/.claude/skills/to-prd/SKILL.md) | Turn the current conversation into a PRD under `.scratch/<feature>/PRD.md`. |
-| [`/to-issues`](templates/claude/.claude/skills/to-issues/SKILL.md) | Break a PRD or plan into independently-grabbable vertical-slice issues. |
-| [`/triage`](templates/claude/.claude/skills/triage/SKILL.md) | Move issues through the lifecycle state machine. |
-| [`/improve-codebase-architecture`](templates/claude/.claude/skills/improve-codebase-architecture/SKILL.md) | Find deepening opportunities; informed by CONTEXT.md and docs/adr/. |
-| [`/codebase-design`](templates/claude/.claude/skills/codebase-design/SKILL.md) | Shared vocabulary for designing deep modules and seams. |
-| [`/roundtable`](templates/claude/.claude/skills/roundtable/SKILL.md) | Multi-perspective design discussion when one viewpoint isn't enough. |
+| `/diagnosing-bugs` | A hard bug / perf regression: build a feedback loop → reproduce + minimise → hypothesise → instrument → fix + regression-test. |
+| `/tdd` | Build a feature / fix a bug with red-green-refactor, one vertical slice at a time. |
+| `/improve-codebase-architecture` | Find deepening opportunities; informed by CONTEXT.md and docs/adr/. |
+| `/codebase-design` | Shared vocabulary for designing deep modules and seams. |
+| `/domain-modeling` | Actively build/sharpen the domain model — challenge terms, write the glossary + ADRs inline. |
+| `/grill-with-docs` | Stress-test a plan against the project's domain language before a non-trivial change. |
+| `/to-prd` | Turn the current conversation into a PRD. |
+| `/to-issues` | Break a PRD/plan into independently-grabbable vertical-slice issues. |
+| `/triage` | Move issues through the lifecycle state machine. |
+| `/implement` | Implement a planned slice from a PRD/issue. |
+| `/resolving-merge-conflicts` | Resolve merge conflicts (Perforce text-merge notes via the `perforce` overlay). |
+| `/setup-matt-pocock-skills` | One-time: configure the issue tracker + triage labels. |
 
-The full skill set (20, verbatim from upstream HEAD `6eeb81b`) installs under each tool dir — see [`CHANGELOG.md`](CHANGELOG.md) for the complete list; this table is a representative subset.
+**Productivity**
+
+| Skill | Use it when |
+|---|---|
+| `/grilling` | Relentless plan/design interview until shared understanding (`grill-me` / `grill-with-docs` delegate here). |
+| `/grill-me` | Shorthand entry to a `/grilling` session. |
+| `/handoff` | Compact the session into a handoff doc for another agent. |
+| `/teach` | Stateful, multi-session teaching workspace (user-invoked). |
+| `/writing-great-skills` | Author high-quality skills (reference + glossary). |
+| `/edit-article` | Edit / rewrite an article. |
+| `/obsidian-vault` | Search / create / manage Obsidian notes. |
+
+**Local (not from upstream)**
+
+| Skill | Use it when |
+|---|---|
+| `/roundtable` | Multi-perspective design discussion when one viewpoint isn't enough. |
+
+Plus package-management commands `/update-myst-skills` (sync upstream in) and `/promote-myst-skills` (push a local improvement out); overlay-only additions `/sync-build-submit` (`ue`), `/design` + `architecture-reviewer` (`myst-project`).
+
+### Divergence from upstream (and why)
+
+We track upstream **faithfully** — name + body + architecture + verbatim frontmatter — and deviate only with a documented reason (see [ADR-0002](docs/adr-0002-vendor-and-overlay-not-fork.md), [ADR-0003](docs/adr-0003-verbatim-skill-format.md), and `.scratch/agentic-scaffold-rejected-upstream.json`):
+
+- **Project specifics live only in overlays**, never in the base. `diagnosing-bugs` → `ue` overlay `UE-NOTES.md` (automation / `-ExecCmds` loops, `p4` bisection, editor HITL). `resolving-merge-conflicts` → `perforce` overlay `P4-NOTES.md` (P4 text merges). `to-issues` follows upstream's removal of HITL/AFK slice-typing — AFK-readiness rides the triage label instead.
+- **Renamed (followed upstream):** `diagnose` → `diagnosing-bugs`. **Removed (followed upstream):** `zoom-out`, `caveman`, `write-a-skill` (replaced by `writing-great-skills`).
+- **Skipped (out of scope):** `ask-matt` (personal/branded), `prototype` (web-bound). **Deferred:** `decision-mapping` (upstream marks it in-progress).
+- Everything else is byte-faithful to upstream HEAD `6eeb81b`.
 
 ### Workflows (always-on rules)
 
