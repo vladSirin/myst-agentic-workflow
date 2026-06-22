@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-13%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v2.11.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-14%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v2.11.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -33,6 +33,8 @@ Three lifecycle commands cover the entire flow:
 ```
 
 All three dry-run first, prompt before writing, and auto-derive their configuration from your installed manifest.
+
+**Upgrading an older install?** See [`docs/upgrade.md`](docs/upgrade.md). Retired skills (`zoom-out`/`caveman`/`write-a-skill`, and `diagnose` → `diagnosing-bugs`) need a one-time cleanup the installer doesn't auto-delete — run [`scripts/migrate-retired-skills.ps1`](scripts/migrate-retired-skills.ps1) (Perforce-aware) before `update.ps1`.
 
 ## Why this package exists
 
@@ -246,7 +248,8 @@ myst-agentic-workflow/
 │   ├── promote-from-project.ps1   # underlying promote primitive
 │   ├── check-mattpocock-updates.ps1
 │   ├── run-skeleton-preflight.ps1 # 10-point write-mode gate
-│   └── run-*-tests.ps1            # 13 test suites (incl. parity + link-existence lint)
+│   ├── migrate-retired-skills.ps1 # upgrade helper: remove retired skills from old installs
+│   └── run-*-tests.ps1            # 14 test suites (incl. parity + link-existence lint)
 └── fixtures/                      # E2E install fixtures
 ```
 

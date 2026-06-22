@@ -2,7 +2,28 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
-## [2.11.2] - 2026-06-23 — Action the cleanup follow-ups
+## [2.12.0] - 2026-06-23 — Deployment/upgrade tooling for existing consumers
+
+### Added
+- **`scripts/migrate-retired-skills.ps1`** — one-time upgrade helper that removes
+  the skills retired by the convergence (`zoom-out`, `caveman`, `write-a-skill`,
+  and the old `diagnose` renamed to `diagnosing-bugs`) from an existing install.
+  Dry-run by default; `-Apply` removes (filesystem); `-UsePerforce` emits the
+  `p4 delete -c <CL> …` commands to run in a changelist. The installer doesn't
+  auto-delete manifest-removed files, so this fills the upgrade gap (and avoids
+  preflight check 5 blocking the write on "unmanaged scaffold files").
+- **`scripts/run-migrate-tests.ps1`** — 14th test suite (7 tests) covering the
+  helper: dry-run detection, Perforce command emission, apply-removal, and that
+  current skills (e.g. `diagnosing-bugs`) survive.
+- **`docs/upgrade.md`** — step-by-step upgrade sequence for a Perforce + Unreal
+  consumer moving from an older version; README links it from the lifecycle commands.
+
+### Verified
+- Fresh install into a Perforce + Unreal consumer (`-Overlays core,perforce,ue`)
+  lands all overlays (sync-build-submit, unrealmcprules, UE-NOTES; Changelist-
+  Verification, ReviewAndSubmit, P4-NOTES) and all 20 skills, with retired skills
+  absent — **ready to deploy fresh**.
+- 14/14 suites pass.
 
 ### Removed
 - **`manifest-template.json`** — dropped the dangling `Docs/agents/scaffold-manifest.json`
