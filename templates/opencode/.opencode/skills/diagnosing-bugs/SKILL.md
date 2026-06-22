@@ -133,7 +133,3 @@ Required before declaring done:
 - [ ] The hypothesis that turned out correct is stated in the commit / PR message — so the next debugger learns
 
 **Then ask: what would have prevented this bug?** If the answer involves architectural change (no good test seam, tangled callers, hidden coupling) hand off to the `/improve-codebase-architecture` skill with the specifics. Make the recommendation **after** the fix is in, not before — you have more information now than when you started.
-
----
-
-*This project may ship adaptation notes for this skill alongside this file (any `*-NOTES.md` in this directory). When present, apply them — they tailor the discipline above to this codebase's tools and version control.*
