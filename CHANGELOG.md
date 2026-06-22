@@ -2,7 +2,32 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
-## [2.8.0] - 2026-06-22 — Phase B-1: vendor new skills (faithful, verbatim frontmatter)
+## [2.9.0] - 2026-06-22 — Phase B-2: converge carried skills to upstream HEAD (verbatim)
+
+### Changed
+Eight carried skills converged to upstream HEAD (`6eeb81b`), verbatim frontmatter
++ body (Claude/Codex byte-identical; OpenCode +`compatibility`):
+- **triage** — + restored `AGENT-BRIEF.md` + `OUT-OF-SCOPE.md` companions;
+  `/grilling`+`/domain-modeling`+`/setup-matt-pocock-skills` refs now resolve.
+- **tdd** — + restored `mocking.md` / `refactoring.md` / `tests.md` companions.
+- **improve-codebase-architecture** — + restored `HTML-REPORT.md`; delegates to
+  `/codebase-design` (vendored B-1).
+- **grill-with-docs**, **grill-me** — now upstream's stubs delegating to
+  `/grilling` + `/domain-modeling` (vendored Phase A).
+- **to-prd**, **handoff** — verbatim.
+- **to-issues** — verbatim, which **drops the HITL/AFK slice-typing**
+  (faithful-pure): AFK-readiness is carried by the triage label, as upstream does.
+
+### Fixed
+- 18 companion manifest entries + 6 parity rows. **Link-check allow-list shrank
+  20 → 6** — the restored companions mean triage/tdd/ICA/grill-with-docs links
+  now genuinely resolve (no longer documented drifts).
+
+### Notes
+- 13/13 suites pass (parity 187, link-check 122 resolve); install + idempotent.
+- Remaining link-check allow-list (6): cross-overlay DesignWorkflow/
+  ChangelistVerification, and the `write-a-skill`/`VersionControlRule` residue —
+  all cleared in Phase B-3.
 
 ### Added
 Seven skills vendored faithfully from upstream HEAD (`6eeb81b`), verbatim

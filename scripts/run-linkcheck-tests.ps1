@@ -25,23 +25,9 @@ function Bad($n, $why) { Write-Host ("[FAIL] {0}: {1}" -f $n,$why); $script:fail
 # Key: "<tool-agnostic-source>|<rawTarget>".  Value: reason.
 $allow = @{
     # triage companions dropped on original vendoring (Phase 1 fix pending)
-    'skills/triage/SKILL.md|AGENT-BRIEF.md'                              = 'pending Phase-1 triage re-vendor (restore companion)'
-    'skills/triage/SKILL.md|OUT-OF-SCOPE.md'                            = 'pending Phase-1 triage re-vendor (restore companion)'
     # tdd companions dropped (Phase 1 fix pending)
-    'skills/tdd/SKILL.md|tests.md'                                       = 'pending Phase-1 tdd re-vendor'
-    'skills/tdd/SKILL.md|mocking.md'                                     = 'pending Phase-1 tdd re-vendor'
-    'skills/tdd/SKILL.md|refactoring.md'                                 = 'pending Phase-1 tdd re-vendor'
-    'skills/tdd/SKILL.md|deep-modules.md'                               = 'pending Phase-1 tdd re-vendor'
-    'skills/tdd/SKILL.md|interface-design.md'                           = 'pending Phase-1 tdd re-vendor'
     # improve-codebase-architecture companions relocated to Docs/agents/ica (Phase 1 fix pending)
-    'skills/improve-codebase-architecture/SKILL.md|LANGUAGE.md'         = 'pending Phase-1 ICA re-vendor (companion relocated to Docs/agents/ica)'
-    'skills/improve-codebase-architecture/SKILL.md|HTML-REPORT.md'      = 'pending Phase-1 ICA re-vendor'
-    'skills/improve-codebase-architecture/SKILL.md|INTERFACE-DESIGN.md' = 'pending Phase-1 ICA re-vendor'
-    'skills/improve-codebase-architecture/SKILL.md|../grill-with-docs/CONTEXT-FORMAT.md' = 'pending Phase-1 (grill-with-docs companion)'
-    'skills/improve-codebase-architecture/SKILL.md|../grill-with-docs/ADR-FORMAT.md'     = 'pending Phase-1 (grill-with-docs companion)'
     # grill-with-docs companions (Phase 1 fix pending)
-    'skills/grill-with-docs/SKILL.md|./CONTEXT-FORMAT.md'              = 'pending Phase-1 grill-with-docs re-vendor'
-    'skills/grill-with-docs/SKILL.md|./ADR-FORMAT.md'                  = 'pending Phase-1 grill-with-docs re-vendor'
     # write-a-skill REFERENCE.md never existed upstream@pin (fenced example text; benign)
     'skills/write-a-skill/SKILL.md|REFERENCE.md'                        = 'benign: literal text inside a fenced template example, not a real link'
     # cross-overlay workflow refs: resolve only when the named overlay is co-installed
