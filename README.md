@@ -94,7 +94,7 @@ Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) at pinned
 |---|---|
 | [`/update-myst-skills`](templates/claude/.claude/commands/update-myst-skills.md) | **(v1.6.0)** Sync upstream package changes into this project. Agent wrapper around `update.ps1`. |
 | [`/promote-myst-skills`](templates/claude/.claude/commands/promote-myst-skills.md) | **(v1.6.0)** Push a local improvement back to the upstream package. Agent wrapper around `promote.ps1`. |
-| [`/diagnose`](templates/claude/.claude/skills/diagnose.md) | A bug or perf regression needs structured reproduction → minimisation → hypothesis → fix. |
+| [`/diagnosing-bugs`](templates/claude/.claude/skills/diagnosing-bugs/SKILL.md) | A bug or perf regression needs structured reproduction → minimisation → hypothesis → fix. |
 | [`/tdd`](templates/claude/.claude/skills/tdd.md) | Building a feature or fixing a bug with red-green-refactor. One vertical slice at a time. |
 | [`/grill-with-docs`](templates/claude/.claude/skills/grill-with-docs.md) | Before any non-trivial change: stress-test the plan against the project's domain language, update CONTEXT.md and ADRs inline. |
 | [`/to-prd`](templates/claude/.claude/skills/to-prd.md) | Turn the current conversation into a PRD under `.scratch/<feature>/PRD.md`. |

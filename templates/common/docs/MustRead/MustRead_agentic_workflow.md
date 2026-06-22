@@ -1,6 +1,6 @@
 # Agentic Workflow Guide
 
-**MUST_READ**: Read this guide before using `/to-prd`, `/to-issues`, `/triage`, `/tdd`, `/diagnose`, `/improve-codebase-architecture`, `/zoom-out`, or `/grill-with-docs` in this repo.
+**MUST_READ**: Read this guide before using `/to-prd`, `/to-issues`, `/triage`, `/tdd`, `/diagnosing-bugs`, `/improve-codebase-architecture`, `/zoom-out`, or `/grill-with-docs` in this repo.
 
 This guide explains the recommended human workflow for turning discussion into tracked, verifiable work.
 
@@ -83,7 +83,7 @@ Use this lane when any required check depends on human judgment, Unreal Editor v
 
 Use `/tdd` for new behavior or planned feature work.
 
-Use `/diagnose` for bugs, regressions, broken behavior, or performance problems.
+Use `/diagnosing-bugs` for bugs, regressions, broken behavior, or performance problems.
 
 Implementation should move the issue to:
 

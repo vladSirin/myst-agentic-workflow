@@ -33,7 +33,7 @@ OpenCode is also supported as a secondary agentic tool. Its configuration lives 
 │   ├── to-issues/                 — /to-issues: Break a plan into vertical-slice issues
 │   ├── triage/                    — /triage: Move issues through the status workflow
 │   ├── tdd/                       — /tdd: One behavior-tested vertical slice at a time
-│   ├── diagnose/                  — /diagnose: Reproducible debugging loop
+│   ├── diagnosing-bugs/                  — /diagnosing-bugs: Reproducible debugging loop
 │   ├── improve-codebase-architecture/ — /improve-codebase-architecture: doc-informed refactors
 │   ├── zoom-out/                  — /zoom-out: Map an unfamiliar area before changes
 │   ├── grill-with-docs/           — /grill-with-docs: Stress-test plans vs project docs
@@ -93,7 +93,7 @@ Custom subagents available via the Agent tool. Codex routes to these automatical
 | `/to-issues` | Breaks PRDs/plans into vertical-slice issues under `.scratch/<feature>/issues/` |
 | `/triage` | Moves issues through the repo status workflow (issues live as version-controlled markdown under `.scratch/`) |
 | `/tdd` | Implements one behavior-tested vertical slice at a time |
-| `/diagnose` | Debugs bugs/regressions by building a reproducible feedback loop first |
+| `/diagnosing-bugs` | Debugs bugs/regressions by building a reproducible feedback loop first |
 | `/improve-codebase-architecture` | Finds architecture improvements informed by project docs |
 | `/zoom-out` | Maps an unfamiliar code area before local changes |
 | `/grill-with-docs` | Stress-tests plans and updates context/ADR docs as decisions solidify |

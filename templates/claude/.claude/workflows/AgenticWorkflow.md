@@ -73,7 +73,7 @@ Use the status model in `{{docs_root}}/agents/triage-labels.md`.
 
 ### 5. Implementation
 
-Use `/tdd` for planned feature work and `/diagnose` for bugs or regressions. Set the issue to `Status: work-in-progress` while working.
+Use `/tdd` for planned feature work and `/diagnosing-bugs` for bugs or regressions. Set the issue to `Status: work-in-progress` while working.
 
 ### 6. Verification
 
