@@ -31,10 +31,19 @@ We keep the **vendor + pinned-commit + curate** model.
 
 The base layer is vendored **faithfully and completely** (every `SKILL.md` *and* its companion files — including non-`.md` companions like `scripts/*.sh`), in house format (Claude/Codex: `# <description>` H1 + `<command-name>` + body; OpenCode: YAML frontmatter + body). The **body prose is content-unedited**; only the per-tool wrapper differs, and (for parity) the OpenCode frontmatter `description` mirrors upstream's verbatim trigger text. Project-specific tailoring (UE5/Perforce/AAA) lives in the **overlay layer**, never by editing the base. Each base skill carries a generic, project-neutral footer pointing at same-dir addenda (any `*-NOTES.md` in the skill directory) — the overlay ships those notes.
 
+**Faithful means name + body + architecture.** Faithfulness is not only a skill's name and prose but its *structure*: companion files keep upstream's layout — in the skill's own directory next to its `SKILL.md` (`./CONTEXT-FORMAT.md`, `./ADR-FORMAT.md`, `./AGENT-BRIEF.md`, `scripts/*.sh`, …) — **not flattened, dropped, or relocated** elsewhere in the tree. This keeps `compare-with-package.ps1` diffs clean against upstream and lets the skill resolve its own relative links wherever it installs. **Deviate from upstream's structure only with a specific, documented reason** (recorded in this ADR or the rejection memory); absent a reason, mirror upstream. The same rule covers naming — upstream-inherited skills track upstream's name (e.g. `diagnose` → `diagnosing-bugs`), accepting the breaking command change rather than letting our copy drift.
+
 Why: editing the base directly is exactly what truncated our skills and broke our links. A faithful base makes `compare-with-package.ps1` produce clean diffs against upstream, makes each sync a reviewed patch instead of archaeology, and keeps divergence confined to clearly-owned overlay files.
 
 - **Rejected: keep editing the base in place** (status quo) — the proven cause of truncation + dangling links.
-- **Rejected: full-resync to upstream HEAD** — HEAD is a disruptive restructure (renames, stub-ification, deletions, hard binds to unvendored sibling skills) we reviewed and largely declined; resyncing trades reachable vendored content for unvendored refs.
+- **Rejected: *blind, wholesale* resync to upstream HEAD** — copying HEAD as-is drops our curated subset-scope, ignores our documented deviations, and imports references to sibling skills we don't vendor. Note the nuance: *converging* to HEAD is allowed and expected **as a reviewed, curated event** (vendor the new dependencies, decide the deletions, re-apply overlays, bump the pin) — exactly how `diagnosing-bugs` reached HEAD. What's rejected is the *unreviewed* wholesale copy. "Faithful" means faithful to a **known pinned commit**, not to a moving "latest"; the pin is the controlled checkpoint we advance deliberately, not a thing we drift behind by accident.
+
+**Known architecture drifts to reconcile** (pre-date this decision; flagged by the 2026-06-21 audit). Under "faithful means architecture", each must be either restored to upstream's same-dir layout during the re-vendor, or given a documented reason here:
+
+- `improve-codebase-architecture` — companions (`LANGUAGE.md`, `HTML-REPORT.md`, `INTERFACE-DESIGN.md`) relocated to `Docs/agents/ica/` instead of the skill dir; the SKILL.md links don't resolve cross-tree.
+- `grill-with-docs` — `CONTEXT-FORMAT.md` relocated to `templates/common/docs/`; `ADR-FORMAT.md` dropped entirely.
+- `triage` — `AGENT-BRIEF.md` / `OUT-OF-SCOPE.md` dropped entirely.
+- `tdd` — `tests.md` / `mocking.md` / `refactoring.md` / `deep-modules.md` / `interface-design.md` dropped.
 
 ## Decision 3 — Tailoring mechanism per file type
 
@@ -45,6 +54,21 @@ The engine offers `copy`, `full-file-override`, `generated-block`, `append-fragm
 - **`full-file-override`** is reserved for skills where upstream is fundamentally wrong for us. It is a maintained fork of that one file (you stop receiving upstream improvements), so it is the last resort.
 
 **Engine gap recorded here (verified):** `append-fragment` cannot cleanly append to a `copy`-owned skill file. Root cause: each manifest entry carries exactly one `mergeStrategy` for one `path`, so a single file cannot be both whole-file `copy` (core) and `append-fragment` (overlay) — the two strategies on one path are unexpressible. The symptom: `Get-EntryRendered` re-renders a `copy` entry as the whole template every install, so on re-install the base overwrite drops any appended fragment (it self-heals within one pass but reports perpetual drift to `compare`). Hence the same-dir-companion choice for skills. A future engine enhancement (an idempotent "copy-with-overlay-append" strategy) could allow truly inline skill tailoring; until then, companions are the supported path.
+
+## Operating principles
+
+The rules that make "faithful vendor-and-overlay" actually hold. Decisions 1–3 establish the model; these govern day-to-day curation.
+
+1. **Faithful = name + body + architecture** (Decision 2). Mirror upstream's command name, prose, *and* file/directory structure. Deviate only with a specific reason documented here or in the rejection memory.
+2. **Sync is deliberate and curated, never a blind wholesale copy.** Advance the pin toward HEAD as a reviewed event; never auto-adopt HEAD in a way that drops subset-scope, ignores documented deviations, or imports unvendored references.
+3. **Provenance is recorded, not implied.** Every vendored skill records which upstream commit it is faithful to. Per-skill divergence (e.g. a skill synced ahead of the package pin) is explicit, never silent.
+4. **Completeness is part of faithful — no dangling references.** A skill may not reference a companion or sibling it doesn't ship. Enforce with a CI link-existence lint, not vigilance.
+5. **Don't import what hard-binds to the unvendored.** If an upstream skill depends on a sibling we haven't vendored, either vendor that sibling too or don't adopt — never import a reference that can't resolve. This is the boundary of faithfulness.
+6. **Curation is remembered.** Every reject/skip is recorded (content-hash keyed in `.scratch/agentic-scaffold-rejected-upstream.json`) so the next sync doesn't re-litigate it.
+7. **Overlay isolation is one-directional.** Project specifics (UE5/Perforce/AAA) flow into overlays, never into the base. The base stays portable enough for a non-UE/non-Perforce team — that is what keeps it syncable.
+8. **No change lands without green gates.** All test suites pass *and* a real install is idempotent (re-run = NO CHANGES) before merge.
+
+Hygiene (not principles, but enforced): upstream-derived entries carry SPDX MIT attribution; the repo is CRLF — keep it.
 
 ## Consequences
 
