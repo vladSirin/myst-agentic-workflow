@@ -2,7 +2,27 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
-## [2.7.0] - 2026-06-22 — ADR-0003: skills adopt upstream's verbatim frontmatter format
+## [2.8.0] - 2026-06-22 — Phase B-1: vendor new skills (faithful, verbatim frontmatter)
+
+### Added
+Seven skills vendored faithfully from upstream HEAD (`6eeb81b`), verbatim
+frontmatter+body (Claude/Codex byte-identical; OpenCode +`compatibility`),
+companions in-dir:
+- **codebase-design** (+ DEEPENING, DESIGN-IT-TWICE) — unblocks faithful tdd/ICA.
+- **setup-matt-pocock-skills** (+ domain, issue-tracker-github/gitlab/local,
+  triage-labels) — unblocks faithful triage/to-issues.
+- **writing-great-skills** (+ GLOSSARY) — successor to write-a-skill.
+- **implement**, **edit-article**, **obsidian-vault** — adopted.
+- **resolving-merge-conflicts** — git base verbatim **+ a `perforce`-overlay
+  `P4-NOTES.md` companion** (Claude/Codex) adapting it to Perforce text merges.
+- 47 manifest entries (45 core SPDX MIT + 2 perforce), 16 parity rows.
+
+### Notes
+- Phase B-1 of the curated convergence: dependency skills first (codebase-design
+  → tdd/ICA; setup-matt-pocock-skills → triage), per principle #5.
+- Rejection memory updated: only `ask-matt`/`prototype` (skip) + `decision-mapping`
+  (defer) remain; zoom-out/caveman/write-a-skill flagged follow-deletion (B-3).
+- 13/13 suites pass (parity 169, link-check 152); install + idempotency verified.
 
 ### Changed
 - **Skill format converged to upstream verbatim** (ADR-0003). `SKILL.md` is now
