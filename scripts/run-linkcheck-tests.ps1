@@ -29,14 +29,10 @@ $allow = @{
     # improve-codebase-architecture companions relocated to Docs/agents/ica (Phase 1 fix pending)
     # grill-with-docs companions (Phase 1 fix pending)
     # write-a-skill REFERENCE.md never existed upstream@pin (fenced example text; benign)
-    'skills/write-a-skill/SKILL.md|REFERENCE.md'                        = 'benign: literal text inside a fenced template example, not a real link'
     # cross-overlay workflow refs: resolve only when the named overlay is co-installed
     'workflows/AgenticWorkflow.md|DesignWorkflow.md'                    = 'cross-overlay: DesignWorkflow ships in myst-project overlay (tracked in ADR-0002 drifts)'
     'workflows/PlanPriority.md|DesignWorkflow.md'                       = 'cross-overlay: DesignWorkflow ships in myst-project overlay'
     'workflows/AutoPlanMode.md|ChangelistVerification.md'              = 'cross-overlay: ChangelistVerification ships in perforce overlay'
-    # self-inflicted VersionControlRule residue (v2.4.1 deletion) -- KNOWN BUG, fix pending
-    'workflows/ScriptStandard.md|VersionControlRule.md'                = 'KNOWN BUG (v2.4.1 deletion residue): re-point to ReviewAndSubmit/ChangelistVerification'
-    'commands/sync-build-submit.md|VersionControlRule.md'             = 'KNOWN BUG (v2.4.1 deletion residue): re-point'
 }
 
 # Consumer artifacts (created in the consumer repo, never shipped) -> skip

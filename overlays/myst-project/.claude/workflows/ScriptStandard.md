@@ -131,4 +131,4 @@ Script/Gameplay/Player/Movement/Jump/jump_capability.as             ❌  Not Pas
 ## Cross-references
 
 - [DocumentStandard.md](DocumentStandard.md) — naming and lifecycle rules for `.md` documents in `{{game_docs_root}}/`
-- [VersionControlRule.md](VersionControlRule.md) — how to submit script changes to Perforce
+- Submitting script changes to Perforce follows the perforce overlay's ReviewAndSubmit and ChangelistVerification workflows (when that overlay is installed).

@@ -46,13 +46,10 @@ $matrix = @(
     @{ Id='skill:to-issues';                      Claude='templates/claude/.claude/skills/to-issues/SKILL.md';                      Codex='templates/codex/.Codex/skills/to-issues/SKILL.md';                      OpenCode='templates/opencode/.opencode/skills/to-issues/SKILL.md' }
     @{ Id='skill:to-prd';                         Claude='templates/claude/.claude/skills/to-prd/SKILL.md';                         Codex='templates/codex/.Codex/skills/to-prd/SKILL.md';                         OpenCode='templates/opencode/.opencode/skills/to-prd/SKILL.md' }
     @{ Id='skill:triage';                         Claude='templates/claude/.claude/skills/triage/SKILL.md';                         Codex='templates/codex/.Codex/skills/triage/SKILL.md';                         OpenCode='templates/opencode/.opencode/skills/triage/SKILL.md' }
-    @{ Id='skill:zoom-out';                       Claude='templates/claude/.claude/skills/zoom-out/SKILL.md';                       Codex='templates/codex/.Codex/skills/zoom-out/SKILL.md';                       OpenCode='templates/opencode/.opencode/skills/zoom-out/SKILL.md' }
 
     # Productivity skills (4, three-way parity, added in v2.0.0)
-    @{ Id='skill:caveman';                        Claude='templates/claude/.claude/skills/caveman/SKILL.md';                        Codex='templates/codex/.Codex/skills/caveman/SKILL.md';                        OpenCode='templates/opencode/.opencode/skills/caveman/SKILL.md' }
     @{ Id='skill:grill-me';                       Claude='templates/claude/.claude/skills/grill-me/SKILL.md';                       Codex='templates/codex/.Codex/skills/grill-me/SKILL.md';                       OpenCode='templates/opencode/.opencode/skills/grill-me/SKILL.md' }
     @{ Id='skill:handoff';                        Claude='templates/claude/.claude/skills/handoff/SKILL.md';                        Codex='templates/codex/.Codex/skills/handoff/SKILL.md';                        OpenCode='templates/opencode/.opencode/skills/handoff/SKILL.md' }
-    @{ Id='skill:write-a-skill';                  Claude='templates/claude/.claude/skills/write-a-skill/SKILL.md';                  Codex='templates/codex/.Codex/skills/write-a-skill/SKILL.md';                  OpenCode='templates/opencode/.opencode/skills/write-a-skill/SKILL.md' }
 
     # Phase A: vendored faithfully from upstream HEAD (ADR-0002), three-way + companions
     @{ Id='skill:domain-modeling';                Claude='templates/claude/.claude/skills/domain-modeling/SKILL.md';                Codex='templates/codex/.Codex/skills/domain-modeling/SKILL.md';                OpenCode='templates/opencode/.opencode/skills/domain-modeling/SKILL.md' }

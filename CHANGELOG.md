@@ -2,7 +2,32 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
-## [2.9.0] - 2026-06-22 — Phase B-2: converge carried skills to upstream HEAD (verbatim)
+## [2.10.0] - 2026-06-22 — Phase B-3: follow upstream deletions + cleanup
+
+### Removed (BREAKING — follow upstream's deletions)
+- **`zoom-out`**, **`caveman`** — deleted (upstream removed them). `/zoom-out`
+  and `/caveman` no longer ship.
+- **`write-a-skill`** — removed; replaced by `writing-great-skills` (vendored
+  B-1), matching upstream. `/write-a-skill` → use `/writing-great-skills`.
+- 9 manifest entries + 3 parity rows dropped.
+
+### Fixed
+- **VersionControlRule residue cleared** — the 5 dangling refs left by the
+  v2.4.1 deletion (ScriptStandard ×2, sync-build-submit ×2, README) re-pointed
+  to the perforce overlay's ReviewAndSubmit / ChangelistVerification (plain-text,
+  conditional). Link-check allow-list now **3** (only the cross-overlay
+  DesignWorkflow / ChangelistVerification see-alsos remain).
+- CLAUDE.md / AGENTS.md skill tables + trees pruned of the removed skills; the
+  stale "command wrappers" line dropped.
+
+### Added
+- **Overlay-surfacing note** (ADR-0003 open item, option a): the bible's Skills
+  section now notes that skills may ship `*-NOTES.md` addenda (e.g. UE/Perforce
+  notes for `diagnosing-bugs` under the `ue` overlay) to read alongside them.
+
+### Notes
+- 13/13 suites pass (parity 184, link-check 117 resolve); install + idempotent.
+- Rejection memory records zoom-out/caveman/write-a-skill as follow-deletion.
 
 ### Changed
 Eight carried skills converged to upstream HEAD (`6eeb81b`), verbatim frontmatter
