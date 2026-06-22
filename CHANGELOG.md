@@ -2,7 +2,30 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
-## [2.5.1] - 2026-06-22 — Curation guardrails (ADR-0002 principles #4, #6)
+## [2.6.0] - 2026-06-22 — Phase A: vendor adopted siblings (domain-modeling, grilling, teach)
+
+### Added
+- **`domain-modeling`** (engineering) — active domain-model discipline, vendored
+  faithfully from upstream HEAD (`6eeb81b`) with its `CONTEXT-FORMAT.md` +
+  `ADR-FORMAT.md` companions in-dir (faithful architecture). Three-way.
+- **`grilling`** (productivity) — relentless plan/design interview; the upstream
+  successor that `grill-me`/`grill-with-docs` delegate to at HEAD. Three-way.
+- **`teach`** (productivity) — stateful multi-session teaching workspace, with
+  its `MISSION-FORMAT` / `RESOURCES-FORMAT` / `LEARNING-RECORD-FORMAT` /
+  `GLOSSARY-FORMAT` companions in-dir. OpenCode frontmatter keeps upstream's
+  `disable-model-invocation` + `argument-hint`; Claude/Codex encode
+  explicit-only via `<command-name>`. Three-way.
+- 27 manifest entries (`owner=package`, `core`, SPDX MIT) + 9 parity rows.
+  Companion `.md` files are byte-faithful to upstream (verbatim, no transform).
+
+### Notes
+- **Phase A** of the curated convergence-to-HEAD program: vendor the adopted
+  siblings first, because Phase-B dependents (`grill-with-docs`, `grill-me`,
+  `triage`) hard-bind to `domain-modeling`/`grilling` (principle #5).
+- Provenance: these track upstream HEAD (`6eeb81b`), ahead of the package pin —
+  deliberate per-skill sync, recorded here.
+- 13/13 suites pass (parity 122, link-check 107 resolve); install lands all
+  skills + companions and is idempotent.
 
 ### Added
 - **Link-existence lint** `scripts/run-linkcheck-tests.ps1` (13th test suite):
