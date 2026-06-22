@@ -2,7 +2,29 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
-## [2.10.0] - 2026-06-22 — Phase B-3: follow upstream deletions + cleanup
+## [2.11.0] - 2026-06-22 — Phase C: converge the pin to upstream HEAD (`6eeb81b`)
+
+### Changed
+- **Pin bumped `b8be62f` → `6eeb81b`** in both `package-manifest.json` and
+  `manifest-template.json` (`previousPinnedCommit` = `b8be62f`). This declares the
+  curated convergence to upstream HEAD **complete** — every carried skill is
+  verbatim-faithful to `6eeb81b`, new siblings vendored, deletions followed,
+  format converged (ADR-0003), with deviations recorded in the rejection memory.
+- LICENSE + README attribution updated to the new pinned commit.
+
+### Provenance
+- Adopted faithfully: diagnosing-bugs, domain-modeling, grilling, teach,
+  codebase-design, writing-great-skills, setup-matt-pocock-skills, implement,
+  edit-article, obsidian-vault, resolving-merge-conflicts (+perforce P4-NOTES),
+  plus the converged carried skills.
+- Deliberate deviations (rejection memory): skip ask-matt/prototype; defer
+  decision-mapping; to-issues drops HITL/AFK slice-typing (AFK-readiness via
+  triage label); resolving-merge-conflicts git base + perforce P4-NOTES overlay.
+- From here, `compare-with-package.ps1` diffs against a current baseline and
+  `check-mattpocock-updates.ps1` reports clean until upstream moves again.
+
+### Notes
+- 13/13 suites pass. Convergence-to-HEAD program (Phase 0 → C) complete.
 
 ### Removed (BREAKING — follow upstream's deletions)
 - **`zoom-out`**, **`caveman`** — deleted (upstream removed them). `/zoom-out`

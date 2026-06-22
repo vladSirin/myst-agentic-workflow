@@ -88,7 +88,7 @@ The three commands you'll actually run.
 
 ### Skills (per-tool, installed under `.claude/`, `.Codex/`, `.opencode/`)
 
-Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) at pinned commit `e74f0061`, MIT-licensed, attribution preserved.
+Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) at pinned commit `6eeb81b`, MIT-licensed, attribution preserved.
 
 | Skill | Use it when |
 |---|---|
@@ -237,7 +237,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the version history.
 
 ## License
 
-MIT. Bundles content adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, pinned at commit `e74f0061`) — attribution preserved in [LICENSE](LICENSE).
+MIT. Bundles content adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, pinned at commit `6eeb81b`) — attribution preserved in [LICENSE](LICENSE).
 
 ## Contributing
 

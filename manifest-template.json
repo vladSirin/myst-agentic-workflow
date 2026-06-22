@@ -35,8 +35,8 @@
         "mattpocockSkills": {
             "repository": "https://github.com/mattpocock/skills",
             "trackedBranch": "main",
-            "pinnedCommit": "b8be62ffacb0118fa3eaa29a0923c87c8c11985c",
-            "previousShortCommit": "e74f006",
+            "pinnedCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461",
+            "previousShortCommit": "b8be62f",
             "lastCheckedRemoteHead": "67bce91c80cd1020a4f068ced32d0281656842ad",
             "adaptationStatus": "pending-review",
             "license": "MIT",
