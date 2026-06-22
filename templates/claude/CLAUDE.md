@@ -36,6 +36,16 @@ OpenCode is also supported as a secondary agentic tool. Its configuration lives 
 │   ├── grill-with-docs/           — /grill-with-docs: Stress-test plans vs project docs
 │   ├── grill-me/                  — /grill-me: relentless plan interview
 │   ├── handoff/                   — /handoff: compact the session into a handoff doc
+│   ├── codebase-design/           — /codebase-design: deep-module design vocabulary
+│   ├── domain-modeling/           — /domain-modeling: build/sharpen the domain model
+│   ├── grilling/                  — /grilling: relentless plan interview
+│   ├── teach/                     — /teach: stateful multi-session teaching workspace
+│   ├── writing-great-skills/      — /writing-great-skills: author high-quality skills
+│   ├── implement/                 — /implement: PRD-based implementation
+│   ├── setup-matt-pocock-skills/  — /setup-matt-pocock-skills: configure tracker + labels
+│   ├── resolving-merge-conflicts/ — /resolving-merge-conflicts: resolve merges (P4 notes via overlay)
+│   ├── edit-article/              — /edit-article: article editing
+│   ├── obsidian-vault/            — /obsidian-vault: Obsidian note management
 └── workflows/       # Mandatory workflow rules (agent reads on every session)
     ├── AutoPlanMode.md             — Enter plan mode for non-trivial tasks
     ├── PreImplementationGate.md    — HARD RULE: PRD/issues/triage before any multi-CL plan
@@ -93,6 +103,16 @@ Custom subagents available via the Agent tool. Claude routes to these automatica
 | `/grill-with-docs` | Stress-tests plans and updates context/ADR docs as decisions solidify |
 | `/grill-me` | Relentless plan/design interview until shared understanding |
 | `/handoff` | Compacts the session into a handoff document for another agent |
+| `/codebase-design` | Shared vocabulary for designing deep modules and seams |
+| `/domain-modeling` | Actively build/sharpen the domain model — glossary + ADRs inline |
+| `/grilling` | Relentless plan/design interview (grill-me/grill-with-docs delegate here) |
+| `/teach` | Stateful multi-session teaching workspace (user-invoked) |
+| `/writing-great-skills` | Reference for authoring high-quality skills |
+| `/implement` | PRD-based implementation of a planned slice |
+| `/setup-matt-pocock-skills` | Configure the issue tracker + triage labels (onboarding) |
+| `/resolving-merge-conflicts` | Resolve merge conflicts (Perforce text-merge notes via the perforce overlay) |
+| `/edit-article` | Article editing/rewriting |
+| `/obsidian-vault` | Search/create/manage Obsidian notes |
 
 > Some skills ship project addenda as `*-NOTES.md` in the skill directory (e.g. UE/Perforce notes for `diagnosing-bugs` when the `ue` overlay is installed). When present, read them alongside the skill.
 
