@@ -2,6 +2,26 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [2.18.0] - 2026-06-23 — `/setup-agentic-workflow` interactive setup wizard
+
+### Added
+- **`setup-agentic-workflow` skill** (`core-local` overlay, all 3 tools, **user-invoked** via
+  `disable-model-invocation: true`) — an interactive wizard to install or upgrade the scaffold in a
+  project, modeled on upstream's `setup-matt-pocock-skills` UX (explain each term, smart defaults from
+  the repo, ask one decision at a time). Flow: **explore** (detect VC / `*.uproject` / existing
+  install / monorepo) → **propose tools + overlays** with rationale (auto-suggest `perforce` on
+  `.p4ignore`, `ue` on `*.uproject`; never propose `myst-project`; `afk-autonomy` only on request,
+  with its risk explained) → **dry-run** → **confirm + write**. It's a thin front-end over
+  `setup.ps1` (fresh) / `upgrade.ps1` (existing) — the scripts own the dry-run/preflight/journal/
+  Perforce-changelist safety. Closes with next steps (run `/setup-matt-pocock-skills`, fill the `ue`
+  `sync-build-submit` placeholders, arm `afk-autonomy` only when wanted).
+- Local-origin (`upstreamDerived: false`), homed in `core-local` (re-vendor-safe per ADR-0004),
+  with a parity-matrix entry.
+
+### Notes
+- 16/16 suites pass; installs via the force-added `core-local` overlay (present in every install).
+- Distinct from `setup-matt-pocock-skills` (which configures the issue tracker / triage labels /
+  domain docs): this wizard installs the *toolset*; that one wires up *project conventions*.
 ## [2.17.0] - 2026-06-23 — `afk-autonomy` overlay (Tier 3: gated autonomous submit)
 
 ### Added
