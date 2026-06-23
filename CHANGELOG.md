@@ -2,6 +2,36 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [2.13.0] - 2026-06-23 — `upgrade.ps1`: real upgrades for existing consumers
+
+### Added
+- **`upgrade.ps1`** — one-command upgrade of an existing consumer to the current
+  package, **preserving local customizations**. Preview by default; `-Apply`
+  executes (Perforce-aware: all changes land in one reviewable changelist).
+  - Regenerates the manifest from the current template (into a temp dir for the
+    preview, so previews never touch the consumer), so **new skills are added** and
+    **retired skills are removed** — which neither `setup.ps1` (skips bootstrap when
+    a manifest exists) nor `update.ps1` (never regenerates) could do.
+  - Re-baselines every existing managed file's hash to its on-disk content so
+    `install.ps1` preflight check 2 passes, then refreshes untouched files and marks
+    **customized** files `manual-only`/`human-owned` so they're never overwritten.
+    Managed blocks (`AGENTS.md`/`CLAUDE.md`/`.p4ignore`) are refreshed in place.
+  - Reports the plan in five buckets: ADD / REFRESH / PRESERVE / BLOCK-REFRESH / REMOVE.
+- **`scripts/run-upgrade-tests.ps1`** — 15th suite (6 tests): preview is read-only,
+  customizations preserved byte-for-byte, deleted skills re-added, retired removed +
+  dirs pruned, preflight clean after.
+
+### Fixed
+- `upgrade.ps1` resolves `$PackageRoot` in the body (not as a `$PSScriptRoot` param
+  default, which is empty under `powershell.exe -File` on Windows PowerShell 5.1).
+
+### Validated
+- End-to-end against a copy of a real v1.0.0 Perforce + Unreal consumer: +101 added,
+  76 refreshed, 11 preserved (incl. a 128-line `sync-build-submit.md` customization,
+  kept byte-for-byte), 24 retired removed; preflight 0 failed afterward. 15/15 suites pass.
+
+### Docs
+- `docs/upgrade.md` rewritten around `upgrade.ps1`; README lifecycle commands + table updated.
 ## [2.12.1] - 2026-06-23 — Fix: restore the manifest's self-tracking entry
 
 ### Fixed
