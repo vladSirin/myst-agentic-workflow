@@ -1,5 +1,16 @@
 # Review and Submit Protocol
 
+## Continuous source-control sync (applies at all times)
+
+This rule applies to **every file modification** in a Perforce client, not just review/submit.
+
+**After modifying, creating, or deleting any tracked file, you MUST `p4 edit` / `p4 add` / `p4 delete` it BEFORE presenting results to the user.** Don't wait to be asked; don't batch checkouts to the end of the session.
+
+> [!CAUTION]
+> `Modify file -> p4 edit/add -> Present status` — never `Modify -> Present -> (forget) -> try to submit later -> find dirty files outside any CL`.
+
+When unsure which CL a file belongs in: put it in the **default change** and reorganize later via `p4 reopen -c <CL>`. Default-change files won't be submitted accidentally (preflight catches them) but they WILL be tracked.
+
 ## Trigger
 
 When the user says **"review and submit {changelist name or ID}"**, execute this workflow.
@@ -226,10 +237,14 @@ After receiving reviewer feedback, present a structured summary:
 
 **DO NOT** proceed with any action until the user explicitly chooses an option.
 
-- If user says "submit" or "1" → Proceed with Perforce submission
-- If user says "fix" or "2" → Address issues, then re-run this protocol
-- If user specifies issues → Fix only those, present updated summary
+- If user says "submit" or "1" → Proceed with Perforce submission (only if no BLOCKING issues)
+- If user says "fix" or "2" → Address issues, then **re-run this protocol from Step 5** — never submit directly after fixing
+- If user specifies issues → Fix only those, then **re-run Steps 5–7** before submitting
 - If user says "defer" → Acknowledge and await further instructions
+
+> [!CAUTION]
+> **HARD RULE — No direct submit after fixes.**
+> After applying any fix in response to a WARNING or BLOCKING verdict, you MUST re-run the reviewer (Step 5) and present a new summary (Step 6) before submitting. Fixes can introduce new issues; the only path to submission is a clean review pass — not "the fixes look obviously correct."
 
 ---
 
@@ -237,9 +252,10 @@ After receiving reviewer feedback, present a structured summary:
 
 When user approves submission:
 
-1. Run `p4 submit -c {CL_ID}` or create new CL with the files
-2. Report submission result
-3. Note any post-submit verification needed
+1. **Run repo preflight validators first** — run any project preflight checks (e.g. `.claude/scripts/check-uproject-assoc.sh` when the `ue` overlay is installed) and **abort the submit on any non-zero exit**, reporting the failure so it can be fixed before retrying.
+2. Run `p4 submit -c {CL_ID}` or create new CL with the files
+3. Report submission result — confirm with `p4 changes -m 1 -s submitted` and report the final submitted CL number
+4. Note any post-submit verification needed
 
 ---
 

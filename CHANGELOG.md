@@ -2,6 +2,38 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [2.14.0] - 2026-06-23 — Promote consumer P4-workflow safety improvements
+
+Generic improvements harvested from a real consumer (3-way diffed vs the install base to
+separate generic value from project-specific tailoring), promoted back to the package:
+
+### Added
+- **`overlays/ue/.{claude,Codex,opencode}/scripts/check-uproject-assoc.sh`** — a UE
+  source-tree + Perforce submission guard: blocks a non-empty `EngineAssociation` in the
+  `.uproject` (a committed engine GUID / launcher version makes teammates hit *"Couldn't set
+  association for project. Check the file is writeable."* on a read-only Perforce file).
+  Generalized from the consumer's version to **discover** the `.uproject` (no hardcoded path).
+  Exit 0/1/2 = OK / blocking / not-found. 3 manifest entries added.
+
+### Changed
+- **`overlays/perforce/.{claude,Codex}/workflows/ReviewAndSubmit.md`**:
+  - New **"Continuous source-control sync"** rule (always `p4 edit/add/delete` a touched file
+    before presenting; when unsure use the default change + `p4 reopen` later).
+  - **Step 7 HARD RULE — no direct submit after fixes**: re-run the reviewer (Step 5) + a fresh
+    summary before submitting; fixes can introduce new issues. (Neutral rationale; project
+    incident reference dropped.)
+  - **Submission Step** now runs **repo preflight validators first** (e.g. `check-uproject-assoc.sh`
+    when the `ue` overlay is installed) and aborts on non-zero; reports the final CL via
+    `p4 changes -m 1 -s submitted`.
+- **`overlays/myst-project/.{claude,Codex,opencode}/agents/architecture-reviewer.md`** — new
+  **"Submission Authority (HARD RULE)"**: the reviewer is a reviewer, not a submitter (no
+  `p4 submit`/`shelve`/`git push`); the parent session owns submission. Closes a real gap —
+  the package's reviewer agent ships with `Bash` + an "auto-submit on green" contract but had
+  nothing forbidding it from submitting itself. Adds a parseable `Verdict:` line for gating.
+
+### Notes
+- Project-specific tailoring (Myst build pipeline, AngelScript standards, hardcoded paths) was
+  deliberately NOT promoted and stays in the consumer. 15/15 suites pass; install verified.
 ## [2.13.2] - 2026-06-23 — `upgrade.ps1` apply-time Perforce fixes (validated on a live consumer)
 
 Found and fixed while running the first real Perforce upgrade end-to-end:
