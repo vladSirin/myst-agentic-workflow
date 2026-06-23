@@ -1,4 +1,4 @@
-# Upgrade guide — moving an existing consumer to v2.11.x
+# Upgrade guide — moving an existing consumer to v2.12.x
 
 This is for projects that installed an **older** version of the scaffold and want the current
 (upstream-HEAD-converged) skill set. A **fresh** install needs none of this — just run
@@ -56,8 +56,8 @@ sections for the complete list.
 - **Skill format changed** to upstream-verbatim YAML frontmatter (ADR-0003). `update.ps1` overwrites
   the `SKILL.md`s (they're `copy`-strategy), so the format updates automatically — no manual step.
 - **Overlays**: ensure your install includes `ue` and `perforce` (auto-added by `setup.ps1`; for an
-  existing install confirm `package-manifest.json` `installedProject` lists them, or re-run setup with
-  `-Overlays 'core,perforce,ue'`).
+  existing install confirm your installed manifest `Docs/agents/scaffold-manifest.json` lists them, or
+  re-run setup with `-Overlays 'core,perforce,ue'`).
 - **AGENTS.md / CLAUDE.md** workspace-setup blocks update via the generated-block mechanism on `update.ps1`.
 - **Known limitation / future work**: auto-deletion of manifest-removed files isn't built into the
   installer yet — this helper covers the one-time retired-skill cleanup. A manifest-driven orphan-prune
