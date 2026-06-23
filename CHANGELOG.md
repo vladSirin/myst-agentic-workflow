@@ -2,6 +2,23 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [2.13.1] - 2026-06-23 — `upgrade.ps1`: complete Perforce preflight handling
+
+### Fixed/Added (upgrade.ps1, Perforce mode)
+- **Re-baseline `depotRevision` to current head** for every managed entry (and null for
+  files not yet in the depot) so preflight **check 4** (`depotRevision == headRev`) passes —
+  the P4 analog of the content-hash re-baseline.
+- **ADOPT pre-existing unmanaged depot files** under scaffold roots (old-feature artifacts,
+  tracked configs like `.Codex/config.toml`) as `owner=project`/`manual-only` so they're
+  preserved and recognized as managed (satisfies preflight **check 5**) — never deleted.
+  Depot prefix is derived via `p4 where`; head revs via `p4 fstat`.
+- **Default-changelist precondition**: `-Apply` aborts cleanly (before any change) if the P4
+  default changelist isn't empty (preflight **check 10**), with guidance to move WIP to a
+  numbered CL — so a messy workspace never gets a half-open changelist.
+
+### Notes
+- Diagnosed against a real consumer whose P4 preflight failed checks 2/4/5/10. Filesystem
+  upgrade path unchanged (15/15 suites pass).
 ## [2.13.0] - 2026-06-23 — `upgrade.ps1`: real upgrades for existing consumers
 
 ### Added
