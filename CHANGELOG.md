@@ -2,6 +2,26 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [2.13.2] - 2026-06-23 — `upgrade.ps1` apply-time Perforce fixes (validated on a live consumer)
+
+Found and fixed while running the first real Perforce upgrade end-to-end:
+
+### Fixed (upgrade.ps1)
+- **EAP vs p4 stderr**: relax `$ErrorActionPreference` in the apply section. p4 writes
+  informational text to stderr in normal operation (e.g. "File(s) not opened" when the
+  default CL is empty); under `Stop` that aborted the apply on the *success* path.
+- **CL creation BOM**: feed the change spec to `p4 change -i` via a no-BOM temp file +
+  `cmd` redirection. Piping the spec directly can prepend a UTF-8 BOM that p4 rejects
+  with a line-1 syntax error (the test suite never exercises real p4, so it was latent).
+- **Head-rev scan covers root files**: `fstat` now scans root-level managed files
+  (`.p4ignore`, `AGENTS.md`, `CLAUDE.md`, `opencode.json`) in addition to the dir-roots,
+  so their `depotRevision` is re-baselined (preflight check 4). Adoption stays scoped to
+  the managed scaffold roots only (never adopts unrelated root files).
+
+### Validated
+- Clean end-to-end upgrade of a real v1.0.0 Perforce + Unreal consumer: changelist with
+  101 add + 42 edit + 24 delete, 11 customizations preserved (untouched, not in the CL),
+  all new skills present, retired removed, **preflight 10/10**. 15/15 suites pass.
 ## [2.13.1] - 2026-06-23 — `upgrade.ps1`: complete Perforce preflight handling
 
 ### Fixed/Added (upgrade.ps1, Perforce mode)
