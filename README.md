@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-15%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v2.11.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-16%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v2.11.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -166,7 +166,8 @@ Tools and rules layered on top of the core for specific environments.
 
 | Overlay | When | What it adds |
 |---|---|---|
-| `core` | always | The core skills + workflows + agent above. The portable layer. |
+| `core` | always | The core skills + workflows + agent above. The portable layer (vendored from upstream). |
+| `core-local` | always (force-added) | **Package-invented (non-upstream)** skills, kept physically separate from vendored content so an upstream re-sync can't clobber them. Holds `roundtable`. See [ADR-0004](docs/adr-0004-local-origin-provenance-and-core-local.md). |
 | `perforce` | `setup.ps1` auto-adds if `.p4ignore` or in P4 client | 3 Perforce workflows (CL-by-CL, review/submit, VC conventions). |
 | `ue` | `setup.ps1` auto-adds if `*.uproject` present | UE sync-build-submit slash command + UE-pattern `.p4ignore` fragment. |
 | `myst-project` | **never auto-added**; reference example | Original Myst_Proto-specific content. See [overlay README](overlays/myst-project/README.md). |
@@ -251,7 +252,7 @@ myst-agentic-workflow/
 │   ├── check-mattpocock-updates.ps1
 │   ├── run-skeleton-preflight.ps1 # 10-point write-mode gate
 │   ├── migrate-retired-skills.ps1 # upgrade helper: remove retired skills from old installs
-│   └── run-*-tests.ps1            # 15 test suites (incl. parity + link-existence lint)
+│   └── run-*-tests.ps1            # 16 test suites (incl. parity, link-existence, provenance)
 └── fixtures/                      # E2E install fixtures
 ```
 

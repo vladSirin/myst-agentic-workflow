@@ -2,6 +2,35 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [2.16.0] - 2026-06-23 — Local-origin provenance + `core-local` overlay (anti-drift)
+
+Make the upstream-vs-local boundary explicit and re-vendor-proof (see
+[ADR-0004](docs/adr-0004-local-origin-provenance-and-core-local.md)).
+
+### Added
+- **`core-local` overlay** (`overlays/core-local/`) — force-added at install (like `tool-capability`)
+  so it ships to every consumer, but lives under `overlays/` where a re-vendor from upstream can
+  never touch it. Holds **`roundtable`** (moved out of `templates/.../skills/`, where a "stay
+  faithful" sync could have clobbered it). Consumer install path is unchanged.
+- **`scripts/run-provenance-tests.ps1`** — 16th suite: asserts every `upstreamDerived: true` entry
+  has a license, **no local-origin skill is sourced from `templates/.../skills/`**, and `core-local`
+  is well-formed + declared.
+- Rejection-memory `type: "local-origin"` guard entries (`roundtable`, `update`/`promote-myst-skills`,
+  `sync-build-submit`, `check-uproject-assoc.sh`) so a future upstream name-collision is flagged.
+
+### Fixed
+- **Provenance flags** (resolved the 30-entry anomaly): `update-myst-skills` + `promote-myst-skills`
+  (×3 tools) were mismarked `upstreamDerived: true` → corrected to `false` (they're local commands);
+  24 genuine upstream entries (`grill-with-docs`, `improve-codebase-architecture`, `tdd`, `to-issues`,
+  `to-prd`, `triage`, `grill-me`, `handoff` ×3) were missing `upstreamLicense` → set to `MIT`.
+
+### Changed
+- `init-consumer.ps1` and `install.ps1` force-add `core-local`; `core-local` added to the overlays
+  enum (both manifests). `install.ps1` now coerces `$TargetOverlays` to an array (fixes a scalar
+  `+=` string-concat bug when a single `-Overlays` value is passed).
+
+### Notes
+- 16/16 suites pass; fresh core-only install verified to still land `roundtable`.
 ## [2.15.0] - 2026-06-23 — sync-build-submit: fix auto-submit footgun + Tier 2 build pipeline
 
 ### Fixed (safety / behavior change)

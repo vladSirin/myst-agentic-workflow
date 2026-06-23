@@ -29,7 +29,8 @@
         "perforce",
         "ue",
         "myst-project",
-        "tool-capability"
+        "tool-capability",
+        "core-local"
     ],
     "upstreams": {
         "mattpocockSkills": {
@@ -1796,7 +1797,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -1812,15 +1813,15 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
             "path": ".claude/skills/roundtable/SKILL.md",
             "tool": "claude",
-            "owner": "package",
-            "ownerOverlay": "core",
-            "sourceTemplate": "templates/claude/.claude/skills/roundtable/SKILL.md",
+            "owner": "overlay",
+            "ownerOverlay": "core-local",
+            "sourceTemplate": "overlays/core-local/.claude/skills/roundtable/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -1844,7 +1845,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -1860,7 +1861,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -1876,7 +1877,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -1892,7 +1893,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -2232,7 +2233,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -2248,15 +2249,15 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
             "path": ".Codex/skills/roundtable/SKILL.md",
             "tool": "codex",
-            "owner": "package",
-            "ownerOverlay": "core",
-            "sourceTemplate": "templates/codex/.Codex/skills/roundtable/SKILL.md",
+            "owner": "overlay",
+            "ownerOverlay": "core-local",
+            "sourceTemplate": "overlays/core-local/.Codex/skills/roundtable/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -2280,7 +2281,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -2296,7 +2297,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -2312,7 +2313,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -2328,7 +2329,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -2668,7 +2669,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -2684,15 +2685,15 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
             "path": ".opencode/skills/roundtable/SKILL.md",
             "tool": "opencode",
-            "owner": "package",
-            "ownerOverlay": "core",
-            "sourceTemplate": "templates/opencode/.opencode/skills/roundtable/SKILL.md",
+            "owner": "overlay",
+            "ownerOverlay": "core-local",
+            "sourceTemplate": "overlays/core-local/.opencode/skills/roundtable/SKILL.md",
             "sourceCommit": "<resolved-by-init-consumer>",
             "hashPolicy": "sha256",
             "mergeStrategy": "copy",
@@ -2716,7 +2717,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -2732,7 +2733,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -2748,7 +2749,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -2764,7 +2765,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -3105,7 +3106,7 @@
             "localOnly": false,
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
-            "upstreamDerived": true,
+            "upstreamDerived": false,
             "upstreamLicense": null,
             "blockHashPolicy": "not-applicable"
         },
@@ -3121,7 +3122,7 @@
             "localOnly": false,
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
-            "upstreamDerived": true,
+            "upstreamDerived": false,
             "upstreamLicense": null,
             "blockHashPolicy": "not-applicable"
         },
@@ -3137,7 +3138,7 @@
             "localOnly": false,
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
-            "upstreamDerived": true,
+            "upstreamDerived": false,
             "upstreamLicense": null,
             "blockHashPolicy": "not-applicable"
         },
@@ -3153,7 +3154,7 @@
             "localOnly": false,
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
-            "upstreamDerived": true,
+            "upstreamDerived": false,
             "upstreamLicense": null,
             "blockHashPolicy": "not-applicable"
         },
@@ -3169,7 +3170,7 @@
             "localOnly": false,
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
-            "upstreamDerived": true,
+            "upstreamDerived": false,
             "upstreamLicense": null,
             "blockHashPolicy": "not-applicable"
         },
@@ -3185,7 +3186,7 @@
             "localOnly": false,
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
-            "upstreamDerived": true,
+            "upstreamDerived": false,
             "upstreamLicense": null,
             "blockHashPolicy": "not-applicable"
         },
@@ -3218,7 +3219,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -3234,7 +3235,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -3250,7 +3251,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -3266,7 +3267,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -3282,7 +3283,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
@@ -3298,7 +3299,7 @@
             "writablePolicy": "installer-owned",
             "baselineState": "scaffold-cleanup",
             "upstreamDerived": true,
-            "upstreamLicense": null,
+            "upstreamLicense": "MIT",
             "blockHashPolicy": "not-applicable"
         },
         {
