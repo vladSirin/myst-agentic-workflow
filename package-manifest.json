@@ -1,7 +1,7 @@
 {
   "package": {
     "name": "myst-agentic-workflow",
-    "version": "2.16.0",
+    "version": "2.17.0",
     "repository": "https://github.com/vladSirin/myst-agentic-workflow",
     "writeModeEnabled": true,
     "license": "MIT"
@@ -9,7 +9,7 @@
   "manifestSchema": {
     "schemaVersion": 3,
     "ownership": ["package", "overlay", "project", "local"],
-    "overlays": ["core", "perforce", "ue", "myst-project", "tool-capability", "core-local"],
+    "overlays": ["core", "perforce", "ue", "myst-project", "tool-capability", "core-local", "afk-autonomy"],
     "mergeStrategies": {
       "copy": "installer owns whole file; whole-file sha256",
       "full-file-override": "overlay replaces a core file; whole-file sha256",
