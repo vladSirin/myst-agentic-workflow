@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-14%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v2.11.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-15%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v2.11.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -29,12 +29,13 @@ Three lifecycle commands cover the entire flow:
 ```powershell
 & "$Pkg/setup.ps1"   -TargetRoot $Target  [-Yes]                        # first-time install
 & "$Pkg/update.ps1"  -TargetRoot $Target  [-Yes] [-NoPull]              # sync upstream changes in
+& "$Pkg/upgrade.ps1" -TargetRoot $Target  [-Apply]                      # major version jump (preserves customizations)
 & "$Pkg/promote.ps1" -TargetRoot $Target -Paths '<file>'                # push local improvements out
 ```
 
 All three dry-run first, prompt before writing, and auto-derive their configuration from your installed manifest.
 
-**Upgrading an older install?** See [`docs/upgrade.md`](docs/upgrade.md). Retired skills (`zoom-out`/`caveman`/`write-a-skill`, and `diagnose` → `diagnosing-bugs`) need a one-time cleanup the installer doesn't auto-delete — run [`scripts/migrate-retired-skills.ps1`](scripts/migrate-retired-skills.ps1) (Perforce-aware) before `update.ps1`.
+**Upgrading an older install?** Run [`upgrade.ps1`](upgrade.ps1) (preview, then `-Apply`) — it adds new skills, refreshes untouched files, **preserves your customizations**, removes retired skills, and (for Perforce) wraps it all in one reviewable changelist. `setup.ps1`/`update.ps1` can't do this jump (they drive install from the stale manifest). See [`docs/upgrade.md`](docs/upgrade.md).
 
 ## Why this package exists
 
@@ -86,6 +87,7 @@ The three commands you'll actually run.
 |---|---|
 | [`setup.ps1`](setup.ps1) | First-time install: auto-detect VC, bootstrap manifest, dry-run, write. |
 | [`update.ps1`](update.ps1) | Sync upstream: `git pull` + compare + dry-run + write. Auto-wraps Perforce CL. |
+| [`upgrade.ps1`](upgrade.ps1) | Major-version upgrade of an existing consumer: regenerate manifest, add new, refresh untouched, **preserve customizations**, remove retired. Preview by default; `-Apply` (Perforce CL). |
 | [`promote.ps1`](promote.ps1) | Push local improvements to package: auto-classify + dry-run + write. |
 
 ### Skills (per-tool, installed under `.claude/`, `.Codex/`, `.opencode/`)
@@ -249,7 +251,7 @@ myst-agentic-workflow/
 │   ├── check-mattpocock-updates.ps1
 │   ├── run-skeleton-preflight.ps1 # 10-point write-mode gate
 │   ├── migrate-retired-skills.ps1 # upgrade helper: remove retired skills from old installs
-│   └── run-*-tests.ps1            # 14 test suites (incl. parity + link-existence lint)
+│   └── run-*-tests.ps1            # 15 test suites (incl. parity + link-existence lint)
 └── fixtures/                      # E2E install fixtures
 ```
 
