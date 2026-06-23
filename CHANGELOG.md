@@ -2,6 +2,37 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [2.15.0] - 2026-06-23 — sync-build-submit: fix auto-submit footgun + Tier 2 build pipeline
+
+### Fixed (safety / behavior change)
+- **`overlays/ue/.../sync-build-submit.md` no longer auto-submits on a GREEN review without
+  asking.** The previous default ran `p4 submit` automatically when the tech review came back
+  green (and on INFO-only) — autonomous submission firing even in normal supervised sessions.
+  **New default: always present the verdict and ask before submitting, including on GREEN.**
+  Autonomous auto-submit-on-green is now a deliberately-gated capability (forthcoming
+  `afk-autonomy` overlay + explicit per-session arming).
+
+### Added (Tier 2 — promoted + generalized from a consumer)
+- **Step 1b Build Gate** — skip the Editor build when a sync brought only content assets
+  (known-content allowlist + fail-safes: unknown ext → build; `.ini` is not content; new
+  `.uplugin`/Plugins dir → build).
+- **Step 2c BuildId-only manifest-churn revert** — detect and `p4 sync -f` the `.modules/.target/
+  .version` files that differ from depot *only* by a regenerated BuildId GUID (submitting them
+  rewrites the team's BuildId + bloats the CL ~100×); keep manifests with real Modules-map changes.
+- Heredoc changelist creation (avoids the PowerShell-BOM corruption of `p4 change -i`) and a
+  machine-parseable reviewer `Verdict:` contract.
+
+### Changed
+- `sync-build-submit` is now **user-invoked** (`disable-model-invocation: true` + a prose note) so
+  the agent never starts an Editor build + Perforce ops on its own.
+- Generalized from hardcoded Myst paths to clear `<PLACEHOLDER>` tokens (`<DEPOT_ROOT>`,
+  `<PROJECT_ROOT>`, `<GAME_DIR>`, `<UPROJECT>`, `<EDITOR_TARGET>`) + a Setup table — reusable by
+  any UE source-tree + Perforce project. Project-specific worked examples were stripped.
+
+### Notes
+- 15/15 suites pass. Local-origin (not from upstream); categorized under the provenance work
+  in a following change.
+
 ## [2.14.0] - 2026-06-23 — Promote consumer P4-workflow safety improvements
 
 Generic improvements harvested from a real consumer (3-way diffed vs the install base to
