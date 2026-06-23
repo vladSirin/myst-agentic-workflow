@@ -2,6 +2,33 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [2.17.0] - 2026-06-23 — `afk-autonomy` overlay (Tier 3: gated autonomous submit)
+
+### Added
+- **`afk-autonomy` overlay** (`overlays/afk-autonomy/`, Claude Code only, **opt-in — NOT
+  force-added**) — autonomous auto-submit governance, generalized from a consumer and homed as a
+  separately-selectable overlay so a plain install does not contain it:
+  - `AFKAutoSubmit.md` — the protocol: explicit-arming authorization sources (issue / per-issue /
+    per-CL / session, most-recent-explicit-wins; agent never self-promotes), a mechanical gate
+    floor (path whitelist/blacklist, size cap, reviewer `Verdict` + `AFK-Verdict: SAFE|REQUIRES-HITL`),
+    growing-CL handling, dry-run-first rollout, daily audit log, per-CL revert recovery, and a
+    reviewer-lessons calibration loop. Cross-overlay references are prose (no file links);
+    gate paths are documented as project-configurable.
+  - `afk-status.sh` — SessionStart surfacer (mode + recent log + pending reverts).
+  - `architecture-reviewer-afk-lessons.md` / `radical-design-critic-afk-lessons.md` — empty lesson
+    templates, **`runtime-mutable`** so they accrue lessons and are never overwritten on reinstall.
+
+### Design
+- **Two independent gates, neither default-on:** the overlay must be selected at install AND armed by
+  an explicit per-session phrase. **No enforcement hook** — advisory governance only (honors the
+  v1.9.0 decision to drop hook-enforced auto-submit gating).
+- Ties into v2.15.0: `sync-build-submit`'s auto-submit-on-green activates *only* when this overlay is
+  installed and armed; the supervised default still always asks.
+- Local-origin (`upstreamDerived: false`); added to both overlay enums.
+
+### Notes
+- 16/16 suites pass. Verified opt-in: a core-only install excludes the AFK files; selecting
+  `afk-autonomy` installs all four.
 ## [2.16.0] - 2026-06-23 — Local-origin provenance + `core-local` overlay (anti-drift)
 
 Make the upstream-vs-local boundary explicit and re-vendor-proof (see

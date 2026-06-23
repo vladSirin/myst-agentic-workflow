@@ -30,7 +30,8 @@
         "ue",
         "myst-project",
         "tool-capability",
-        "core-local"
+        "core-local",
+        "afk-autonomy"
     ],
     "upstreams": {
         "mattpocockSkills": {
@@ -87,6 +88,70 @@
         ]
     },
     "files": [
+        {
+            "path": ".claude/workflows/AFKAutoSubmit.md",
+            "tool": "claude",
+            "owner": "overlay",
+            "ownerOverlay": "afk-autonomy",
+            "sourceTemplate": "overlays/afk-autonomy/.claude/workflows/AFKAutoSubmit.md",
+            "sourceCommit": "<resolved-by-init-consumer>",
+            "hashPolicy": "sha256",
+            "mergeStrategy": "copy",
+            "localOnly": false,
+            "writablePolicy": "installer-owned",
+            "baselineState": "submitted",
+            "upstreamDerived": false,
+            "upstreamLicense": null,
+            "blockHashPolicy": "not-applicable"
+        },
+        {
+            "path": ".claude/scripts/afk-status.sh",
+            "tool": "claude",
+            "owner": "overlay",
+            "ownerOverlay": "afk-autonomy",
+            "sourceTemplate": "overlays/afk-autonomy/.claude/scripts/afk-status.sh",
+            "sourceCommit": "<resolved-by-init-consumer>",
+            "hashPolicy": "sha256",
+            "mergeStrategy": "copy",
+            "localOnly": false,
+            "writablePolicy": "installer-owned",
+            "baselineState": "submitted",
+            "upstreamDerived": false,
+            "upstreamLicense": null,
+            "blockHashPolicy": "not-applicable"
+        },
+        {
+            "path": ".claude/agents/architecture-reviewer-afk-lessons.md",
+            "tool": "claude",
+            "owner": "overlay",
+            "ownerOverlay": "afk-autonomy",
+            "sourceTemplate": "overlays/afk-autonomy/.claude/agents/architecture-reviewer-afk-lessons.md",
+            "sourceCommit": "<resolved-by-init-consumer>",
+            "hashPolicy": "runtime-mutable",
+            "mergeStrategy": "copy",
+            "localOnly": false,
+            "writablePolicy": "installer-owned",
+            "baselineState": "submitted",
+            "upstreamDerived": false,
+            "upstreamLicense": null,
+            "blockHashPolicy": "not-applicable"
+        },
+        {
+            "path": ".claude/agents/radical-design-critic-afk-lessons.md",
+            "tool": "claude",
+            "owner": "overlay",
+            "ownerOverlay": "afk-autonomy",
+            "sourceTemplate": "overlays/afk-autonomy/.claude/agents/radical-design-critic-afk-lessons.md",
+            "sourceCommit": "<resolved-by-init-consumer>",
+            "hashPolicy": "runtime-mutable",
+            "mergeStrategy": "copy",
+            "localOnly": false,
+            "writablePolicy": "installer-owned",
+            "baselineState": "submitted",
+            "upstreamDerived": false,
+            "upstreamLicense": null,
+            "blockHashPolicy": "not-applicable"
+        },
         {
             "path": ".claude/scripts/check-uproject-assoc.sh",
             "tool": "claude",
