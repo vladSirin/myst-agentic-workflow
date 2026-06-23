@@ -134,6 +134,52 @@ foreach ($e in $old.files) {
     if ($base -and $disk -ne $base) { $orphanCustom += $e.path }          # customized retired file -> keep + warn
     else { $retired += $e.path }
 }
+# Adopt PRE-EXISTING unmanaged depot files under scaffold roots (Perforce only) as project-owned:
+# they're in neither the old nor new manifest (e.g. old-feature artifacts, a tracked config), so
+# they would trip preflight check 5. Record them as owner=project/manual-only so they're preserved
+# AND recognized as managed (never modified by install). We never delete files we don't recognize.
+$adopt=@()
+if ($VC -eq 'perforce') {
+    $depotPrefix = $null
+    $w = (& p4 -ztag -F "%depotFile%" where (Join-Path $TargetRoot 'Docs\agents\scaffold-manifest.json') 2>$null) -join ''
+    if ($w -match '^(//.+)/Docs/agents/scaffold-manifest\.json') { $depotPrefix = $Matches[1] }
+    if ($depotPrefix) {
+        # Build rel -> headRev for live (non-deleted) depot files under scaffold roots.
+        $headRev=@{}
+        foreach ($root in @('.claude','.Codex','.opencode','Docs/agents','Docs/MustRead')) {
+            $fs = & p4 -ztag -F "%depotFile%|%headRev%|%headAction%" fstat "$depotPrefix/$root/..." 2>$null
+            foreach ($line in $fs) {
+                $p = $line -split '\|'; if ($p.Count -lt 3) { continue }
+                if ($p[2] -match 'delete') { continue }                          # deleted at head -> not present
+                if ($p[0] -match ('^' + [regex]::Escape($depotPrefix) + '/(.+)$')) { $headRev[$Matches[1].Replace('\','/')] = $p[1] }
+            }
+        }
+        # Adopt pre-existing unmanaged depot files as project-owned (preserve + satisfy check 5).
+        $retiredSet=@{}; foreach($r in $retired){ $retiredSet[$r]=$true }
+        foreach ($rel in @($headRev.Keys)) {
+            if ($newPaths[$rel] -or $retiredSet[$rel]) { continue }
+            $fp = Join-Path $TargetRoot $rel
+            if (-not (Test-Path -LiteralPath $fp)) { continue }
+            $new.files += [pscustomobject]@{
+                path=$rel; tool='common'; owner='project'; ownerOverlay=$null; sourceTemplate=$null
+                sourceCommit='project-local'; hashPolicy='sha256'; contentHash=(Get-Hash $fp); depotRevision=[int]$headRev[$rel]
+                mergeStrategy='manual-only'; localOnly=$false; writablePolicy='human-owned'
+                baselineState='adopted-on-upgrade'; upstreamDerived=$false; upstreamLicense=$null
+                blockHashPolicy='not-applicable'
+            }
+            $newPaths[$rel]=$true; $adopt += $rel
+        }
+        # Re-baseline depotRevision to current headRev so preflight check 4 passes (null for files
+        # not yet in the depot -- they'll be p4-added and are exempt while open-for-add).
+        foreach ($e in $new.files) {
+            if ($e.localOnly -or $e.hashPolicy -eq 'self-excluded') { continue }
+            $rel = $e.path.Replace('\','/')
+            $val = if ($headRev.ContainsKey($rel)) { [int]$headRev[$rel] } else { $null }
+            if ($e.PSObject.Properties.Match('depotRevision').Count -gt 0) { $e.depotRevision = $val }
+            else { $e | Add-Member -NotePropertyName depotRevision -NotePropertyValue $val -Force }
+        }
+    }
+}
 Remove-Item -Recurse -Force $tmp -ErrorAction SilentlyContinue
 
 # --- Report the plan ---
@@ -147,6 +193,7 @@ Show "REFRESH (untouched -> package)"  $refresh
 Show "PRESERVE (your customizations)"  $preserve
 Show "BLOCK-REFRESH (managed block)"   $blockRefresh
 Show "REMOVE (retired)"                $retired
+if ($adopt.Count -gt 0)        { Show "ADOPT (pre-existing, kept as project-owned)" $adopt }
 if ($orphanCustom.Count -gt 0) { Show "KEPT but RETIRED upstream (you customized; review)" $orphanCustom }
 
 Write-Host ""
@@ -165,6 +212,21 @@ if (-not $Yes) {
 # --- APPLY ---
 $cl = $null
 if ($VC -eq 'perforce') {
+    # Precondition: install's preflight (check 10) requires an empty DEFAULT changelist. Abort
+    # BEFORE making any change so we never leave a half-open CL on a messy workspace.
+    $defOpen = @(& p4 opened -c default 2>$null | Where-Object { $_ -notmatch 'not opened' })
+    if ($defOpen.Count -gt 0) {
+        Write-Error @"
+Default changelist is not empty ($($defOpen.Count) file(s) open). install preflight (check 10)
+requires it clean. Move them to a numbered changelist first, e.g.:
+  p4 change            # create a numbered CL, note its number N
+  p4 reopen -c N //...  # move the open default files into N
+Then re-run: upgrade.ps1 -TargetRoot '$TargetRoot' -Apply
+Open in default:
+$([string]::Join("`n", ($defOpen | ForEach-Object { '  ' + $_ })))
+"@
+        exit 2
+    }
     $clTag = Prop $old.installedProject 'clTagPrefix'; if (-not $clTag) { $clTag = '[scaffold]' }
     $spec = & p4 change -o
     $desc = "$clTag Upgrade agentic scaffold to current package`n`n## What`n- upgrade.ps1 v${ScriptVersion}: +$($add.Count) new, ~$($refresh.Count) refreshed, $($preserve.Count) preserved, -$($retired.Count) retired.`n`n## Notes`n- Generated by upgrade.ps1. Review the diff before submit; 'p4 revert -c <CL> //...' to abort."
