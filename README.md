@@ -128,6 +128,7 @@ Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) at pinned
 | Skill | Use it when |
 |---|---|
 | `/roundtable` | Multi-perspective design discussion when one viewpoint isn't enough. |
+| `/setup-agentic-workflow` | Interactive wizard to install/upgrade the scaffold in a project — detects the environment, proposes tools + overlays, asks one question at a time, dry-runs, then writes (front-end over `setup.ps1`/`upgrade.ps1`). |
 
 Plus package-management commands `/update-myst-skills` (sync upstream in) and `/promote-myst-skills` (push a local improvement out); overlay-only additions `/sync-build-submit` (`ue`), `/design` + `architecture-reviewer` (`myst-project`).
 
@@ -167,7 +168,7 @@ Tools and rules layered on top of the core for specific environments.
 | Overlay | When | What it adds |
 |---|---|---|
 | `core` | always | The core skills + workflows + agent above. The portable layer (vendored from upstream). |
-| `core-local` | always (force-added) | **Package-invented (non-upstream)** skills, kept physically separate from vendored content so an upstream re-sync can't clobber them. Holds `roundtable`. See [ADR-0004](docs/adr-0004-local-origin-provenance-and-core-local.md). |
+| `core-local` | always (force-added) | **Package-invented (non-upstream)** skills, kept physically separate from vendored content so an upstream re-sync can't clobber them. Holds `roundtable` + `setup-agentic-workflow`. See [ADR-0004](docs/adr-0004-local-origin-provenance-and-core-local.md). |
 | `perforce` | `setup.ps1` auto-adds if `.p4ignore` or in P4 client | 3 Perforce workflows (CL-by-CL, review/submit, VC conventions). |
 | `ue` | `setup.ps1` auto-adds if `*.uproject` present | UE sync-build-submit slash command + UE-pattern `.p4ignore` fragment. |
 | `myst-project` | **never auto-added**; reference example | Original Myst_Proto-specific content. See [overlay README](overlays/myst-project/README.md). |
