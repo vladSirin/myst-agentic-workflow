@@ -102,7 +102,12 @@ if (-not (Test-Path $InstalledManifestPath)) {
 $InstalledManifest = Get-Content -Raw $InstalledManifestPath | ConvertFrom-Json
 
 $TargetTools = if ($Tools -eq "all") { @("codex", "claude", "opencode") } else { $Tools -split "," | ForEach-Object { $_.Trim().ToLower() } }
-$TargetOverlays = $Overlays -split "," | ForEach-Object { $_.Trim().ToLower() }
+$TargetOverlays = @($Overlays -split "," | ForEach-Object { $_.Trim().ToLower() })
+# core-local is package-invented content shipped to every consumer (mirrors init-consumer's
+# force-add). Force-add so its files install even when the caller passed a narrower -Overlays
+# (e.g. setup.ps1 passing the user's selection only). tool-capability needs no force-add — its
+# entries are manual-only and never written regardless of overlay selection.
+if ($TargetOverlays -notcontains 'core-local') { $TargetOverlays += 'core-local' }
 
 Write-Output "=============================================================="
 Write-Output "myst-agentic-workflow install.ps1  v$ScriptVersion"

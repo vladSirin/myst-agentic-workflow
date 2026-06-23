@@ -19,5 +19,16 @@
     "reason": "Faithful-to-upstream: upstream replaced write-a-skill with writing-great-skills. Remove write-a-skill (Phase B-3); writing-great-skills vendored in Phase B-1. (User call 2026-06-22.)" },
 
   { "type": "schema-note", "_adopted": "ADOPTED faithfully (NOT rejected): domain-modeling, grilling, teach (Phase A); codebase-design, writing-great-skills, setup-matt-pocock-skills, edit-article, obsidian-vault, resolving-merge-conflicts (+perforce P4-NOTES overlay), implement (Phase B-1); diagnosing-bugs (HEAD rename, v2.5.0). Carried skills converge to HEAD verbatim in Phase B-2.",
-    "_deviations": "to-issues drops upstream's HITL/AFK slice-typing faithfully; AFK-readiness carried by triage label (Phase B-2). resolving-merge-conflicts base is git-verbatim; Perforce text-merge guidance lives in the perforce-overlay P4-NOTES companion." }
+    "_deviations": "to-issues drops upstream's HITL/AFK slice-typing faithfully; AFK-readiness carried by triage label (Phase B-2). resolving-merge-conflicts base is git-verbatim; Perforce text-merge guidance lives in the perforce-overlay P4-NOTES companion." },
+
+  { "type": "local-origin", "target": "roundtable", "homedIn": "overlays/core-local", "upstreamDerived": false, "date": "2026-06-23",
+    "reason": "Package-invented, NOT from upstream. Moved to the core-local overlay (re-vendor only writes templates/.../skills/, never overlays/). A future upstream skill named 'roundtable' must NOT silently overwrite this — adopt under a different name or reconcile explicitly. Enforced by run-provenance-tests.ps1." },
+  { "type": "local-origin", "target": "update-myst-skills", "homedIn": "templates (command)", "upstreamDerived": false, "date": "2026-06-23",
+    "reason": "Local package-management command (wraps update.ps1). Not from upstream. Lives in commands/, which the upstream skill sync does not target." },
+  { "type": "local-origin", "target": "promote-myst-skills", "homedIn": "templates (command)", "upstreamDerived": false, "date": "2026-06-23",
+    "reason": "Local package-management command (wraps promote.ps1). Not from upstream." },
+  { "type": "local-origin", "target": "sync-build-submit", "homedIn": "overlays/ue", "upstreamDerived": false, "date": "2026-06-23",
+    "reason": "Local UE+Perforce build/submit pipeline (Tier 2). Not from upstream. Lives in the ue overlay." },
+  { "type": "local-origin", "target": "check-uproject-assoc.sh", "homedIn": "overlays/ue", "upstreamDerived": false, "date": "2026-06-23",
+    "reason": "Local UE source-tree EngineAssociation submit guard. Not from upstream. Lives in the ue overlay." }
 ]
