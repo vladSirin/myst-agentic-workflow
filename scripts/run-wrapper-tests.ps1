@@ -65,12 +65,12 @@ if ($r.Out -match 'reusable-core\s+\(inferred\)') { Ok 'promote.ps1 inferred cla
 else { Bad 'promote.ps1 inferred classification' 'inference marker not present' }
 
 # Verify package file got the change
-$pkgFile = Join-Path $pkg 'templates\claude\.claude\skills\diagnosing-bugs\SKILL.md'
+$pkgFile = Join-Path $pkg 'plugins\myst-dev-kit\skills\diagnosing-bugs\SKILL.md'
 if (Select-String -Path $pkgFile -Pattern 'Test marker' -Quiet) { Ok 'promote.ps1 wrote change to package tree' }
 else { Bad 'promote.ps1 wrote change' 'package file does not show marker' }
 
 # Cleanup: restore the package file
-Restore-PackageFile 'templates/claude/.claude/skills/diagnosing-bugs/SKILL.md'
+Restore-PackageFile 'plugins/myst-dev-kit/skills/diagnosing-bugs/SKILL.md'
 Remove-Item -Recurse -Force $t -ErrorAction SilentlyContinue
 
 # --- Test 4: promote.ps1 errors clearly when classification cannot be inferred ---

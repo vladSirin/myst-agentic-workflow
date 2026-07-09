@@ -27,8 +27,7 @@ function New-NewuserFixture {
 
     # Synthetic per-tool sentinel templates (one each so we verify both tools).
     $tpls = @(
-        @{ Rel='templates/codex/.Codex/skills/diagnose.md';    Body="# Codex diagnose`nuse {{game_docs_root}}/some.md`n" },
-        @{ Rel='templates/claude/.claude/skills/diagnose.md';  Body="# Claude diagnose`nuse {{game_docs_root}}/some.md`n" }
+        @{ Rel='plugins/myst-dev-kit/skills/diagnose.md';  Body="# Shared diagnose`nuse {{game_docs_root}}/some.md`n" }
     )
     foreach ($t in $tpls) {
         $p = Join-Path $pkg ($t.Rel -replace '/','\')
@@ -58,8 +57,8 @@ function New-NewuserFixture {
         }
     }
     $entries = @(
-        MkEntry '.Codex/skills/diagnose.md'           'codex'    'templates/codex/.Codex/skills/diagnose.md'
-        MkEntry '.claude/skills/diagnose.md'          'claude'   'templates/claude/.claude/skills/diagnose.md'
+        MkEntry '.Codex/skills/diagnose.md'           'codex'    'plugins/myst-dev-kit/skills/diagnose.md'
+        MkEntry '.claude/skills/diagnose.md'          'claude'   'plugins/myst-dev-kit/skills/diagnose.md'
     )
     $instMan = @{ schemaVersion=3; installedProject=@{name='Acme_Game'; docsRoot='Docs'; gameDocsRoot='Acme_Game/Docs'}; files=$entries } | ConvertTo-Json -Depth 6
     [IO.File]::WriteAllText((Join-Path $target ('Docs/agents/scaffold-manifest.json' -replace '/','\')), $instMan)
@@ -84,8 +83,8 @@ else { Bad 'install -Mode Write' "code=$($r.Code) out=$($r.Out)" }
 
 # Check each per-tool sentinel landed.
 $sentinels = @(
-    @{ Tool='codex';    Path=(Join-Path $fx.Target '.Codex\skills\diagnose.md');           ExpectedHead='# Codex diagnose' }
-    @{ Tool='claude';   Path=(Join-Path $fx.Target '.claude\skills\diagnose.md');          ExpectedHead='# Claude diagnose' }
+    @{ Tool='codex';    Path=(Join-Path $fx.Target '.Codex\skills\diagnose.md');           ExpectedHead='# Shared diagnose' }
+    @{ Tool='claude';   Path=(Join-Path $fx.Target '.claude\skills\diagnose.md');          ExpectedHead='# Shared diagnose' }
 )
 foreach ($s in $sentinels) {
     if (-not (Test-Path -LiteralPath $s.Path)) {

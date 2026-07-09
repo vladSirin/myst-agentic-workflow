@@ -16,8 +16,7 @@ If you're unsure whether a `.scratch/` file should be submitted: assume
 typically only `_tmp/` or `.cache/` style directories).
 
 Genuinely local-only state lives elsewhere — `.claude/settings.local.json`,
-`.Codex/settings.local.json`, `.opencode/settings.local.json`. Those are
-per-machine, not `.scratch/`.
+`.Codex/settings.local.json`. Those are per-machine, not `.scratch/`.
 
 ## Conventions
 

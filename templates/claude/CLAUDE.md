@@ -2,8 +2,6 @@
 
 All Claude Code agentic configuration lives under `.claude/`. This section documents every component so any team member can understand and use the full setup.
 
-OpenCode is also supported as a secondary agentic tool. Its configuration lives in `opencode.json` and `.opencode/`.
-
 **CRITICAL**: At the start of EVERY session, read and follow ALL workflow files listed below.
 
 ### `.claude/` Directory Map

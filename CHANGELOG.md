@@ -2,6 +2,37 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [3.0.0] - 2026-07-09 — marketplace restructure: OpenCode retired, shared-source layout
+
+### BREAKING / Removed
+- **OpenCode support retired** (tool scope is now Claude Code + Codex): deleted
+  `templates/opencode/` (49 files), all `overlays/*/.opencode/` trees, the 60 `tool: opencode`
+  manifest entries, the `openCode` tools flag + toolCapabilities block, and every opencode
+  branch in the lifecycle scripts and test runners.
+- **`run-parity-tests.ps1` retired** — the Claude/Codex/OpenCode mirror it policed no longer
+  exists (see below); parity now holds by construction.
+- **`run-runtime-mutable-tests.ps1` retired** — `opencode.json` was the only `runtime-mutable`
+  entry. The mechanism itself (hashPolicy `runtime-mutable`) remains, documented and dormant.
+
+### Changed
+- **Mirror collapsed into ONE shared source: `plugins/myst-dev-kit/`** — `templates/claude/.claude/`
+  and `templates/codex/.Codex/` were byte-identical (48/48 files); the shared
+  skills/agents/commands/scripts/workflows now live once under `plugins/myst-dev-kit/`, and
+  the manifest maps the same `sourceTemplate` to both `.claude/` and `.Codex/` targets
+  (132 sourceTemplate values remapped, zero content changes).
+- **Overlays flattened** the same way: `overlays/<name>/{skills,workflows,agents,commands,rules,scripts}/`
+  with no per-tool split. Only diverging file was `perforce/ReviewAndSubmit.md` (one tool-path
+  string) — wording neutralized to cover both tools.
+- `templates/` now holds only the per-tool bibles (`claude/CLAUDE.md`, `codex/AGENTS.md`) and
+  tool-neutral `common/docs/`.
+- README / docs / overlay READMEs updated for the two-tool, shared-source reality.
+
+### Notes
+- Layout groundwork for the plugin-marketplace build-out (`.claude-plugin/marketplace.json` +
+  dual plugin manifests land next). Named `plugins/myst-dev-kit/` to match the target
+  Claude-plugin / Codex-plugin directory shape.
+- No consumer-facing install-path changes: installed targets are still `.claude/` + `.Codex/`.
+
 ## [2.18.0] - 2026-06-23 — `/setup-agentic-workflow` interactive setup wizard
 
 ### Added

@@ -13,7 +13,7 @@
 # Priority order (a file matching multiple gates is classified by the first):
 #   1. local-only      (localOnly:true)             never reported as drift, never promoted
 #   2. project-owned   (manual-only / human-owned)  reported for awareness, never promoted
-#   3. package-core    (ownerOverlay:core)          promotes to templates/{tool|common}/
+#   3. package-core    (ownerOverlay:core)          promotes to plugins/myst-dev-kit/ (templates/common/ for tool=common)
 #   4. overlay         (ownerOverlay:non-core)      promotes to overlays/{ownerOverlay}/
 #
 # Note: this library does NOT set strict mode. Each consumer can opt in.
@@ -50,14 +50,17 @@ function Get-PromotionTarget {
     if ($bucket -in @('local-only','project-owned')) { return $null }
     $sourceTemplate = Get-EntryProperty $Entry 'sourceTemplate'
     if ($sourceTemplate) { return $sourceTemplate }
-    # Fallback: build from bucket + path
+    # Fallback: build from bucket + path. Shared-source layout: one copy under
+    # plugins/myst-dev-kit/ (or overlays/<name>/) serves both tools, so the
+    # per-tool dir prefix (.claude/ or .Codex/) is stripped from the target.
+    $sharedRel = $Entry.path -replace '^\.(claude|Codex)/', ''
     if ($bucket -eq 'package-core') {
         $tool = Get-EntryProperty $Entry 'tool'
         if ($tool -eq 'common') { return "templates/common/$($Entry.path)" }
-        return "templates/$tool/$($Entry.path)"
+        return "plugins/myst-dev-kit/$sharedRel"
     }
     $ownerOverlay = Get-EntryProperty $Entry 'ownerOverlay'
-    return "overlays/$ownerOverlay/$($Entry.path)"
+    return "overlays/$ownerOverlay/$sharedRel"
 }
 
 # True if entries of this bucket are eligible for upstream promotion.

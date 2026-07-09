@@ -28,7 +28,6 @@ There are three supported tools — you only need one:
 |------|--------------|-------------------|
 | **Claude Code** | VS Code, terminal, or desktop app | Typing questions or commands |
 | **Codex** | VS Code extension | Typing questions or commands |
-| **OpenCode** | Terminal or VS Code | Typing questions or commands |
 
 ## What Can You Ask Them to Do?
 
@@ -94,10 +93,10 @@ These tools cannot:
 ### DO NOT
 
 1. **Do not edit AI-generated configuration files by hand unless you know
-   which parts are safe.** Some files (especially `.claude/`, `.Codex/`,
-   `.opencode/` settings) are managed by the tool. If you edit them and break
+   which parts are safe.** Some files (especially `.claude/` and `.Codex/`
+   settings) are managed by the tool. If you edit them and break
    something, tell a technical team member.
-2. **Do not delete `.Codex/`, `.claude/`, or `.opencode/` folders.** They
+2. **Do not delete `.claude/` or `.Codex/` folders.** They
    contain the AI's instructions. Deleting them disables the AI until someone
    restores them.
 3. **Do not submit AI agent settings to Perforce.** Files named
@@ -154,9 +153,8 @@ If you are new: ask a team member which tool is set up on your machine.
 - **Claude Code** is the most full-featured. It is installed via the VS Code
   extension or the terminal CLI.
 - **Codex** runs in VS Code. Good for quick questions.
-- **OpenCode** is lighter and runs in a terminal. Best for script-only work.
 
-All three share the same workflows and instructions. You cannot break anything
+Both tools share the same workflows and instructions. You cannot break anything
 by switching between them.
 
 ## Getting Help
@@ -194,7 +192,6 @@ For technical questions about the AI setup: ask the project lead or check
 |------|---------|---------|
 | **Claude Code** | VS Code、终端或桌面应用 | 打字提问或输入命令 |
 | **Codex** | VS Code插件 | 打字提问或输入命令 |
-| **OpenCode** | 终端或VS Code | 打字提问或输入命令 |
 
 ## 可以帮做什么？
 
@@ -257,9 +254,9 @@ For technical questions about the AI setup: ask the project lead or check
 ### 不要做
 
 1. **不要手动编辑AI生成/管理的配置文件**（除非你确定哪些部分是安全的）。
-   尤其是`.claude/`、`.Codex/`、`.opencode/`里的设置文件。
+   尤其是`.claude/`、`.Codex/`里的设置文件。
    不小心改坏了就找技术人员帮忙。
-2. **不要删除`.Codex/`、`.claude/`、`.opencode/`文件夹。**
+2. **不要删除`.claude/`、`.Codex/`文件夹。**
    那里面有AI的工作指令，删掉AI就废了。
 3. **不要把AI的本地设置文件提交到Perforce。**
    `settings.json`、`settings.local.json`、`scheduled_tasks.lock`这类文件是
@@ -314,9 +311,8 @@ For technical questions about the AI setup: ask the project lead or check
 
 - **Claude Code**功能最全。装VS Code插件或命令行工具即可使用。
 - **Codex**在VS Code里运行，适合快速提问。
-- **OpenCode**比较轻量，在终端里运行，适合只写脚本的工作。
 
-三个工具共享同一套工作流程和指令。来回切换不会搞坏任何东西。
+两个工具共享同一套工作流程和指令。来回切换不会搞坏任何东西。
 
 ## 获取帮助
 
