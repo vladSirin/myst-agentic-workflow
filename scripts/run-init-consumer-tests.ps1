@@ -85,7 +85,6 @@ else { Bad 'setup.ps1 -Yes round-trip exits 0' "exit=$($r.Code)`n$($r.Out)" }
 $sentinels = @(
     @{ Tool='codex';    Path=(Join-Path $t '.Codex\skills\diagnosing-bugs\SKILL.md') }
     @{ Tool='claude';   Path=(Join-Path $t '.claude\skills\diagnosing-bugs\SKILL.md') }
-    @{ Tool='opencode'; Path=(Join-Path $t '.opencode\skills\diagnosing-bugs\SKILL.md') }
 )
 foreach ($s in $sentinels) {
     if (Test-Path $s.Path) { Ok "setup landed $($s.Tool) sentinel" }

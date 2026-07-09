@@ -25,11 +25,10 @@ function New-NewuserFixture {
     $pkg     = Join-Path $root 'pkg'
     $target  = Join-Path $root 'target'
 
-    # Synthetic per-tool sentinel templates (one each so we verify all 3 tools).
+    # Synthetic per-tool sentinel templates (one each so we verify both tools).
     $tpls = @(
         @{ Rel='templates/codex/.Codex/skills/diagnose.md';    Body="# Codex diagnose`nuse {{game_docs_root}}/some.md`n" },
-        @{ Rel='templates/claude/.claude/skills/diagnose.md';  Body="# Claude diagnose`nuse {{game_docs_root}}/some.md`n" },
-        @{ Rel='templates/opencode/.opencode/skills/diagnose/SKILL.md'; Body="# OpenCode diagnose`nuse {{game_docs_root}}/some.md`n" }
+        @{ Rel='templates/claude/.claude/skills/diagnose.md';  Body="# Claude diagnose`nuse {{game_docs_root}}/some.md`n" }
     )
     foreach ($t in $tpls) {
         $p = Join-Path $pkg ($t.Rel -replace '/','\')
@@ -61,7 +60,6 @@ function New-NewuserFixture {
     $entries = @(
         MkEntry '.Codex/skills/diagnose.md'           'codex'    'templates/codex/.Codex/skills/diagnose.md'
         MkEntry '.claude/skills/diagnose.md'          'claude'   'templates/claude/.claude/skills/diagnose.md'
-        MkEntry '.opencode/skills/diagnose/SKILL.md'  'opencode' 'templates/opencode/.opencode/skills/diagnose/SKILL.md'
     )
     $instMan = @{ schemaVersion=3; installedProject=@{name='Acme_Game'; docsRoot='Docs'; gameDocsRoot='Acme_Game/Docs'}; files=$entries } | ConvertTo-Json -Depth 6
     [IO.File]::WriteAllText((Join-Path $target ('Docs/agents/scaffold-manifest.json' -replace '/','\')), $instMan)
@@ -76,7 +74,7 @@ function Run($script, $argList) {
     return [pscustomobject]@{ Code = $code; Out = (($out | ForEach-Object { [string]$_ }) -join "`n") }
 }
 
-# Scenario: fresh install lands all 3 tool sentinels and compare reports clean.
+# Scenario: fresh install lands both tool sentinels and compare reports clean.
 $fx = New-NewuserFixture
 $r = Run $install @('-TargetRoot',$fx.Target,'-PackageRoot',$fx.Pkg,'-Tools','all','-Overlays','core','-Mode','Write')
 
@@ -88,7 +86,6 @@ else { Bad 'install -Mode Write' "code=$($r.Code) out=$($r.Out)" }
 $sentinels = @(
     @{ Tool='codex';    Path=(Join-Path $fx.Target '.Codex\skills\diagnose.md');           ExpectedHead='# Codex diagnose' }
     @{ Tool='claude';   Path=(Join-Path $fx.Target '.claude\skills\diagnose.md');          ExpectedHead='# Claude diagnose' }
-    @{ Tool='opencode'; Path=(Join-Path $fx.Target '.opencode\skills\diagnose\SKILL.md');  ExpectedHead='# OpenCode diagnose' }
 )
 foreach ($s in $sentinels) {
     if (-not (Test-Path -LiteralPath $s.Path)) {

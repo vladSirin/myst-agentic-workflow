@@ -158,7 +158,7 @@ if (-not $p4Available) {
 if (-not $p4Available) {
     Skip '5. no unmanaged scaffold-like files (depot-tracked)' 'p4 client not reachable'
 } else {
-    $managedRoots = @('.claude','.Codex','.opencode','Docs/agents','Docs/MustRead')
+    $managedRoots = @('.claude','.Codex','Docs/agents','Docs/MustRead')
     $manifestPaths = @{}
     foreach ($e in $m.files) { $manifestPaths[$e.path.Replace('\','/')] = $true }
     $pendingDeleteActions = @('delete','move/delete')
@@ -199,7 +199,7 @@ if (-not $p4Available) {
 $devs = @()
 $tc = Prop $m 'toolCapabilities'
 if ($tc) {
-    foreach ($t in 'codex','claudeCode','openCode') {
+    foreach ($t in 'codex','claudeCode') {
         $sub  = Prop $tc $t
         $devsForT = Prop $sub 'deviations'
         if ($devsForT) { foreach ($d in @($devsForT)) { $devs += "${t}: $d" } }
