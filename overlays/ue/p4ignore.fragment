@@ -2,7 +2,7 @@
 # Agentic Tool Local State
 ###############################################################################
 
-# Checked-in scaffold lives under .Codex, .claude, and .opencode.
+# Checked-in scaffold lives under .Codex and .claude.
 # These files are per-user runtime state and must not be reconciled into P4.
 .Codex/settings.json
 .Codex/settings.local.json
@@ -10,6 +10,3 @@
 .claude/settings.json
 .claude/settings.local.json
 .claude/scheduled_tasks.lock
-.opencode/settings.json
-.opencode/settings.local.json
-.opencode/scheduled_tasks.lock

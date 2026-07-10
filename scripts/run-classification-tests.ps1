@@ -92,6 +92,21 @@ $loc = Mk @{ localOnly=$true; sourceTemplate='ignored' }
 if ((Get-PromotionTarget $loc) -eq $null) { Ok 'Get-PromotionTarget: returns null for local-only' }
 else { Bad 'Get-PromotionTarget: local-only' "should be null" }
 
+# 8b. Fallback (no sourceTemplate), package-core: strips the per-tool dir and
+#     lands in the shared source at plugins/myst-dev-kit/ (both tools -> same file).
+$fbClaude = Mk @{ ownerOverlay='core'; owner='package'; mergeStrategy='copy'; tool='claude'; path='.claude/skills/x/SKILL.md' }
+$fbCodex  = Mk @{ ownerOverlay='core'; owner='package'; mergeStrategy='copy'; tool='codex';  path='.Codex/skills/x/SKILL.md' }
+if ((Get-PromotionTarget $fbClaude) -eq 'plugins/myst-dev-kit/skills/x/SKILL.md' -and
+    (Get-PromotionTarget $fbCodex)  -eq 'plugins/myst-dev-kit/skills/x/SKILL.md') {
+    Ok 'Get-PromotionTarget: core fallback strips tool dir -> plugins/myst-dev-kit/ (both tools converge)'
+} else { Bad 'Get-PromotionTarget: core fallback' "claude=$(Get-PromotionTarget $fbClaude) codex=$(Get-PromotionTarget $fbCodex)" }
+
+# 8c. Fallback, overlay bucket: same strip, lands in overlays/<name>/.
+$fbOv = Mk @{ ownerOverlay='perforce'; owner='overlay'; mergeStrategy='copy'; tool='claude'; path='.claude/workflows/ReviewAndSubmit.md' }
+if ((Get-PromotionTarget $fbOv) -eq 'overlays/perforce/workflows/ReviewAndSubmit.md') {
+    Ok 'Get-PromotionTarget: overlay fallback strips tool dir'
+} else { Bad 'Get-PromotionTarget: overlay fallback' "got $(Get-PromotionTarget $fbOv)" }
+
 # 9. Test-IsPromotable
 if ((Test-IsPromotable 'package-core') -and (Test-IsPromotable 'overlay') -and -not (Test-IsPromotable 'local-only') -and -not (Test-IsPromotable 'project-owned')) {
     Ok 'Test-IsPromotable: correct for all 4 buckets'

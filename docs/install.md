@@ -350,7 +350,7 @@ Each check and its fix:
 | 9 | Marker Specification fixtures pass | the package's marker parser is broken; report as bug |
 | 10 | `p4 opened -c default` is clean | move the unrelated files in default to a named CL — common in shared depots; see [perforce-consumer.md](perforce-consumer.md) |
 
-### 6.2 `opencode.json`-style out-of-band local edits
+### 6.2 `text+w`-style out-of-band local edits
 
 Some files in Perforce have type `text+w` (always writable). They can be
 edited without `p4 edit`, which means a local change won't show up in `p4

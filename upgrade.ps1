@@ -146,9 +146,9 @@ if ($VC -eq 'perforce') {
     if ($depotPrefix) {
         # Build rel -> headRev for live (non-deleted) depot files. Scan the scaffold dir-roots
         # recursively AND root-level files ('*'), since managed root files (.p4ignore, AGENTS.md,
-        # CLAUDE.md, opencode.json) also need their depotRevision re-baselined for preflight check 4.
+        # CLAUDE.md) also need their depotRevision re-baselined for preflight check 4.
         $headRev=@{}
-        foreach ($pat in @('.claude/...','.Codex/...','.opencode/...','Docs/agents/...','Docs/MustRead/...','*')) {
+        foreach ($pat in @('.claude/...','.Codex/...','Docs/agents/...','Docs/MustRead/...','*')) {
             $fs = & p4 -ztag -F "%depotFile%|%headRev%|%headAction%" fstat "$depotPrefix/$pat" 2>$null
             foreach ($line in $fs) {
                 $p = $line -split '\|'; if ($p.Count -lt 3) { continue }
@@ -158,7 +158,7 @@ if ($VC -eq 'perforce') {
         }
         # Adopt pre-existing unmanaged depot files as project-owned (preserve + satisfy check 5).
         # Only files under the managed scaffold roots are in check 5's scope -- never adopt root files.
-        $managedRootRe = '^(\.claude|\.Codex|\.opencode|Docs/agents|Docs/MustRead)/'
+        $managedRootRe = '^(\.claude|\.Codex|Docs/agents|Docs/MustRead)/'
         $retiredSet=@{}; foreach($r in $retired){ $retiredSet[$r]=$true }
         foreach ($rel in @($headRev.Keys)) {
             if ($rel -notmatch $managedRootRe) { continue }

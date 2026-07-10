@@ -10,7 +10,7 @@
 # consumer repo -- so they are skipped.
 #
 # Known, not-yet-reconciled drifts live in $allow (keyed tool-agnostically so a
-# single entry covers claude/codex/opencode). Each entry shrinks the backlog;
+# single entry covers claude/codex). Each entry shrinks the backlog;
 # remove it when the drift is fixed. A reference that is neither resolvable nor
 # allow-listed fails the suite.
 #

@@ -23,7 +23,7 @@ else { Bad 'upstreamDerived=true missing license' (($noLicense | ForEach-Object 
 # 2. No local-origin SKILL sourced from templates/.../skills/ (must live in an overlay).
 $riskySkills = @($m.files | Where-Object {
     $_.upstreamDerived -eq $false -and
-    $_.path -match '^\.(claude|Codex|opencode)/skills/' -and
+    $_.path -match '^\.(claude|Codex)/skills/' -and
     $_.sourceTemplate -and ($_.sourceTemplate -match '^templates/')
 })
 if ($riskySkills.Count -eq 0) { Ok 'no local-origin skill lives under templates/.../skills/ (re-vendor-safe)' }

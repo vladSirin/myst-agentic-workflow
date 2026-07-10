@@ -52,7 +52,7 @@ $man = [Text.Encoding]::UTF8.GetString($manBytes) | ConvertFrom-Json
 
 # Tools: distinct values from manifest.files (excluding 'common')
 $tools = @($man.files | ForEach-Object { $_.tool } | Where-Object { $_ -and $_ -ne 'common' } | Sort-Object -Unique)
-if ($tools.Count -eq 0) { $tools = @('codex','claude','opencode') }
+if ($tools.Count -eq 0) { $tools = @('codex','claude') }
 $Tools = $tools -join ','
 
 # Overlays: distinct ownerOverlay (excluding nulls and 'core' which is implicit)

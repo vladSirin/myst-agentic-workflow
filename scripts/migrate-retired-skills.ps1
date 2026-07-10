@@ -18,7 +18,7 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 
-$toolDirs = @('.claude', '.Codex', '.opencode')
+$toolDirs = @('.claude', '.Codex')
 $retiredSkills   = @('zoom-out', 'caveman', 'write-a-skill', 'diagnose')   # diagnose -> diagnosing-bugs
 $retiredCommands = @('caveman.md', 'write-a-skill.md')                      # old command wrappers, if present
 

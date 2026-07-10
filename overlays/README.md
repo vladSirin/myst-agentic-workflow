@@ -17,3 +17,8 @@ and expands to `perforce,ue`. New consumers should pick `perforce` and/or `ue`
 explicitly.
 
 A core-only install (no overlays) must never emit Perforce/UE/Myst-specific files.
+**Layout (post marketplace-restructure):** each overlay holds ONE shared content
+tree (`skills/`, `workflows/`, `agents/`, `commands/`, `rules/`, `scripts/`) with
+no per-tool `.claude/`/`.Codex/` split. The manifest maps the same source file to
+both tool targets; OpenCode was retired.
+

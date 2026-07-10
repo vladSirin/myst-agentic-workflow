@@ -9,13 +9,13 @@ content other consumers should install.
 
 | File | Why it's Myst-only |
 |---|---|
-| `.claude/rules/angelscriptrules.md` | Hardcodes paths `/Myst_Proto/Script/` and `/split_fiction_scripts/` |
-| `.claude/agents/architecture-reviewer.md` | Description specialized for "Unreal Engine projects"; references FrogEvent plugin and Flow Subsystem |
+| `rules/angelscriptrules.md` | Hardcodes paths `/Myst_Proto/Script/` and `/split_fiction_scripts/` |
+| `agents/architecture-reviewer.md` | Description specialized for "Unreal Engine projects"; references FrogEvent plugin and Flow Subsystem |
 | `docs/MustRead/MustRead_ai_tools_for_creatives.md` | Project-specific user manual for the Myst team |
-| `.claude/skills/design.md` + workflow files | Tailored to Myst's review conventions and folder layout |
+| `skills/design/SKILL.md` + workflow files | Tailored to Myst's review conventions and folder layout |
 
-The `.Codex/` and `.opencode/` mirrors carry the same biases for the
-corresponding tools.
+One shared copy serves both tools (the manifest maps each file to `.claude/`
+and `.Codex/` targets).
 
 ## If you're adopting this package for your own project
 
@@ -32,15 +32,14 @@ structure as a starting point:
 
 ```
 overlays/your-project/
-├── .claude/
-│   ├── agents/        # your-project-specialized reviewers
-│   ├── rules/         # paths and references specific to your codebase
-│   ├── workflows/     # your team's design / review / submit conventions
-│   └── skills/        # project-specific skills
-├── .Codex/            # same shape, for Codex
-├── .opencode/         # same shape, for OpenCode
+├── agents/            # your-project-specialized reviewers
+├── rules/             # paths and references specific to your codebase
+├── workflows/         # your team's design / review / submit conventions
+├── skills/            # project-specific skills
 └── docs/MustRead/     # team-specific docs
 ```
+(One shared tree — the manifest maps each file to both `.claude/` and
+`.Codex/` targets in the consumer.)
 
 Add `your-project` to `package-manifest.json`'s `manifestSchema.overlays` enum,
 populate `manifest-template.json` with entries pointing at your overlay paths,

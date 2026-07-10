@@ -1,10 +1,10 @@
 # myst-agentic-workflow
 
-**Reusable agentic-workflow scaffolding for [Codex](https://github.com/openai/codex), [Claude Code](https://github.com/anthropics/claude-code), and [OpenCode](https://github.com/sst/opencode) — installed in seconds, kept in sync over time.**
+**Reusable agentic-workflow scaffolding for [Claude Code](https://github.com/anthropics/claude-code) and [Codex](https://github.com/openai/codex) — installed in seconds, kept in sync over time.**
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-16%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v2.11.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-16%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v3.0.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -22,7 +22,7 @@ $Pkg = "$PWD/myst-agentic-workflow"
 & "$Pkg/setup.ps1" -TargetRoot c:/path/to/your-project [-Yes]
 ```
 
-That's it. Your project now has the same skills, workflows, and slash commands in `.claude/`, `.Codex/`, and `.opencode/` — whichever tools you have installed will pick them up.
+That's it. Your project now has the same skills, workflows, and slash commands in `.claude/` and `.Codex/` — whichever tools you have installed will pick them up.
 
 Three lifecycle commands cover the entire flow:
 
@@ -41,11 +41,11 @@ All three dry-run first, prompt before writing, and auto-derive their configurat
 
 Pain points solved, with the skills / scripts that solve them.
 
-### #1: Three agentic CLIs that drift apart
+### #1: Agentic CLIs that drift apart
 
-Codex, Claude Code, and OpenCode each have their own config dirs (`.Codex/`, `.claude/`, `.opencode/`). When you tweak a workflow file in one, the others fall behind. Multiply by every project you work on and the drift becomes structural.
+Claude Code and Codex each have their own config dirs (`.claude/`, `.Codex/`). When you tweak a workflow file in one, the other falls behind. Multiply by every project you work on and the drift becomes structural.
 
-**The fix:** every skill, workflow, and agent ships in **all three tool directories at once**. Edit the upstream template; `update.ps1` propagates the change to every consumer's per-tool directory. Edit a per-tool file in a consumer; `promote.ps1` round-trips it back to the template (reverse-substituting `{{var}}` placeholders) so the next update keeps the three tools in lockstep.
+**The fix:** every skill, workflow, and agent lives **once**, in `plugins/myst-dev-kit/`, and the manifest maps that single source into both tool directories. Edit the shared source; `update.ps1` propagates the change to every consumer's per-tool directories. Edit a per-tool file in a consumer; `promote.ps1` round-trips it back to the shared source (reverse-substituting `{{var}}` placeholders) so both tools stay in lockstep by construction.
 
 ### #2: The Bible-file corruption risk
 
@@ -90,9 +90,9 @@ The three commands you'll actually run.
 | [`upgrade.ps1`](upgrade.ps1) | Major-version upgrade of an existing consumer: regenerate manifest, add new, refresh untouched, **preserve customizations**, remove retired. Preview by default; `-Apply` (Perforce CL). |
 | [`promote.ps1`](promote.ps1) | Push local improvements to package: auto-classify + dry-run + write. |
 
-### Skills (per-tool, installed under `.claude/`, `.Codex/`, `.opencode/`)
+### Skills (shared source, installed under `.claude/` and `.Codex/`)
 
-Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) at pinned commit `6eeb81b`, MIT-licensed, attribution preserved. **20 skills**, vendored **verbatim** (upstream YAML frontmatter; Claude/Codex byte-identical, OpenCode adds only `compatibility`). Every link below resolves to `templates/<tool>/.<tool>/skills/<name>/SKILL.md`.
+Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) at pinned commit `6eeb81b`, MIT-licensed, attribution preserved. **20 skills**, vendored **verbatim** (upstream YAML frontmatter; one shared copy serves both tools). Every link below resolves to `plugins/myst-dev-kit/skills/<name>/SKILL.md`.
 
 **Engineering**
 
@@ -176,8 +176,8 @@ Tools and rules layered on top of the core for specific environments.
 
 ## FAQ
 
-**Do I need all three tools (Codex / Claude Code / OpenCode)?**
-No. Pass `-Tools` to select a subset, e.g. `setup.ps1 -TargetRoot ... -Tools claude`. The other tool directories simply aren't written. You can add tools later by re-running `setup.ps1` with a broader `-Tools` flag and `-Force`.
+**Do I need both tools (Claude Code / Codex)?**
+No. Pass `-Tools` to select a subset, e.g. `setup.ps1 -TargetRoot ... -Tools claude`. The other tool directory simply isn't written. You can add tools later by re-running `setup.ps1` with a broader `-Tools` flag and `-Force`.
 
 **Do I need Perforce?**
 No. `setup.ps1` defaults to `filesystem` mode when it sees no `.p4ignore`. The core skills + workflows are version-control-agnostic. The Perforce-specific workflows only install if you opt in (auto-detected or explicit `-Overlays perforce`).
@@ -206,8 +206,6 @@ Three reasons. **Drift detection** — without a manifest of expected hashes, `c
 You don't — `update.ps1` runs `git pull` for you by default. Pass `-NoPull` if you've already pulled or are testing against an unmerged local change.
 
 ## Gotchas (known limitations)
-
-- **`opencode.json` is `+w` (always-writable).** OpenCode mutates it at runtime when you grant permissions in-session. **Resolved in v1.7.0** via the `runtime-mutable` hashPolicy — the file is now seeded by install on first run, never overwritten after, and reported as `runtime-mutable` (not `downstream-edit`) by compare. Preflight check 2 skips it. See [§ runtime-mutable below](#what-runtime-mutable-means).
 
 - **Preflight check 10 (default-change clean).** Write-mode refuses if your P4 default changelist contains *any* files — including unrelated work from other workstreams. Move them to a named CL or revert before `install.ps1 -Mode Write`. `setup.ps1` and `update.ps1` surface this as a clear error pointing at the offending files.
 
@@ -239,8 +237,12 @@ myst-agentic-workflow/
 │   ├── adr-0001-extract-reusable-core-decisions.md
 │   ├── adr-0002-vendor-and-overlay-not-fork.md
 │   └── adr-0003-verbatim-skill-format.md
-├── templates/{common,codex,claude,opencode}/
-│   └── ...                        # the core skills + workflows + agent, per-tool
+├── plugins/myst-dev-kit/
+│   └── ...                        # the core skills + workflows + agents + commands (ONE shared source for both tools)
+├── templates/
+│   ├── claude/CLAUDE.md           # per-tool bible templates (generated-block sources)
+│   ├── codex/AGENTS.md
+│   └── common/docs/               # tool-neutral consumer docs (MustRead, agents/)
 ├── overlays/
 │   ├── perforce/                  # CL workflow, review-and-submit, VC rules
 │   ├── ue/                        # sync-build-submit, UE p4ignore fragment
@@ -254,17 +256,17 @@ myst-agentic-workflow/
 │   ├── check-mattpocock-updates.ps1
 │   ├── run-skeleton-preflight.ps1 # 10-point write-mode gate
 │   ├── migrate-retired-skills.ps1 # upgrade helper: remove retired skills from old installs
-│   └── run-*-tests.ps1            # 16 test suites (incl. parity, link-existence, provenance)
+│   └── run-*-tests.ps1            # test suites (link-existence, provenance, e2e, ...)
 └── fixtures/                      # E2E install fixtures
 ```
 
 ## Status
 
-**v2.11.0** — Converged to upstream `mattpocock/skills` HEAD (`6eeb81b`). Skills are now vendored **verbatim** (upstream YAML frontmatter; Claude/Codex byte-identical, OpenCode adds only `compatibility`); project specifics live in overlays, never in the base (see [ADR-0002](docs/adr-0002-vendor-and-overlay-not-fork.md), [ADR-0003](docs/adr-0003-verbatim-skill-format.md)). Removed `zoom-out`/`caveman`/`write-a-skill`; renamed `diagnose` → `diagnosing-bugs`; vendored new skills (`codebase-design`, `domain-modeling`, `grilling`, `teach`, `writing-great-skills`, `implement`, `setup-matt-pocock-skills`, `resolving-merge-conflicts`, …). 20 skills, 13 test suites green. Full history in [CHANGELOG.md](CHANGELOG.md).
+**v3.0.0** — Marketplace restructure: OpenCode support retired (tool scope is Claude Code + Codex); the per-tool template mirror collapsed into ONE shared source at `plugins/myst-dev-kit/` (skills/agents/commands/workflows live once; the manifest maps each file to both `.claude/` and `.Codex/` targets); overlays flattened the same way. Skills remain vendored **verbatim** from upstream `mattpocock/skills` HEAD (`6eeb81b`) — project specifics live in overlays, never in the base (see [ADR-0002](docs/adr-0002-vendor-and-overlay-not-fork.md), [ADR-0003](docs/adr-0003-verbatim-skill-format.md)). Full history in [CHANGELOG.md](CHANGELOG.md).
 
 ## What `runtime-mutable` means
 
-Some files are package-templated but get rewritten by the tool at runtime — `opencode.json`'s `permission` block is the canonical case (OpenCode mutates it when you grant a permission in-session). These files can't be hash-tracked the normal way without perpetually reporting drift.
+Some files are package-templated but get rewritten by the tool at runtime. These files can't be hash-tracked the normal way without perpetually reporting drift.
 
 The `hashPolicy: "runtime-mutable"` policy says:
 - **Install seeds the file from the template on first run** (when the target is absent).
@@ -273,7 +275,7 @@ The `hashPolicy: "runtime-mutable"` policy says:
 - **Compare reports the entry with outcome `runtime-mutable`** (its own bucket, not `downstream-edit` or `clean`); does not count toward conflicts.
 - **Promote refuses** to push runtime-mutated content upstream (the disk content is user-state, not package content).
 
-Mark any tool-managed-at-runtime file with this policy in `manifest-template.json`. Currently used only for `opencode.json`; reusable for any future file with the same property.
+Mark any tool-managed-at-runtime file with this policy in `manifest-template.json`. No entry currently uses it (the canonical case was OpenCode's `opencode.json`, retired with OpenCode support); the mechanism remains for any future file with the same property.
 
 See [CHANGELOG.md](CHANGELOG.md) for the version history.
 

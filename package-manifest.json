@@ -1,7 +1,7 @@
 {
   "package": {
     "name": "myst-agentic-workflow",
-    "version": "2.18.0",
+    "version": "3.0.0",
     "repository": "https://github.com/vladSirin/myst-agentic-workflow",
     "writeModeEnabled": true,
     "license": "MIT"
@@ -23,7 +23,7 @@
       "manual-only(tracked)": "hashPolicy=sha256 report-only, blockHashPolicy=not-applicable",
       "manual-only(localOnly)": "hashPolicy=not-applicable, contentHash=null",
       "self": "manifest self-entry hashPolicy=self-excluded",
-      "runtime-mutable": "tool mutates the file at runtime (e.g., opencode.json's permission block); install seeds from template on first run and never overwrites after; preflight + compare skip hash checks; reported as outcome 'runtime-mutable'",
+      "runtime-mutable": "tool mutates the file at runtime; install seeds from template on first run and never overwrites after; preflight + compare skip hash checks; reported as outcome 'runtime-mutable'",
       "validation": "REJECT any generated-block/append-fragment entry carrying a whole-file contentHash"
     },
     "baselineStates": ["submitted", "scaffold-cleanup", "packaging-plan", "default", "local-only", "future-package"],

@@ -87,7 +87,7 @@ if (-not $pkgSha) {
 if (-not $pkgSha) { $pkgSha = 'unknown' }
 
 # --- Resolve tool / overlay selection ---
-$selectedTools = if ($Tools -eq 'all') { @('codex','claude','opencode','common') }
+$selectedTools = if ($Tools -eq 'all') { @('codex','claude','common') }
                  else { @(($Tools -split ',') | ForEach-Object { $_.Trim().ToLower() }) }
 $selectedOverlays = @(($Overlays -split ',') | ForEach-Object { $_.Trim().ToLower() })
 
