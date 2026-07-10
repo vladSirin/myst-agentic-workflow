@@ -9,7 +9,7 @@ This rule applies to **every file modification** in a Perforce client, not just 
 > [!CAUTION]
 > `Modify file -> p4 edit/add -> Present status` — never `Modify -> Present -> (forget) -> try to submit later -> find dirty files outside any CL`.
 
-When unsure which CL a file belongs in: put it in the **default change** and reorganize later via `p4 reopen -c <CL>`. Default-change files won't be submitted accidentally (preflight catches them) but they WILL be tracked.
+When unsure which CL a file belongs in: put it in the **default change** and reorganize later via `p4 reopen -c <CL>`. Default-change files stay out of named-CL submits (`p4 submit -c` submits only that CL) and they WILL be tracked in `p4 opened`.
 
 ## Trigger
 
@@ -23,9 +23,21 @@ When the user says **"review and submit {changelist name or ID}"**, execute this
 
 **Before any review**, ensure files are in a properly named changelist:
 
-1. **If files are in default changelist**:
-   - Create a new numbered changelist: `p4 change -o | p4 change -i`
-   - Move the relevant files to the new CL: `p4 reopen -c {new_CL} {files...}`
+1. **Create a named changelist (at task START, not submit time)**:
+   - Start every P4 task in a **new named CL**; use the default change only if the user asks. The default change usually holds the human's own WIP — never sweep it wholesale.
+   - Create the CL from **Bash** with a heredoc. A PowerShell pipe into `p4 change -i` prepends a UTF-8 BOM and fails with `Unknown field name`:
+
+     ```bash
+     p4 change -i <<'EOF'
+     Change: new
+     Description:
+     	[JobFamily][Name] Title - brief summary
+     EOF
+     ```
+
+     (Description lines in a change spec are TAB-indented.)
+   - **Never create a CL via `p4 change -o | p4 change -i`**: the new-CL form pre-fills `Files:` with EVERY default-changelist file and sweeps them all into the new CL.
+   - **Verify right after creating**: run `p4 opened -c {new_CL}`; evict any stray with `p4 reopen -c default {file}`. Pull task files from default **selectively** via `p4 reopen -c {new_CL} {files...}`.
 
 2. **Name the changelist properly**:
    - **REQUIRED FORMAT**: `[JobFamily][Name] Brief description of changes`
@@ -58,7 +70,7 @@ When the user says **"review and submit {changelist name or ID}"**, execute this
    - **Keep it scannable**: prefer bullets over paragraphs
    - **Be specific**: name the classes, systems, and files that changed — don't just say "updated code"
    - **Include context**: teammates who didn't write the code should understand the CL without reading every file
-   - To update the description: `p4 change {CL_ID}` (opens editor) or pipe via `p4 change -o {CL_ID} | ... | p4 change -i`
+   - To update the description of an **existing** CL safely: `p4 change -o {CL_ID} > {scratch}/cl.spec` → edit the spec (keep the `Files:` section untouched — the existing-CL form lists only that CL's files, so no sweep) → `p4 change -i < {scratch}/cl.spec` from **Bash** (never a PowerShell pipe — BOM). Don't use bare `p4 change {CL_ID}`: it opens an interactive editor. See Step 8 for the `{scratch}` path note.
 
 4. **Verify the changelist**:
    - Run `p4 describe {CL_ID}` to confirm all intended files are included
@@ -101,6 +113,16 @@ Determine which reviewer(s) to launch based on changelist contents:
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
+
+### Fast path (small, non-risky CLs)
+
+If the CL is **non-risky** (contains no `.as`, `.cpp`, `.h`, `.hpp`, `.inl`, `.build.cs`, `.target.cs`, `.ini`, `.uproject`, `.uplugin`) **or** risky-but-under-threshold (**≤ 5 non-WP files AND ≤ 100 changed lines** — files under `__ExternalActors__`/`__ExternalObjects__` don't count, matching the submit-audit thresholds when the audit hook is installed), you MAY skip Step 4 (doc check) and Step 5 (reviewer agents):
+
+1. Do a careful self-review of the diff (`p4 diff -du` on the CL's files)
+2. Go straight to Step 8 (Record the Review) with a self-review block, then the Submission Step preflight
+3. Still present a one-paragraph summary and wait for the user's submit decision (Step 7 always applies)
+
+The user can always force a full agent review ("full review CL {N}"). When in doubt — mixed content, unfamiliar system, anything player-facing — take the full path.
 
 ---
 
@@ -155,6 +177,9 @@ Review the following changelist for submission readiness: {changelist name}
 Files to review:
 {file list}
 
+If a radical-design-critic-afk-lessons.md file exists under your tool's
+agents dir, load it first and apply its anti-patterns to this review.
+
 Critically analyze for:
 - Edge cases that could break the design
 - UX friction points or confusing interactions
@@ -170,6 +195,11 @@ Categorize issues as:
 - INFO: Suggestions for future improvement
 
 Be specific with file:line references where applicable.
+
+End your response with a single line of the form:
+  Verdict: GREEN | WARNING | BLOCKING
+The parent session parses the literal `Verdict:` token — do not omit
+or paraphrase it.
 ```
 
 #### For architecture-reviewer
@@ -179,6 +209,9 @@ Review the following changelist for submission readiness: {changelist name}
 
 Files to review:
 {file list}
+
+If an architecture-reviewer-afk-lessons.md file exists under your tool's
+agents dir, load it first and apply its anti-patterns to this review.
 
 Analyze for:
 - Code Complete principles and best practices
@@ -195,6 +228,11 @@ Categorize issues as:
 - INFO: Suggestions for future improvement
 
 Reference existing project patterns where applicable.
+
+End your response with a single line of the form:
+  Verdict: GREEN | WARNING | BLOCKING
+The parent session parses the literal `Verdict:` token — do not omit
+or paraphrase it.
 ```
 
 ---
@@ -248,11 +286,49 @@ After receiving reviewer feedback, present a structured summary:
 
 ---
 
+### 8. Record the Review in the CL Description
+
+**After the user approves submission and before any preflight/submit**, append a **Review Record block** to the CL description. If a Submit-Audit hook is installed, this is what it looks for — a reviewed CL without this block still warns "NO review block", and teammates reading `p4 describe` can't see the review outcome.
+
+**Format** (appended after the What/Why/Notes body):
+
+```
+## Review
+Reviewer: architecture-reviewer — Verdict: WARNING (2 passes)
+Reviewer: radical-design-critic — Verdict: GREEN
+Findings:
+- [FIXED] BLOCKING SomeFile.as:88 — one-line description
+- [ACCEPTED] WARNING — magic number in threshold
+- [DEFERRED] INFO — naming suggestion
+```
+
+**Rules:**
+
+- One `Reviewer: {name} — Verdict: {GREEN|WARNING|BLOCKING}` line per reviewer that ran. The verdict shown is the **final pass** verdict; note the pass count if more than one.
+- Fast-path self-review: `Reviewer: self — Verdict: GREEN (quick review: config-only, 3 files)` and `Findings: none`.
+- `Findings:` one-liners only, each prefixed with its disposition: `[FIXED]` (fixed before submit), `[ACCEPTED]` (submitting with it), `[DEFERRED]` (tracked for later).
+- Cap at ~6 finding lines; summarize overflow as `- ...and N more INFO items (see review transcript)`.
+- Write this block on **every** CL that goes through this protocol — it's cheap and keeps the audit quiet. (The AFK path writes the same block before its auto-submit.)
+
+**Mechanics** (safe description update — see Step 1 for the pitfalls):
+
+```bash
+p4 change -o {CL_ID} > {scratch}/cl.spec   # existing-CL form: Files: lists only this CL, no sweep
+# append the block to the Description field (TAB-indent every line)
+p4 change -i < {scratch}/cl.spec           # from Bash — never a PowerShell pipe (BOM)
+```
+
+Use a temp path both Bash and any native-OS tool resolve identically for `{scratch}` (e.g. the session scratchpad dir). On Windows, MSYS `/tmp` is invisible to native tools (python, editors) — a spec written there can't be edited by them and you'll silently re-submit the old description.
+
+---
+
 ## Submission Step
 
-When user approves submission:
+After the Review Record block is in place:
 
-1. **Run repo preflight validators first** — run any project preflight checks (e.g. `check-uproject-assoc.sh` under your tool's scripts dir — `.claude/scripts/` or `.Codex/scripts/` — when the `ue` overlay is installed) and **abort the submit on any non-zero exit**, reporting the failure so it can be fixed before retrying.
+1. **Run repo preflight validators** — on any warning or non-zero exit: report it, fix, and re-run before submitting:
+   1. Project preflight checks (e.g. `check-uproject-assoc.sh` under your tool's scripts dir — `.claude/scripts/` or `.Codex/scripts/` — when the `ue` overlay is installed).
+   2. `submit-audit-warn.sh --check-cl {CL_ID}` when the Submit-Audit hook is installed — client mirror of the server audit: `[JobFamily][Name]` tags, review-block presence, and EOL flips (Edit/Write tools silently convert CRLF→LF on text source). Normalize any flagged file LF→CRLF as the **last** content change before submit.
 2. Run `p4 submit -c {CL_ID}` or create new CL with the files
 3. Report submission result — confirm with `p4 changes -m 1 -s submitted` and report the final submitted CL number
 4. Note any post-submit verification needed
