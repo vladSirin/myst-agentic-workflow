@@ -2,6 +2,39 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [4.0.0] - 2026-07-10 — role shift: plugin owns the kit, installer bootstraps the core
+
+### BREAKING
+- **The installer no longer file-copies the optional kit.** manifest-template dropped from
+  152 to 25 entries: all `.claude/{skills,agents,commands,workflows}` and ALL `.Codex/*`
+  consumer copies are retired (the `myst-dev-kit` plugin owns them; Codex = bible + plugin).
+  The installer's remaining job is the committed-core bootstrap: bibles (generated blocks),
+  `Docs/agents` + `Docs/MustRead`, `.claude/rules`, `.claude/scripts`, `.p4ignore` fragment,
+  and the opt-in `afk-autonomy` overlay. Existing consumers converge via `upgrade.ps1 -Apply`
+  (it deletes the retired file-copies in one reviewable changelist).
+- **Workflows are now on-demand skills** (user decision: advisory-everything; the server
+  Submit-Audit remains the enforcement backstop). Converted with trigger-strength
+  descriptions: `review-and-submit`, `changelist-verification`, `plan-priority`,
+  `pre-implementation-gate`, `agentic-workflow`, `auto-plan-mode`, `design-workflow`.
+  The plugin `workflows/` dir is gone; nothing depends on a consumer `.claude/workflows/`.
+- **Overlays `perforce` and `core-local` retired** (content absorbed by the plugin);
+  names still parse in old manifests but install nothing.
+
+### Changed
+- **myst-dev-kit is now the full team bundle — 29 skills** (was 19): + design, roundtable,
+  setup-agentic-workflow, the 7 workflow-skills; + `architecture-reviewer` agent (both
+  reviewers now ship); + `sync-build-submit` command; + P4-NOTES/UE-NOTES folded into their
+  skills; + `check-uproject-assoc.sh` in plugin scripts.
+- Frontmatter hygiene: quoted YAML descriptions (unquoted `: ` broke parsing — validator
+  errors on 8 files), added missing frontmatter to the design skill.
+- `install.ps1`/`init-consumer.ps1`: core-local force-add retired.
+
+### Notes
+- `claude plugin validate` passes clean at both marketplace and plugin level.
+- The stale myst-project overlay workflow copies of DocumentStandard/RawMaterialsProtection/
+  ScriptStandard remain as committed-core authoring references (consumer rules are the live
+  versions) — reconcile in a follow-up.
+
 ## [3.1.1] - 2026-07-10 — review/submit protocol: Review Record block + CL-creation lessons
 
 ### Changed

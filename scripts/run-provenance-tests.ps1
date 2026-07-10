@@ -29,16 +29,17 @@ $riskySkills = @($m.files | Where-Object {
 if ($riskySkills.Count -eq 0) { Ok 'no local-origin skill lives under templates/.../skills/ (re-vendor-safe)' }
 else { Bad 'local skill in templates/.../skills (re-vendor would clobber it)' (($riskySkills | ForEach-Object { "$($_.path) <- $($_.sourceTemplate)" }) -join '; ') }
 
-# 3. core-local entries are well-formed (owner=overlay, ownerOverlay=core-local, upstreamDerived=false).
-$coreLocal = @($m.files | Where-Object { $_.ownerOverlay -eq 'core-local' })
-$badCoreLocal = @($coreLocal | Where-Object { $_.owner -ne 'overlay' -or $_.upstreamDerived -ne $false -or ($_.sourceTemplate -and $_.sourceTemplate -notmatch '^overlays/core-local/') })
-if ($coreLocal.Count -gt 0 -and $badCoreLocal.Count -eq 0) { Ok "core-local entries well-formed ($($coreLocal.Count) entries)" }
-elseif ($coreLocal.Count -eq 0) { Bad 'core-local overlay' 'no core-local entries found (expected at least roundtable)' }
-else { Bad 'core-local entries malformed' (($badCoreLocal | ForEach-Object { $_.path }) -join '; ') }
+# 3. Local-origin skills live in the PLUGIN (v4.0.0; core-local overlay retired) and
+#    keep the re-vendor-safety property: a mattpocock re-vendor can never clobber them.
+$localOrigin = @('roundtable', 'setup-agentic-workflow')
+$missing = @($localOrigin | Where-Object { -not (Test-Path "$PSScriptRoot\..\plugins\myst-dev-kit\skills\$_\SKILL.md") })
+if ($missing.Count -eq 0) { Ok "local-origin skills present in the plugin ($($localOrigin -join ', '))" }
+else { Bad 'local-origin skills in plugin' ($missing -join ', ') }
 
-# 4. core-local is a declared overlay.
-if ($m.overlays -contains 'core-local') { Ok "core-local declared in manifest overlays list" }
-else { Bad 'core-local overlay not declared' ($m.overlays -join ', ') }
+# 4. No manifest entry still references the retired core-local overlay paths.
+$staleCl = @($m.files | Where-Object { $_.sourceTemplate -and $_.sourceTemplate -match '^overlays/core-local/' })
+if ($staleCl.Count -eq 0) { Ok 'no manifest entry references retired overlays/core-local/' }
+else { Bad 'stale core-local sourceTemplates' (($staleCl | ForEach-Object { $_.path }) -join '; ') }
 
 Write-Host ''
 Write-Host '=============================================================='

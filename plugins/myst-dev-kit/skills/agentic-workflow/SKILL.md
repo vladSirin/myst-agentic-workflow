@@ -1,3 +1,8 @@
+---
+name: agentic-workflow
+description: "Team delivery process (discussion -> PRD -> issues -> triage -> implementation -> verification -> review/submit). Use when starting any non-trivial feature work, or when unsure which process stage applies."
+---
+
 # Agentic Workflow
 
 ## Scope and relationship to DesignWorkflow

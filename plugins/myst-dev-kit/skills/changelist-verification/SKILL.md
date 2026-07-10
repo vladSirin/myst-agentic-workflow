@@ -1,3 +1,8 @@
+---
+name: changelist-verification
+description: "HARD RULE - use whenever a task involves MORE THAN ONE Perforce changelist. Execute CL-by-CL with a stop-and-verify gate between each; never batch CLs."
+---
+
 # CRITICAL WORKFLOW REQUIREMENT
 
 ## Changelist-by-Changelist Verification

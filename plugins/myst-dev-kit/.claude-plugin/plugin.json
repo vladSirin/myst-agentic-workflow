@@ -1,8 +1,8 @@
 {
     "name": "myst-dev-kit",
     "displayName": "Myst Dev Kit",
-    "version": "3.1.1",
-    "description": "Team dev kit: 19 engineering/productivity skills (PRD, TDD, triage, debugging, grilling, teaching...), design-critic review agent, package lifecycle commands, and the Codex-side Submit-Audit pre-submit warning bridge.",
+    "version": "4.0.0",
+    "description": "Team dev kit: 29 skills - engineering/productivity (PRD, TDD, triage, debugging, grilling, teaching...) plus the team process rules as on-demand skills (review-and-submit, changelist-verification, plan-priority...), both review agents (architecture-reviewer, radical-design-critic), sync-build-submit + package commands, and the Codex-side Submit-Audit warning bridge.",
     "author": {
         "name": "Sirin",
         "email": "sirinwintersong@gmail.com"

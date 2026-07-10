@@ -1,3 +1,8 @@
+---
+name: design
+description: "Create a design document with reviewer-agent feedback and iterate to approval. Use when the user asks to design a feature or system (/design)."
+---
+
 # Design Document Workflow
 
 <command-name>design</command-name>

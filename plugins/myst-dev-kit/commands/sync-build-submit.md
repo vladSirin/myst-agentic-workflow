@@ -1,5 +1,5 @@
 ---
-description: Full UE + Perforce pipeline — P4 sync, build gate, Editor build, binary reconcile, editor verification, tech review, submit. User-invoked: run it when you are ready to sync and submit updated binaries after a Perforce sync.
+description: "Full UE + Perforce pipeline — P4 sync, build gate, Editor build, binary reconcile, editor verification, tech review, submit. User-invoked: run it when you are ready to sync and submit updated binaries after a Perforce sync."
 disable-model-invocation: true
 ---
 

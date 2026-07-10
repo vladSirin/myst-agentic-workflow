@@ -1,3 +1,8 @@
+---
+name: auto-plan-mode
+description: "Use at the START of any non-trivial implementation request to decide whether to enter plan mode before writing code."
+---
+
 # Plan Mode — When to use it
 
 Plan mode is for **alignment before commitment**. Use it when the cost of going down the wrong path is high; skip it when the work is small or read-only.

@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-16%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v3.1.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-16%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.0.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -22,7 +22,7 @@ $Pkg = "$PWD/myst-agentic-workflow"
 & "$Pkg/setup.ps1" -TargetRoot c:/path/to/your-project [-Yes]
 ```
 
-That's it. Your project now has the same skills, workflows, and slash commands in `.claude/` and `.Codex/` — whichever tools you have installed will pick them up.
+That's it for the **committed core** (bible generated-blocks, team docs, rules, hook scripts, `.p4ignore` fragment). The skills/agents/commands kit installs separately as a **plugin** (see next section) — `setup.ps1` no longer file-copies it.
 
 Three lifecycle commands cover the entire flow:
 
@@ -37,7 +37,7 @@ All three dry-run first, prompt before writing, and auto-derive their configurat
 
 ## Install as a plugin (marketplace)
 
-The repo doubles as a **plugin marketplace** for both tools — the same content, installed natively instead of file-copied. One plugin is published: **`myst-dev-kit`** (19 skills, the design-critic review agent, package lifecycle commands, and the Codex-side Submit-Audit warning bridge).
+The repo is a **plugin marketplace** for both tools — since v4.0.0 the plugin IS the delivery path for the kit (the installer only bootstraps the committed core). One plugin is published: **`myst-dev-kit`** — 29 skills (engineering + productivity + the team process rules as on-demand skills), both review agents, `sync-build-submit` and package commands, and the Codex-side Submit-Audit warning bridge.
 
 ```bash
 # Claude Code
@@ -54,7 +54,7 @@ Both tools read their native manifest from the same repo (`.claude-plugin/market
 Notes:
 - The plugin's `hooks/hooks.json` delivers the client Submit-Audit warning **to Codex only** — under Claude Code the bridge no-ops because the consumer project's committed `.claude/settings.json` already registers the same audit (no double warnings). On consumers without the Myst governance core, the hook exits silently.
 - `agents/` (radical-design-critic) is Claude-only — Codex ignores the directory.
-- `workflows/` ships in the plugin but is not auto-loaded by either tool; the file-copy installer remains the delivery path for workflows until the package role shift lands.
+- Former always-on workflows are now **on-demand skills** with trigger-strength descriptions (`review-and-submit`, `changelist-verification`, `plan-priority`, ...) — advisory by design; the server-side Submit-Audit is the enforcement backstop.
 
 **Upgrading an older install?** Run [`upgrade.ps1`](upgrade.ps1) (preview, then `-Apply`) — it adds new skills, refreshes untouched files, **preserves your customizations**, removes retired skills, and (for Perforce) wraps it all in one reviewable changelist. `setup.ps1`/`update.ps1` can't do this jump (they drive install from the stale manifest). See [`docs/upgrade.md`](docs/upgrade.md).
 
@@ -113,7 +113,7 @@ The three commands you'll actually run.
 
 ### Skills (shared source, installed under `.claude/` and `.Codex/`)
 
-Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) at pinned commit `6eeb81b`, MIT-licensed, attribution preserved. **20 skills**, vendored **verbatim** (upstream YAML frontmatter; one shared copy serves both tools). Every link below resolves to `plugins/myst-dev-kit/skills/<name>/SKILL.md`.
+The engineering/productivity set is adapted from [mattpocock/skills](https://github.com/mattpocock/skills) at pinned commit `6eeb81b`, MIT-licensed, attribution preserved, vendored **verbatim**. Since v4.0.0 the bundle also carries the local-origin skills (design, roundtable, setup wizard) and the **team process rules converted to on-demand skills**. **29 skills total**; every link resolves to `plugins/myst-dev-kit/skills/<name>/SKILL.md`.
 
 **Engineering**
 
@@ -162,16 +162,19 @@ We track upstream **faithfully** — name + body + architecture + verbatim front
 - **Skipped (out of scope):** `ask-matt` (personal/branded), `prototype` (web-bound). **Deferred:** `decision-mapping` (upstream marks it in-progress).
 - Everything else is byte-faithful to upstream HEAD `6eeb81b`.
 
-### Workflows (always-on rules)
+### Process-rule skills (formerly always-on workflows)
 
-Rules the agent follows autonomously. Loaded every session.
+Converted to on-demand skills in v4.0.0 — each carries a trigger-strength description so the agent loads it at the right moment; all are advisory (the server Submit-Audit is the backstop).
 
-| Workflow | Scope | What it enforces |
+| Skill | Fires when | What it enforces |
 |---|---|---|
-| `AgenticWorkflow.md` | core | Discussion → PRD → issues → triage → impl → verify → review/submit. |
-| `PlanPriority.md` | core | **HARD RULE**: Always use existing plans before creating new ones. |
-| `ChangelistVerification.md` | perforce overlay | **HARD RULE**: CL-by-CL execution, never batched. Stop between CLs for verification. |
-| `ReviewAndSubmit.md` | perforce overlay | Pre-submit protocol with What/Why/Notes CL description standard and reviewer routing. |
+| `agentic-workflow` | non-trivial feature work starts | Discussion → PRD → issues → triage → impl → verify → review/submit. |
+| `plan-priority` | before creating any new plan | **HARD RULE**: Always use existing plans before creating new ones. |
+| `pre-implementation-gate` | before drafting a multi-CL plan | **HARD RULE**: PRD/issues/triage must exist first. |
+| `changelist-verification` | any multi-CL task | **HARD RULE**: CL-by-CL execution, never batched. Stop between CLs for verification. |
+| `review-and-submit` | "review and submit" / any p4 submit | Pre-submit protocol: reviewer routing, Review Record block, preflight validators. |
+| `auto-plan-mode` | start of non-trivial implementation | Decide whether to enter plan mode before coding. |
+| `design-workflow` | writing/updating a design doc | Doc naming, location, reviewer-agent routing, iteration loop. |
 
 ### Agents
 
@@ -179,7 +182,7 @@ Specialized subagents available via the agent tool.
 
 | Agent | Triggers on |
 |---|---|
-| `architecture-reviewer` | Post-implementation review. Code Complete + SOLID + project-specific patterns. (Lives in `overlays/myst-project/` — UE-flavoured; adapt for your project.) |
+| `architecture-reviewer` | Post-implementation review. Code Complete + SOLID + project-specific patterns. (Ships in `myst-dev-kit` since v4.0.0 — UE-flavoured; adapt for your project.) |
 | `radical-design-critic` | Design docs / proposals. Stress-tests for edge cases, UX friction, hidden complexity. |
 
 ### Overlays
@@ -288,7 +291,7 @@ myst-agentic-workflow/
 
 ## Status
 
-**v3.0.0** — Marketplace restructure: OpenCode support retired (tool scope is Claude Code + Codex); the per-tool template mirror collapsed into ONE shared source at `plugins/myst-dev-kit/` (skills/agents/commands/workflows live once; the manifest maps each file to both `.claude/` and `.Codex/` targets); overlays flattened the same way. Skills remain vendored **verbatim** from upstream `mattpocock/skills` HEAD (`6eeb81b`) — project specifics live in overlays, never in the base (see [ADR-0002](docs/adr-0002-vendor-and-overlay-not-fork.md), [ADR-0003](docs/adr-0003-verbatim-skill-format.md)). Full history in [CHANGELOG.md](CHANGELOG.md).
+**v4.0.0** — Role shift: the plugin owns the kit (29 skills incl. the process rules as on-demand skills, both review agents, commands, Codex audit bridge); the installer only bootstraps the committed core (bibles, docs, rules, scripts). Existing consumers converge via `upgrade.ps1 -Apply`. Previously — **v3.0.0** — Marketplace restructure: OpenCode support retired (tool scope is Claude Code + Codex); the per-tool template mirror collapsed into ONE shared source at `plugins/myst-dev-kit/` (skills/agents/commands/workflows live once; the manifest maps each file to both `.claude/` and `.Codex/` targets); overlays flattened the same way. Skills remain vendored **verbatim** from upstream `mattpocock/skills` HEAD (`6eeb81b`) — project specifics live in overlays, never in the base (see [ADR-0002](docs/adr-0002-vendor-and-overlay-not-fork.md), [ADR-0003](docs/adr-0003-verbatim-skill-format.md)). Full history in [CHANGELOG.md](CHANGELOG.md).
 
 ## What `runtime-mutable` means
 

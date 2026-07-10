@@ -1,24 +1,29 @@
 # overlays/
 
-Optional content layered on top of the reusable core. Each overlay is opt-in
-via `-Overlays <names>` at install time.
+Optional content layered on top of the reusable core at install time, opt-in
+via `-Overlays <names>`. **Since v4.0.0 most former overlay content ships in
+the `myst-dev-kit` plugin instead** (skills/agents/commands install via the
+plugin marketplace, not file-copy); what remains here is only what must be
+file-copied into a consumer:
 
-- `perforce/` — generic Perforce workflow: CL-by-CL verification, review-and-submit
-  protocol, version-control conventions. Applies to any Perforce project regardless
-  of engine/toolchain.
-- `ue/` — Unreal-Engine specific: build/sync/submit commands, UE `.p4ignore`
-  patterns (`Binaries/`, `Intermediate/`, `Saved/`). Pair with `perforce` for
-  UE+P4 projects.
-- `myst-project/` — Myst-only content (project paths, FrogEvent usage, AngelScript
-  conventions, project-specific reviewers). Stays project-local unless generalized.
+- `ue/` — UE `.p4ignore` fragment + the `unrealmcprules` rule (committed-core
+  rule source). Auto-added when `*.uproject` is detected.
+- `myst-project/` — Myst-only committed-core sources: `angelscriptrules`,
+  the doc standards, the team creatives manual. **Never auto-added**; reference
+  example for building your own project overlay.
+- `afk-autonomy/` — opt-in autonomous auto-submit governance (workflow, agent
+  lessons, afk-status hook script). Claude Code only; off by default.
+
+**Retired overlays** (content now in `plugins/myst-dev-kit/`): `perforce`
+(ChangelistVerification/ReviewAndSubmit are on-demand skills; P4-NOTES rides the
+resolving-merge-conflicts skill), `core-local` (roundtable + setup wizard are
+plugin skills). The overlay names remain accepted by old manifests but install
+nothing new.
 
 **Legacy alias**: `ue-perforce` (v1.0.0 – v1.1.0) is accepted by `init-consumer.ps1`
-and expands to `perforce,ue`. New consumers should pick `perforce` and/or `ue`
-explicitly.
+and expands to `perforce,ue`.
 
 A core-only install (no overlays) must never emit Perforce/UE/Myst-specific files.
-**Layout (post marketplace-restructure):** each overlay holds ONE shared content
-tree (`skills/`, `workflows/`, `agents/`, `commands/`, `rules/`, `scripts/`) with
-no per-tool `.claude/`/`.Codex/` split. The manifest maps the same source file to
-both tool targets; OpenCode was retired.
 
+**Layout:** each overlay holds ONE shared content tree (no per-tool
+`.claude/`/`.Codex/` split); the manifest maps each file to its tool targets.

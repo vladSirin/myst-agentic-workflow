@@ -103,11 +103,7 @@ if ($selectedOverlays -notcontains 'tool-capability') {
     $selectedOverlays += 'tool-capability'
 }
 
-# core-local: package-invented (non-upstream) content that ships to every consumer; always
-# include so a re-vendor from upstream can never touch it (it lives under overlays/, not templates/).
-if ($selectedOverlays -notcontains 'core-local') {
-    $selectedOverlays += 'core-local'
-}
+# (core-local retired v4.0.0: its content moved into the myst-dev-kit plugin.)
 
 # --- Filter entries ---
 $filtered = @()
