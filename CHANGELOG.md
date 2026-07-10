@@ -2,6 +2,35 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [3.1.0] - 2026-07-10 — plugin marketplace: dual manifests + myst-dev-kit plugin
+
+### Added
+- **Plugin marketplace, both tools native**: `.claude-plugin/marketplace.json` (Claude Code)
+  + `.agents/plugins/marketplace.json` (Codex) list ONE bundle plugin `myst-dev-kit`
+  sourced from `./plugins/myst-dev-kit` in this repo. Marketplace name: `myst`
+  (install as `myst-dev-kit@myst`).
+- **Dual plugin manifests**: `plugins/myst-dev-kit/.claude-plugin/plugin.json` +
+  `.codex-plugin/plugin.json` over the same shared content (skills/agents/commands
+  auto-discovered by Claude; `skills`/`hooks` declared explicitly for Codex).
+- **Codex Submit-Audit warn bridge** (`hooks/hooks.json` + `scripts/submit-audit-bridge.sh`):
+  PreToolUse(Bash) hook that execs the consumer project's committed
+  `.claude/scripts/submit-audit-warn.sh` — single copy of the audit logic per project.
+  Under Claude Code the bridge no-ops (gates on Codex's native `PLUGIN_ROOT` env var)
+  because the project's committed settings.json already registers that hook; on
+  consumers without the governance core it exits silently.
+- **`plugins/myst-dev-kit/LICENSE`** — MIT + mattpocock/skills attribution travels with
+  plugin installs (installs copy only the plugin dir).
+- **`scripts/run-marketplace-tests.ps1`** (17 checks): four-manifest consistency
+  (name/version/description lockstep incl. package-manifest), source resolution, Codex
+  policy fields, SKILL.md coverage, hook-bridge existence + double-fire gate, attribution.
+- YAML frontmatter added to the two command files (`claude plugin validate` warning fix).
+
+### Notes
+- `claude plugin validate .` and `claude plugin validate ./plugins/myst-dev-kit` both pass clean.
+- `agents/` is Claude-only (Codex ignores it); `workflows/` is inert in the plugin for both
+  tools — file-copy install remains the workflows delivery path until the package role shift.
+- No MCP config in the plugin: the team's `.mcp.json` is committed to Perforce as core.
+
 ## [3.0.0] - 2026-07-09 — marketplace restructure: OpenCode retired, shared-source layout
 
 ### BREAKING / Removed
