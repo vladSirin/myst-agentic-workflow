@@ -1,3 +1,7 @@
+---
+description: Sync the latest myst-agentic-workflow package changes into this project (update.ps1)
+---
+
 # /update-myst-skills — Sync upstream package changes into this project
 
 Pull the latest [`myst-agentic-workflow`](https://github.com/vladSirin/myst-agentic-workflow)

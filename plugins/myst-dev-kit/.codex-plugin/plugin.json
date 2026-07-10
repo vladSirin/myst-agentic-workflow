@@ -1,0 +1,20 @@
+{
+    "name": "myst-dev-kit",
+    "version": "3.1.0",
+    "description": "Team dev kit: 19 engineering/productivity skills (PRD, TDD, triage, debugging, grilling, teaching...), design-critic review agent, package lifecycle commands, and the Codex-side Submit-Audit pre-submit warning bridge.",
+    "author": {
+        "name": "Sirin",
+        "email": "sirinwintersong@gmail.com"
+    },
+    "repository": "https://github.com/vladSirin/myst-agentic-workflow",
+    "license": "MIT",
+    "keywords": ["workflow", "skills", "perforce", "review", "myst"],
+    "skills": "./skills/",
+    "hooks": "./hooks/hooks.json",
+    "interface": {
+        "displayName": "Myst Dev Kit",
+        "shortDescription": "Myst team skills, review workflows, and Submit-Audit warning",
+        "developerName": "Myst team",
+        "category": "Productivity"
+    }
+}

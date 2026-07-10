@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-16%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v3.0.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-16%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v3.1.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -34,6 +34,27 @@ Three lifecycle commands cover the entire flow:
 ```
 
 All three dry-run first, prompt before writing, and auto-derive their configuration from your installed manifest.
+
+## Install as a plugin (marketplace)
+
+The repo doubles as a **plugin marketplace** for both tools — the same content, installed natively instead of file-copied. One plugin is published: **`myst-dev-kit`** (19 skills, the design-critic review agent, package lifecycle commands, and the Codex-side Submit-Audit warning bridge).
+
+```bash
+# Claude Code
+/plugin marketplace add vladSirin/myst-agentic-workflow
+/plugin install myst-dev-kit@myst
+
+# Codex
+codex plugin marketplace add vladSirin/myst-agentic-workflow
+# then /plugins -> Myst Team Plugins -> install myst-dev-kit
+```
+
+Both tools read their native manifest from the same repo (`.claude-plugin/marketplace.json` for Claude Code, `.agents/plugins/marketplace.json` for Codex; consistency is enforced by `scripts/run-marketplace-tests.ps1` + `claude plugin validate`). The repo is private — installs use your existing GitHub credentials (`gh auth login` / SSH).
+
+Notes:
+- The plugin's `hooks/hooks.json` delivers the client Submit-Audit warning **to Codex only** — under Claude Code the bridge no-ops because the consumer project's committed `.claude/settings.json` already registers the same audit (no double warnings). On consumers without the Myst governance core, the hook exits silently.
+- `agents/` (radical-design-critic) is Claude-only — Codex ignores the directory.
+- `workflows/` ships in the plugin but is not auto-loaded by either tool; the file-copy installer remains the delivery path for workflows until the package role shift lands.
 
 **Upgrading an older install?** Run [`upgrade.ps1`](upgrade.ps1) (preview, then `-Apply`) — it adds new skills, refreshes untouched files, **preserves your customizations**, removes retired skills, and (for Perforce) wraps it all in one reviewable changelist. `setup.ps1`/`update.ps1` can't do this jump (they drive install from the stale manifest). See [`docs/upgrade.md`](docs/upgrade.md).
 
@@ -237,7 +258,12 @@ myst-agentic-workflow/
 │   ├── adr-0001-extract-reusable-core-decisions.md
 │   ├── adr-0002-vendor-and-overlay-not-fork.md
 │   └── adr-0003-verbatim-skill-format.md
+├── .claude-plugin/marketplace.json# plugin marketplace (Claude Code native)
+├── .agents/plugins/marketplace.json# plugin marketplace (Codex native; same content, enforced by test)
 ├── plugins/myst-dev-kit/
+│   ├── .claude-plugin/plugin.json # dual plugin manifests (one per tool)
+│   ├── .codex-plugin/plugin.json
+│   ├── hooks/hooks.json           # Codex Submit-Audit warn bridge (no-ops under Claude Code)
 │   └── ...                        # the core skills + workflows + agents + commands (ONE shared source for both tools)
 ├── templates/
 │   ├── claude/CLAUDE.md           # per-tool bible templates (generated-block sources)

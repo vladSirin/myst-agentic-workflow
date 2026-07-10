@@ -1,3 +1,7 @@
+---
+description: Push a local skill/workflow improvement back to the upstream myst-agentic-workflow package (promote.ps1 round-trip)
+---
+
 # /promote-myst-skills — Push a local improvement back to the upstream package
 
 When the user has improved a workflow / skill / template file locally and

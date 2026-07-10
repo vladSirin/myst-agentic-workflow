@@ -1,0 +1,20 @@
+{
+    "name": "myst",
+    "interface": {
+        "displayName": "Myst Team Plugins"
+    },
+    "plugins": [
+        {
+            "name": "myst-dev-kit",
+            "source": {
+                "source": "local",
+                "path": "./plugins/myst-dev-kit"
+            },
+            "policy": {
+                "installation": "AVAILABLE",
+                "authentication": "ON_INSTALL"
+            },
+            "category": "Productivity"
+        }
+    ]
+}
