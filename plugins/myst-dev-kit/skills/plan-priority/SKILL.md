@@ -1,3 +1,8 @@
+---
+name: plan-priority
+description: "HARD RULE - use BEFORE creating any new plan, roadmap, or implementation document. Existing plans must be found and used first; never duplicate planning artifacts."
+---
+
 # CRITICAL WORKFLOW REQUIREMENT
 
 ## Mandatory Plan Discovery

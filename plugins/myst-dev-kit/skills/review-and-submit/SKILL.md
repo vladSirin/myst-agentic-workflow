@@ -1,3 +1,8 @@
+---
+name: review-and-submit
+description: "MANDATORY protocol when the user says 'review and submit' (any variant) or before submitting ANY Perforce changelist. CL organization, reviewer routing, Review Record block, preflight validators, submit."
+---
+
 # Review and Submit Protocol
 
 ## Continuous source-control sync (applies at all times)

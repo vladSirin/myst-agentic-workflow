@@ -1,3 +1,8 @@
+---
+name: design-workflow
+description: "Team process for creating and routing design documents (naming, location, reviewer agents, iteration loop). Use when writing or updating any design doc."
+---
+
 # Design & Planning Workflow
 
 ## Automatic Detection

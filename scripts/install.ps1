@@ -103,11 +103,8 @@ $InstalledManifest = Get-Content -Raw $InstalledManifestPath | ConvertFrom-Json
 
 $TargetTools = if ($Tools -eq "all") { @("codex", "claude") } else { $Tools -split "," | ForEach-Object { $_.Trim().ToLower() } }
 $TargetOverlays = @($Overlays -split "," | ForEach-Object { $_.Trim().ToLower() })
-# core-local is package-invented content shipped to every consumer (mirrors init-consumer's
-# force-add). Force-add so its files install even when the caller passed a narrower -Overlays
-# (e.g. setup.ps1 passing the user's selection only). tool-capability needs no force-add — its
-# entries are manual-only and never written regardless of overlay selection.
-if ($TargetOverlays -notcontains 'core-local') { $TargetOverlays += 'core-local' }
+# (core-local retired v4.0.0: its content - roundtable, setup wizard - moved into the
+# myst-dev-kit plugin; the overlay name remains valid in old manifests but has no entries.)
 
 Write-Output "=============================================================="
 Write-Output "myst-agentic-workflow install.ps1  v$ScriptVersion"

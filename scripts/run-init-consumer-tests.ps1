@@ -41,7 +41,7 @@ else {
         else { Ok 'installedProject.name injected' }
         if ($m.installedProject.gameDocsRoot -ne 'Acme/Docs') { Bad 'gameDocsRoot' "got $($m.installedProject.gameDocsRoot)" }
         else { Ok 'installedProject.gameDocsRoot injected' }
-        if ($m.files.Count -lt 50) { Bad 'entry count' "got $($m.files.Count) (expected >= 50 for core+tool-capability)" }
+        if ($m.files.Count -lt 15) { Bad 'entry count' "got $($m.files.Count) (expected >= 15 for the committed-core bootstrap; the kit ships via the plugin since v4.0.0)" }
         else { Ok ("entry count = {0}" -f $m.files.Count) }
         if ($m.files | Where-Object { $_.sourceCommit -eq '<resolved-by-init-consumer>' }) {
             Bad 'sourceCommit placeholders resolved' 'placeholder still present'
@@ -83,13 +83,18 @@ if ($r.Code -eq 0) { Ok 'setup.ps1 -Yes round-trip exits 0' }
 else { Bad 'setup.ps1 -Yes round-trip exits 0' "exit=$($r.Code)`n$($r.Out)" }
 
 $sentinels = @(
-    @{ Tool='codex';    Path=(Join-Path $t '.Codex\skills\diagnosing-bugs\SKILL.md') }
-    @{ Tool='claude';   Path=(Join-Path $t '.claude\skills\diagnosing-bugs\SKILL.md') }
+    @{ Tool='claude'; Path=(Join-Path $t '.claude\scripts\doc-audit.sh') }
+    @{ Tool='common'; Path=(Join-Path $t 'Docs\agents\issue-tracker.md') }
 )
 foreach ($s in $sentinels) {
     if (Test-Path $s.Path) { Ok "setup landed $($s.Tool) sentinel" }
     else { Bad "setup landed $($s.Tool) sentinel" "missing at $($s.Path)" }
 }
+# v4.0.0: the skills kit ships via the plugin, NOT file-copy - .Codex/ and
+# .claude/skills/ must NOT be created by the installer anymore
+if (-not (Test-Path (Join-Path $t '.Codex')) -and -not (Test-Path (Join-Path $t '.claude\skills'))) {
+    Ok 'setup does NOT file-copy the plugin-owned kit (.Codex/, .claude/skills absent)'
+} else { Bad 'plugin-owned kit file-copied' 'installer still writes .Codex/ or .claude/skills/' }
 
 # Verify CLAUDE.md got its block populated (was 289 stub, should be >1000 after write)
 $claudeMd = Join-Path $t 'CLAUDE.md'
@@ -127,8 +132,8 @@ $ueEntries = @($m.files | Where-Object { $_.ownerOverlay -eq 'ue' })
 if ($ueEntries.Count -eq 0) { Ok 'perforce-only excludes ue entries' }
 else { Bad 'perforce-only excludes ue entries' "got $($ueEntries.Count) ue entries" }
 $pfEntries = @($m.files | Where-Object { $_.ownerOverlay -eq 'perforce' })
-if ($pfEntries.Count -gt 0) { Ok ("perforce-only includes {0} perforce entries" -f $pfEntries.Count) }
-else { Bad 'perforce-only includes perforce entries' 'got 0' }
+if ($pfEntries.Count -eq 0) { Ok 'perforce overlay retired: selecting it installs nothing (v4.0.0: content lives in the plugin)' }
+else { Bad 'perforce overlay retired' "got $($pfEntries.Count) entries (should be 0)" }
 Remove-Item -Recurse -Force $t -ErrorAction SilentlyContinue
 
 # --- Test 7: legacy ue-perforce alias expands to perforce + ue ---
@@ -140,10 +145,9 @@ $r = Invoke-PS (Join-Path $pkg 'scripts\init-consumer.ps1') @(
 if ($r.Code -eq 0) { Ok 'init-consumer accepts legacy ue-perforce alias' }
 else { Bad 'init-consumer ue-perforce alias' "exit=$($r.Code)`n$($r.Out)" }
 $m = Get-Content -Raw (Join-Path $t 'Docs\agents\scaffold-manifest.json') | ConvertFrom-Json
-$hasPerforce = @($m.files | Where-Object { $_.ownerOverlay -eq 'perforce' }).Count -gt 0
-$hasUe       = @($m.files | Where-Object { $_.ownerOverlay -eq 'ue'       }).Count -gt 0
-if ($hasPerforce -and $hasUe) { Ok 'ue-perforce alias expanded to both overlays' }
-else { Bad 'ue-perforce alias expanded' "perforce=$hasPerforce ue=$hasUe" }
+$hasUe = @($m.files | Where-Object { $_.ownerOverlay -eq 'ue' }).Count -gt 0
+if ($hasUe) { Ok 'ue-perforce alias still parses; ue entries land (perforce retired, installs nothing)' }
+else { Bad 'ue-perforce alias' 'no ue entries landed' }
 Remove-Item -Recurse -Force $t -ErrorAction SilentlyContinue
 
 # --- Summary ---

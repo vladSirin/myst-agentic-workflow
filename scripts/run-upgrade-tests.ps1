@@ -18,12 +18,12 @@ try {
     if ($LASTEXITCODE -ne 0) { Bad 'setup fixture' 'setup.ps1 failed'; Get-Content (Join-Path $t 'setup.log') -Tail 10 | Write-Host; throw 'fixture' }
 
     # 2. Simulate an OLD consumer:
-    #  (a) PRESERVE: customize tdd/SKILL.md (on-disk now differs from manifest baseline)
-    $tdd = "$t\.claude\skills\tdd\SKILL.md"
+    #  (a) PRESERVE: customize a core-bootstrap doc (on-disk now differs from manifest baseline)
+    $tdd = "$t\Docs\agents\issue-tracker.md"
     Add-Content -LiteralPath $tdd -Value "`n<!-- my local customization -->"
     $tddCustom = GH $tdd
-    #  (b) ADD: delete the teach skill from disk so upgrade re-adds it from the template
-    Remove-Item -LiteralPath "$t\.claude\skills\teach" -Recurse -Force
+    #  (b) ADD: delete a core doc from disk so upgrade re-adds it from the template
+    Remove-Item -LiteralPath "$t\Docs\agents\triage-labels.md" -Force
     #  (c) REMOVE: inject a retired skill (on disk + manifest, unmodified) not in the current template
     New-Item -ItemType Directory -Path "$t\.claude\skills\zoom-out" -Force | Out-Null
     Set-Content -LiteralPath "$t\.claude\skills\zoom-out\SKILL.md" -Value 'retired skill body'
@@ -41,18 +41,17 @@ try {
     [IO.File]::WriteAllText($mp, ($man | ConvertTo-Json -Depth 100), (New-Object Text.UTF8Encoding($true)))
 
     # 3. Preview must not change anything
-    $teachBeforePreview = Test-Path "$t\.claude\skills\teach\SKILL.md"
     & powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$pkg\upgrade.ps1" -TargetRoot $t *> (Join-Path $t 'preview.log')
-    if ((-not (Test-Path "$t\.claude\skills\teach\SKILL.md")) -and (Test-Path "$t\.claude\skills\zoom-out\SKILL.md")) { Ok 'preview made no changes' } else { Bad 'preview' 'preview mutated the consumer' }
+    if ((-not (Test-Path "$t\Docs\agents\triage-labels.md")) -and (Test-Path "$t\.claude\skills\zoom-out\SKILL.md")) { Ok 'preview made no changes' } else { Bad 'preview' 'preview mutated the consumer' }
 
     # 4. Apply
     & powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$pkg\upgrade.ps1" -TargetRoot $t -Apply -Yes *> (Join-Path $t 'apply.log')
     if ($LASTEXITCODE -eq 0) { Ok 'upgrade -Apply exit 0' } else { Bad 'apply exit' "exit $LASTEXITCODE"; Get-Content (Join-Path $t 'apply.log') -Tail 12 | Write-Host }
 
     # 5. Assertions
-    if ((Test-Path $tdd) -and (GH $tdd) -eq $tddCustom) { Ok 'PRESERVE: customized tdd kept byte-for-byte' } else { Bad 'preserve' 'tdd customization was overwritten' }
-    if (Test-Path "$t\.claude\skills\teach\SKILL.md") { Ok 'ADD: deleted skill (teach) re-added' } else { Bad 'add' 'teach not re-added' }
-    if (-not (Test-Path "$t\.claude\skills\zoom-out")) { Ok 'REMOVE: retired skill (zoom-out) removed + dir pruned' } else { Bad 'remove' 'zoom-out still present' }
+    if ((Test-Path $tdd) -and (GH $tdd) -eq $tddCustom) { Ok 'PRESERVE: customized issue-tracker kept byte-for-byte' } else { Bad 'preserve' 'issue-tracker customization was overwritten' }
+    if (Test-Path "$t\Docs\agents\triage-labels.md") { Ok 'ADD: deleted core doc (triage-labels) re-added' } else { Bad 'add' 'triage-labels not re-added' }
+    if (-not (Test-Path "$t\.claude\skills\zoom-out")) { Ok 'REMOVE: retired skill (zoom-out) removed + dir pruned - the CL 3.6 detrack path' } else { Bad 'remove' 'zoom-out still present' }
 
     # 6. Preflight clean
     $pf = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$pkg\scripts\run-skeleton-preflight.ps1" -TargetRoot $t 2>&1 | Out-String

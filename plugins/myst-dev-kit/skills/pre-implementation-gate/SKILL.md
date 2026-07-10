@@ -1,3 +1,8 @@
+---
+name: pre-implementation-gate
+description: "HARD RULE - use BEFORE drafting any multi-changelist implementation plan. Verify that PRD, issues, and triage exist first."
+---
+
 # CRITICAL WORKFLOW REQUIREMENT
 
 ## Pre-Implementation Gate
