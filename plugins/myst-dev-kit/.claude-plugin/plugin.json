@@ -1,7 +1,7 @@
 {
     "name": "myst-dev-kit",
     "displayName": "Myst Dev Kit",
-    "version": "3.1.0",
+    "version": "3.1.1",
     "description": "Team dev kit: 19 engineering/productivity skills (PRD, TDD, triage, debugging, grilling, teaching...), design-critic review agent, package lifecycle commands, and the Codex-side Submit-Audit pre-submit warning bridge.",
     "author": {
         "name": "Sirin",

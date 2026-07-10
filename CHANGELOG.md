@@ -2,6 +2,29 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [3.1.1] - 2026-07-10 — review/submit protocol: Review Record block + CL-creation lessons
+
+### Changed
+- **ReviewAndSubmit (perforce overlay)**: new **Step 8 "Record the Review"** — every reviewed
+  CL gets a `Reviewer: <name> — Verdict: <GREEN|WARNING|BLOCKING>` line per reviewer plus
+  disposition-tagged (`[FIXED]`/`[ACCEPTED]`/`[DEFERRED]`) one-liner findings appended to its
+  description before submit. An installed Submit-Audit hook greps for this block, so reviewed
+  CLs no longer false-warn "NO review block", and `p4 describe` shows the review outcome.
+- **ReviewAndSubmit**: Step 1 CL-creation mechanics rewritten to codify field lessons — create
+  named CLs via a Bash heredoc (a PowerShell pipe into `p4 change -i` prepends a UTF-8 BOM and
+  fails); never `p4 change -o | p4 change -i` for a NEW CL (it sweeps every default-changelist
+  file in); verify `p4 opened -c` and evict strays after creating. Safe existing-CL
+  description-update path + a note that MSYS `/tmp` is invisible to native-OS tools.
+- **ReviewAndSubmit**: numbered preflight (project validators + `submit-audit-warn.sh --check-cl`
+  incl. EOL-flip detection); a **fast path** letting small non-risky CLs skip agent review after
+  a self-review; reviewer prompts now require the literal `Verdict:` line and load the AFK
+  lessons files.
+- **radical-design-critic (myst-dev-kit)**: added a Submission Authority HARD RULE + required
+  `Verdict:` output line, mirroring architecture-reviewer — closes a gate-parsing hole where
+  AFKAutoSubmit parsed a `Verdict:` the agent never emitted.
+- **AFKAutoSubmit (afk-autonomy overlay)**: live-phase auto-submit now writes the same Review
+  Record block before `p4 submit`.
+
 ## [3.1.0] - 2026-07-10 — plugin marketplace: dual manifests + myst-dev-kit plugin
 
 ### Added

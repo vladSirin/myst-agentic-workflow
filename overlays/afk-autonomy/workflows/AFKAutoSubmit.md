@@ -129,7 +129,9 @@ with body `Issue: <path>` + `AFK-Source: <source>` → implement (`p4 edit`/`add
 4. Parse `Verdict:` and `AFK-Verdict:`.
 5. If `Verdict: BLOCKING` or `AFK-Verdict: REQUIRES-HITL` → queue for HITL, log, stop.
 6. All gates pass: **dry-run phase** → log `[DRY-RUN would-submit]`, do NOT submit; **live phase** →
-   `p4 submit -c <CL>`, log `[SUBMITTED]`.
+   append the **Review Record block** to the CL description (same format/mechanics as ReviewAndSubmit.md
+   Step 8 — `Reviewer:`/`Verdict:` lines + one-liner findings; this is what the server Submit-Audit greps
+   for), then `p4 submit -c <CL>`, log `[SUBMITTED]`.
 
 **Queueing for HITL:** leave the CL open, append `AFK-DEMOTED-TO-HITL: <reason>` to its description,
 log the failure. On return the user runs the supervised review-and-submit flow.
