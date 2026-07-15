@@ -5,7 +5,8 @@ The team AI setup has two layers:
 **1. Committed core** (arrives with version-control sync — nothing to do):
 - `.claude/settings.json` — team hooks (session doc-audit, AngelScript write
   validator, Submit-Audit pre-submit warning) + plugin marketplace registration.
-- `.claude/rules/` — auto-loaded rules: `angelscriptrules` (AS conventions),
+- `.claude/rules/` — auto-loaded rules committed in this repo (the set varies
+  by project; the Myst repo ships all five): `angelscriptrules` (AS conventions),
   `unrealmcprules` (use `mcp__unreal-engine__*` for `/Game` assets, never
   Read/Grep), `DocumentStandard` (doc naming), `RawMaterialsProtection`
   (**HARD RULE**: `{{game_docs_root}}/_Raw/` is leads-only),

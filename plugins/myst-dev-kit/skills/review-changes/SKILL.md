@@ -14,8 +14,9 @@ rubrics the dedicated reviewer agents use.
 
 1. **Gather the change**: `p4 describe -du {CL}` (or `git diff`) plus the full
    content of every changed file that needs context.
-2. **Load the rubrics** — read both agent definitions that ship in this plugin
-   (same directory tree as this skill, under `agents/`):
+2. **Load the rubrics** — read both agent definitions that ship in this plugin,
+   at the plugin root's `agents/` dir (a sibling of `skills/` — from this file:
+   `../../agents/`):
    - `agents/architecture-reviewer.md` — Code Complete principles, SOLID,
      UE5/AngelScript patterns, project conventions.
    - `agents/radical-design-critic.md` — edge cases, UX friction, hidden

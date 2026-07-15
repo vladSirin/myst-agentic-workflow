@@ -51,7 +51,7 @@ codex plugin marketplace add vladSirin/myst-agentic-workflow
 # then /plugins -> Myst Team Plugins -> install myst-dev-kit
 ```
 
-Both tools read their native manifest from the same repo (`.claude-plugin/marketplace.json` for Claude Code, `.agents/plugins/marketplace.json` for Codex; consistency is enforced by `scripts/run-marketplace-tests.ps1` + `claude plugin validate`). The repo is private — installs use your existing GitHub credentials (`gh auth login` / SSH).
+Both tools read their native manifest from the same repo (`.claude-plugin/marketplace.json` for Claude Code, `.agents/plugins/marketplace.json` for Codex; consistency is enforced by `scripts/run-marketplace-tests.ps1` + `claude plugin validate`). The repo is public today, so installs need no auth (if it goes private later: collaborator access + `gh auth login`).
 
 Notes:
 - The plugin's `hooks/hooks.json` delivers the client Submit-Audit warning **to Codex only** — under Claude Code the bridge no-ops because the consumer project's committed `.claude/settings.json` already registers the same audit (no double warnings). On consumers without the Myst governance core, the hook exits silently.
