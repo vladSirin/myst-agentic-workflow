@@ -2,6 +2,26 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [4.1.0] - 2026-07-15 — contribution gate + team onboarding + Codex inline review
+
+### Added
+- **CONTRIBUTING.md** — the per-skill contribution gate: one skill per PR, author-in-consumer
+  -> promote.ps1 roundtrip -> mechanical validation (plugin validate + marketplace/linkcheck
+  suites) -> review checklist (trigger-strength frontmatter, genericity, provenance/attribution,
+  submission-authority, advisory posture, size) -> 4-site version bump on merge.
+- **SETUP.md** — team onboarding for both archetypes (standard sync-and-go, poweruser) and
+  both tools; documents the manual `/plugin install myst-dev-kit@myst` path (the trust-prompt
+  is version-flaky), the Codex `marketplace add` step, the settings.local opt-out, the
+  empty-hook-array pitfall, and the 2-minute verify.
+- **`review-changes` skill** (30th) — inline review for sessions without reviewer subagents
+  (Codex): loads the same two rubric files from the plugin's `agents/` dir, categorizes
+  BLOCKING/WARNING/INFO, ends with the parseable `Verdict:` line, and carries the
+  submission-authority hard rule. Closes the D5 "Codex gets review as a skill" item.
+
+### Changed
+- README: Contributing section now points at CONTRIBUTING.md; Quickstart points Myst team
+  members at SETUP.md.
+
 ## [4.0.0] - 2026-07-10 — role shift: plugin owns the kit, installer bootstraps the core
 
 ### BREAKING

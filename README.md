@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-16%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.0.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-16%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.1.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -13,6 +13,8 @@ Extracted from `Myst_Proto`, a UE5/Perforce game project, and offered as a start
 The `overlays/myst-project/` directory ships the original project-specific content **as a reference example, not generic content** — see [`overlays/myst-project/README.md`](overlays/myst-project/README.md). `setup.ps1` never auto-installs it.
 
 ## Quickstart (60-second setup)
+
+> **Myst team member?** Follow [SETUP.md](SETUP.md) — it covers both archetypes (standard sync-and-go and poweruser) for Claude Code and Codex.
 
 ```powershell
 git clone https://github.com/vladSirin/myst-agentic-workflow
@@ -49,7 +51,7 @@ codex plugin marketplace add vladSirin/myst-agentic-workflow
 # then /plugins -> Myst Team Plugins -> install myst-dev-kit
 ```
 
-Both tools read their native manifest from the same repo (`.claude-plugin/marketplace.json` for Claude Code, `.agents/plugins/marketplace.json` for Codex; consistency is enforced by `scripts/run-marketplace-tests.ps1` + `claude plugin validate`). The repo is private — installs use your existing GitHub credentials (`gh auth login` / SSH).
+Both tools read their native manifest from the same repo (`.claude-plugin/marketplace.json` for Claude Code, `.agents/plugins/marketplace.json` for Codex; consistency is enforced by `scripts/run-marketplace-tests.ps1` + `claude plugin validate`). The repo is public today, so installs need no auth (if it goes private later: collaborator access + `gh auth login`).
 
 Notes:
 - The plugin's `hooks/hooks.json` delivers the client Submit-Audit warning **to Codex only** — under Claude Code the bridge no-ops because the consumer project's committed `.claude/settings.json` already registers the same audit (no double warnings). On consumers without the Myst governance core, the hook exits silently.
@@ -314,10 +316,4 @@ MIT. Bundles content adapted from [mattpocock/skills](https://github.com/mattpoc
 
 ## Contributing
 
-The package was extracted from one project. Improvements that benefit other adopters are welcome:
-
-1. Edit the file in your consumer project first (where you'll actually use it).
-2. Run `promote.ps1 -TargetRoot <consumer> -Paths <file>` to push the change to the package working tree.
-3. Open a PR against `main`.
-
-For larger structural changes (new overlay, new tool support, manifest schema bump), open an issue first.
+Content enters the marketplace through a **per-skill contribution gate** — one skill per PR, promote.ps1 roundtrip, mechanical validation, review checklist. Full process: [CONTRIBUTING.md](CONTRIBUTING.md).
