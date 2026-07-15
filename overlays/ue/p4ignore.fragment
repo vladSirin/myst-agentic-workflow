@@ -2,11 +2,11 @@
 # Agentic Tool Local State
 ###############################################################################
 
-# Checked-in scaffold lives under .Codex and .claude.
-# These files are per-user runtime state and must not be reconciled into P4.
+# Per-user runtime state - must not be reconciled into P4.
+# NOTE: .claude/settings.json is NOT ignored: it is committed team core
+# (hooks + marketplace registration) since the governance rollout.
 .Codex/settings.json
 .Codex/settings.local.json
 .Codex/scheduled_tasks.lock
-.claude/settings.json
 .claude/settings.local.json
 .claude/scheduled_tasks.lock
