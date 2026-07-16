@@ -3,32 +3,137 @@
     "_comment": "Curation memory for mattpocock/skills upstream sync (ADR-0002 principle #6). Records skill-level skip/defer/keep decisions vs upstream HEAD 6eeb81b so future syncs don't re-litigate them. check-mattpocock-updates.ps1 reads hunk-level entries (with hunkContentHash); the skill-decision entries here are documentation for human/agent curation.",
     "type": "schema-note"
   },
-
-  { "type": "skill-decision", "decision": "skip", "target": "ask-matt", "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461", "date": "2026-06-22",
-    "reason": "Matt-Pocock-personal/branded router (aihero.dev). Out of scope. (User call 2026-06-22.)" },
-  { "type": "skill-decision", "decision": "skip", "target": "prototype", "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461", "date": "2026-06-22",
-    "reason": "Web-bound (React/Tailwind/?variant=); no UE/Perforce relevance. (User call 2026-06-22.)" },
-  { "type": "skill-decision", "decision": "defer", "target": "decision-mapping", "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461", "date": "2026-06-22",
-    "reason": "Upstream marks it in-progress/unstable; hard-depends on prototype + domain-modeling. Revisit after it graduates. (User call 2026-06-22.)" },
-
-  { "type": "skill-decision", "decision": "follow-deletion", "target": "zoom-out", "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461", "date": "2026-06-22",
-    "reason": "Faithful-to-upstream: follow upstream's deletion. Removed in Phase B-3. (User call 2026-06-22.)" },
-  { "type": "skill-decision", "decision": "follow-deletion", "target": "caveman", "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461", "date": "2026-06-22",
-    "reason": "Faithful-to-upstream: follow upstream's deletion. Removed in Phase B-3. (User call 2026-06-22.)" },
-  { "type": "skill-decision", "decision": "replace", "target": "write-a-skill", "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461", "date": "2026-06-22",
-    "reason": "Faithful-to-upstream: upstream replaced write-a-skill with writing-great-skills. Remove write-a-skill (Phase B-3); writing-great-skills vendored in Phase B-1. (User call 2026-06-22.)" },
-
-  { "type": "schema-note", "_adopted": "ADOPTED faithfully (NOT rejected): domain-modeling, grilling, teach (Phase A); codebase-design, writing-great-skills, setup-matt-pocock-skills, edit-article, obsidian-vault, resolving-merge-conflicts (+perforce P4-NOTES overlay), implement (Phase B-1); diagnosing-bugs (HEAD rename, v2.5.0). Carried skills converge to HEAD verbatim in Phase B-2.",
-    "_deviations": "to-issues drops upstream's HITL/AFK slice-typing faithfully; AFK-readiness carried by triage label (Phase B-2). resolving-merge-conflicts base is git-verbatim; Perforce text-merge guidance lives in the perforce-overlay P4-NOTES companion." },
-
-  { "type": "local-origin", "target": "roundtable", "homedIn": "overlays/core-local", "upstreamDerived": false, "date": "2026-06-23",
-    "reason": "Package-invented, NOT from upstream. Moved to the core-local overlay (re-vendor only writes templates/.../skills/, never overlays/). A future upstream skill named 'roundtable' must NOT silently overwrite this — adopt under a different name or reconcile explicitly. Enforced by run-provenance-tests.ps1." },
-  { "type": "local-origin", "target": "update-myst-skills", "homedIn": "templates (command)", "upstreamDerived": false, "date": "2026-06-23",
-    "reason": "Local package-management command (wraps update.ps1). Not from upstream. Lives in commands/, which the upstream skill sync does not target." },
-  { "type": "local-origin", "target": "promote-myst-skills", "homedIn": "templates (command)", "upstreamDerived": false, "date": "2026-06-23",
-    "reason": "Local package-management command (wraps promote.ps1). Not from upstream." },
-  { "type": "local-origin", "target": "sync-build-submit", "homedIn": "overlays/ue", "upstreamDerived": false, "date": "2026-06-23",
-    "reason": "Local UE+Perforce build/submit pipeline (Tier 2). Not from upstream. Lives in the ue overlay." },
-  { "type": "local-origin", "target": "check-uproject-assoc.sh", "homedIn": "overlays/ue", "upstreamDerived": false, "date": "2026-06-23",
-    "reason": "Local UE source-tree EngineAssociation submit guard. Not from upstream. Lives in the ue overlay." }
+  {
+    "type": "skill-decision",
+    "decision": "skip",
+    "target": "ask-matt",
+    "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461",
+    "date": "2026-06-22",
+    "reason": "Matt-Pocock-personal/branded router (aihero.dev). Out of scope. (User call 2026-06-22.)"
+  },
+  {
+    "type": "skill-decision",
+    "decision": "skip",
+    "target": "prototype",
+    "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461",
+    "date": "2026-06-22",
+    "reason": "Web-bound (React/Tailwind/?variant=); no UE/Perforce relevance. (User call 2026-06-22.)"
+  },
+  {
+    "type": "skill-decision",
+    "decision": "defer",
+    "target": "decision-mapping",
+    "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461",
+    "date": "2026-06-22",
+    "reason": "Upstream marks it in-progress/unstable; hard-depends on prototype + domain-modeling. Revisit after it graduates. (User call 2026-06-22.)"
+  },
+  {
+    "type": "skill-decision",
+    "decision": "follow-deletion",
+    "target": "zoom-out",
+    "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461",
+    "date": "2026-06-22",
+    "reason": "Faithful-to-upstream: follow upstream's deletion. Removed in Phase B-3. (User call 2026-06-22.)"
+  },
+  {
+    "type": "skill-decision",
+    "decision": "follow-deletion",
+    "target": "caveman",
+    "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461",
+    "date": "2026-06-22",
+    "reason": "Faithful-to-upstream: follow upstream's deletion. Removed in Phase B-3. (User call 2026-06-22.)"
+  },
+  {
+    "type": "skill-decision",
+    "decision": "replace",
+    "target": "write-a-skill",
+    "againstUpstreamCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461",
+    "date": "2026-06-22",
+    "reason": "Faithful-to-upstream: upstream replaced write-a-skill with writing-great-skills. Remove write-a-skill (Phase B-3); writing-great-skills vendored in Phase B-1. (User call 2026-06-22.)"
+  },
+  {
+    "type": "schema-note",
+    "_adopted": "ADOPTED faithfully (NOT rejected): domain-modeling, grilling, teach (Phase A); codebase-design, writing-great-skills, setup-matt-pocock-skills, edit-article, obsidian-vault, resolving-merge-conflicts (+perforce P4-NOTES overlay), implement (Phase B-1); diagnosing-bugs (HEAD rename, v2.5.0). Carried skills converge to HEAD verbatim in Phase B-2.",
+    "_deviations": "to-issues drops upstream's HITL/AFK slice-typing faithfully; AFK-readiness carried by triage label (Phase B-2). resolving-merge-conflicts base is git-verbatim; Perforce text-merge guidance lives in the perforce-overlay P4-NOTES companion."
+  },
+  {
+    "type": "local-origin",
+    "target": "roundtable",
+    "homedIn": "overlays/core-local",
+    "upstreamDerived": false,
+    "date": "2026-06-23",
+    "reason": "Package-invented, NOT from upstream. Moved to the core-local overlay (re-vendor only writes templates/.../skills/, never overlays/). A future upstream skill named 'roundtable' must NOT silently overwrite this — adopt under a different name or reconcile explicitly. Enforced by run-provenance-tests.ps1."
+  },
+  {
+    "type": "local-origin",
+    "target": "update-myst-skills",
+    "homedIn": "templates (command)",
+    "upstreamDerived": false,
+    "date": "2026-06-23",
+    "reason": "Local package-management command (wraps update.ps1). Not from upstream. Lives in commands/, which the upstream skill sync does not target."
+  },
+  {
+    "type": "local-origin",
+    "target": "promote-myst-skills",
+    "homedIn": "templates (command)",
+    "upstreamDerived": false,
+    "date": "2026-06-23",
+    "reason": "Local package-management command (wraps promote.ps1). Not from upstream."
+  },
+  {
+    "type": "local-origin",
+    "target": "sync-build-submit",
+    "homedIn": "overlays/ue",
+    "upstreamDerived": false,
+    "date": "2026-06-23",
+    "reason": "Local UE+Perforce build/submit pipeline (Tier 2). Not from upstream. Lives in the ue overlay."
+  },
+  {
+    "type": "local-origin",
+    "target": "check-uproject-assoc.sh",
+    "homedIn": "overlays/ue",
+    "upstreamDerived": false,
+    "date": "2026-06-23",
+    "reason": "Local UE source-tree EngineAssociation submit guard. Not from upstream. Lives in the ue overlay."
+  },
+  {
+    "type": "skill-decision",
+    "decision": "reject",
+    "target": "to-prd -> to-spec (rename)",
+    "againstUpstreamCommit": "e9fcdf95b402d360f90f1db8d776d5dd450f9234",
+    "date": "2026-07-16",
+    "reason": "Team governance vocabulary is PRD/issues, baked into the P4-committed PreImplementationGate rule, MustRead workflow manual, and triage docs. Keeping to-prd/to-issues under their current names+content; adopting the spec/tickets rename is a deliberate future vocabulary-migration decision, not a drive-by re-vendor."
+  },
+  {
+    "type": "skill-decision",
+    "decision": "reject",
+    "target": "to-issues deletion / to-tickets replacement",
+    "againstUpstreamCommit": "e9fcdf95b402d360f90f1db8d776d5dd450f9234",
+    "date": "2026-07-16",
+    "reason": "Same vocabulary coupling as the to-spec rename; migrate together or not at all."
+  },
+  {
+    "type": "skill-decision",
+    "decision": "defer",
+    "target": "setup-matt-pocock-skills (updates)",
+    "againstUpstreamCommit": "e9fcdf95b402d360f90f1db8d776d5dd450f9234",
+    "date": "2026-07-16",
+    "reason": "Updated upstream version teaches the new spec/tickets vocabulary; ours must stay consistent with the kept to-prd/to-issues. One-time-setup skill, low update value. Revisit with the vocabulary migration."
+  },
+  {
+    "type": "skill-decision",
+    "decision": "defer",
+    "target": "research, wayfinder, claude-handoff, loop-me, wizard, to-questionnaire, setup-ts-deep-modules, review/code-review (new upstream skills)",
+    "againstUpstreamCommit": "e9fcdf95b402d360f90f1db8d776d5dd450f9234",
+    "date": "2026-07-16",
+    "reason": "CONTRIBUTING gate: new skills enter the bundle one-per-PR after individual vetting; none requested by the team yet."
+  },
+  {
+    "type": "skill-decision",
+    "decision": "skip",
+    "target": "agents/openai.yaml per-skill metadata (all skills)",
+    "againstUpstreamCommit": "e9fcdf95b402d360f90f1db8d776d5dd450f9234",
+    "date": "2026-07-16",
+    "reason": "Upstream's own multi-tool packaging metadata; our Codex delivery is the dual-manifest myst-dev-kit plugin, which doesn't use these."
+  }
 ]

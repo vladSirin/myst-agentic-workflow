@@ -2,6 +2,30 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [4.2.0] - 2026-07-16 — upstream re-vendor: mattpocock/skills 6eeb81b -> e9fcdf9
+
+### Changed (adopted verbatim)
+- `tdd` (SKILL + tests; upstream deleted `refactoring.md` — followed), `implement`,
+  `improve-codebase-architecture` (yagni scoping), `grilling`, `handoff`,
+  `writing-great-skills` (SKILL + substantially reworked GLOSSARY).
+
+### Rejected / deferred (recorded in .scratch/agentic-scaffold-rejected-upstream.json)
+- **to-prd -> to-spec rename + to-issues -> to-tickets replacement: REJECTED.** The team
+  governance vocabulary (PRD/issues) is baked into the consumer's committed
+  PreImplementationGate rule, MustRead manual, and triage docs. Ours keep their names and
+  pre-rename content; migrating the vocabulary is its own future decision.
+- `setup-matt-pocock-skills` updates deferred (teaches the new vocabulary).
+- New upstream skills (research, wayfinder, claude-handoff, loop-me, wizard,
+  to-questionnaire, setup-ts-deep-modules, review) deferred — CONTRIBUTING gate vets
+  new skills one per PR on request.
+- Per-skill `agents/openai.yaml` metadata skipped (upstream's own packaging; our Codex
+  delivery is the dual-manifest plugin).
+
+### Notes
+- First re-vendor since the marketplace went live; pin + license audit date moved in
+  package-manifest.json. Upstream now also ships as a Claude plugin itself — noted,
+  but the curated team bundle remains the delivery path.
+
 ## [4.1.0] - 2026-07-15 — contribution gate + team onboarding + Codex inline review
 
 ### Added

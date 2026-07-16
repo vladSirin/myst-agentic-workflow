@@ -1,15 +1,28 @@
 {
   "package": {
     "name": "myst-agentic-workflow",
-    "version": "4.1.0",
+    "version": "4.2.0",
     "repository": "https://github.com/vladSirin/myst-agentic-workflow",
     "writeModeEnabled": true,
     "license": "MIT"
   },
   "manifestSchema": {
     "schemaVersion": 3,
-    "ownership": ["package", "overlay", "project", "local"],
-    "overlays": ["core", "perforce", "ue", "myst-project", "tool-capability", "core-local", "afk-autonomy"],
+    "ownership": [
+      "package",
+      "overlay",
+      "project",
+      "local"
+    ],
+    "overlays": [
+      "core",
+      "perforce",
+      "ue",
+      "myst-project",
+      "tool-capability",
+      "core-local",
+      "afk-autonomy"
+    ],
     "mergeStrategies": {
       "copy": "installer owns whole file; whole-file sha256",
       "full-file-override": "overlay replaces a core file; whole-file sha256",
@@ -26,25 +39,48 @@
       "runtime-mutable": "tool mutates the file at runtime; install seeds from template on first run and never overwrites after; preflight + compare skip hash checks; reported as outcome 'runtime-mutable'",
       "validation": "REJECT any generated-block/append-fragment entry carrying a whole-file contentHash"
     },
-    "baselineStates": ["submitted", "scaffold-cleanup", "packaging-plan", "default", "local-only", "future-package"],
+    "baselineStates": [
+      "submitted",
+      "scaffold-cleanup",
+      "packaging-plan",
+      "default",
+      "local-only",
+      "future-package"
+    ],
     "depotRevisionBinding": "every managed VC file records depotRevision; drift preflight fails if headRev differs",
     "requiredFileFields": [
-      "path", "tool", "owner", "ownerOverlay", "sourceTemplate", "sourceCommit",
-      "contentHash", "hashPolicy", "blockHash", "blockHashPolicy", "depotRevision",
-      "mergeStrategy", "localOnly", "upstreamDerived", "upstreamLicense",
-      "writablePolicy", "baselineState", "pendingChangelist", "conflictReport", "lastCheckedAt"
+      "path",
+      "tool",
+      "owner",
+      "ownerOverlay",
+      "sourceTemplate",
+      "sourceCommit",
+      "contentHash",
+      "hashPolicy",
+      "blockHash",
+      "blockHashPolicy",
+      "depotRevision",
+      "mergeStrategy",
+      "localOnly",
+      "upstreamDerived",
+      "upstreamLicense",
+      "writablePolicy",
+      "baselineState",
+      "pendingChangelist",
+      "conflictReport",
+      "lastCheckedAt"
     ]
   },
   "upstream": {
     "mattpocockSkills": {
       "repository": "https://github.com/mattpocock/skills",
       "trackedBranch": "main",
-      "pinnedCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461",
-      "previousPinnedCommit": "b8be62ffacb0118fa3eaa29a0923c87c8c11985c",
+      "pinnedCommit": "e9fcdf95b402d360f90f1db8d776d5dd450f9234",
+      "previousPinnedCommit": "6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461",
       "license": "MIT",
-      "licenseAuditedAt": "2026-05-19T00:00:00+08:00",
+      "licenseAuditedAt": "2026-07-16T00:00:00+08:00",
       "redistributionAllowed": true,
-      "attributionRequirement": "SPDX MIT. Audited at pinned commit 6eeb81b5fcfeeb5bd531dd47ab2f9f2bbea27461. Must preserve the verbatim notice 'Copyright (c) 2026 Matt Pocock' and the full MIT permission notice in all copies or substantial portions of redistributed files."
+      "attributionRequirement": "SPDX MIT. Audited at pinned commit e9fcdf95b402d360f90f1db8d776d5dd450f9234. Must preserve the verbatim notice 'Copyright (c) 2026 Matt Pocock' and the full MIT permission notice in all copies or substantial portions of redistributed files."
     }
   }
 }
