@@ -2,6 +2,20 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [4.4.0] - 2026-07-16 — Spec axis for reviews (idea mined from upstream code-review)
+
+### Changed
+- **review-and-submit**: CL descriptions must link the originating PRD/issue in `## Why`
+  when one exists; both reviewer prompts gain a conditional **Spec axis** — verify the
+  change implements what the linked source asked for, reporting [SPEC] GAPS and SCOPE
+  CREEP findings alongside quality findings. No linked source = axis skipped (behavior
+  unchanged for unlinked CLs).
+- **review-changes** (Codex inline reviewer): same Spec-axis step.
+
+### Notes
+- Idea adopted from mattpocock/skills' new `code-review` skill; the skill itself remains
+  rejected (git-native mechanics, would duplicate the review-and-submit entry point).
+
 ## [4.3.0] - 2026-07-16 — adopt upstream `research` skill (31st)
 
 ### Added
