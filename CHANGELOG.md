@@ -2,6 +2,14 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [4.5.0] - 2026-07-16 — English-only CL descriptions
+
+### Changed
+- **review-and-submit**: CL descriptions (title, body, Review Record) must be
+  English/ASCII only — non-English text turns to mojibake on some P4 clients/CI/audit
+  systems. Enforced advisorily by the consumer's Submit-Audit (client + server warn
+  on non-ASCII; shipped separately in the game repo).
+
 ## [4.4.0] - 2026-07-16 — Spec axis for reviews (idea mined from upstream code-review)
 
 ### Changed
