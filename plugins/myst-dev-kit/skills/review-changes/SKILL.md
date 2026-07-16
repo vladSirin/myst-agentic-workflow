@@ -39,7 +39,7 @@ rubrics the dedicated reviewer agents use.
 
    The `review-and-submit` protocol parses the literal `Verdict:` token and
    records it in the CL description's Review Record block as
-   `Reviewer: self (inline, review-changes skill) — Verdict: ...`.
+   `Reviewer: self (inline, review-changes skill) - Verdict: ...`.
 
 ## Hard rule: submission authority
 
