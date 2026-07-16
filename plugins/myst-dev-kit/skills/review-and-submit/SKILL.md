@@ -78,6 +78,8 @@ When the user says **"review and submit {changelist name or ID}"**, execute this
    - **English only**: the ENTIRE description (title, body, Review Record) must be
      English/ASCII — non-English text renders as unreadable garbage on some P4
      clients, CI, and audit systems. Submit-Audit warns on non-ASCII characters.
+     This includes punctuation: use ASCII '-' in the Review Record's
+     'Reviewer: {name} - Verdict:' line, never an em-dash.
    - **Keep it scannable**: prefer bullets over paragraphs
    - **Be specific**: name the classes, systems, and files that changed — don't just say "updated code"
    - **Include context**: teammates who didn't write the code should understand the CL without reading every file
@@ -323,8 +325,8 @@ After receiving reviewer feedback, present a structured summary:
 
 ```
 ## Review
-Reviewer: architecture-reviewer — Verdict: WARNING (2 passes)
-Reviewer: radical-design-critic — Verdict: GREEN
+Reviewer: architecture-reviewer - Verdict: WARNING (2 passes)
+Reviewer: radical-design-critic - Verdict: GREEN
 Findings:
 - [FIXED] BLOCKING SomeFile.as:88 — one-line description
 - [ACCEPTED] WARNING — magic number in threshold
@@ -333,8 +335,8 @@ Findings:
 
 **Rules:**
 
-- One `Reviewer: {name} — Verdict: {GREEN|WARNING|BLOCKING}` line per reviewer that ran. The verdict shown is the **final pass** verdict; note the pass count if more than one.
-- Fast-path self-review: `Reviewer: self — Verdict: GREEN (quick review: config-only, 3 files)` and `Findings: none`.
+- One `Reviewer: {name} - Verdict: {GREEN|WARNING|BLOCKING}` line per reviewer that ran. The verdict shown is the **final pass** verdict; note the pass count if more than one.
+- Fast-path self-review: `Reviewer: self - Verdict: GREEN (quick review: config-only, 3 files)` and `Findings: none`.
 - `Findings:` one-liners only, each prefixed with its disposition: `[FIXED]` (fixed before submit), `[ACCEPTED]` (submitting with it), `[DEFERRED]` (tracked for later).
 - Cap at ~6 finding lines; summarize overflow as `- ...and N more INFO items (see review transcript)`.
 - Write this block on **every** CL that goes through this protocol — it's cheap and keeps the audit quiet. (The AFK path writes the same block before its auto-submit.)

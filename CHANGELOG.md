@@ -2,6 +2,14 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [4.5.1] - 2026-07-16 — ASCII Review Record (dogfood finding)
+
+### Fixed
+- The Review Record template's em-dash (`— Verdict:`) is non-ASCII and tripped the new
+  English-only Submit-Audit check on its very first live CL. Template and examples now
+  use ASCII `- Verdict:`; the description standard notes the punctuation rule.
+  (The audit's loose `Verdict` substring match is unaffected either way.)
+
 ## [4.5.0] - 2026-07-16 — English-only CL descriptions
 
 ### Changed
