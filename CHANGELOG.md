@@ -2,6 +2,19 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [4.3.0] - 2026-07-16 — adopt upstream `research` skill (31st)
+
+### Added
+- **`research`** (vendored verbatim from mattpocock/skills @ e9fcdf9): delegate a question
+  to a background agent that reads PRIMARY sources only and captures cited findings as a
+  repo markdown file. Vetted per the CONTRIBUTING gate (plan "Upstream Skill Adoptions").
+
+### Notes
+- Curation memory updated: `wayfinder` re-classified defer-with-direction (adopt as the
+  discovery FRONT-END of the PRD/issues/triage pipeline when the real tracker lands —
+  assessed complementary, not competing); `code-review` mined for its Spec axis
+  (lands in review-and-submit via the next release).
+
 ## [4.2.0] - 2026-07-16 — upstream re-vendor: mattpocock/skills 6eeb81b -> e9fcdf9
 
 ### Changed (adopted verbatim)
