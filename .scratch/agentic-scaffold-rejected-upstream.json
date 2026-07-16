@@ -123,10 +123,10 @@
   {
     "type": "skill-decision",
     "decision": "defer",
-    "target": "research, wayfinder, claude-handoff, loop-me, wizard, to-questionnaire, setup-ts-deep-modules, review/code-review (new upstream skills)",
+    "target": "claude-handoff, loop-me, wizard, to-questionnaire, setup-ts-deep-modules (new upstream skills)",
     "againstUpstreamCommit": "e9fcdf95b402d360f90f1db8d776d5dd450f9234",
     "date": "2026-07-16",
-    "reason": "CONTRIBUTING gate: new skills enter the bundle one-per-PR after individual vetting; none requested by the team yet."
+    "reason": "CONTRIBUTING gate: new skills enter one-per-PR after vetting; these remain deferred/skipped (claude-handoff overlaps /handoff; others in-progress or TS/personal)."
   },
   {
     "type": "skill-decision",
@@ -135,5 +135,29 @@
     "againstUpstreamCommit": "e9fcdf95b402d360f90f1db8d776d5dd450f9234",
     "date": "2026-07-16",
     "reason": "Upstream's own multi-tool packaging metadata; our Codex delivery is the dual-manifest myst-dev-kit plugin, which doesn't use these."
+  },
+  {
+    "type": "skill-decision",
+    "decision": "adopt",
+    "target": "research",
+    "againstUpstreamCommit": "e9fcdf95b402d360f90f1db8d776d5dd450f9234",
+    "date": "2026-07-16",
+    "reason": "Vetted + adopted verbatim (plan 'Upstream Skill Adoptions', user-approved): fills the delegated-research gap, zero coupling, works in both tools."
+  },
+  {
+    "type": "skill-decision",
+    "decision": "defer-with-direction",
+    "target": "wayfinder",
+    "againstUpstreamCommit": "e9fcdf95b402d360f90f1db8d776d5dd450f9234",
+    "date": "2026-07-16",
+    "reason": "Assessed COMPLEMENTARY to (not competing with) the PRD/issues/triage delivery pipeline: adopt as the structured DISCOVERY front-end for large foggy efforts. Trigger = Jira/OpenProject integration (same milestone as issue-ref Submit-Audit): adapting to the temporary .scratch markdown tracker would be thrown away and redone at the switch."
+  },
+  {
+    "type": "skill-decision",
+    "decision": "mine-idea",
+    "target": "code-review (Spec axis)",
+    "againstUpstreamCommit": "e9fcdf95b402d360f90f1db8d776d5dd450f9234",
+    "date": "2026-07-16",
+    "reason": "Skill itself rejected (git-native, duplicate review entry point vs review-and-submit); its Spec-conformance axis adopted INTO review-and-submit + review-changes instead (follow-up PR)."
   }
 ]
