@@ -66,6 +66,9 @@ When the user says **"review and submit {changelist name or ID}"**, execute this
    ## Why
    - Motivation: what problem this solves, what feature it enables, or what phase/plan it advances
    - Link to relevant design doc or plan if one exists (e.g., "See Docs/plan_flow_system.md Phase 8")
+   - **If the CL implements a PRD or issue, LINK IT here** (path or tracker ref) —
+     this is what enables the reviewers' Spec axis (see Step 5) and the future
+     issue-ref audit
 
    ## Notes (optional)
    - Anything reviewers or teammates should know: migration steps, known limitations,
@@ -201,6 +204,15 @@ Categorize issues as:
 
 Be specific with file:line references where applicable.
 
+SPEC AXIS (conditional): if the CL description links a PRD, issue, or design doc,
+read it and verify the change implements what it asked for. Report on this axis:
+- GAPS: requirements the source asked for that this CL does not implement
+  (and are not explicitly deferred in the CL description)
+- SCOPE CREEP: substantive changes the source never asked for
+Categorize Spec findings with the same BLOCKING/WARNING/INFO severities, marked
+[SPEC]. If no source is linked, skip this axis and note "Spec axis: no linked
+source" in your response.
+
 End your response with a single line of the form:
   Verdict: GREEN | WARNING | BLOCKING
 The parent session parses the literal `Verdict:` token — do not omit
@@ -233,6 +245,15 @@ Categorize issues as:
 - INFO: Suggestions for future improvement
 
 Reference existing project patterns where applicable.
+
+SPEC AXIS (conditional): if the CL description links a PRD, issue, or design doc,
+read it and verify the change implements what it asked for. Report on this axis:
+- GAPS: requirements the source asked for that this CL does not implement
+  (and are not explicitly deferred in the CL description)
+- SCOPE CREEP: substantive changes the source never asked for
+Categorize Spec findings with the same BLOCKING/WARNING/INFO severities, marked
+[SPEC]. If no source is linked, skip this axis and note "Spec axis: no linked
+source" in your response.
 
 End your response with a single line of the form:
   Verdict: GREEN | WARNING | BLOCKING
