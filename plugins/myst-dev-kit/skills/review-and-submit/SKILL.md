@@ -75,6 +75,9 @@ When the user says **"review and submit {changelist name or ID}"**, execute this
      dependencies on other CLs, areas that need testing, etc.
    ```
 
+   - **English only**: the ENTIRE description (title, body, Review Record) must be
+     English/ASCII — non-English text renders as unreadable garbage on some P4
+     clients, CI, and audit systems. Submit-Audit warns on non-ASCII characters.
    - **Keep it scannable**: prefer bullets over paragraphs
    - **Be specific**: name the classes, systems, and files that changed — don't just say "updated code"
    - **Include context**: teammates who didn't write the code should understand the CL without reading every file
