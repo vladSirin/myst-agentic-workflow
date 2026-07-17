@@ -11,14 +11,13 @@ file-copied into a consumer:
 - `myst-project/` — Myst-only committed-core sources: `angelscriptrules`,
   the doc standards, the team creatives manual. **Never auto-added**; reference
   example for building your own project overlay.
-- `afk-autonomy/` — opt-in autonomous auto-submit governance (workflow, agent
-  lessons, afk-status hook script). Claude Code only; off by default.
-
 **Retired overlays** (content now in `plugins/myst-dev-kit/`): `perforce`
 (ChangelistVerification/ReviewAndSubmit are on-demand skills; P4-NOTES rides the
 resolving-merge-conflicts skill), `core-local` (roundtable + setup wizard are
-plugin skills). The overlay names remain accepted by old manifests but install
-nothing new.
+plugin skills), `afk-autonomy` (autonomous auto-submit — retired 2026-07-17,
+superseded by harness auto/goal modes + the review-and-submit protocol; content
+deleted, recoverable from git history). The overlay names remain accepted by
+old manifests but install nothing new.
 
 **Legacy alias**: `ue-perforce` (v1.0.0 – v1.1.0) is accepted by `init-consumer.ps1`
 and expands to `perforce,ue`.

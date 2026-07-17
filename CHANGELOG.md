@@ -2,6 +2,22 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [4.6.0] - 2026-07-17 — Retire the afk-autonomy overlay
+
+### Removed
+- **`afk-autonomy` overlay** (AFKAutoSubmit workflow, afk-status hook script, both
+  reviewer lessons templates) — retired. Rationale: 2 auto-submits in its lifetime,
+  no activity since 2026-06-19, and harness auto/goal modes + the review-and-submit
+  protocol now cover autonomous operation with human-gated submits. Content is
+  recoverable from git history; old manifests naming the overlay still install
+  (it just adds nothing), matching the other retired overlays.
+- AFK plumbing in plugin content: review-and-submit no longer instructs reviewers
+  to load `*-afk-lessons.md`; sync-build-submit's auto-submit-on-green gate note
+  replaced with "always asks"; setup-agentic-workflow no longer offers the overlay.
+  Generic "AFK agent" triage vocabulary (`ready-for-agent` label semantics) is
+  unchanged. Consumer side: game repo CL 1604 deleted the installed files and
+  dropped the overlay from its scaffold manifest.
+
 ## [4.5.1] - 2026-07-16 — ASCII Review Record (dogfood finding)
 
 ### Fixed

@@ -190,9 +190,6 @@ Review the following changelist for submission readiness: {changelist name}
 Files to review:
 {file list}
 
-If a radical-design-critic-afk-lessons.md file exists under your tool's
-agents dir, load it first and apply its anti-patterns to this review.
-
 Critically analyze for:
 - Edge cases that could break the design
 - UX friction points or confusing interactions
@@ -231,9 +228,6 @@ Review the following changelist for submission readiness: {changelist name}
 
 Files to review:
 {file list}
-
-If an architecture-reviewer-afk-lessons.md file exists under your tool's
-agents dir, load it first and apply its anti-patterns to this review.
 
 Analyze for:
 - Code Complete principles and best practices
@@ -339,7 +333,7 @@ Findings:
 - Fast-path self-review: `Reviewer: self - Verdict: GREEN (quick review: config-only, 3 files)` and `Findings: none`.
 - `Findings:` one-liners only, each prefixed with its disposition: `[FIXED]` (fixed before submit), `[ACCEPTED]` (submitting with it), `[DEFERRED]` (tracked for later).
 - Cap at ~6 finding lines; summarize overflow as `- ...and N more INFO items (see review transcript)`.
-- Write this block on **every** CL that goes through this protocol — it's cheap and keeps the audit quiet. (The AFK path writes the same block before its auto-submit.)
+- Write this block on **every** CL that goes through this protocol — it's cheap and keeps the audit quiet.
 
 **Mechanics** (safe description update — see Step 1 for the pitfalls):
 
