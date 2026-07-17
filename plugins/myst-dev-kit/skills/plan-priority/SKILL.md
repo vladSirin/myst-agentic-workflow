@@ -22,9 +22,9 @@ Check these locations IN ORDER before generating a new plan. The first two refle
 {{game_docs_root}}/guide_*.md
 ```
 
-### 1b. Code/system PRDs (.scratch/) — for [AgenticWorkflow.md](AgenticWorkflow.md) scope
+### 1b. Code/system specs (.scratch/) — for [AgenticWorkflow.md](AgenticWorkflow.md) scope
 ```
-.scratch/*/PRD.md
+.scratch/*/spec.md
 .scratch/*/issues/*.md
 ```
 
@@ -41,9 +41,9 @@ Check these locations IN ORDER before generating a new plan. The first two refle
 
 ### How 1a and 1b relate
 
-These two are not parallel choices — they sequence into each other. `DesignWorkflow` produces 1a; finalizing it then hands off to `AgenticWorkflow`, which produces 1b. A given feature may have BOTH a design doc and a PRD (the PRD references the design doc). Always search both; if you find one, look for the other.
+These two are not parallel choices — they sequence into each other. `DesignWorkflow` produces 1a; finalizing it then hands off to `AgenticWorkflow`, which produces 1b. A given feature may have BOTH a design doc and a spec (the spec references the design doc). Always search both; if you find one, look for the other.
 
-- Game-design work that will lead to implementation: a design doc in 1a may exist; a PRD in 1b may also exist. The design doc is the Discussion-phase artifact, the PRD is the implementation-intent artifact.
+- Game-design work that will lead to implementation: a design doc in 1a may exist; a spec in 1b may also exist. The design doc is the Discussion-phase artifact, the spec is the implementation-intent artifact.
 - Code-only / bugfix / pipeline work: typically only 1b is populated (Discussion stayed in chat).
 - Game-design-only deliverables (no code): typically only 1a is populated.
 

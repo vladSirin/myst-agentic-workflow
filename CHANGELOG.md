@@ -2,6 +2,24 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [4.7.0] - 2026-07-18 — Converge skill names to upstream (to-spec / to-tickets)
+
+### Changed
+- **BREAKING (rename)**: `to-prd` → **`to-spec`** and `to-issues` → **`to-tickets`**,
+  converging with upstream mattpocock/skills. `/to-prd` and `/to-issues` no longer
+  resolve — use `/to-spec` and `/to-tickets`. This reverses the 2026-07-16 reject
+  decision; the motivation is **sync-path health**: `check-mattpocock-updates` compares
+  upstream by file path, so a renamed skill was invisible to upstream updates.
+- **Vocabulary migrated** across skills + templates to match upstream exactly:
+  the document is now a **spec** ("you may know a spec as a PRD"); a work-item is a
+  **ticket**. PRESERVED verbatim, as upstream keeps them: the `.scratch/<slug>/issues/`
+  **directory**, "issue tracker", "issue file", `gh issue`, and every triage label
+  (`ready-for-agent`, `needs-triage`, …). Only the local spec file renames
+  (`PRD.md` → `spec.md`).
+- Skill **bodies kept** (reworded), not re-vendored from upstream — our `to-tickets`
+  still drops upstream's HITL/AFK slice-typing.
+- Curation memory: the two reject entries + the setup-matt-pocock defer flipped to `adopt`.
+
 ## [4.6.2] - 2026-07-17 — Fix Markers.ps1 under PowerShell 7
 
 ### Fixed

@@ -1,13 +1,14 @@
 # Issue tracker: Repo markdown
 
-Issues and PRDs for this repo live as markdown files under `.scratch/`.
-This is the temporary setup until the team migrates to a hosted tracker.
+Issues and specs (you may know a spec as a PRD) for this repo live as markdown
+files under `.scratch/`. This is the temporary setup until the team migrates to
+a hosted tracker.
 
 ## Version-control policy
 
 **Files under `.scratch/<feature-slug>/` are version-controlled.** They're
 submitted to the repo (Perforce or git) alongside the related work and
-serve as the project's tracked history of PRDs, issues, and triage state.
+serve as the project's tracked history of specs, tickets, and triage state.
 "Repo markdown" means *the tracker is in the repo*, not *the files are
 local-only*.
 
@@ -21,8 +22,8 @@ Genuinely local-only state lives elsewhere — `.claude/settings.local.json`,
 ## Conventions
 
 - One feature per directory: `.scratch/<feature-slug>/`
-- The PRD is `.scratch/<feature-slug>/PRD.md`
-- Implementation issues are `.scratch/<feature-slug>/issues/<NN>-<slug>.md`, numbered from `01`
+- The spec is `.scratch/<feature-slug>/spec.md`
+- Implementation tickets are one file per ticket at `.scratch/<feature-slug>/issues/<NN>-<slug>.md`, numbered from `01`
 - Triage state is recorded as a `Status:` line near the top of each issue file
 - Status values are defined in `Docs/agents/triage-labels.md`
 - Comments and conversation history append to the bottom of the file under a `## Comments` heading
