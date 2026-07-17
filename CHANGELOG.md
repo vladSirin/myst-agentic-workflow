@@ -2,6 +2,16 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [4.6.2] - 2026-07-17 — Fix Markers.ps1 under PowerShell 7
+
+### Fixed
+- **scripts/lib/Markers.ps1**: `-split "`n", -1` silently returns the WHOLE string as
+  one element under PowerShell 7 (negative limits split from the end since PS7;
+  |-1| = 1 substring = no split), so every marker lookup threw "No BEGIN/END markers
+  found" under pwsh while working under Windows PowerShell 5.1. Both sites now use
+  `, 0` ("all substrings" in both editions). Found while cross-verifying game CL 1607's
+  generated-block rehash. Marker fixtures: 14/14 both editions.
+
 ## [4.6.1] - 2026-07-17 — Dedup the generated-block "Key protocol" section
 
 ### Changed

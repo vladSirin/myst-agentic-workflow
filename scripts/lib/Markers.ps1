@@ -75,7 +75,10 @@ function Resolve-MarkerSpan {
         [Parameter(Mandatory)][ValidateSet('html','hash')][string] $Style
     )
     $pat   = $script:MarkerStyles[$Style]
-    $lines = $NormalizedText -split "`n", -1
+    # ", 0" = all substrings in BOTH PS editions. ", -1" is a PS7 trap: negative
+    # limits split from the END (|-1| = 1 substring = no split), silently breaking
+    # marker resolution under pwsh while working under Windows PowerShell 5.1.
+    $lines = $NormalizedText -split "`n", 0
 
     $inFence   = $false
     $fenceChar = $null
@@ -201,7 +204,7 @@ function Set-AppendFragment {
         for ($i = 0; $i -lt $lines.Count; $i++) {
             if ($i -eq $span.BeginLine) {
                 $out += $beginLine
-                foreach ($fl in ($frag -split "`n", -1)) { $out += $fl }
+                foreach ($fl in ($frag -split "`n", 0)) { $out += $fl }
             } elseif ($i -gt $span.BeginLine -and $i -lt $span.EndLine) {
                 continue   # old inner content dropped
             } elseif ($i -eq $span.EndLine) {
