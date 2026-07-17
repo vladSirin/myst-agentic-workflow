@@ -32,13 +32,6 @@ run `/plugin install myst-dev-kit@myst`. Full onboarding for both archetypes
 (standard sync-and-go, poweruser personal layers): **SETUP.md in the
 myst-agentic-workflow repo**.
 
-### Key protocol
-
-Say **"review and submit {changelist name or ID}"** before submitting code —
-the `review-and-submit` skill runs the protocol: named-CL organization,
-reviewer routing, BLOCKING/WARNING/INFO summary, your decision, then a
-Review Record block in the CL description and preflight validators.
-
 ### Personal layer (never version-controlled)
 
 `~/.claude/CLAUDE.md` and `CLAUDE.local.md` (additive personal instructions),

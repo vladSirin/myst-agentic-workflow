@@ -2,6 +2,16 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [4.6.1] - 2026-07-17 — Dedup the generated-block "Key protocol" section
+
+### Changed
+- **templates (CLAUDE.md/AGENTS.md generated block)**: removed the "### Key protocol"
+  subsection — it restated the "review and submit {CL}" hard rule that consumer
+  baselines already carry in their Hard Rules list (both Myst files, and the skeleton
+  encourages the same). One less always-loaded duplicate; the protocol itself is
+  unchanged (review-and-submit skill). Consumer side: game repo CL 1607 removed the
+  section from its installed blocks and refreshed marker + manifest blockHashes.
+
 ## [4.6.0] - 2026-07-17 — Retire the afk-autonomy overlay
 
 ### Removed
