@@ -47,7 +47,9 @@ function Write-Fixture-File($root, $relPath, $content) {
         New-Item -ItemType Directory -Path $parent -Force | Out-Null
     }
     [System.IO.File]::WriteAllText($full, $content, [System.Text.UTF8Encoding]::new($false))
-    # Compute the same hash style preflight uses.
+    # Raw-byte hash. Fixtures here are LF-only + no BOM, so this equals the EOL/BOM-invariant
+    # contentHash the preflight/audit now compute (Get-NormalizedContentHash). If a CRLF or
+    # BOM fixture is ever added, switch this to Get-NormalizedContentHash to stay honest.
     $bytes = [System.IO.File]::ReadAllBytes($full)
     $sha = [System.Security.Cryptography.SHA256]::Create()
     return 'sha256:' + [BitConverter]::ToString($sha.ComputeHash($bytes)).Replace('-','').ToLowerInvariant()

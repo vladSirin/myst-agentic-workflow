@@ -9,12 +9,12 @@ param(
 $ErrorActionPreference = 'Stop'
 $ScriptVersion = "0.2.0-promotion"
 . (Join-Path $PSScriptRoot 'lib\Classification.ps1')
+. (Join-Path $PSScriptRoot 'lib\Markers.ps1')
 
 function Get-Hash($path) {
     if (-not (Test-Path $path)) { return $null }
-    $bytes = [System.IO.File]::ReadAllBytes([System.IO.Path]::GetFullPath($path))
-    $sha = [System.Security.Cryptography.SHA256]::Create()
-    return "sha256:" + [BitConverter]::ToString($sha.ComputeHash($bytes)).Replace("-","").ToLower()
+    # EOL/BOM-invariant contentHash (see Get-NormalizedContentHash in Markers.ps1).
+    return Get-NormalizedContentHash -Path (Resolve-Path -LiteralPath $path).Path
 }
 
 $ManifestPath = Join-Path $TargetRoot $Manifest
