@@ -40,7 +40,7 @@ Why: editing the base directly is exactly what truncated our skills and broke ou
 
 **Known architecture drifts to reconcile** (pre-date this decision; flagged by the 2026-06-21 audit). Under "faithful means architecture", each must be either restored to upstream's same-dir layout during the re-vendor, or given a documented reason here:
 
-- `improve-codebase-architecture` — companions (`LANGUAGE.md`, `HTML-REPORT.md`, `INTERFACE-DESIGN.md`) relocated to `Docs/agents/ica/` instead of the skill dir; the SKILL.md links don't resolve cross-tree.
+- `improve-codebase-architecture` / `codebase-design` — **RESOLVED (v4.9.0)**: the live companions now sit in their skill dirs, upstream-style (`HTML-REPORT.md` in `improve-codebase-architecture/`, `DEEPENING.md` in `codebase-design/`), so the relative `SKILL.md` links resolve. The redundant `Docs/agents/ica/` copies and the two genuinely-unused docs (`LANGUAGE.md`, `INTERFACE-DESIGN.md` — referenced by nothing) were deleted.
 - `grill-with-docs` — `CONTEXT-FORMAT.md` relocated to `templates/common/docs/`; `ADR-FORMAT.md` dropped entirely.
 - `triage` — `AGENT-BRIEF.md` / `OUT-OF-SCOPE.md` dropped entirely.
 - `tdd` — `tests.md` / `mocking.md` / `refactoring.md` / `deep-modules.md` / `interface-design.md` dropped.

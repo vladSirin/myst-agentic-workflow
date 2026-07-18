@@ -41,7 +41,7 @@ else {
         else { Ok 'installedProject.name injected' }
         if ($m.installedProject.gameDocsRoot -ne 'Acme/Docs') { Bad 'gameDocsRoot' "got $($m.installedProject.gameDocsRoot)" }
         else { Ok 'installedProject.gameDocsRoot injected' }
-        if ($m.files.Count -lt 15) { Bad 'entry count' "got $($m.files.Count) (expected >= 15 for the committed-core bootstrap; the kit ships via the plugin since v4.0.0)" }
+        if ($m.files.Count -lt 11) { Bad 'entry count' "got $($m.files.Count) (expected >= 11 for the committed-core bootstrap; the kit ships via the plugin since v4.0.0, and Docs/agents/ica/ was removed in v4.9.0)" }
         else { Ok ("entry count = {0}" -f $m.files.Count) }
         if ($m.files | Where-Object { $_.sourceCommit -eq '<resolved-by-init-consumer>' }) {
             Bad 'sourceCommit placeholders resolved' 'placeholder still present'
