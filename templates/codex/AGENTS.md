@@ -34,13 +34,6 @@ then `/plugins` → Myst Team Plugins → install `myst-dev-kit` → start a new
 session. Full onboarding for both archetypes: **SETUP.md in the
 myst-agentic-workflow repo**.
 
-### Key protocol
-
-Say **"review and submit {changelist name or ID}"** before submitting code —
-the `review-and-submit` skill runs the protocol: named-CL organization, review
-(inline via `review-changes`), BLOCKING/WARNING/INFO summary, your decision,
-then a Review Record block in the CL description and preflight validators.
-
 ### Personal layer (never version-controlled)
 
 `~/.codex/AGENTS.md` (additive personal instructions — the Codex analog of a
