@@ -19,9 +19,9 @@ Set-StrictMode -Version Latest
 
 function Get-RawFileHash {
     param([Parameter(Mandatory)][string] $Path)
-    $b = [System.IO.File]::ReadAllBytes($Path)
-    $s = [System.Security.Cryptography.SHA256]::Create()
-    return 'sha256:' + ([BitConverter]::ToString($s.ComputeHash($b)).Replace('-','').ToLowerInvariant())
+    # EOL/BOM-invariant (see Get-NormalizedContentHash in Markers.ps1). Named "Raw"
+    # historically; the contentHash is now normalized so it survives CRLF<->LF sync.
+    return Get-NormalizedContentHash -Path $Path
 }
 
 function Update-ManifestForChanges {

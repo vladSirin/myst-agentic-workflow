@@ -66,6 +66,20 @@ function Read-NormalizedText {
     return $text
 }
 
+# EOL/BOM-invariant SHA-256 of a whole file. This is the authoritative contentHash
+# form: it mirrors the blockHash normalization (Read-NormalizedText) so a file's
+# contentHash is identical regardless of the client's Perforce LineEnd translation
+# (CRLF on `LineEnd: local` Windows vs LF elsewhere) or a UTF-8 BOM. Without this,
+# a fresh CRLF sync of an LF-hashed file (or vice versa) false-reports drift in the
+# consumer audit (diff-installed.ps1 / install.ps1).
+function Get-NormalizedContentHash {
+    param([Parameter(Mandatory)][string] $Path)
+    $text = Read-NormalizedText -Path $Path
+    $sha  = [System.Security.Cryptography.SHA256]::Create()
+    $hash = $sha.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($text))
+    return 'sha256:' + ([BitConverter]::ToString($hash).Replace('-','').ToLowerInvariant())
+}
+
 # Scan normalized text and return the resolved BEGIN/END line indices for $Id,
 # applying every hard rule. Throws MarkerAmbiguityException on any ambiguity.
 function Resolve-MarkerSpan {

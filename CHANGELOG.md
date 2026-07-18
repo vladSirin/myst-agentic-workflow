@@ -2,6 +2,24 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [4.8.0] - 2026-07-18 — EOL/BOM-invariant contentHash (drift-audit portability)
+
+### Fixed
+- **Manifest `contentHash` is now EOL/BOM-invariant.** It was a raw-byte SHA-256, so a file
+  hashed as LF on one machine false-reported drift after a fresh Perforce sync delivered it as
+  CRLF (`LineEnd: local` on Windows) — or vice versa. `contentHash` now normalizes CRLF/CR→LF
+  and strips a UTF-8 BOM before hashing, exactly as `blockHash` already did (new shared
+  `Get-NormalizedContentHash` in `lib/Markers.ps1`; wired into `install.ps1`,
+  `diff-installed.ps1`, and `lib/ManifestUpdate.ps1`). The drift audit is now indifferent to a
+  client's `LineEnd` setting and OS.
+
+### Migration (consumers)
+- Existing installed manifests hold raw-byte hashes. On the next `install.ps1`/`upgrade.ps1`
+  run, any tracked text file whose on-disk EOL differs from its stored-hash EOL (i.e. CRLF
+  files hashed as LF, or the reverse) is recomputed once to its normalized hash and thereafter
+  stays stable. LF-only files are unaffected (raw == normalized). No template re-baseline is
+  needed — the package template stores no computed `contentHash` values.
+
 ## [4.7.0] - 2026-07-18 — Converge skill names to upstream (to-spec / to-tickets)
 
 ### Changed

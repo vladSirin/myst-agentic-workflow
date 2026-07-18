@@ -92,9 +92,8 @@ $m = Get-Content -Raw $ctx.Manifest | ConvertFrom-Json
 $newConfigEntry = $m.files | Where-Object { $_.path -eq 'CONFIG.md' }
 $newNotesEntry  = $m.files | Where-Object { $_.path -eq 'NOTES.md'  }
 
-$expectedConfig = 'sha256:' + ([BitConverter]::ToString(
-    [Security.Cryptography.SHA256]::Create().ComputeHash([IO.File]::ReadAllBytes($ctx.Config))
-).Replace('-','').ToLowerInvariant())
+# contentHash is EOL/BOM-invariant (Get-NormalizedContentHash), same normalization as blockHash.
+$expectedConfig = Get-NormalizedContentHash -Path $ctx.Config
 $expectedBlock  = Get-MarkerBlockHash -Path $ctx.Notes -Id 'test-block'
 
 if ($newConfigEntry.contentHash -eq $expectedConfig -and $newConfigEntry.contentHash -ne $ctx.InitConfig) {
