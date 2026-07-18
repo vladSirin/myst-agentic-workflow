@@ -1,13 +1,13 @@
 # Agentic Workflow Guide
 
-**MUST_READ**: Read this guide before using `/to-prd`, `/to-issues`, `/triage`, `/tdd`, `/diagnosing-bugs`, `/improve-codebase-architecture`, or `/grill-with-docs` in this repo.
+**MUST_READ**: Read this guide before using `/to-spec`, `/to-tickets`, `/triage`, `/tdd`, `/diagnosing-bugs`, `/improve-codebase-architecture`, or `/grill-with-docs` in this repo.
 
 This guide explains the recommended human workflow for turning discussion into tracked, verifiable work.
 
 ## Core workflow
 
 ```text
-Discussion -> PRD -> Issues -> Triage -> Implement -> Verify -> Review/Submit
+Discussion -> Spec -> Tickets -> Triage -> Implement -> Verify -> Review/Submit
 ```
 
 Use this flow when the work is more than a trivial one-off edit. The goal is to keep ideas, implementation slices, verification, and Perforce submission separate enough that humans can inspect each step.
@@ -23,41 +23,41 @@ Discussion should answer:
 - Does this require human-in-the-loop verification?
 - Which existing docs, systems, or plans does it touch?
 
-## 2. PRD
+## 2. Spec
 
-Use `/to-prd` when the idea is clear enough to capture as product or feature intent.
+Use `/to-spec` when the idea is clear enough to capture as product or feature intent (you may know this document as a PRD).
 
 Output:
 
 ```text
-.scratch/<feature-slug>/PRD.md
+.scratch/<feature-slug>/spec.md
 ```
 
-New PRDs enter the tracker as:
+New specs enter the tracker as:
 
 ```text
 Status: needs-triage
 ```
 
-## 3. Issues
+## 3. Tickets
 
-Use `/to-issues` to break a PRD, plan, or design into vertical slices.
+Use `/to-tickets` to break a spec, plan, or design into vertical slices.
 
 Output:
 
 ```text
-.scratch/<feature-slug>/issues/<NN>-<issue-slug>.md
+.scratch/<feature-slug>/issues/<NN>-<ticket-slug>.md
 ```
 
-Each issue should be independently understandable and verifiable. Prefer slices that can fit in one Perforce changelist.
+Each ticket should be independently understandable and verifiable. Prefer slices that can fit in one Perforce changelist.
 
-Issue creation includes initial triage. Do not default all generated issues to `needs-triage`. Assign:
+Ticket creation includes initial triage. Do not default all generated tickets to `needs-triage`. Assign:
 
 - `ready-for-agent` when all required checks are agent-verifiable
 - `ready-for-human` when any HITL work or verification is required
-- `needs-info` when the issue is still too vague to classify safely
+- `needs-info` when the ticket is still too vague to classify safely
 
-Avoid specific file paths or code snippets in issue bodies because they go stale quickly. Exception: include a compact prototype-derived snippet only when it captures a decision more precisely than prose can.
+Avoid specific file paths or code snippets in ticket bodies because they go stale quickly. Exception: include a compact prototype-derived snippet only when it captures a decision more precisely than prose can.
 
 ## 4. Triage
 
@@ -85,7 +85,7 @@ Use `/tdd` for new behavior or planned feature work.
 
 Use `/diagnosing-bugs` for bugs, regressions, broken behavior, or performance problems.
 
-Implementation should move the issue to:
+Implementation should move the ticket to:
 
 ```text
 Status: work-in-progress
@@ -93,7 +93,7 @@ Status: work-in-progress
 
 ## 6. Verification
 
-For agent-verifiable work, the agent may mark the issue:
+For agent-verifiable work, the agent may mark the ticket:
 
 ```text
 Status: closed
@@ -101,7 +101,7 @@ Status: closed
 
 only after all required checks pass.
 
-For HITL work, mark the issue:
+For HITL work, mark the ticket:
 
 ```text
 Status: resolved
@@ -121,7 +121,7 @@ The agent then follows the project review protocol: organize the changelist, che
 
 ## Supporting docs
 
-- `Docs/agents/issue-tracker.md` defines where PRDs and issues live.
+- `Docs/agents/issue-tracker.md` defines where specs and tickets live.
 - `Docs/agents/triage-labels.md` defines allowed status values and lane rules.
 - `Docs/agents/domain.md` defines how agents should consume context and ADRs.
 

@@ -11,14 +11,14 @@ The team AI setup has two layers:
   (a write-time hook enforces it under Claude Code; under Codex, load the
   project's `.claude/rules/angelscriptrules.md` before writing `.as` files);
   `{{game_docs_root}}/_Raw/` is **leads-only** — never modify it;
-  PRD/issues/triage come before any multi-CL implementation plan.
+  spec/tickets/triage come before any multi-CL implementation plan.
 
 **2. Dev kit** (the `myst-dev-kit` plugin — installed once per user):
 - All team skills, including the process rules as on-demand skills:
   `review-and-submit`, `changelist-verification`, `plan-priority`,
   `pre-implementation-gate`, `agentic-workflow`, `auto-plan-mode`,
   `design-workflow`, plus the engineering/productivity set (`tdd`,
-  `diagnosing-bugs`, `to-prd`, `to-issues`, `triage`, `grilling`, `design`,
+  `diagnosing-bugs`, `to-spec`, `to-tickets`, `triage`, `grilling`, `design`,
   `handoff`, ...).
 - **Reviews under Codex**: there are no subagents — use the `review-changes`
   skill (inline review with the same rubrics and the same `Verdict:` contract).

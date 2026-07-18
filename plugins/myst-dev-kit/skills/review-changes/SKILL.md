@@ -26,7 +26,7 @@ rubrics the dedicated reviewer agents use.
 3. **Review adversarially**: you are reviewing the change, not defending it —
    even (especially) when you authored it. Name concrete failure scenarios,
    with file:line references.
-4. **Spec axis (conditional)**: if the CL description links a PRD, issue, or
+4. **Spec axis (conditional)**: if the CL description links a spec, ticket, or
    design doc, read it and verify the change implements what it asked for —
    report GAPS (asked-for but missing, and not explicitly deferred) and SCOPE
    CREEP (substantive changes never asked for) as findings marked [SPEC], with

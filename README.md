@@ -127,10 +127,10 @@ The engineering/productivity set is adapted from [mattpocock/skills](https://git
 | `/codebase-design` | Shared vocabulary for designing deep modules and seams. |
 | `/domain-modeling` | Actively build/sharpen the domain model — challenge terms, write the glossary + ADRs inline. |
 | `/grill-with-docs` | Stress-test a plan against the project's domain language before a non-trivial change. |
-| `/to-prd` | Turn the current conversation into a PRD. |
-| `/to-issues` | Break a PRD/plan into independently-grabbable vertical-slice issues. |
-| `/triage` | Move issues through the lifecycle state machine. |
-| `/implement` | Implement a planned slice from a PRD/issue. |
+| `/to-spec` | Turn the current conversation into a spec. |
+| `/to-tickets` | Break a spec/plan into independently-grabbable vertical-slice tickets. |
+| `/triage` | Move tickets through the lifecycle state machine. |
+| `/implement` | Implement a planned slice from a spec/ticket. |
 | `/resolving-merge-conflicts` | Resolve merge conflicts (Perforce text-merge notes via the `perforce` overlay). |
 | `/setup-matt-pocock-skills` | One-time: configure the issue tracker + triage labels. |
 
@@ -159,7 +159,7 @@ Plus package-management commands `/update-myst-skills` (sync upstream in) and `/
 
 We track upstream **faithfully** — name + body + architecture + verbatim frontmatter — and deviate only with a documented reason (see [ADR-0002](docs/adr-0002-vendor-and-overlay-not-fork.md), [ADR-0003](docs/adr-0003-verbatim-skill-format.md), and `.scratch/agentic-scaffold-rejected-upstream.json`):
 
-- **Project specifics live only in overlays**, never in the base. `diagnosing-bugs` → `ue` overlay `UE-NOTES.md` (automation / `-ExecCmds` loops, `p4` bisection, editor HITL). `resolving-merge-conflicts` → `perforce` overlay `P4-NOTES.md` (P4 text merges). `to-issues` follows upstream's removal of HITL/AFK slice-typing — AFK-readiness rides the triage label instead.
+- **Project specifics live only in overlays**, never in the base. `diagnosing-bugs` → `ue` overlay `UE-NOTES.md` (automation / `-ExecCmds` loops, `p4` bisection, editor HITL). `resolving-merge-conflicts` → `perforce` overlay `P4-NOTES.md` (P4 text merges). `to-tickets` follows upstream's removal of HITL/AFK slice-typing — AFK-readiness rides the triage label instead.
 - **Renamed (followed upstream):** `diagnose` → `diagnosing-bugs`. **Removed (followed upstream):** `zoom-out`, `caveman`, `write-a-skill` (replaced by `writing-great-skills`).
 - **Skipped (out of scope):** `ask-matt` (personal/branded), `prototype` (web-bound). **Deferred:** `decision-mapping` (upstream marks it in-progress).
 - Everything else is byte-faithful to upstream HEAD `6eeb81b`.
@@ -170,9 +170,9 @@ Converted to on-demand skills in v4.0.0 — each carries a trigger-strength desc
 
 | Skill | Fires when | What it enforces |
 |---|---|---|
-| `agentic-workflow` | non-trivial feature work starts | Discussion → PRD → issues → triage → impl → verify → review/submit. |
+| `agentic-workflow` | non-trivial feature work starts | Discussion → spec → tickets → triage → impl → verify → review/submit. |
 | `plan-priority` | before creating any new plan | **HARD RULE**: Always use existing plans before creating new ones. |
-| `pre-implementation-gate` | before drafting a multi-CL plan | **HARD RULE**: PRD/issues/triage must exist first. |
+| `pre-implementation-gate` | before drafting a multi-CL plan | **HARD RULE**: spec/tickets/triage must exist first. |
 | `changelist-verification` | any multi-CL task | **HARD RULE**: CL-by-CL execution, never batched. Stop between CLs for verification. |
 | `review-and-submit` | "review and submit" / any p4 submit | Pre-submit protocol: reviewer routing, Review Record block, preflight validators. |
 | `auto-plan-mode` | start of non-trivial implementation | Decide whether to enter plan mode before coding. |

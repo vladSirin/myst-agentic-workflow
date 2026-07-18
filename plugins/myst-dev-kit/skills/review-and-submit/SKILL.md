@@ -66,7 +66,7 @@ When the user says **"review and submit {changelist name or ID}"**, execute this
    ## Why
    - Motivation: what problem this solves, what feature it enables, or what phase/plan it advances
    - Link to relevant design doc or plan if one exists (e.g., "See Docs/plan_flow_system.md Phase 8")
-   - **If the CL implements a PRD or issue, LINK IT here** (path or tracker ref) —
+   - **If the CL implements a spec or ticket, LINK IT here** (path or tracker ref) —
      this is what enables the reviewers' Spec axis (see Step 5) and the future
      issue-ref audit
 
@@ -206,7 +206,7 @@ Categorize issues as:
 
 Be specific with file:line references where applicable.
 
-SPEC AXIS (conditional): if the CL description links a PRD, issue, or design doc,
+SPEC AXIS (conditional): if the CL description links a spec, ticket, or design doc,
 read it and verify the change implements what it asked for. Report on this axis:
 - GAPS: requirements the source asked for that this CL does not implement
   (and are not explicitly deferred in the CL description)
@@ -245,7 +245,7 @@ Categorize issues as:
 
 Reference existing project patterns where applicable.
 
-SPEC AXIS (conditional): if the CL description links a PRD, issue, or design doc,
+SPEC AXIS (conditional): if the CL description links a spec, ticket, or design doc,
 read it and verify the change implements what it asked for. Report on this axis:
 - GAPS: requirements the source asked for that this CL does not implement
   (and are not explicitly deferred in the CL description)

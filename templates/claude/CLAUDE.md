@@ -10,7 +10,7 @@ The team AI setup has two layers:
   `unrealmcprules` (use `mcp__unreal-engine__*` for `/Game` assets, never
   Read/Grep), `DocumentStandard` (doc naming), `RawMaterialsProtection`
   (**HARD RULE**: `{{game_docs_root}}/_Raw/` is leads-only),
-  `PreImplementationGate` (**HARD RULE**: PRD/issues/triage before any
+  `PreImplementationGate` (**HARD RULE**: spec/tickets/triage before any
   multi-CL plan).
 - `.claude/scripts/` — the hook validators the settings wire up.
 - Team docs — `Docs/MustRead/MustRead_agentic_workflow.md` (the human workflow
@@ -21,7 +21,7 @@ The team AI setup has two layers:
   `review-and-submit`, `changelist-verification`, `plan-priority`,
   `pre-implementation-gate`, `agentic-workflow`, `auto-plan-mode`,
   `design-workflow`, plus the engineering/productivity set (`tdd`,
-  `diagnosing-bugs`, `to-prd`, `to-issues`, `triage`, `grilling`, `design`,
+  `diagnosing-bugs`, `to-spec`, `to-tickets`, `triage`, `grilling`, `design`,
   `handoff`, ...).
 - Reviewer agents: `architecture-reviewer` (code), `radical-design-critic`
   (designs/docs). Sessions without agents use the `review-changes` skill.

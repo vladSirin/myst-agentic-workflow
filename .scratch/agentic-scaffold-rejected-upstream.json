@@ -98,27 +98,27 @@
   },
   {
     "type": "skill-decision",
-    "decision": "reject",
+    "decision": "adopt",
     "target": "to-prd -> to-spec (rename)",
     "againstUpstreamCommit": "e9fcdf95b402d360f90f1db8d776d5dd450f9234",
-    "date": "2026-07-16",
-    "reason": "Team governance vocabulary is PRD/issues, baked into the P4-committed PreImplementationGate rule, MustRead workflow manual, and triage docs. Keeping to-prd/to-issues under their current names+content; adopting the spec/tickets rename is a deliberate future vocabulary-migration decision, not a drive-by re-vendor."
+    "date": "2026-07-18",
+    "reason": "ADOPTED (reverses the 2026-07-16 reject). Team converged skill names to upstream (to-spec) for future sync-path health: check-mattpocock-updates compares by path, so a renamed skill goes invisible to upstream updates. Full vocabulary migrated PRD->spec across the P4-committed governance (PreImplementationGate rule, MustRead, issue-tracker, CLAUDE/AGENTS, CONTEXT) and .scratch history. Kept our curated skill BODY (reworded), not a content re-vendor. Package v4.7.0 / game CLs 2026-07-18."
   },
   {
     "type": "skill-decision",
-    "decision": "reject",
-    "target": "to-issues deletion / to-tickets replacement",
+    "decision": "adopt",
+    "target": "to-issues -> to-tickets (rename)",
     "againstUpstreamCommit": "e9fcdf95b402d360f90f1db8d776d5dd450f9234",
-    "date": "2026-07-16",
-    "reason": "Same vocabulary coupling as the to-spec rename; migrate together or not at all."
+    "date": "2026-07-18",
+    "reason": "ADOPTED (reverses the 2026-07-16 reject). Migrated with to-spec. Matched upstream's exact convention: work-item concept renamed 'issue'->'ticket', but the .scratch 'issues/' DIRECTORY, 'issue tracker', 'issue file', and all triage labels (ready-for-agent etc.) are PRESERVED verbatim as upstream keeps them. Kept our curated body (dropped upstream HITL/AFK slice-typing), not a re-vendor."
   },
   {
     "type": "skill-decision",
-    "decision": "defer",
-    "target": "setup-matt-pocock-skills (updates)",
+    "decision": "adopt",
+    "target": "setup-matt-pocock-skills (spec/tickets vocabulary)",
     "againstUpstreamCommit": "e9fcdf95b402d360f90f1db8d776d5dd450f9234",
-    "date": "2026-07-16",
-    "reason": "Updated upstream version teaches the new spec/tickets vocabulary; ours must stay consistent with the kept to-prd/to-issues. One-time-setup skill, low update value. Revisit with the vocabulary migration."
+    "date": "2026-07-18",
+    "reason": "ADOPTED (reverses the 2026-07-16 defer). issue-tracker-local/github/gitlab now use upstream's 'spec (you may know a spec as a PRD)' phrasing + spec.md local file; issues/ dir and tracker terms preserved. Consistent with the adopted to-spec/to-tickets names."
   },
   {
     "type": "skill-decision",
