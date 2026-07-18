@@ -26,7 +26,8 @@ function Bad($n, $why) { Write-Host ("[FAIL] {0}: {1}" -f $n,$why); $script:fail
 $allow = @{
     # triage companions dropped on original vendoring (Phase 1 fix pending)
     # tdd companions dropped (Phase 1 fix pending)
-    # improve-codebase-architecture companions relocated to Docs/agents/ica (Phase 1 fix pending)
+    # improve-codebase-architecture / codebase-design companions RESOLVED v4.9.0
+    #   (HTML-REPORT.md + DEEPENING.md restored to their skill dirs; ica/ removed)
     # grill-with-docs companions (Phase 1 fix pending)
     # write-a-skill REFERENCE.md never existed upstream@pin (fenced example text; benign)
     # cross-overlay workflow refs: resolve only when the named overlay is co-installed

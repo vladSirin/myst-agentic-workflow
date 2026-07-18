@@ -2,6 +2,19 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [4.9.0] - 2026-07-18 — Remove the redundant Docs/agents/ica/ install docs
+
+### Removed
+- **`Docs/agents/ica/` no longer installed** (4 template files + their manifest-template
+  entries). Investigation showed the two *live* companion docs there were stale duplicates:
+  `HTML-REPORT.md` (linked by `improve-codebase-architecture/SKILL.md`) and `DEEPENING.md`
+  (linked by `codebase-design/SKILL.md`) already exist in their skill dirs upstream-style,
+  where the relative `SKILL.md` links resolve — and the skill-dir copies are the maintained
+  ones (they no longer reference the removed `LANGUAGE.md`). The other two, `LANGUAGE.md` and
+  `INTERFACE-DESIGN.md`, were referenced by nothing. This completes the ADR-0002 "Phase 1"
+  same-dir-layout reconciliation for these two skills and removes the `ica/` footprint from
+  consumer installs. Consumer side: the game repo already dropped `Docs/agents/ica/` (CL 1605).
+
 ## [4.8.0] - 2026-07-18 — EOL/BOM-invariant contentHash (drift-audit portability)
 
 ### Fixed
