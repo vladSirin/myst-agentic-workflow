@@ -36,6 +36,19 @@ $ScriptsDir = Join-Path $PackageRoot 'scripts'
 
 function Get-Hash([string]$p) {
     if (-not (Test-Path -LiteralPath $p)) { return $null }
+    # EOL/BOM-invariant contentHash (see Get-NormalizedContentHash in Markers.ps1).
+    # upgrade re-baselines every sha256 entry, so this is the writer that migrates a
+    # CRLF consumer's manifest to the normalized form the audit expects.
+    return Get-NormalizedContentHash -Path (Resolve-Path -LiteralPath $p).Path
+}
+
+# Pre-4.8.0 raw-byte hash, kept ONLY for cross-scheme customization detection: a stored
+# $base written before the EOL fix is a raw-byte hash, so an unchanged CRLF file matches it
+# under Get-RawHash even though its Get-Hash (normalized) now differs. Comparing under both
+# schemes keeps the one-time raw->normalized migration seamless (no spurious "customized",
+# retired files still removed on the migrating upgrade).
+function Get-RawHash([string]$p) {
+    if (-not (Test-Path -LiteralPath $p)) { return $null }
     $b = [IO.File]::ReadAllBytes([IO.Path]::GetFullPath($p))
     $s = [Security.Cryptography.SHA256]::Create()
     return "sha256:" + [BitConverter]::ToString($s.ComputeHash($b)).Replace('-','').ToLower()
@@ -110,7 +123,7 @@ foreach ($e in $new.files) {
         $e.contentHash = $disk
         if ($e.mergeStrategy -eq 'manual-only') { $preserve += "$($e.path) (human-owned)"; continue }
         $base = $oldHash[$e.path]
-        if ($base -and $disk -ne $base) {                                 # user customized -> PRESERVE
+        if ($base -and $disk -ne $base -and (Get-RawHash $fp) -ne $base) { # user customized -> PRESERVE (dual-scheme: unchanged under normalized OR raw)
             $e.mergeStrategy  = 'manual-only'
             $e.writablePolicy = 'human-owned'
             $preserve += $e.path
@@ -131,7 +144,7 @@ foreach ($e in $old.files) {
     $fp = Join-Path $TargetRoot $e.path
     if (-not (Test-Path -LiteralPath $fp)) { continue }
     $base = $oldHash[$e.path]; $disk = Get-Hash $fp
-    if ($base -and $disk -ne $base) { $orphanCustom += $e.path }          # customized retired file -> keep + warn
+    if ($base -and $disk -ne $base -and (Get-RawHash $fp) -ne $base) { $orphanCustom += $e.path }  # customized retired file -> keep + warn (dual-scheme)
     else { $retired += $e.path }
 }
 # Adopt PRE-EXISTING unmanaged depot files under scaffold roots (Perforce only) as project-owned:

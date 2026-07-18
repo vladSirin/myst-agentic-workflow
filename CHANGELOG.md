@@ -9,16 +9,22 @@ All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
   hashed as LF on one machine false-reported drift after a fresh Perforce sync delivered it as
   CRLF (`LineEnd: local` on Windows) — or vice versa. `contentHash` now normalizes CRLF/CR→LF
   and strips a UTF-8 BOM before hashing, exactly as `blockHash` already did (new shared
-  `Get-NormalizedContentHash` in `lib/Markers.ps1`; wired into `install.ps1`,
-  `diff-installed.ps1`, and `lib/ManifestUpdate.ps1`). The drift audit is now indifferent to a
-  client's `LineEnd` setting and OS.
+  `Get-NormalizedContentHash` in `lib/Markers.ps1`). **All five** `contentHash` sites were
+  rewired to it — the three reporters/writers `install.ps1`, `diff-installed.ps1`,
+  `lib/ManifestUpdate.ps1`, plus the consumer re-baseline writer `upgrade.ps1` and the
+  write-mode gate `run-skeleton-preflight.ps1` (whose validation must use the same
+  normalization the writers now use). The drift audit is now indifferent to a client's
+  `LineEnd` setting and OS.
 
 ### Migration (consumers)
-- Existing installed manifests hold raw-byte hashes. On the next `install.ps1`/`upgrade.ps1`
-  run, any tracked text file whose on-disk EOL differs from its stored-hash EOL (i.e. CRLF
-  files hashed as LF, or the reverse) is recomputed once to its normalized hash and thereafter
-  stays stable. LF-only files are unaffected (raw == normalized). No template re-baseline is
-  needed — the package template stores no computed `contentHash` values.
+- LF-only checkouts are unaffected (raw == normalized). A CRLF checkout (Windows/P4
+  `LineEnd: local`) becomes correct after running **`upgrade.ps1 -Apply`**, which re-baselines
+  every tracked `sha256` entry's `contentHash` to the normalized form; the drift audit then
+  reports clean. The migration is **seamless**: during the one-time raw→normalized transition
+  `upgrade.ps1` matches each file against its stored hash under **both** the normalized and the
+  legacy raw scheme (`Get-RawHash`), so unchanged CRLF files are not spuriously flagged as
+  customized and retired files are still removed on the migrating pass. No template re-baseline
+  is needed — the package template stores no computed `contentHash` values.
 
 ## [4.7.0] - 2026-07-18 — Converge skill names to upstream (to-spec / to-tickets)
 

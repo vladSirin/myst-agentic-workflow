@@ -20,11 +20,8 @@ function Prop($obj, $name) {
     if ($obj.PSObject.Properties.Match($name).Count -eq 0) { return $null }
     return $obj.$name
 }
-function RawSha($p) {
-    $b = [System.IO.File]::ReadAllBytes($p)
-    $s = [System.Security.Cryptography.SHA256]::Create()
-    return 'sha256:' + [BitConverter]::ToString($s.ComputeHash($b)).Replace('-','').ToLowerInvariant()
-}
+# contentHash is EOL/BOM-invariant (Get-NormalizedContentHash in Markers.ps1); the
+# write-mode gate must validate with the same normalization the manifest writers use.
 function P4HeadRev($depotPath) {
     # Tolerate native errors (file not in depot, session issues). Returns null
     # for any missing/unknowable head rev rather than crashing under
@@ -104,7 +101,7 @@ foreach ($e in $m.files) {
     $fp = Join-Path $TargetRoot $e.path
     if (-not (Test-Path -LiteralPath $fp)) { continue }
     if ($e.hashPolicy -eq 'sha256') {
-        if ((RawSha $fp) -ne $e.contentHash) { $hash_bad += "$($e.path) (whole-file)" }
+        if ((Get-NormalizedContentHash -Path $fp) -ne $e.contentHash) { $hash_bad += "$($e.path) (whole-file)" }
     } elseif ($e.hashPolicy -eq 'block-scoped') {
         if ($null -eq $e.blockHash) { $hash_bad += "$($e.path) (block null)"; continue }
         $gid = Prop $e 'generatedBlockId'

@@ -160,6 +160,27 @@ if ($threw2 -and $afterContent -eq 'BEFORE-STAGE') {
     Ok 'failure in ManifestUpdateAction rolls back file rename (BLOCKING-2 restore confirmed end-to-end)'
 } else { Bad 'rollback on action failure' "threw=$threw2  content='$afterContent'" }
 
+# ----------------------------------------------------------------------------
+# 5. EOL/BOM invariance: Get-NormalizedContentHash must be identical across LF,
+#    CRLF, and BOM+CRLF encodings of the same content. An LF-only git checkout
+#    cannot exercise CRLF, so assert it explicitly here — this is what guards the
+#    five contentHash sites against a raw-byte regression (a CRLF consumer would
+#    otherwise false-report drift; see CHANGELOG 4.8.0).
+# ----------------------------------------------------------------------------
+$eolBase  = "line one`nline two`nline three`n"
+$lfFile   = Join-Path $tmp 'eol-lf.md'
+$crlfFile = Join-Path $tmp 'eol-crlf.md'
+$bomFile  = Join-Path $tmp 'eol-bom-crlf.md'
+[IO.File]::WriteAllBytes($lfFile,   [Text.Encoding]::UTF8.GetBytes($eolBase))
+[IO.File]::WriteAllBytes($crlfFile, [Text.Encoding]::UTF8.GetBytes(($eolBase -replace "`n","`r`n")))
+[IO.File]::WriteAllBytes($bomFile,  (([byte[]](0xEF,0xBB,0xBF)) + [Text.Encoding]::UTF8.GetBytes(($eolBase -replace "`n","`r`n"))))
+$hLf   = Get-NormalizedContentHash -Path $lfFile
+$hCrlf = Get-NormalizedContentHash -Path $crlfFile
+$hBom  = Get-NormalizedContentHash -Path $bomFile
+if ($hLf -eq $hCrlf -and $hLf -eq $hBom) {
+    Ok 'contentHash is EOL/BOM-invariant (LF == CRLF == BOM+CRLF)'
+} else { Bad 'contentHash EOL/BOM-invariant' "lf=$hLf crlf=$hCrlf bom=$hBom" }
+
 Remove-Item -Recurse -Force $tmp -ErrorAction SilentlyContinue
 
 Write-Output ""
