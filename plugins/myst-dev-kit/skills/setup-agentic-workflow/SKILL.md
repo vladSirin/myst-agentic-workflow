@@ -58,11 +58,6 @@ Step 1 evidence:
    `*.uproject` was found, else no.
 5. **`myst-project`** — *"A project-specific reference example (Myst_Proto). Almost never what you want."*
    Default **no**. Only include if the user explicitly confirms they are that project.
-6. **`afk-autonomy`** — *"Lets the agent autonomously `p4 submit` low-risk changelists while you're away.
-   Powerful and risky: it is off by default and, even installed, only acts when you explicitly arm it
-   each session. There is no hard enforcement — it's governance you opt into."* Default **no**. Only
-   include if the user asks for autonomous runs (and understands the gating). Requires `perforce` (+ a
-   reviewer agent; the `myst-project` overlay supplies one, or bring your own).
 
 Confirm the final overlay set back to the user.
 
@@ -104,8 +99,6 @@ Use the upgrade path, which preserves local customizations:
   toolset; `setup-matt-pocock-skills` wires up the project conventions.
 - **If `ue` was installed:** open the `sync-build-submit` command and fill its `<DEPOT_ROOT>` /
   `<PROJECT_ROOT>` / `<GAME_DIR>` / `<UPROJECT>` / `<EDITOR_TARGET>` placeholders.
-- **If `afk-autonomy` was installed:** it starts in dry-run + disarmed. Read `AFKAutoSubmit.md`, tune
-  the gate path lists for your repo, and arm it only when you actually want autonomous runs.
 - Skills live under each tool dir; read `CLAUDE.md` / `AGENTS.md` for the skill list and workspace rules.
 
 ## Notes

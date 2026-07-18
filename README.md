@@ -198,7 +198,6 @@ Tools and rules layered on top of the core for specific environments.
 | `perforce` | `setup.ps1` auto-adds if `.p4ignore` or in P4 client | 3 Perforce workflows (CL-by-CL, review/submit, VC conventions). |
 | `ue` | `setup.ps1` auto-adds if `*.uproject` present | UE sync-build-submit slash command + UE-pattern `.p4ignore` fragment. |
 | `myst-project` | **never auto-added**; reference example | Original Myst_Proto-specific content. See [overlay README](overlays/myst-project/README.md). |
-| `afk-autonomy` | **opt-in only** (`-Overlays ...,afk-autonomy`) | Autonomous auto-submit governance (gates, explicit per-session arming, dry-run-first, audit log, reviewer calibration). **Off by default**; even when installed it only acts when you arm it. No enforcement hook. Local-origin; Claude Code only. |
 
 ## FAQ
 

@@ -282,10 +282,7 @@ If the reviewer returns prose without a `Verdict:` line, treat it as ambiguous a
 - `BLOCKING`: stop. Present findings. Wait for the user.
 
 > [!NOTE]
-> **Autonomous auto-submit-on-green** (submitting without asking when the review is GREEN) is a
-> deliberately-gated capability. It is OFF unless the **`afk-autonomy` overlay** is installed AND
-> explicitly armed for the session (see that overlay's protocol). With a plain install, this command
-> always asks before submitting.
+> This command always asks before submitting — there is no autonomous auto-submit path.
 
 Once approved, run from the main session:
 
