@@ -2,6 +2,21 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [4.10.0] - 2026-07-19 — Canonical gate-compliance lines (agent CLs only)
+
+### Changed
+- **pre-implementation-gate** + **review-and-submit**: the gate's two compliance trails
+  now have canonical, greppable formats — `Ticket: .scratch/<slug>/issues/<NN>-<slug>.md`
+  for ticket-linked work, `Workflow: skipped (<reason>)` for user-approved skips. Both
+  skills teach the exact lines. Rationale: skip notes were improvised per session (not
+  auditable), and silent non-compliance was invisible.
+- Consumer side (game repo): Submit-Audit client hook gains advisory check 5 — a risky
+  over-threshold CL with neither line warns. **Agent-session-only by design**: the check
+  lives exclusively in the agent-side client hook and must never be promoted to the
+  server trigger — human teammates are fully exempt from this convention (lead decision
+  2026-07-19). Precursor of the tracker issue-ref check (swap the ticket-ref pattern
+  when the hosted tracker lands).
+
 ## [4.9.0] - 2026-07-18 — Remove the redundant Docs/agents/ica/ install docs
 
 ### Removed

@@ -26,13 +26,19 @@ Before proposing any multi-CL implementation plan (`CL1`, `CL2`, `CL3`, ...), yo
 2. **Do tickets exist?** Look under `.scratch/<feature-slug>/issues/` for vertical-slice tickets.
 3. **Is at least one ticket at `Status: ready-for-agent`?**
 
-If ALL three are yes → proceed with the multi-CL plan, and **link the plan to the ticket(s)** in the plan body.
+If ALL three are yes → proceed with the multi-CL plan, **link the plan to the ticket(s)** in the plan body, and put the canonical line in each CL description:
+
+```
+Ticket: .scratch/<feature-slug>/issues/<NN>-<slug>.md
+```
+
+(or the tracker's native ref once a hosted tracker is integrated).
 
 If ANY is no → STOP. Don't draft CLs. Respond with:
 
 > "Before drafting a CL plan, I need to follow the workflow. I don't see [spec / tickets / triaged tickets] for this work yet. Options:
 > (a) Use `/to-spec` to create a spec now (recommended).
-> (b) Skip the workflow and proceed directly to CL planning — I'll note this as an explicit deviation in the CL description.
+> (b) Skip the workflow and proceed directly to CL planning — I'll put `Workflow: skipped (<reason>)` in each CL description.
 >
 > Which do you want?"
 
@@ -85,6 +91,8 @@ This gate fires INSIDE plan mode. If you've already called `exit_plan_mode` and 
 ## Enforcement
 
 This rule is advisory (like `ChangelistVerification.md`). If you find yourself proposing CLs without checking `.scratch/`, you have violated this requirement. Catch yourself before presenting the plan, not after.
+
+Where the consumer repo runs the Submit-Audit client hook, a risky over-threshold CL whose description carries **neither** a `Ticket:` ref **nor** a `Workflow: skipped (<reason>)` line gets an advisory warning. The two canonical lines above are exactly what that check greps. **Agent-session-only**: the check exists only in the agent-side client hook — human teammates' CLs are exempt from this convention by design and must never be audited for it server-side.
 
 ---
 
