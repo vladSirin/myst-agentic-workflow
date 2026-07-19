@@ -40,6 +40,9 @@ The **ONLY** exception is when the user **explicitly** states one of:
 - "Skip CL-by-CL verification"
 - Or similar explicit override
 
+> [!CAUTION]
+> **The exception itself has one carve-out: HITL tickets.** A CL implementing a `ready-for-human` ticket is NEVER covered by the batch override above. In an unattended run, `p4 shelve -c <CL>` it (files stay open locally — exclude from later reconcile/submit-all), append `HITL-SHELVED: awaiting human review` to its description, and continue; the human unshelves, reviews, and submits. See the `pre-implementation-gate` skill's HITL section.
+
 ---
 
 ## Why This Matters

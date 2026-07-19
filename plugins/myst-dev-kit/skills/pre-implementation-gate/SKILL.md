@@ -24,15 +24,22 @@ Before proposing any multi-CL implementation plan (`CL1`, `CL2`, `CL3`, ...), yo
 
 1. **Does a spec exist?** Look under `.scratch/<feature-slug>/spec.md` for this work.
 2. **Do tickets exist?** Look under `.scratch/<feature-slug>/issues/` for vertical-slice tickets.
-3. **Is at least one ticket at `Status: ready-for-agent`?**
+3. **Is at least one ticket triaged ready — `Status: ready-for-agent` or `ready-for-human`?**
+   (`ready-for-human` = HITL: the agent still implements; a human gates verification and every submit — see "HITL tickets" below.)
 
-If ALL three are yes → proceed with the multi-CL plan, and **link the plan to the ticket(s)** in the plan body.
+If ALL three are yes → proceed with the multi-CL plan, **link the plan to the ticket(s)** in the plan body, and put the canonical line in each CL description:
+
+```
+Ticket: .scratch/<feature-slug>/issues/<NN>-<slug>.md
+```
+
+(or the tracker's native ref once a hosted tracker is integrated).
 
 If ANY is no → STOP. Don't draft CLs. Respond with:
 
 > "Before drafting a CL plan, I need to follow the workflow. I don't see [spec / tickets / triaged tickets] for this work yet. Options:
 > (a) Use `/to-spec` to create a spec now (recommended).
-> (b) Skip the workflow and proceed directly to CL planning — I'll note this as an explicit deviation in the CL description.
+> (b) Skip the workflow and proceed directly to CL planning — I'll put `Workflow: skipped (<reason>)` in each CL description.
 >
 > Which do you want?"
 
@@ -50,7 +57,7 @@ Does **not** fire on:
 
 - Single-file edits or trivial fixes (one CL).
 - Diagnostic, read-only, or research tasks.
-- Work explicitly tied to an existing `ready-for-agent` ticket (linked in the plan).
+- Work explicitly tied to an existing triaged-ready ticket (`ready-for-agent` or `ready-for-human`, linked in the plan).
 
 ---
 
@@ -77,14 +84,30 @@ The **ONLY** exceptions are:
 
 This gate fires INSIDE plan mode. If you've already called `exit_plan_mode` and your plan body is "CL1 do X, CL2 do Y, CL3 do Z" with no ticket link, you skipped this gate. The correct plan body shapes are:
 
-- A **workflow plan**: "Create spec → discuss → break into tickets → triage → implement against ready-for-agent ticket(s)."
-- A **CL plan against an existing ticket**: "Per ticket `.scratch/<slug>/issues/01-foo.md` (status: ready-for-agent), implement CL1, CL2, CL3 ..."
+- A **workflow plan**: "Create spec → discuss → break into tickets → triage → implement against triaged-ready ticket(s)."
+- A **CL plan against an existing ticket**: "Per ticket `.scratch/<slug>/issues/01-foo.md` (status: ready-for-agent or ready-for-human), implement CL1, CL2, CL3 ..."
+
+---
+
+## HITL tickets (`ready-for-human`): the batch-authorization carve-out
+
+Work on a `ready-for-human` ticket proceeds normally — the agent implements and runs every agent-runnable check. What changes is the **submit endgame**:
+
+> [!CAUTION]
+> A CL implementing a `ready-for-human` ticket is **NEVER covered by a standing batch/goal authorization** ("do all CLs at once", a `/goal` run, or any similar pre-approval).
+>
+> - **Attended session**: stop and ask for explicit per-CL approval, every time.
+> - **Unattended session**: run the normal review pass, then `p4 shelve -c <CL>` — the depot is untouched, but the files STAY OPEN locally: exclude that CL from any later reconcile/submit-all, and re-shelve with `p4 shelve -f -c <CL>` if its files change again. Append `HITL-SHELVED: awaiting human review` to the CL description (alongside its `Ticket:` line), mark the ticket `resolved` once agent-runnable checks pass, log it in your final report, and continue with other work. The human's unshelve-review-submit IS the approval. Never `p4 submit` it yourself.
+>
+> Ticket status flow stays per triage-labels: HITL tickets end at `resolved` (agent-runnable checks passed); only a human moves them to `closed`.
 
 ---
 
 ## Enforcement
 
 This rule is advisory (like `ChangelistVerification.md`). If you find yourself proposing CLs without checking `.scratch/`, you have violated this requirement. Catch yourself before presenting the plan, not after.
+
+Where the consumer repo runs the Submit-Audit client hook, a risky over-threshold CL whose description carries **neither** a `Ticket:` ref **nor** a `Workflow: skipped (<reason>)` line gets an advisory warning. The two canonical lines above are exactly what that check greps. **Agent-session-only**: the check exists only in the agent-side client hook — human teammates' CLs are exempt from this convention by design and must never be audited for it server-side.
 
 ---
 

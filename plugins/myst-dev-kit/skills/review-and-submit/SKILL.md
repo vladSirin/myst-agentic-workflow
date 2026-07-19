@@ -66,9 +66,12 @@ When the user says **"review and submit {changelist name or ID}"**, execute this
    ## Why
    - Motivation: what problem this solves, what feature it enables, or what phase/plan it advances
    - Link to relevant design doc or plan if one exists (e.g., "See Docs/plan_flow_system.md Phase 8")
-   - **If the CL implements a spec or ticket, LINK IT here** (path or tracker ref) —
-     this is what enables the reviewers' Spec axis (see Step 5) and the future
-     issue-ref audit
+   - **If the CL implements a spec or ticket, LINK IT here** as a
+     `Ticket: .scratch/<slug>/issues/<NN>-<slug>.md` line (path or tracker ref) —
+     this is what enables the reviewers' Spec axis (see Step 5) and what the
+     Submit-Audit agent check greps. If the user explicitly skipped the workflow,
+     carry `Workflow: skipped (<reason>)` instead (see the pre-implementation-gate
+     skill; agent CLs only — humans are exempt from this convention)
 
    ## Notes (optional)
    - Anything reviewers or teammates should know: migration steps, known limitations,
@@ -308,6 +311,10 @@ After receiving reviewer feedback, present a structured summary:
 > [!CAUTION]
 > **HARD RULE — No direct submit after fixes.**
 > After applying any fix in response to a WARNING or BLOCKING verdict, you MUST re-run the reviewer (Step 5) and present a new summary (Step 6) before submitting. Fixes can introduce new issues; the only path to submission is a clean review pass — not "the fixes look obviously correct."
+
+> [!CAUTION]
+> **HARD RULE — HITL tickets are excluded from standing authorizations.**
+> A CL implementing a `ready-for-human` (HITL) ticket is NEVER covered by a batch/goal pre-authorization ("do all CLs at once", a `/goal` run, or similar). Attended: stop at this step and ask, every time. Unattended: after the review pass, `p4 shelve -c <CL>` instead of submitting — the depot stays untouched, but the files STAY OPEN locally (exclude that CL from any later reconcile/submit-all; re-shelve with `-f` if its files change again). Append `HITL-SHELVED: awaiting human review` to the description (alongside its `Ticket:` line), mark the ticket `resolved` once agent-runnable checks pass, and log it in your final report. The human's unshelve-review-submit IS the approval.
 
 ---
 

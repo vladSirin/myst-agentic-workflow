@@ -2,6 +2,31 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [4.10.0] - 2026-07-19 — Canonical gate-compliance lines (agent CLs only)
+
+### Changed
+- **pre-implementation-gate** + **review-and-submit**: the gate's two compliance trails
+  now have canonical, greppable formats — `Ticket: .scratch/<slug>/issues/<NN>-<slug>.md`
+  for ticket-linked work, `Workflow: skipped (<reason>)` for user-approved skips. Both
+  skills teach the exact lines. Rationale: skip notes were improvised per session (not
+  auditable), and silent non-compliance was invisible.
+- Consumer side (game repo): Submit-Audit client hook gains advisory check 5 — a risky
+  over-threshold CL with neither line warns. **Agent-session-only by design**: the check
+  lives exclusively in the agent-side client hook and must never be promoted to the
+  server trigger — human teammates are fully exempt from this convention (lead decision
+  2026-07-19). Precursor of the tracker issue-ref check (swap the ticket-ref pattern
+  when the hosted tracker lands).
+- **HITL lane fixes** (lead design review): the gate no longer blocks all-HITL features —
+  its ticket check accepts `ready-for-agent` OR `ready-for-human` (HITL: agent implements,
+  human gates). NEW HARD RULE closing a real gap: a CL implementing a `ready-for-human`
+  ticket is NEVER covered by a standing batch/goal authorization — attended sessions ask
+  per-CL; unattended sessions `p4 shelve` the CL (`HITL-SHELVED` description marker, files
+  stay open locally, ticket → `resolved`) and the human's unshelve-review-submit IS the
+  approval. Wired into `pre-implementation-gate` (HITL section), `review-and-submit`
+  (Step 7 hard rule), and `changelist-verification` (batch-exception carve-out); `triage`
+  wording aligned (`ready-for-human` = HITL work OR verification, not "needs human
+  implementation").
+
 ## [4.9.0] - 2026-07-18 — Remove the redundant Docs/agents/ica/ install docs
 
 ### Removed
