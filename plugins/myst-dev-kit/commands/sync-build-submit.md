@@ -100,8 +100,9 @@ p4 reconcile -n \
   "<DEPOT_ROOT>/<GAME_DIR>/Binaries/Win64/*.modules" \
   "<DEPOT_ROOT>/<GAME_DIR>/Binaries/Win64/*.target" \
   "<DEPOT_ROOT>/<GAME_DIR>/Binaries/Win64/*.version" \
-  "<DEPOT_ROOT>/<GAME_DIR>/Plugins/*/Binaries/Win64/*.modules" \
+  "<DEPOT_ROOT>/<GAME_DIR>/Plugins/.../Binaries/Win64/*.modules" \
   "<DEPOT_ROOT>/Engine/Binaries/Win64/*.modules" \
+  "<DEPOT_ROOT>/Engine/Binaries/Win64/*.target" \
   "<DEPOT_ROOT>/Engine/Binaries/Win64/*.version" \
   "<DEPOT_ROOT>/Engine/Plugins/.../Binaries/Win64/*.modules" 2>/dev/null \
   | grep -oE '<DEPOT_ROOT>/[^#]+' > /tmp/manifest_candidates.txt
@@ -127,6 +128,20 @@ echo "Manifests with REAL changes (review, do NOT auto-revert): $(wc -l < /tmp/r
 Reverting the churn (a) keeps the depot's stable BuildId and (b) makes Step 5's editor launch verify the *true* delivered state (depot manifests + only the real new DLLs).
 
 - **`real_manifests.txt`** — a manifest whose `Modules` map genuinely changed (a module added / removed / renamed). **Do not auto-revert.** Leave it for Step 3/3b to handle. A common case: an engine manifest still lists modules for a now-disabled plugin — that intersects the Step 3b disabled-plugin / delete HARD-STOP rule; resolve it there, do not blindly submit the removal.
+
+**Split-BuildId check (run after the revert — and standalone any time the editor won't launch):** the revert must land on *every* manifest or none. A **partial** revert is worse than no revert: the editor compares each `.modules` BuildId against its own, ignores any manifest that disagrees, and then reports every module that manifest declares as missing —
+
+> Plugin 'DerivedDataBuildController' failed to load because module 'DerivedDataBuildController' could not be found.
+
+The named plugin is a red herring: it is simply the first `LoadingPhase: EarliestPossible` plugin in the drifted set, so it aborts startup before the rest of the drifted set can complain. The DLL is on disk and fine. This also fires when someone builds **outside** this command and hand-swaps only the engine/game manifests — Step 2c never ran, so nothing reconciled the plugin ones.
+
+```bash
+cd <PROJECT_ROOT>
+find Engine <GAME_DIR> -path "*Binaries*" -name "*.modules" -print0 2>/dev/null \
+  | xargs -0 grep -ho '"BuildId": *"[^"]*"' | sort | uniq -c | sort -rn
+```
+
+Expect **one** dominant BuildId across all `UnrealEditor.modules`. `UnrealPak.modules` (~8, incl. the per-platform copies under `Engine/Binaries/Win64/<Platform>/`) and `ShaderCompileWorker.modules` carry their own BuildIds — separate targets, not drift. If a minority id shows up on `UnrealEditor.modules` files, they are the drifted set: `p4 sync -f` them back (they should be byte-identical to depot afterwards, so **no `p4 edit`, nothing to submit** — this is local-state repair, not a change). If depot is not the authority (e.g. a manifest is a truncated subset of depot's `Modules` map because the local build omitted Editor/UncookedOnly modules whose DLLs *are* on disk), `p4 sync -f` is still correct — the depot map matches the DLLs present.
 
 **Incidental engine-DLL check (after the manifest revert):** if Step 3b still flags an **engine** `.dll`:
 - `p4 diff -se <DEPOT_ROOT>/Engine/Plugins/<Plugin>/Source/...` — if versioned plugin source changed, the DLL is **real**: submit it.

@@ -2,6 +2,24 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [4.10.1] - 2026-07-22 — sync-build-submit: split-BuildId detection
+
+### Fixed
+- **sync-build-submit** Step 2c gains a **Split-BuildId check** — a one-line scan that
+  groups every `.modules` BuildId and surfaces a drifted minority. Rationale: a build run
+  *outside* this command (or a hand-swap that reaches only the engine/game manifests)
+  leaves plugin manifests on a stale BuildId, and the editor then refuses to launch with
+  `Plugin 'X' failed to load because module 'X' could not be found` — naming an innocent
+  `EarliestPossible` plugin whose DLL is present and fine. Nothing detected that state
+  after the fact; the check is documented as runnable standalone whenever the editor
+  won't launch. Also records that a *partial* revert is worse than none, and that the
+  repair (`p4 sync -f`) is local-state only — no `p4 edit`, nothing to submit.
+- **sync-build-submit** Step 2c candidate globs widened: added
+  `Engine/Binaries/Win64/*.target` (the game `.target` was listed, the engine one was
+  not, so engine-target churn could leak into the reconcile), and game plugins now scan
+  recursively (`Plugins/.../Binaries/...` instead of one level of `Plugins/*/`) to match
+  the engine side and catch nested plugin layouts.
+
 ## [4.10.0] - 2026-07-19 — Canonical gate-compliance lines (agent CLs only)
 
 ### Changed
