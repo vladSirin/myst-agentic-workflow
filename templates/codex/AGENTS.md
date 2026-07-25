@@ -1,42 +1,27 @@
 ## Codex Workspace Setup
 
-The team AI setup has two layers:
+Two layers:
 
-**1. Committed core** (arrives with version-control sync — nothing to do):
-- This file (AGENTS.md) — the shared team baseline. Never edit it for personal
-  preferences; your personal layer is `~/.codex/AGENTS.md` (additive).
-- Team docs — `Docs/MustRead/MustRead_agentic_workflow.md` (the human workflow
-  manual), `Docs/agents/` (issue tracker, triage labels, domain).
-- Behavioral rules that ALWAYS apply: AngelScript naming per the ScriptStandard
-  (a write-time hook enforces it under Claude Code; under Codex, load the
-  project's `.claude/rules/angelscriptrules.md` before writing `.as` files);
-  `{{game_docs_root}}/_Raw/` is **leads-only** — never modify it;
-  spec/tickets/triage come before any multi-CL implementation plan.
+**1. Committed core** — arrives with version-control sync, nothing to do: this
+file (the shared baseline — personal preferences go in `~/.codex/AGENTS.md`,
+never here), team docs (`Docs/MustRead/`, `Docs/agents/`), `.claude/rules/`
+(no auto-load under Codex — read the relevant rule file before working in its
+domain).
 
-**2. Dev kit** (the `myst-dev-kit` plugin — installed once per user):
-- All team skills, including the process rules as on-demand skills:
-  `review-and-submit`, `changelist-verification`, `plan-priority`,
-  `pre-implementation-gate`, `agentic-workflow`, `auto-plan-mode`,
-  `design-workflow`, plus the engineering/productivity set (`tdd`,
-  `diagnosing-bugs`, `to-spec`, `to-tickets`, `triage`, `grilling`, `design`,
-  `handoff`, ...).
-- **Reviews under Codex**: there are no subagents — use the `review-changes`
-  skill (inline review with the same rubrics and the same `Verdict:` contract).
-- The plugin's hook delivers the Submit-Audit pre-submit warning to Codex
-  sessions automatically.
-- Commands: `/sync-build-submit`, `/update-myst-skills`, `/promote-myst-skills`.
+**2. Dev kit** — the `myst-dev-kit` plugin, installed once per user: all team
+skills and commands; its hook delivers the Submit-Audit pre-submit warning to
+Codex sessions. Install (once):
 
-**Install** (once):
 ```
 codex plugin marketplace add vladSirin/myst-agentic-workflow
 ```
-then `/plugins` → Myst Team Plugins → install `myst-dev-kit` → start a new
-session. Full onboarding for both archetypes: **SETUP.md in the
-myst-agentic-workflow repo**.
+
+then `/plugins` → Myst Team Plugins → install `myst-dev-kit` → new session.
+Full onboarding (both archetypes): **SETUP.md in the myst-agentic-workflow
+repo**.
 
 ### Personal layer (never version-controlled)
 
-`~/.codex/AGENTS.md` (additive personal instructions — the Codex analog of a
-personal CLAUDE.md). `AGENTS.override.md` REPLACES this file entirely — escape
-hatch only, not for preferences. Improvements worth sharing go back via the
-package's CONTRIBUTING.md gate.
+`~/.codex/AGENTS.md` (additive). `AGENTS.override.md` REPLACES the project file
+entirely — escape hatch only, not for preferences. Improvements worth sharing
+go back via the package's CONTRIBUTING.md gate.
