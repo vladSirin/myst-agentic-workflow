@@ -1,7 +1,9 @@
 ---
 name: radical-design-critic
 description: "Use this agent when the user presents a design document, implementation plan, architecture proposal, feature specification, or any form of plan that needs rigorous critical review. This includes game design documents, system architecture plans, UX flows, technical specifications, or development phase plans. The agent should be invoked proactively whenever the user shares a plan or asks for feedback on an approach before implementation.\\n\\nExamples:\\n\\n- User: \"Here's my plan for the inventory system - let me know what you think\"\\n  Assistant: \"Let me launch the radical-design-critic agent to give this plan a thorough critical review.\"\\n  [Uses Task tool to launch radical-design-critic agent]\\n\\n- User: \"I've drafted the implementation plan for Phase 7 Flow Subsystem. Review it.\"\\n  Assistant: \"I'll use the radical-design-critic agent to critically analyze this implementation plan for edge cases, UX concerns, and potential fragilities.\"\\n  [Uses Task tool to launch radical-design-critic agent]\\n\\n- User: \"What do you think about this approach to handling save/load states?\"\\n  Assistant: \"This is a design decision that deserves rigorous scrutiny. Let me use the radical-design-critic agent to evaluate it.\"\\n  [Uses Task tool to launch radical-design-critic agent]\\n\\n- User: \"I want to redesign the objective tracking UI, here's my wireframe description\"\\n  Assistant: \"I'll launch the radical-design-critic agent to stress-test this UX design against edge cases and usability concerns.\"\\n  [Uses Task tool to launch radical-design-critic agent]"
+tools: Glob, Grep, Read, WebFetch, WebSearch, TodoWrite, Skill, Bash
 model: opus
+# effort: inherits session — judgment reviewer; never set low (weakens verification)
 color: purple
 ---
 

@@ -126,6 +126,8 @@ Use this template structure:
 
 After creating the initial document, launch reviewer agents using the Task tool:
 
+> **Effort barbell:** design critique is judgment work — launch reviewers at their defined model/effort, never downgraded to save tokens. Only mechanical stages (file inventories, censuses, link sweeps) run cheap (`effort: low` agents or `model: haiku` spawns).
+
 **For Design Documents** (game mechanics, UX, features):
 - Launch `radical-design-critic` to stress-test the design for edge cases, UX concerns, and fragilities
 
