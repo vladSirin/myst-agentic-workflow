@@ -6,8 +6,7 @@ the `myst-dev-kit` plugin instead** (skills/agents/commands install via the
 plugin marketplace, not file-copy); what remains here is only what must be
 file-copied into a consumer:
 
-- `ue/` — UE `.p4ignore` fragment + the `unrealmcprules` rule (committed-core
-  rule source). Auto-added when `*.uproject` is detected.
+- `ue/` — UE `.p4ignore` fragment. Auto-added when `*.uproject` is detected.
 - `myst-project/` — Myst-only committed-core sources: `angelscriptrules`,
   the doc standards, the team creatives manual. **Never auto-added**; reference
   example for building your own project overlay.

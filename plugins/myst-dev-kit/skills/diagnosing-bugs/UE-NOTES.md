@@ -14,7 +14,7 @@ The base skill's web-flavoured examples (curl, Playwright, `git bisect`) rarely 
 
 ## Binary assets
 
-`.uasset` / `.umap` are binary — `Read`/`Grep` on them is useless. Inspect via the Unreal Engine MCP tools (see the `unrealmcprules` rule), the editor, or a commandlet. Never build a "loop" that greps binary assets as text.
+`.uasset` / `.umap` are binary — `Read`/`Grep` on them is useless. Inspect via the Unreal Engine MCP tools (deferred: `ToolSearch` loads their schemas), the editor, or a commandlet. Never build a "loop" that greps binary assets as text.
 
 ## Phase 5–6 — fix, regression, submit
 

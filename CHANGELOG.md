@@ -2,6 +2,38 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [5.0.0] - 2026-08-02 — Remove the UE MCP rule from the `ue` overlay (BREAKING)
+
+### Removed
+- **`overlays/ue/rules/unrealmcprules.md`** and its `manifest-template.json` entry
+  (`.claude/rules/unrealmcprules.md`, `owner=overlay`, `ownerOverlay=ue`). The `ue` overlay
+  now ships only the `.p4ignore` fragment.
+- **BREAKING for consumers**: projects that installed the `ue` overlay lose an always-on rule
+  on their next `update.ps1`. Nothing replaces it in the package — consuming projects that
+  still want the guidance must carry it as project-owned content.
+
+### Rationale
+- The rule cost ~2,151 tokens of always-on context per session (~28% of the consumer's
+  always-on budget) and a large share of it duplicated context carried elsewhere: the
+  deferred-tool/`ToolSearch` mechanism is stated verbatim by the harness every session, the
+  tool-selection table restated the MCP tool schemas, and its blast-radius tiers documented a
+  PreToolUse hook that enforced them without prose.
+- Measured in the originating project before removal: MCP was 18% of tool calls but only ~8%
+  of tool-result characters, so the rule was not defending a hot path.
+
+### Known losses (recorded deliberately, not overlooked)
+- The `inspect_cdo` `SCS_Inherited` caveat (it reports the PARENT template's values, hiding
+  child overrides) is no longer written down in the package.
+- The leave-no-trace P4 sweep for MCP-leaked EXCLUSIVE `.uasset`/`.umap` checkouts.
+- The parameter crib for observed repeat failures (`delete_assets` + `paths:[...]`, missing
+  `action:`, unquoted path values, `add_variable` USTRUCT gap).
+- Measured fat-read costs (`list_node_types` ~26k chars/call, `get_blueprint` ~12k).
+
+### Changed
+- `overlays/README.md`: `ue/` description no longer advertises the rule.
+- `plugins/myst-dev-kit/skills/diagnosing-bugs/UE-NOTES.md`: the binary-assets note pointed at
+  the now-deleted rule; it now states the deferred-tool mechanism inline (linkcheck fix).
+
 ## [4.12.0] - 2026-08-01 — Reviewer prompt trim (parity-gated)
 
 ### Changed
