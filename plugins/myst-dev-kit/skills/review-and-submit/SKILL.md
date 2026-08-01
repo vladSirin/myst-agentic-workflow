@@ -185,6 +185,8 @@ The user can always force a full agent review ("full review CL {N}"). When in do
 
 Use the Task tool with the appropriate subagent_type:
 
+> **Effort barbell:** reviewing is judgment work — launch reviewers at their defined model/effort, never downgraded to save tokens. Only mechanical stages (file inventories, node censuses, link sweeps) run cheap (`effort: low` agents or `model: haiku` spawns).
+
 #### For radical-design-critic
 
 ```

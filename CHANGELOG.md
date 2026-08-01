@@ -2,6 +2,26 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [4.11.0] - 2026-08-01 — Effort barbell: reviewer tool pinning + spawn-cost guidance
+
+### Changed
+- **radical-design-critic** agent gains an explicit `tools:` frontmatter line
+  (`Glob, Grep, Read, WebFetch, WebSearch, TodoWrite, Skill, Bash`). Previously it
+  inherited *every* tool — including Edit/Write/Task, which its own Submission
+  Authority rule forbids it to use — and every spawn paid the full toolset's schema
+  tokens. Behavior contract unchanged: the agent was already required to be
+  read-only; the frontmatter now enforces and prices it accordingly.
+- Both reviewer agents document the **effort decision** in frontmatter: reasoning
+  effort deliberately *inherits the session* (a YAML comment marks it) — they are
+  judgment agents, and lowering reviewer effort to save tokens would weaken the
+  team's verification mechanisms (token-cost plan r2-S3).
+- **Effort-barbell guidance line** added at each subagent-spawn site in workflow
+  skills (`review-and-submit` §5, `design` Step 3, `improve-codebase-architecture`
+  Explore step, `codebase-design/DESIGN-IT-TWICE` Step 2): mechanical stages
+  (inventories, censuses, link sweeps) run cheap (`effort: low` agents /
+  `model: haiku` spawns); judgment stages (review, critique, design) stay on their
+  defined model and session effort.
+
 ## [4.10.1] - 2026-07-22 — sync-build-submit: split-BuildId detection
 
 ### Fixed
