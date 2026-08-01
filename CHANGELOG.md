@@ -2,6 +2,26 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [4.12.0] - 2026-08-01 — Reviewer prompt trim (parity-gated)
+
+### Changed
+- **architecture-reviewer** trimmed 12.4KB → ~5.5KB (description condensed to its trigger
+  contract; body rewritten at ~half size with the Submission Authority section, the literal
+  `Verdict:` contract, BLOCKING/WARNING/INFO categories, project context, and all three
+  review axes preserved). **Adopted on finding-parity:** trimmed vs original A/B against the
+  CL 1859 diff (the documented ground-truth pin-defect corpus, defects D0–D5 from CLs
+  1865/1869) — trimmed found a strict superset of the original's ground-truth findings
+  ({D0,D1,D2,D3,D5} vs {D0,D1,D2,D5}).
+- **radical-design-critic**: description condensed the same way (routing metadata only —
+  never part of the reviewing agent's prompt). **Body deliberately NOT trimmed:** the trimmed
+  candidate failed the parity gate — over two runs per variant, the original found all six
+  ground-truth defects (the Break-node palette-name defect in 2/2 runs) while the trimmed
+  candidate missed that defect in 0/2. Per the token-cost plan's rule (never weaken a
+  verification mechanism), the original body ships unchanged.
+- Parity method: 6 review cells (2 agents × 2 variants + 2 re-runs), opus, identical task
+  and constraints, scored against the documented defect list; full protocol and per-cell
+  scores in the PR.
+
 ## [4.11.0] - 2026-08-01 — Effort barbell: reviewer tool pinning + spawn-cost guidance
 
 ### Changed
