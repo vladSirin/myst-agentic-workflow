@@ -47,4 +47,4 @@ Approval doesn't carry across user instructions — each new task starts fresh o
 
 - [PreImplementationGate.md](PreImplementationGate.md) — when in plan mode for multi-CL work, this gate fires before the plan body is drafted.
 - [ChangelistVerification.md](ChangelistVerification.md) — once a plan is approved and multiple CLs are executing, this rule kicks in.
-- [PlanPriority.md](PlanPriority.md) — before drafting any plan, search for existing ones.
+- [DesignWorkflow.md](../design-workflow/SKILL.md) and [AgenticWorkflow.md](../agentic-workflow/SKILL.md) — both require searching for an existing plan/spec before creating a new one.

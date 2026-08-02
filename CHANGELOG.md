@@ -2,6 +2,36 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [6.0.0] - 2026-08-02 — Retire `plan-priority` (BREAKING)
+
+### Removed
+- **`skills/plan-priority/`** (~120 lines). **BREAKING for consumers**: the skill disappears on
+  the next `upgrade.ps1`. Skill count 31 → 30.
+
+### Rationale
+- Its description — *"use BEFORE creating any new plan, roadmap, or implementation document"* —
+  could only match after the model had already decided to create one, which is the decision the
+  skill existed to intercept. Same circular-trigger defect fixed in `auto-plan-mode` in v5.1.0,
+  but here it was the whole skill: a guardrail that cannot fire is not a guardrail.
+- It had rotted: two sibling links (`DesignWorkflow.md`, `AgenticWorkflow.md`) pointed at files
+  retired into the `design-workflow` / `agentic-workflow` skills and resolved to nothing.
+- Its protection is now carried where the trigger is real — see below.
+
+### Changed
+- **design-workflow** (step 1) and **agentic-workflow** (guardrails) now state the rule inline:
+  search `plan_*.md` / `design_*.md` / `guide_*.md` and `.scratch/*/spec.md` for the feature,
+  system, or phase name before creating a planning artifact; extend what exists rather than
+  opening a second. Both skills fire exactly when someone is about to create one of these
+  documents, so the guidance arrives at the moment it applies.
+- **auto-plan-mode** `Related`: the dead `PlanPriority.md` link now points at those two skills.
+- README skill table and the three plugin descriptions updated.
+
+### Known loss (recorded deliberately)
+- The four-location search *order* (game docs → `.scratch/` → `~/.claude/plans/` → session
+  memory) is no longer written down anywhere. The two folded-in versions name the first two
+  locations only — the ones that hold shared, version-controlled artifacts. Per-user plan
+  directories and session memory are now searched at the agent's discretion.
+
 ## [5.1.0] - 2026-08-02 — Submit authority + self-directed plan mode
 
 ### Added
