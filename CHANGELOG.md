@@ -20,6 +20,13 @@ All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
   rather than waiting to be asked, and corrects the stale `exit_plan_mode` tool name to
   `ExitPlanMode`. Adds a `/goal` exception: plan mode's approval gate either stalls an
   unattended run or degrades to a rubber stamp, so state the plan in the reply and proceed.
+- **auto-plan-mode description de-circularised**: was *"use at the START of any non-trivial
+  implementation request"* — which the model can only match after making the very judgment
+  the skill exists to make, so it fired only for agents that had already decided to check.
+  Now *"use before the first Edit or Write of any request"*: an observable fact rather than
+  an assessment. This narrows the gap at zero always-on cost; it does not close it. A
+  consumer wanting a guaranteed trigger still needs a project-owned always-loaded rule
+  (see Notes).
 - **pre-implementation-gate**: the HITL carve-out no longer reads as if non-HITL CLs ride
   standing authorizations. Defers to the submit-authority rule up front, then states what
   is genuinely HITL-specific — `ready-for-human` stays gated even *inside* goal mode.

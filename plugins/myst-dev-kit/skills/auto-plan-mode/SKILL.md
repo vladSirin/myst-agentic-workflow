@@ -1,6 +1,6 @@
 ---
 name: auto-plan-mode
-description: "Use at the START of any non-trivial implementation request to decide whether to enter plan mode before writing code."
+description: "Use before the first Edit or Write of any request, to decide whether the work needs a plan first."
 ---
 
 # Plan Mode — When to use it
