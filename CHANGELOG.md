@@ -2,6 +2,36 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [5.1.0] - 2026-08-02 — Submit authority + self-directed plan mode
+
+### Added
+- **review-and-submit**: new HARD RULE — *every submit is human-gated unless the run is
+  verifiably in goal mode*. Ticket status governs **verification**, never **submit
+  authority**: `ready-for-agent` answers "can the agent verify every required test case",
+  not "may the agent publish to `main`". Outside goal mode no standing/batch authorization
+  covers a submit; attended sessions ask per CL, unattended sessions shelve with
+  `GATED-SHELVED:`. Goal mode is identified **only** by the harness's own signal — the
+  session-scoped Stop-hook notice a `/goal` run injects into context, plus its
+  `goal_status` attachment — never inferred from circumstance. `ready-for-human` CLs stay
+  gated even inside goal mode (the existing HITL rule outranks the exemption).
+
+### Changed
+- **auto-plan-mode**: instructs the agent to enter plan mode *itself* via `EnterPlanMode`
+  rather than waiting to be asked, and corrects the stale `exit_plan_mode` tool name to
+  `ExitPlanMode`. Adds a `/goal` exception: plan mode's approval gate either stalls an
+  unattended run or degrades to a rubber stamp, so state the plan in the reply and proceed.
+- **pre-implementation-gate**: the HITL carve-out no longer reads as if non-HITL CLs ride
+  standing authorizations. Defers to the submit-authority rule up front, then states what
+  is genuinely HITL-specific — `ready-for-human` stays gated even *inside* goal mode.
+
+### Notes
+- Consumers who want plan mode decided per request (not per skill invocation) should carry
+  the policy in an always-loaded rules file rather than relying on the `auto-plan-mode`
+  skill: a model-invoked skill whose trigger is "use at the start of any non-trivial
+  implementation request" can only fire once the model has already made the judgment the
+  skill exists to make. Rules files without a `paths:` frontmatter load unconditionally
+  every session; ones with it are path-scoped.
+
 ## [5.0.0] - 2026-08-02 — Remove the UE MCP rule from the `ue` overlay (BREAKING)
 
 ### Removed

@@ -1,6 +1,6 @@
 {
     "name": "myst-dev-kit",
-    "version": "5.0.0",
+    "version": "5.1.0",
     "description": "Team dev kit: 31 skills - engineering/productivity (spec, TDD, triage, debugging, grilling, teaching...) plus the team process rules as on-demand skills (review-and-submit, changelist-verification, plan-priority...), both review agents (architecture-reviewer, radical-design-critic), sync-build-submit + package commands, and the Codex-side Submit-Audit warning bridge.",
     "author": {
         "name": "Sirin",
