@@ -56,7 +56,7 @@ Both tools read their native manifest from the same repo (`.claude-plugin/market
 Notes:
 - The plugin's `hooks/hooks.json` delivers the client Submit-Audit warning **to Codex only** — under Claude Code the bridge no-ops because the consumer project's committed `.claude/settings.json` already registers the same audit (no double warnings). On consumers without the Myst governance core, the hook exits silently.
 - `agents/` (radical-design-critic) is Claude-only — Codex ignores the directory.
-- Former always-on workflows are now **on-demand skills** with trigger-strength descriptions (`review-and-submit`, `changelist-verification`, `pre-implementation-gate`, ...) — advisory by design; the server-side Submit-Audit is the enforcement backstop.
+- Former always-on workflows are now **on-demand skills** with trigger-strength descriptions (`review-and-submit`, `changelist-verification`, `pre-implementation-gate`, ...) — advisory by design; the server-side Submit-Audit is the enforcement backstop. A skill only fires when the model judges it relevant, so for guidance that must apply to *every* request, carry it as an always-on rule in your own project — see [`docs/install.md` §2.3](docs/install.md) and the two copyable examples in [`overlays/myst-project/rules/`](overlays/myst-project/rules/).
 
 **Upgrading an older install?** Run [`upgrade.ps1`](upgrade.ps1) (preview, then `-Apply`) — it adds new skills, refreshes untouched files, **preserves your customizations**, removes retired skills, and (for Perforce) wraps it all in one reviewable changelist. `setup.ps1`/`update.ps1` can't do this jump (they drive install from the stale manifest). See [`docs/upgrade.md`](docs/upgrade.md).
 

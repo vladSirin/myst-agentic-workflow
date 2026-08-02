@@ -61,13 +61,24 @@ All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
   standing authorizations. Defers to the submit-authority rule up front, then states what
   is genuinely HITL-specific — `ready-for-human` stays gated even *inside* goal mode.
 
+### Added (docs)
+- **`docs/install.md` §2.3 "Always-on rules — the part the package can't install for you"**:
+  states the skill-vs-rule mechanism (a rule's trigger is mechanical, a skill's is a judgment
+  call), why the package ships no rules — it owns `CLAUDE.md`/`AGENTS.md` only between the
+  `AGENTIC-SCAFFOLD` markers, and the always-on budget belongs to the consumer — and how to
+  convert any **HARD RULE** skill into something that actually fires.
+- **Two copyable rules in `overlays/myst-project/rules/`**: `AutoPlanMode.md` and
+  `PreImplementationGate.md`, both live in the originating project. Neither is in
+  `manifest-template.json`, so nothing installs them and they cost no adopter any context —
+  they exist to be copied and edited. Shipped as the real files rather than sanitised
+  templates: a sanitised example drifts from the one actually in use, and adopters edit
+  either way. README and the overlay README point at them.
+
 ### Notes
-- Consumers who want plan mode decided per request (not per skill invocation) should carry
-  the policy in an always-loaded rules file rather than relying on the `auto-plan-mode`
-  skill: a model-invoked skill whose trigger is "use at the start of any non-trivial
-  implementation request" can only fire once the model has already made the judgment the
-  skill exists to make. Rules files without a `paths:` frontmatter load unconditionally
-  every session; ones with it are path-scoped.
+- Plan mode is the clearest case for a rule over a skill: its trigger is "every request", so
+  no `paths:` scope can express it and no skill description can catch it in time. Rules files
+  without a `paths:` frontmatter load unconditionally every session; ones with it are
+  path-scoped and free until they match.
 
 ## [5.0.0] - 2026-08-02 — Remove the UE MCP rule from the `ue` overlay (BREAKING)
 

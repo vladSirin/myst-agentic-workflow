@@ -133,6 +133,50 @@ For Perforce consumers add `-UsePerforce -Changelist new` — see the
 [Perforce consumer guide](perforce-consumer.md). (`setup.ps1` does this
 automatically when VC=perforce.)
 
+### 2.3 Always-on rules — the part the package can't install for you
+
+The install gives you **skills**. Skills load when the model decides they are relevant to
+what you just asked. That works well for a skill triggered by a phrase ("review and submit")
+or a file type, and badly for anything that must apply to *every* request — by the time the
+model considers loading it, the decision it was meant to influence has usually been made.
+
+Rules work the other way. A `.md` file in `.claude/rules/` loads **automatically**:
+
+| Frontmatter | When it loads | Use for |
+|---|---|---|
+| none | every session, unconditionally | guidance that applies to any request |
+| `paths: ["**/*.py"]` | automatically when a matching file is touched | language- or area-specific standards |
+
+Neither is "manually loaded" — the difference is that a rule's trigger is mechanical and a
+skill's is a judgment call. Nothing in `.claude/rules/` costs you anything until it matches;
+an unscoped rule costs its own length in every session, forever.
+
+**The package deliberately ships you none of them.** It owns `CLAUDE.md` and `AGENTS.md`
+only between the `AGENTIC-SCAFFOLD` markers; the hard-rules list above that block is yours,
+and your always-on budget is yours to spend. (v5.0.0 removed the last rule the package
+installed — ~2,151 tokens per session on every consumer — for exactly this reason.)
+
+So if you want a skill's guidance to fire reliably, you write the rule. Two working ones to
+copy, both live in the project this package came from:
+
+- [`overlays/myst-project/rules/AutoPlanMode.md`](../overlays/myst-project/rules/AutoPlanMode.md)
+  — decide whether a request needs plan mode *before* starting, rather than waiting to be
+  asked. This is the clearest case for a rule: its trigger is "every request", so no
+  path-scope can express it and no skill description can catch it in time.
+- [`overlays/myst-project/rules/PreImplementationGate.md`](../overlays/myst-project/rules/PreImplementationGate.md)
+  — require a spec, tickets, and triage before drafting a multi-commit implementation plan.
+
+Copy one into your `.claude/rules/`, delete what doesn't apply, keep it short. **These are
+real rules in production, not sanitised templates** — they mention `p4 revert`, changelists,
+and a `.scratch/<slug>/issues/` ticket layout. That is the point: an example you can see
+running is worth more than a generic one, and you were going to edit it anyway. Expect to.
+
+The same pattern applies to any skill whose description starts with **HARD RULE** —
+`changelist-verification`, `pre-implementation-gate`, `auto-plan-mode`. Each states a
+mandatory behaviour and each depends on being noticed. Where one genuinely matters to you,
+a few lines in your own `CLAUDE.md` hard-rules list, or a small rule file, converts it from
+a hope into a mechanism. Where it doesn't, leave it as a skill and pay nothing.
+
 ---
 
 ## 3. Update from upstream

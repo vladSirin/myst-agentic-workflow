@@ -10,12 +10,20 @@ content other consumers should install.
 | File | Why it's Myst-only |
 |---|---|
 | `rules/angelscriptrules.md` | Hardcodes paths `/Myst_Proto/Script/` and `/split_fiction_scripts/` |
+| `rules/AutoPlanMode.md` | Mentions `p4 revert` and changelists; otherwise portable |
+| `rules/PreImplementationGate.md` | Myst's ticket layout (`.scratch/<slug>/issues/`) and CL conventions |
 | `agents/architecture-reviewer.md` | Description specialized for "Unreal Engine projects"; references FrogEvent plugin and Flow Subsystem |
 | `docs/MustRead/MustRead_ai_tools_for_creatives.md` | Project-specific user manual for the Myst team |
 | `skills/design/SKILL.md` + workflow files | Tailored to Myst's review conventions and folder layout |
 
 One shared copy serves both tools (the manifest maps each file to `.claude/`
 and `.Codex/` targets).
+
+> **`rules/AutoPlanMode.md` and `rules/PreImplementationGate.md` are the two worth
+> stealing.** Neither is in `manifest-template.json`, so nothing installs them and they
+> cost no adopter any context — they are here to be copied. See
+> [`docs/install.md` §2.3](../../docs/install.md) for why a rule is the only reliable place
+> for guidance that has to apply to *every* request, and what to strip before using them.
 
 ## If you're adopting this package for your own project
 
