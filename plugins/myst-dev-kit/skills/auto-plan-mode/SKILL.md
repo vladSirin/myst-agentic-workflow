@@ -18,7 +18,9 @@ Plan mode is for **alignment before commitment**. Use it when the cost of going 
 - **The user explicitly asks for a plan** — "give me a plan", "what's the approach", "let's think through this"
 - **About to propose CLs** — see [PreImplementationGate.md](PreImplementationGate.md) for the additional check that fires here
 
-When in plan mode, use the `exit_plan_mode` tool to present the plan. **Wait for explicit user approval before executing.**
+Enter plan mode yourself with `EnterPlanMode` — don't wait to be asked. Present the plan with `ExitPlanMode` and **wait for explicit user approval before executing.**
+
+**Exception — `/goal` runs**: do NOT enter plan mode. `ExitPlanMode` waits on an approval that goal mode explicitly forbids you to pause for, while its Stop hook blocks stopping — at best auto-granted and the gate is theatre, at worst the run stalls with nobody there to answer. State the plan in your reply and proceed.
 
 ---
 

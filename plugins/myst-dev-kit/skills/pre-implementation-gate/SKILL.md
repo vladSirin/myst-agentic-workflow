@@ -94,7 +94,7 @@ This gate fires INSIDE plan mode. If you've already called `exit_plan_mode` and 
 Work on a `ready-for-human` ticket proceeds normally — the agent implements and runs every agent-runnable check. What changes is the **submit endgame**:
 
 > [!CAUTION]
-> A CL implementing a `ready-for-human` ticket is **NEVER covered by a standing batch/goal authorization** ("do all CLs at once", a `/goal` run, or any similar pre-approval).
+> Every submit is human-gated outside a `/goal` run (see the submit-authority rule in `review-and-submit`) — do not read this section as implying non-HITL CLs ride standing authorizations. What is HITL-specific: a CL implementing a `ready-for-human` ticket is **NEVER covered by a standing batch/goal authorization** ("do all CLs at once", a `/goal` run, or any similar pre-approval) — it stays gated even *inside* goal mode.
 >
 > - **Attended session**: stop and ask for explicit per-CL approval, every time.
 > - **Unattended session**: run the normal review pass, then `p4 shelve -c <CL>` — the depot is untouched, but the files STAY OPEN locally: exclude that CL from any later reconcile/submit-all, and re-shelve with `p4 shelve -f -c <CL>` if its files change again. Append `HITL-SHELVED: awaiting human review` to the CL description (alongside its `Ticket:` line), mark the ticket `resolved` once agent-runnable checks pass, log it in your final report, and continue with other work. The human's unshelve-review-submit IS the approval. Never `p4 submit` it yourself.
