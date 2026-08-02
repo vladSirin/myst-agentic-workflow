@@ -27,6 +27,28 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.15.0] - 2026-08-02 — An explicit per-CL submit instruction IS the approval
+
+### `review-and-submit`: define the one approval instead of re-asking for it
+
+#### Changed
+- **`skills/review-and-submit/SKILL.md`** (Step 7, submit-authority rule): an explicit user
+  instruction naming submission for **that CL by number** — "review and submit 1970" — now counts
+  as the Step 7 approval, and the protocol does **not** re-ask when the review returns GREEN with
+  no preflight warning. Previously "one approval covers one CL" was silent on whether the naming
+  instruction itself was that approval, so the protocol asked the user to approve the CL they had
+  just named — a gate firing on the clean path, which trains people to rubber-stamp it.
+- The rule still re-asks on: any non-GREEN verdict (WARNING included), any preflight failure or
+  warning, a CL the user never named, scope that grew after they asked, `ready-for-human` tickets,
+  and any fix applied mid-run. The HITL rule and the no-direct-submit-after-fixes rule both
+  outrank this one and are unchanged.
+- Nothing else moves: no standing or batch authorization, `ready-for-agent` still grants
+  verification and not publish authority, goal mode is still identified only by the harness's own
+  Stop-hook signal, and unattended-not-goal-mode still shelves with `GATED-SHELVED:`.
+
+Consumers of the team baseline get the matching hard-rule-6 wording in `CLAUDE.md` / `AGENTS.md`
+from their own repo (Myst: CL 1973); those two files are project-local, not templated here.
+
 ## [4.14.0] - 2026-08-02 — Submit authority reaches the triage-labels template
 
 > A second heading dated today is deliberate, not a policy slip: `v4.13.0` is already tagged and
