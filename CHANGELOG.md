@@ -27,6 +27,35 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.14.0] - 2026-08-02 — Submit authority reaches the triage-labels template
+
+> A second heading dated today is deliberate, not a policy slip: `v4.13.0` is already tagged and
+> released, so extending it would rewrite shipped history. The rule against same-day headings
+> targets *untagged* increments.
+
+### Carry the submit-authority rule into `triage-labels.md`
+
+#### Added
+- **`templates/common/docs/agents/triage-labels.md`**: the `ready-for-agent` lane now states
+  outright that the label is a **verification** label, not a **submit authorization**. It answers
+  "can the agent verify every required test case", nothing more; submitting the resulting
+  changelist stays human-gated outside a `/goal` run. An agent may take a `ready-for-agent`
+  ticket all the way to a reviewed, shelved changelist unattended — publishing it is a separate
+  decision with a separate gate.
+
+#### Rationale
+v4.13.0 landed this rule in the `review-and-submit` skill but never carried it into the triage
+docs, so the one file a triager actually reads while choosing a label still implied that
+`ready-for-agent` authorized a submit. Found by a downstream `update.ps1` run: the consumer had
+written the paragraph locally, and `-Mode Write` would have silently deleted it — the drift was
+the package being behind, not the consumer being wrong.
+
+#### Changed
+- The paragraph's cross-reference is **"the submit gate hard rule in `CLAUDE.md`"**, not
+  "hard rule 6". Rule numbering is per-consumer; a `reusable-core` template must not hard-code
+  one project's ordinal. Consumers already carrying the "hard rule 6" wording will see this as
+  a one-line drift on their next update.
+
 ## [4.13.0] - 2026-08-02 — Submit authority, plan mode, and always-on context
 
 > Consolidates three same-day increments briefly numbered 5.0.0, 5.1.0 and 6.0.0. None was

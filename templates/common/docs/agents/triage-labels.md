@@ -25,6 +25,8 @@ needs-triage -> ready-for-agent -> work-in-progress -> closed
 
 Use this lane only when the agent can run or otherwise verify every required test case. The agent may close the ticket directly after the implementation and verification pass.
 
+**`ready-for-agent` is a verification label, not a submit authorization.** It answers "can the agent verify every required test case", nothing more. Submitting the resulting changelist is still human-gated outside a `/goal` run — see the submit gate hard rule in `CLAUDE.md` and the submit-authority rule in the `review-and-submit` skill. An agent may take a `ready-for-agent` ticket all the way to a reviewed, shelved changelist unattended; publishing it to `main` is a separate decision with a separate gate.
+
 Human-required tickets:
 
 ```text
