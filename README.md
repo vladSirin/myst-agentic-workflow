@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-16%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.1.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-16%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.13.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -39,7 +39,7 @@ All three dry-run first, prompt before writing, and auto-derive their configurat
 
 ## Install as a plugin (marketplace)
 
-The repo is a **plugin marketplace** for both tools — since v4.0.0 the plugin IS the delivery path for the kit (the installer only bootstraps the committed core). One plugin is published: **`myst-dev-kit`** — 29 skills (engineering + productivity + the team process rules as on-demand skills), both review agents, `sync-build-submit` and package commands, and the Codex-side Submit-Audit warning bridge.
+The repo is a **plugin marketplace** for both tools — since v4.0.0 the plugin IS the delivery path for the kit (the installer only bootstraps the committed core). One plugin is published: **`myst-dev-kit`** — 30 skills (engineering + productivity + the team process rules as on-demand skills), both review agents, `sync-build-submit` and package commands, and the Codex-side Submit-Audit warning bridge.
 
 ```bash
 # Claude Code
@@ -115,7 +115,7 @@ The three commands you'll actually run.
 
 ### Skills (shared source, installed under `.claude/` and `.Codex/`)
 
-The engineering/productivity set is adapted from [mattpocock/skills](https://github.com/mattpocock/skills) at pinned commit `6eeb81b`, MIT-licensed, attribution preserved, vendored **verbatim**. Since v4.0.0 the bundle also carries the local-origin skills (design, roundtable, setup wizard) and the **team process rules converted to on-demand skills**. **29 skills total**; every link resolves to `plugins/myst-dev-kit/skills/<name>/SKILL.md`.
+The engineering/productivity set is adapted from [mattpocock/skills](https://github.com/mattpocock/skills) at pinned commit `6eeb81b`, MIT-licensed, attribution preserved, vendored **verbatim**. Since v4.0.0 the bundle also carries the local-origin skills (design, roundtable, setup wizard) and the **team process rules converted to on-demand skills**. **30 skills total**; every link resolves to `plugins/myst-dev-kit/skills/<name>/SKILL.md`.
 
 **Engineering**
 

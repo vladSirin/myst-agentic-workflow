@@ -66,6 +66,17 @@ and ends with the same parseable `Verdict:` line. Inline self-review is the
 floor, not the ceiling — risky CLs over the Submit-Audit thresholds deserve an
 independent reviewer.
 
+## Versioning
+
+Rules live at the top of [CHANGELOG.md](CHANGELOG.md). The short version:
+
+- **MAJOR** only when an existing install breaks or needs manual migration. Retiring a
+  skill or rule is **MINOR** — `upgrade.ps1` handles it.
+- **One bump per merge to `main`**, not per commit and not per PR in a stack.
+- **Tag it or don't bump it.** An untagged bump is a string in a JSON file.
+- The number lives in **five** places (four manifests + the README badge) — change them
+  together.
+
 ## Larger changes
 
 New overlay, new tool support, manifest schema bump, hook changes: open an
