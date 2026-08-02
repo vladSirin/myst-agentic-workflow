@@ -92,7 +92,7 @@ For Perforce submission, follow `ReviewAndSubmit.md`. Never submit without expli
 
 ## Guardrails
 
-- Do not skip existing plan discovery; follow `PlanPriority.md`.
+- Search before creating a planning artifact: Glob `{{game_docs_root}}/plan_*.md`, `design_*.md` and `.scratch/*/spec.md` for the feature/system/phase name. If one exists, extend it rather than opening a second — duplicates don't error, they split the source of truth.
 - Do not batch multiple changelists without explicit user approval; follow `ChangelistVerification.md`.
 - Do not modify `{{game_docs_root}}/_Raw/` without the protected-material approval flow.
 - Keep ticket state changes explicit in the issue file's `Status:` line.
