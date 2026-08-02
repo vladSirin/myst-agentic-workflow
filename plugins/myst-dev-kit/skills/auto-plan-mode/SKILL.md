@@ -1,6 +1,6 @@
 ---
 name: auto-plan-mode
-description: "Use at the START of any non-trivial implementation request to decide whether to enter plan mode before writing code."
+description: "Use before the first Edit or Write of any request, to decide whether the work needs a plan first."
 ---
 
 # Plan Mode — When to use it
@@ -18,7 +18,9 @@ Plan mode is for **alignment before commitment**. Use it when the cost of going 
 - **The user explicitly asks for a plan** — "give me a plan", "what's the approach", "let's think through this"
 - **About to propose CLs** — see [PreImplementationGate.md](PreImplementationGate.md) for the additional check that fires here
 
-When in plan mode, use the `exit_plan_mode` tool to present the plan. **Wait for explicit user approval before executing.**
+Enter plan mode yourself with `EnterPlanMode` — don't wait to be asked. Present the plan with `ExitPlanMode` and **wait for explicit user approval before executing.**
+
+**Exception — `/goal` runs**: do NOT enter plan mode. `ExitPlanMode` waits on an approval that goal mode explicitly forbids you to pause for, while its Stop hook blocks stopping — at best auto-granted and the gate is theatre, at worst the run stalls with nobody there to answer. State the plan in your reply and proceed.
 
 ---
 
@@ -45,4 +47,4 @@ Approval doesn't carry across user instructions — each new task starts fresh o
 
 - [PreImplementationGate.md](PreImplementationGate.md) — when in plan mode for multi-CL work, this gate fires before the plan body is drafted.
 - [ChangelistVerification.md](ChangelistVerification.md) — once a plan is approved and multiple CLs are executing, this rule kicks in.
-- [PlanPriority.md](PlanPriority.md) — before drafting any plan, search for existing ones.
+- [DesignWorkflow.md](../design-workflow/SKILL.md) and [AgenticWorkflow.md](../agentic-workflow/SKILL.md) — both require searching for an existing plan/spec before creating a new one.

@@ -2,6 +2,73 @@
 
 All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
 
+## [6.0.0] - 2026-08-02 — Retire `plan-priority` (BREAKING)
+
+### Removed
+- **`skills/plan-priority/`** (~120 lines). **BREAKING for consumers**: the skill disappears on
+  the next `upgrade.ps1`. Skill count 31 → 30.
+
+### Rationale
+- Its description — *"use BEFORE creating any new plan, roadmap, or implementation document"* —
+  could only match after the model had already decided to create one, which is the decision the
+  skill existed to intercept. Same circular-trigger defect fixed in `auto-plan-mode` in v5.1.0,
+  but here it was the whole skill: a guardrail that cannot fire is not a guardrail.
+- It had rotted: two sibling links (`DesignWorkflow.md`, `AgenticWorkflow.md`) pointed at files
+  retired into the `design-workflow` / `agentic-workflow` skills and resolved to nothing.
+- Its protection is now carried where the trigger is real — see below.
+
+### Changed
+- **design-workflow** (step 1) and **agentic-workflow** (guardrails) now state the rule inline:
+  search `plan_*.md` / `design_*.md` / `guide_*.md` and `.scratch/*/spec.md` for the feature,
+  system, or phase name before creating a planning artifact; extend what exists rather than
+  opening a second. Both skills fire exactly when someone is about to create one of these
+  documents, so the guidance arrives at the moment it applies.
+- **auto-plan-mode** `Related`: the dead `PlanPriority.md` link now points at those two skills.
+- README skill table and the three plugin descriptions updated.
+
+### Known loss (recorded deliberately)
+- The four-location search *order* (game docs → `.scratch/` → `~/.claude/plans/` → session
+  memory) is no longer written down anywhere. The two folded-in versions name the first two
+  locations only — the ones that hold shared, version-controlled artifacts. Per-user plan
+  directories and session memory are now searched at the agent's discretion.
+
+## [5.1.0] - 2026-08-02 — Submit authority + self-directed plan mode
+
+### Added
+- **review-and-submit**: new HARD RULE — *every submit is human-gated unless the run is
+  verifiably in goal mode*. Ticket status governs **verification**, never **submit
+  authority**: `ready-for-agent` answers "can the agent verify every required test case",
+  not "may the agent publish to `main`". Outside goal mode no standing/batch authorization
+  covers a submit; attended sessions ask per CL, unattended sessions shelve with
+  `GATED-SHELVED:`. Goal mode is identified **only** by the harness's own signal — the
+  session-scoped Stop-hook notice a `/goal` run injects into context, plus its
+  `goal_status` attachment — never inferred from circumstance. `ready-for-human` CLs stay
+  gated even inside goal mode (the existing HITL rule outranks the exemption).
+
+### Changed
+- **auto-plan-mode**: instructs the agent to enter plan mode *itself* via `EnterPlanMode`
+  rather than waiting to be asked, and corrects the stale `exit_plan_mode` tool name to
+  `ExitPlanMode`. Adds a `/goal` exception: plan mode's approval gate either stalls an
+  unattended run or degrades to a rubber stamp, so state the plan in the reply and proceed.
+- **auto-plan-mode description de-circularised**: was *"use at the START of any non-trivial
+  implementation request"* — which the model can only match after making the very judgment
+  the skill exists to make, so it fired only for agents that had already decided to check.
+  Now *"use before the first Edit or Write of any request"*: an observable fact rather than
+  an assessment. This narrows the gap at zero always-on cost; it does not close it. A
+  consumer wanting a guaranteed trigger still needs a project-owned always-loaded rule
+  (see Notes).
+- **pre-implementation-gate**: the HITL carve-out no longer reads as if non-HITL CLs ride
+  standing authorizations. Defers to the submit-authority rule up front, then states what
+  is genuinely HITL-specific — `ready-for-human` stays gated even *inside* goal mode.
+
+### Notes
+- Consumers who want plan mode decided per request (not per skill invocation) should carry
+  the policy in an always-loaded rules file rather than relying on the `auto-plan-mode`
+  skill: a model-invoked skill whose trigger is "use at the start of any non-trivial
+  implementation request" can only fire once the model has already made the judgment the
+  skill exists to make. Rules files without a `paths:` frontmatter load unconditionally
+  every session; ones with it are path-scoped.
+
 ## [5.0.0] - 2026-08-02 — Remove the UE MCP rule from the `ue` overlay (BREAKING)
 
 ### Removed

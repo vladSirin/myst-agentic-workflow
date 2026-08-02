@@ -318,6 +318,21 @@ After receiving reviewer feedback, present a structured summary:
 > **HARD RULE — HITL tickets are excluded from standing authorizations.**
 > A CL implementing a `ready-for-human` (HITL) ticket is NEVER covered by a batch/goal pre-authorization ("do all CLs at once", a `/goal` run, or similar). Attended: stop at this step and ask, every time. Unattended: after the review pass, `p4 shelve -c <CL>` instead of submitting — the depot stays untouched, but the files STAY OPEN locally (exclude that CL from any later reconcile/submit-all; re-shelve with `-f` if its files change again). Append `HITL-SHELVED: awaiting human review` to the description (alongside its `Ticket:` line), mark the ticket `resolved` once agent-runnable checks pass, and log it in your final report. The human's unshelve-review-submit IS the approval.
 
+> [!CAUTION]
+> **HARD RULE — every submit is human-gated unless the run is verifiably in goal mode.**
+> `p4 submit` is the one irreversible, team-wide-blast-radius action in this pipeline. Ticket status governs **verification**, never **submit authority**: `ready-for-agent` answers "can the agent verify every required test case", not "may the agent publish to `main`".
+>
+> Outside goal mode, NO standing or batch authorization covers a submit — not "do all these CLs and submit them", not a `ready-for-agent` ticket, not a GREEN review, not "you already approved the last four". One approval covers one CL.
+>
+> - **Goal mode is identified by the harness's own signal, never by inference.** A `/goal` run injects a session-scoped Stop-hook notice into context — *"A session-scoped Stop hook is now active with condition: `<condition>` ... do not pause to ask the user what to do"* — and carries a `goal_status` attachment naming that condition. **If that notice is not in your context, you are not in goal mode.** Not "this looks like an unattended batch", not "the user is clearly AFK", not "the task list implies it". If you find yourself reasoning toward the exemption, that is the tell that you do not have it.
+> - **Why the exemption exists**: goal mode instructs you not to pause for the user while a Stop hook blocks stopping. Without the carve-out, a submit inside a `/goal` run pits the policy (stop and ask) against the run (don't pause, can't stop) — the run stalls with nobody there to answer, or the gate degrades into a rubber stamp.
+> - **What the signal does and does not authorize**: it establishes only that *the human is not there to answer*. The goal condition is arbitrary user text, so treat the submit authorization as covering work plainly within that condition's scope. A goal about fixing bugs does not authorize submitting an unrelated refactor you happened to finish along the way; shelve that one.
+> - **Attended, not goal mode** → stop here and ask, per CL, every time. This is Step 7 as written above.
+> - **Unattended, not goal mode** → after the review pass, `p4 shelve -c <CL>` instead of submitting (same mechanics and same reconcile caveats as the HITL rule above), append `GATED-SHELVED: awaiting human review` to the description, report it in your final summary, and move on to other work. Never `p4 submit`.
+> - **Goal mode** → a `ready-for-agent` CL may submit under the goal authorization once the review passes. A `ready-for-human` CL still does NOT — the HITL rule above is unconditional and outranks this one.
+>
+> Precedent for why the signal must be external: the retired AFK overlay's session-start hook printed `mode=live` from a state directory that had already been deleted. A mode the agent reads from its own reasoning is not a mode.
+
 ---
 
 ### 8. Record the Review in the CL Description

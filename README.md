@@ -56,7 +56,7 @@ Both tools read their native manifest from the same repo (`.claude-plugin/market
 Notes:
 - The plugin's `hooks/hooks.json` delivers the client Submit-Audit warning **to Codex only** — under Claude Code the bridge no-ops because the consumer project's committed `.claude/settings.json` already registers the same audit (no double warnings). On consumers without the Myst governance core, the hook exits silently.
 - `agents/` (radical-design-critic) is Claude-only — Codex ignores the directory.
-- Former always-on workflows are now **on-demand skills** with trigger-strength descriptions (`review-and-submit`, `changelist-verification`, `plan-priority`, ...) — advisory by design; the server-side Submit-Audit is the enforcement backstop.
+- Former always-on workflows are now **on-demand skills** with trigger-strength descriptions (`review-and-submit`, `changelist-verification`, `pre-implementation-gate`, ...) — advisory by design; the server-side Submit-Audit is the enforcement backstop.
 
 **Upgrading an older install?** Run [`upgrade.ps1`](upgrade.ps1) (preview, then `-Apply`) — it adds new skills, refreshes untouched files, **preserves your customizations**, removes retired skills, and (for Perforce) wraps it all in one reviewable changelist. `setup.ps1`/`update.ps1` can't do this jump (they drive install from the stale manifest). See [`docs/upgrade.md`](docs/upgrade.md).
 
@@ -171,7 +171,6 @@ Converted to on-demand skills in v4.0.0 — each carries a trigger-strength desc
 | Skill | Fires when | What it enforces |
 |---|---|---|
 | `agentic-workflow` | non-trivial feature work starts | Discussion → spec → tickets → triage → impl → verify → review/submit. |
-| `plan-priority` | before creating any new plan | **HARD RULE**: Always use existing plans before creating new ones. |
 | `pre-implementation-gate` | before drafting a multi-CL plan | **HARD RULE**: spec/tickets/triage must exist first. |
 | `changelist-verification` | any multi-CL task | **HARD RULE**: CL-by-CL execution, never batched. Stop between CLs for verification. |
 | `review-and-submit` | "review and submit" / any p4 submit | Pre-submit protocol: reviewer routing, Review Record block, preflight validators. |

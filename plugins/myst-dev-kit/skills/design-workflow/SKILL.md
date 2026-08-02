@@ -20,6 +20,12 @@ When the user requests design or planning work, you **MUST** follow this workflo
 
 ### 1. Create Document First
 
+> **Search before you create.** Glob `{{game_docs_root}}/plan_*.md`, `design_*.md`, `guide_*.md`
+> and `.scratch/*/spec.md` for the feature, system, or phase name first. If a related document
+> exists, extend it — update status, add sections, keep its history — rather than opening a
+> second one. Two documents for one feature don't error; they split the source of truth, and
+> someone later works from the stale half.
+
 **ALWAYS** create a design document in `{{game_docs_root}}/` before any implementation:
 
 | Request Type | File Naming | Example |
