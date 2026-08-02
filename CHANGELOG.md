@@ -1,40 +1,74 @@
 # Changelog
 
-All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
+All notable changes to `myst-agentic-workflow`.
 
-## [6.0.0] - 2026-08-02 — Retire `plan-priority` (BREAKING)
+## Versioning rules
 
-### Removed
-- **`skills/plan-priority/`** (~120 lines). **BREAKING for consumers**: the skill disappears on
-  the next `upgrade.ps1`. Skill count 31 → 30.
+SemVer, scoped to **what an install has to do about it** — not to how big the change felt.
 
-### Rationale
-- Its description — *"use BEFORE creating any new plan, roadmap, or implementation document"* —
-  could only match after the model had already decided to create one, which is the decision the
-  skill existed to intercept. Same circular-trigger defect fixed in `auto-plan-mode` in v5.1.0,
-  but here it was the whole skill: a guardrail that cannot fire is not a guardrail.
-- It had rotted: two sibling links (`DesignWorkflow.md`, `AgenticWorkflow.md`) pointed at files
-  retired into the `design-workflow` / `agentic-workflow` skills and resolved to nothing.
-- Its protection is now carried where the trigger is real — see below.
+| Bump | When | Examples |
+|---|---|---|
+| **MAJOR** | An existing install **breaks or needs manual migration**. | Manifest schema change; installer/marker contract change; a path or ownership move `update.ps1` / `upgrade.ps1` cannot resolve on its own. |
+| **MINOR** | Anything a consumer gets **automatically** — including removals. | New or retired skills, rules, docs; behaviour changes to an existing skill; content moved between skills. `upgrade.ps1` already adds new files and removes retired ones. |
+| **PATCH** | No behavioural change. | Typos, links, wording, formatting. |
 
-### Changed
-- **design-workflow** (step 1) and **agentic-workflow** (guardrails) now state the rule inline:
-  search `plan_*.md` / `design_*.md` / `guide_*.md` and `.scratch/*/spec.md` for the feature,
-  system, or phase name before creating a planning artifact; extend what exists rather than
-  opening a second. Both skills fire exactly when someone is about to create one of these
-  documents, so the guidance arrives at the moment it applies.
-- **auto-plan-mode** `Related`: the dead `PlanPriority.md` link now points at those two skills.
-- README skill table and the three plugin descriptions updated.
+Retiring a skill or a rule is **MINOR**, not MAJOR. It is consumer-visible — say so in the entry,
+and record what was lost — but the upgrade path handles it without anyone editing a file.
 
-### Known loss (recorded deliberately)
-- The four-location search *order* (game docs → `.scratch/` → `~/.claude/plans/` → session
-  memory) is no longer written down anywhere. The two folded-in versions name the first two
-  locations only — the ones that hold shared, version-controlled artifacts. Per-user plan
-  directories and session memory are now searched at the agent's discretion.
+**One bump per merge to `main`.** Not per commit, and not once per PR in a stack: three PRs that
+land the same change set share one version. If you are about to write a second `## [x.y.z]`
+heading dated today, you almost certainly want to extend the first one instead.
 
-## [5.1.0] - 2026-08-02 — Submit authority + self-directed plan mode
+**Tag it or don't bump it.** The version means nothing until `git tag -a vX.Y.Z` exists —
+v3.0.0 through v6.0.0 were written into four JSON files and never tagged, which is exactly how
+two spurious majors went unnoticed. Either tag on merge, or leave the number alone.
 
-### Added
+**The number lives in five places** — `package-manifest.json`, `.claude-plugin/marketplace.json`,
+`plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
+and the README badge. Update all five in the same commit; the badge is the one that drifts.
+
+## [4.13.0] - 2026-08-02 — Submit authority, plan mode, and always-on context
+
+> Consolidates three same-day increments briefly numbered 5.0.0, 5.1.0 and 6.0.0. None was
+> tagged or released and nothing downstream ever consumed them, so they are folded into one
+> 4.x minor rather than left as two spurious majors. Removals handled automatically by
+> `upgrade.ps1` are minor under the policy at the top of this file.
+
+### Remove the UE MCP rule from the `ue` overlay
+
+#### Removed
+- **`overlays/ue/rules/unrealmcprules.md`** and its `manifest-template.json` entry
+  (`.claude/rules/unrealmcprules.md`, `owner=overlay`, `ownerOverlay=ue`). The `ue` overlay
+  now ships only the `.p4ignore` fragment.
+- **Consumer-visible**: projects that installed the `ue` overlay lose an always-on rule
+  on their next `update.ps1`. Nothing replaces it in the package — consuming projects that
+  still want the guidance must carry it as project-owned content.
+
+#### Rationale
+- The rule cost ~2,151 tokens of always-on context per session (~28% of the consumer's
+  always-on budget) and a large share of it duplicated context carried elsewhere: the
+  deferred-tool/`ToolSearch` mechanism is stated verbatim by the harness every session, the
+  tool-selection table restated the MCP tool schemas, and its blast-radius tiers documented a
+  PreToolUse hook that enforced them without prose.
+- Measured in the originating project before removal: MCP was 18% of tool calls but only ~8%
+  of tool-result characters, so the rule was not defending a hot path.
+
+#### Known losses (recorded deliberately, not overlooked)
+- The `inspect_cdo` `SCS_Inherited` caveat (it reports the PARENT template's values, hiding
+  child overrides) is no longer written down in the package.
+- The leave-no-trace P4 sweep for MCP-leaked EXCLUSIVE `.uasset`/`.umap` checkouts.
+- The parameter crib for observed repeat failures (`delete_assets` + `paths:[...]`, missing
+  `action:`, unquoted path values, `add_variable` USTRUCT gap).
+- Measured fat-read costs (`list_node_types` ~26k chars/call, `get_blueprint` ~12k).
+
+#### Changed
+- `overlays/README.md`: `ue/` description no longer advertises the rule.
+- `plugins/myst-dev-kit/skills/diagnosing-bugs/UE-NOTES.md`: the binary-assets note pointed at
+  the now-deleted rule; it now states the deferred-tool mechanism inline (linkcheck fix).
+
+### Submit authority + self-directed plan mode
+
+#### Added
 - **review-and-submit**: new HARD RULE — *every submit is human-gated unless the run is
   verifiably in goal mode*. Ticket status governs **verification**, never **submit
   authority**: `ready-for-agent` answers "can the agent verify every required test case",
@@ -45,7 +79,7 @@ All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
   `goal_status` attachment — never inferred from circumstance. `ready-for-human` CLs stay
   gated even inside goal mode (the existing HITL rule outranks the exemption).
 
-### Changed
+#### Changed
 - **auto-plan-mode**: instructs the agent to enter plan mode *itself* via `EnterPlanMode`
   rather than waiting to be asked, and corrects the stale `exit_plan_mode` tool name to
   `ExitPlanMode`. Adds a `/goal` exception: plan mode's approval gate either stalls an
@@ -61,7 +95,7 @@ All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
   standing authorizations. Defers to the submit-authority rule up front, then states what
   is genuinely HITL-specific — `ready-for-human` stays gated even *inside* goal mode.
 
-### Notes
+#### Notes
 - Consumers who want plan mode decided per request (not per skill invocation) should carry
   the policy in an always-loaded rules file rather than relying on the `auto-plan-mode`
   skill: a model-invoked skill whose trigger is "use at the start of any non-trivial
@@ -69,37 +103,35 @@ All notable changes to `myst-agentic-workflow`. Versioning: SemVer.
   skill exists to make. Rules files without a `paths:` frontmatter load unconditionally
   every session; ones with it are path-scoped.
 
-## [5.0.0] - 2026-08-02 — Remove the UE MCP rule from the `ue` overlay (BREAKING)
+### Retire `plan-priority`
 
-### Removed
-- **`overlays/ue/rules/unrealmcprules.md`** and its `manifest-template.json` entry
-  (`.claude/rules/unrealmcprules.md`, `owner=overlay`, `ownerOverlay=ue`). The `ue` overlay
-  now ships only the `.p4ignore` fragment.
-- **BREAKING for consumers**: projects that installed the `ue` overlay lose an always-on rule
-  on their next `update.ps1`. Nothing replaces it in the package — consuming projects that
-  still want the guidance must carry it as project-owned content.
+#### Removed
+- **`skills/plan-priority/`** (~120 lines). **Consumer-visible**: the skill disappears on
+  the next `upgrade.ps1`. Skill count 31 → 30.
 
-### Rationale
-- The rule cost ~2,151 tokens of always-on context per session (~28% of the consumer's
-  always-on budget) and a large share of it duplicated context carried elsewhere: the
-  deferred-tool/`ToolSearch` mechanism is stated verbatim by the harness every session, the
-  tool-selection table restated the MCP tool schemas, and its blast-radius tiers documented a
-  PreToolUse hook that enforced them without prose.
-- Measured in the originating project before removal: MCP was 18% of tool calls but only ~8%
-  of tool-result characters, so the rule was not defending a hot path.
+#### Rationale
+- Its description — *"use BEFORE creating any new plan, roadmap, or implementation document"* —
+  could only match after the model had already decided to create one, which is the decision the
+  skill existed to intercept. Same circular-trigger defect fixed in `auto-plan-mode` in v5.1.0,
+  but here it was the whole skill: a guardrail that cannot fire is not a guardrail.
+- It had rotted: two sibling links (`DesignWorkflow.md`, `AgenticWorkflow.md`) pointed at files
+  retired into the `design-workflow` / `agentic-workflow` skills and resolved to nothing.
+- Its protection is now carried where the trigger is real — see below.
 
-### Known losses (recorded deliberately, not overlooked)
-- The `inspect_cdo` `SCS_Inherited` caveat (it reports the PARENT template's values, hiding
-  child overrides) is no longer written down in the package.
-- The leave-no-trace P4 sweep for MCP-leaked EXCLUSIVE `.uasset`/`.umap` checkouts.
-- The parameter crib for observed repeat failures (`delete_assets` + `paths:[...]`, missing
-  `action:`, unquoted path values, `add_variable` USTRUCT gap).
-- Measured fat-read costs (`list_node_types` ~26k chars/call, `get_blueprint` ~12k).
+#### Changed
+- **design-workflow** (step 1) and **agentic-workflow** (guardrails) now state the rule inline:
+  search `plan_*.md` / `design_*.md` / `guide_*.md` and `.scratch/*/spec.md` for the feature,
+  system, or phase name before creating a planning artifact; extend what exists rather than
+  opening a second. Both skills fire exactly when someone is about to create one of these
+  documents, so the guidance arrives at the moment it applies.
+- **auto-plan-mode** `Related`: the dead `PlanPriority.md` link now points at those two skills.
+- README skill table and the three plugin descriptions updated.
 
-### Changed
-- `overlays/README.md`: `ue/` description no longer advertises the rule.
-- `plugins/myst-dev-kit/skills/diagnosing-bugs/UE-NOTES.md`: the binary-assets note pointed at
-  the now-deleted rule; it now states the deferred-tool mechanism inline (linkcheck fix).
+#### Known loss (recorded deliberately)
+- The four-location search *order* (game docs → `.scratch/` → `~/.claude/plans/` → session
+  memory) is no longer written down anywhere. The two folded-in versions name the first two
+  locations only — the ones that hold shared, version-controlled artifacts. Per-user plan
+  directories and session memory are now searched at the agent's discretion.
 
 ## [4.12.0] - 2026-08-01 — Reviewer prompt trim (parity-gated)
 
