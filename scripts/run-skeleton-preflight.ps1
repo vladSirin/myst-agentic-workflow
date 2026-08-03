@@ -120,10 +120,19 @@ else { Bad '1. schema v3 loads' "schemaVersion=$($m.schemaVersion)" }
 
 # 2. Non-self hashes match (whole-file sha256 + block-scoped).
 $hash_bad = @()
+$humanOwned2 = 0
 foreach ($e in $m.files) {
     if ($e.localOnly) { continue }
     if ($e.hashPolicy -eq 'self-excluded') { continue }
     if ($e.hashPolicy -eq 'runtime-mutable') { continue }
+    # human-owned == the installer never writes it. Policing a file the consumer
+    # owns turns "someone edited their own doc" into a red write gate, which is
+    # the same defect the block-scoped exemption fixed in check 4 -- the shared
+    # rule is "if we do not own it, we do not police it". Hash baselines here are
+    # bookkeeping (diff-installed annotates with them, never gates), and since
+    # upgrade.ps1 keys customization detection on recorded OWNERSHIP rather than
+    # hashes, nothing load-bearing depends on them.
+    if ($e.writablePolicy -eq 'human-owned') { $humanOwned2++; continue }
     $fp = Join-Path $TargetRoot $e.path
     if (-not (Test-Path -LiteralPath $fp)) { continue }
     if ($e.hashPolicy -eq 'sha256') {
@@ -139,7 +148,8 @@ foreach ($e in $m.files) {
         } catch { $hash_bad += "$($e.path) (parse error: $($_.Exception.Message))" }
     }
 }
-if ($hash_bad.Count -eq 0) { Ok '2. all non-self hashes match' }
+$ho2Note = if ($humanOwned2 -gt 0) { "$humanOwned2 human-owned entr$(if($humanOwned2 -eq 1){'y'}else{'ies'}) not hash-tracked (the installer never writes them)" } else { '' }
+if ($hash_bad.Count -eq 0) { Ok '2. all non-self hashes match' $ho2Note }
 else { Bad '2. all non-self hashes match' ($hash_bad -join '; ') }
 
 # 3. No generated-block/append-fragment carries a whole-file hash.
@@ -156,6 +166,7 @@ if (-not $p4Available) {
 } else {
     $drift = @()
     $blockScoped = 0
+    $humanOwned4 = 0
     $pendingAddActions = @('add','branch','move/add')
     foreach ($e in $m.files) {
         if ($e.localOnly) { continue }
@@ -169,6 +180,10 @@ if (-not $p4Available) {
         # unaffected by edits outside the markers. Revision drift here is expected
         # behaviour, not drift -- counted and reported, never gating.
         if ($e.hashPolicy -eq 'block-scoped') { $blockScoped++; continue }
+        # Same rule, wider: a human-owned file is the consumer's, and they are
+        # expected to edit it. Revision-tracking it means every legitimate edit
+        # closes the write gate until someone hand-patches the manifest.
+        if ($e.writablePolicy -eq 'human-owned') { $humanOwned4++; continue }
         $relKey = $e.path.Replace('\','/')
         if ($pendingOpens.ContainsKey($relKey) -and $pendingAddActions -contains $pendingOpens[$relKey]) {
             continue
@@ -193,7 +208,10 @@ if (-not $p4Available) {
         }
         $drift += "$($e.path) (manifest=$($e.depotRevision) head=$head)"
     }
-    $bsNote = if ($blockScoped -gt 0) { "$blockScoped block-scoped entr$(if($blockScoped -eq 1){'y'}else{'ies'}) not revision-tracked; blockHash guards them (check 2)" } else { '' }
+    $notes4 = @()
+    if ($blockScoped -gt 0) { $notes4 += "$blockScoped block-scoped entr$(if($blockScoped -eq 1){'y'}else{'ies'}) not revision-tracked; blockHash guards them (check 2)" }
+    if ($humanOwned4 -gt 0) { $notes4 += "$humanOwned4 human-owned entr$(if($humanOwned4 -eq 1){'y'}else{'ies'}) not revision-tracked (the installer never writes them)" }
+    $bsNote = $notes4 -join '; '
     if ($drift.Count -eq 0) { Ok '4. depotRevision == headRev for all managed' $bsNote }
     else { Bad '4. depotRevision == headRev for all managed' ($drift -join '; ') }
 }

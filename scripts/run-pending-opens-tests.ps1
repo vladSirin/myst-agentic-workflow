@@ -264,6 +264,32 @@ if ($resF.Code -eq 0 -and $resF.Out -match 'WARN\s+5b\.' -and $resF.Out -match '
     Bad 'F. real unmanaged is reported by check 5b and does not gate' "code=$($resF.Code)`n$($resF.Out)"
 }
 
+###############################################################################
+# Scenario G: human-owned files are the CONSUMER'S. The installer never writes
+# them, so neither their hash nor their revision may gate a write. Without this,
+# editing a doc you own closes the gate until someone hand-patches the manifest --
+# the same defect the block-scoped exemption fixed, one category wider.
+###############################################################################
+Reset-Env
+$rootG = New-FixtureRoot
+$null = Write-Fixture-File $rootG '.claude/rules/TeamRule.md' "the team's own rule`n"  # real hash discarded on purpose
+$entryG = New-Entry '.claude/rules/TeamRule.md' 'sha256:deliberately-stale' 3
+$entryG.writablePolicy = 'human-owned'
+$entryG.mergeStrategy  = 'manual-only'
+$entryG.owner          = 'project'
+$entryG.sourceTemplate = $null          # project-owned: no package template backs it
+Write-Fixture-Manifest $rootG @($entryG, (New-LocalOnlyEntries))
+# Depot says rev 7; the manifest says 3; the on-disk hash matches neither. A file
+# the installer owns would fail both checks here -- a human-owned one must not.
+$env:FAKE_P4_FSTAT = "//UEPrototype/main/.claude/rules/TeamRule.md=7"
+$env:FAKE_P4_HAVE  = "//UEPrototype/main/.claude/rules/TeamRule.md#7"
+$resG = Invoke-Preflight $rootG
+if ($resG.Code -eq 0 -and $resG.Out -notmatch 'FAIL\s+2\.' -and $resG.Out -notmatch 'FAIL\s+4\.') {
+    Ok 'G. human-owned file with stale hash AND stale revision does not gate checks 2/4'
+} else {
+    Bad 'G. human-owned file does not gate checks 2/4' "code=$($resG.Code)`n$($resG.Out)"
+}
+
 # Cleanup fake-p4 dir.
 Reset-Env
 $env:PATH = $origPath

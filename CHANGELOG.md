@@ -27,6 +27,40 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.24.0] - 2026-08-04 — The write gate stops policing files the installer does not own
+
+### Checks 2 and 4 exempt `human-owned` entries
+
+#### Fixed
+- **Editing your own file still closed the write gate.** v4.21.0 exempted block-scoped entries from
+  check 4 after a human edit to `AGENTS.md` red-lighted the gate three times in one day. That fix
+  was scoped to the three examples in front of it rather than to the category they belonged to —
+  so the identical failure returned the moment someone edited a `human-owned` doc
+  (`.claude/rules/DocumentStandard.md`, submitted as a normal docs change), tripping **both**
+  check 2 (hash) and check 4 (revision).
+- Both checks now skip entries whose `writablePolicy` is `human-owned`, and both report the count
+  in their own result line rather than skipping silently.
+
+The governing rule, stated once so it stops being rediscovered: **if the installer does not own a
+file, the installer's gate does not police it.** `human-owned` means exactly that — the installer
+never writes it, so its recorded hash and revision are bookkeeping, not safety. `diff-installed.ps1`
+still reads them to annotate a drift report, which is informational and never gating; and since
+v4.22.0 `upgrade.ps1` keys customization detection on recorded **ownership** rather than hashes,
+nothing load-bearing depends on those baselines any more.
+
+#### Not weakened
+Entries the installer *does* own are untouched: an `installer-owned`/`copy` file with a stale hash
+or revision still fails both checks, because for those a mismatch genuinely means drift. Verified by
+the existing scenario E (real drift still fails check 4) alongside the new case.
+
+#### Added
+- `run-pending-opens-tests.ps1` scenario G: a `human-owned` entry whose manifest hash **and**
+  revision both disagree with reality must not gate. Confirmed to fail without the fix (`code=1`)
+  and pass with it. 17 suites, all green.
+
+Verified on the live consumer: preflight returns to **10/10** with no manifest hand-patching — which
+was the alternative on the table and would have had to be repeated after every future edit.
+
 ## [4.23.0] - 2026-08-04 — `doc-audit.sh` stops reporting health it never checked
 
 ### The SessionStart doc audit was a false green
