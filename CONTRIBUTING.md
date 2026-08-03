@@ -25,6 +25,7 @@ reviewed before it lands. The unit of review is the unit of installation.
    claude plugin validate .                          # marketplace manifest
    ./scripts/run-marketplace-tests.ps1               # 4-manifest lockstep etc.
    ./scripts/run-linkcheck-tests.ps1                 # no dangling references
+   ./scripts/run-p4spec-tests.ps1                    # installer CL spec: no Files:, no BOM
    ```
 5. **Pass the review bar** — the reviewer (project lead, or anyone with
    believability on the topic) checks the [checklist](#per-skill-review-checklist)
