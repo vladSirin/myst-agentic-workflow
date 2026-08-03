@@ -27,6 +27,41 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.22.0] - 2026-08-03 — `upgrade.ps1` no longer lets the template overrule the consumer
+
+### Data-loss fix: human-owned files could be silently overwritten
+
+#### Fixed
+- **`upgrade.ps1 -Apply` would overwrite locally-customized, explicitly protected files while
+  reporting `PRESERVE (your customizations): 0`.** Found by exercising the tool against a real
+  consumer: three files marked `human-owned` / `manual-only` in the installed manifest — carrying
+  38, 92 and 5 lines of local content — were classified `REFRESH (untouched -> package)`.
+
+Both of the script's safety nets failed, for the same root cause:
+1. **The ownership guard read the wrong manifest.** `upgrade` regenerates the manifest from the
+   package template *first*, then checks `mergeStrategy -eq 'manual-only'` on the regenerated entry.
+   The template naturally claims everything it ships as `installer-owned` / `copy`, so a consumer's
+   deliberate `human-owned` marking was discarded before the guard ever ran.
+2. **The customization guard cannot see a pre-existing fork.** It calls a file customized when
+   on-disk differs from the recorded baseline — but when a file was customized *before* its baseline
+   was taken, the baseline was computed from the forked bytes, so on-disk == baseline and the fork is
+   invisible. Every legitimate re-baseline (`install.ps1` refreshes `contentHash` on each write)
+   makes this *more* likely, not less.
+
+Ownership recorded in the installed manifest is now carried forward: an entry marked `human-owned`
+or `manual-only` there stays that way through regeneration, regardless of what the template claims.
+Ownership is a decision the consumer made; the template does not get a vote.
+
+#### Added
+- Regression test in `run-upgrade-tests.ps1` for the case no existing test covered: a `human-owned`
+  file whose **baseline equals its on-disk content**, so the hash guard is blind and only the
+  ownership carry-forward can save it. Confirmed to fail without the fix and pass with it — the
+  suite was 6/6 green while this defect was live, because its fixtures build consumer manifests
+  straight from the template and ownership therefore never diverges.
+
+Verified on a live consumer: the three at-risk files moved from `REFRESH` to
+`PRESERVE (human-owned in the installed manifest)`. All sixteen suites pass.
+
 ## [4.21.0] - 2026-08-03 — Editing a file you are supposed to edit no longer closes the write gate
 
 ### Check 4 stops revision-tracking the files humans co-own
