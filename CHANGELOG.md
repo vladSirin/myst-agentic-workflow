@@ -27,6 +27,42 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.18.0] - 2026-08-03 — Always-on Claude rules must have a Codex counterpart
+
+### `check-rule-parity.sh`: the drift that nothing was watching
+
+#### Added
+- **`plugins/myst-dev-kit/scripts/check-rule-parity.sh`**, installed to
+  `.claude/scripts/` and called from `doc-audit.sh` at SessionStart.
+  Claude Code auto-loads every `.claude/rules/*.md` without `paths:` frontmatter, every session.
+  Codex has no such mechanism — it reads `AGENTS.md` and nothing else. So a rule added to
+  `.claude/rules/` reaches Claude teammates immediately and Codex teammates **never**, silently.
+  On the reference consumer that had already happened twice: `BlueprintPinVerification.md` (a HARD
+  rule that exists because two changelists shipped five wrong Blueprint-pin claims) and
+  `PreImplementationGate.md` both had **zero** mentions in `AGENTS.md`.
+  The check greps `AGENTS.md` for each always-on rule's filename; path-scoped rules are advisory.
+- Registered in `manifest-template.json` so new consumers get it at init and existing ones on upgrade.
+
+#### Notes on its limits, which are deliberate
+- **It proves *mention*, not *coverage*.** `TODO: BlueprintPinVerification` would satisfy it. A
+  content or length floor was considered and rejected as brittle — rules legitimately compress to a
+  paragraph for Codex — without being much harder to game. The script header says so; green means
+  "someone wrote a counterpart", not "the counterpart is good".
+- **The anchor is the filename, not new frontmatter.** The three always-on rules currently carry no
+  frontmatter at all, and adding an unknown key risks the loader skipping the rule — manufacturing
+  the exact failure the check exists to prevent, on the rule with the incident history. Citing the
+  rule by path is also useful to a human Codex reader.
+- **Failure-isolated at the call site** (`--advisory || true`): `doc-audit.sh` runs at every
+  teammate's SessionStart under a timeout, so a bug here must not degrade session start. Run the
+  script directly, without `--advisory`, for a gating exit code.
+- **Safe for consumers this doesn't apply to**: no `.claude/rules/` or no `AGENTS.md` (a
+  Claude-only consumer) exits 0 with a plain message rather than failing.
+
+Verified on the reference consumer across four branches, each run rather than reasoned: parity holds
+(exit 0, two path-scoped rules noted as advisory); a scratch `AGENTS.md` with the Blueprint mention
+stripped fails by name (exit 1); the same case under `--advisory` exits 0; and a directory with no
+rules dir exits 0 cleanly.
+
 ## [4.17.0] - 2026-08-03 — The installer stops building its changelist the two forbidden ways
 
 ### `install.ps1`: a spec that cannot sweep, written in bytes p4 accepts

@@ -24,6 +24,14 @@ for file in "$DOCS_DIR"/*.md; do
   fi
 done
 
+# Claude/Codex rule parity. Failure-isolated on purpose: this runs at every
+# teammate's SessionStart under a timeout, so a bug in the parity check must not
+# degrade session start. --advisory keeps it reporting-only here; run the script
+# directly (no flag) for a gating exit code.
+if [ -x ".claude/scripts/check-rule-parity.sh" ] || [ -f ".claude/scripts/check-rule-parity.sh" ]; then
+  bash .claude/scripts/check-rule-parity.sh --advisory || true
+fi
+
 if [ ${#violations[@]} -eq 0 ]; then
   echo "Doc audit: all clean."
 else
