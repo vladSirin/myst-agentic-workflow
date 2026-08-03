@@ -135,6 +135,44 @@ automatically when VC=perforce.)
 
 ---
 
+## 2.9 The other half: the plugin (Claude Code and Codex)
+
+`setup.ps1` / `install.ps1` deliver the **scaffold** — `Docs/`, `.claude/` rules and
+scripts, the generated blocks in `CLAUDE.md` / `AGENTS.md`. They do **not** deliver the
+skills, reviewer agents, commands, or hooks. Those ship as a **plugin**, through each
+tool's own add-on system, into that tool's own cache. Two payloads, two channels, two
+pieces of state — a consumer needs both.
+
+| | Claude Code | Codex |
+|---|---|---|
+| Install | prompt on trusting the repo, or `/plugin install myst-dev-kit@myst` | `codex plugin marketplace add vladSirin/myst-agentic-workflow` then `codex plugin add myst-dev-kit@myst` |
+| Update | `claude plugin update myst-dev-kit@myst` (**restart to apply**) | `codex plugin marketplace upgrade` — that alone replaces the installed plugin |
+| Verify | `claude plugin list` | `codex plugin list` |
+| Installed to | `~/.claude/plugins/cache/<mkt>/<plugin>/<version>/` | `~/.codex/plugins/cache/<mkt>/<plugin>/<version>/` |
+
+The update commands are **not** mirror images, so don't reason from one to the other:
+Codex has no `plugin update` subcommand at all, and refreshing the marketplace snapshot
+updates the installed plugin in place (verified 4.18.0 → 4.19.0, cache directory
+replaced, no follow-up `add`). Claude's marketplace refresh does *not* update an
+installed plugin — it needs the explicit `plugin update`, and then a restart.
+
+**Two Codex limits worth knowing before you design around them**, both measured rather
+than inferred:
+
+- **No auto-loaded rules directory.** Codex reads `AGENTS.md` and nothing else, so an
+  always-on `.claude/rules/*.md` reaches Claude and never reaches Codex. That is what
+  `check-rule-parity.sh` guards.
+- **No project-level hooks.** Codex loads hooks from `~/.codex/hooks.json` and from
+  installed plugins only; a hooks file committed in the repo is ignored (both
+  `.codex/hooks.json` and `.agents/hooks.json` were placed in a live session and never
+  fired). A repo-local hook a project depends on is therefore Claude-only unless it
+  ships through the plugin.
+
+Plugin-shipped hooks work under both: Codex exports `PLUGIN_ROOT` alongside a
+`CLAUDE_PLUGIN_ROOT` compatibility alias, so `${CLAUDE_PLUGIN_ROOT}` resolves in each.
+Guard with `[ -z "${PLUGIN_ROOT:-}" ] && exit 0` when a hook must run under Codex only
+(see `scripts/submit-audit-bridge.sh`).
+
 ## 3. Update from upstream
 
 ### 3.1 The one-command path

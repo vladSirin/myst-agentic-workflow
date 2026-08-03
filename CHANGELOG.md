@@ -27,6 +27,42 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.20.0] - 2026-08-03 — Codex is documented as a first-class tool, from a sequence that was actually run
+
+### `SETUP.md` + `docs/install.md`: the plugin half, and how Codex differs
+
+#### Added
+- **`docs/install.md` had zero occurrences of "codex"** despite being the document the update
+  command points at. It now has a section covering the plugin channel for both tools: what the
+  scaffold installer does *not* deliver (skills, agents, commands, hooks), where each tool caches
+  it, and how to install, update, and verify.
+- **`SETUP.md`** gains the Codex update command and a short statement of what Codex does and does
+  not receive.
+
+#### The update commands are not mirror images — do not reason from one to the other
+- **Codex**: `codex plugin marketplace upgrade` is the *whole* update. There is no
+  `codex plugin update` subcommand, and refreshing the marketplace snapshot replaces the installed
+  plugin in place — measured 4.18.0 → 4.19.0 with the cache directory swapped and **no** follow-up
+  `codex plugin add`.
+- **Claude**: a marketplace refresh does *not* update an installed plugin; it needs an explicit
+  `claude plugin update`, followed by a restart.
+
+This was written after running it. The prior expectation — recorded in the plan — was that Codex
+would need a re-add, by analogy with Claude's version-pinned cache path. That expectation was
+wrong, which is precisely why the sequence was executed before being documented.
+
+#### Two Codex limits, measured rather than inferred
+- **No auto-loaded rules directory** — Codex reads `AGENTS.md` only, so an always-on
+  `.claude/rules/*.md` never reaches it. That is what `check-rule-parity.sh` (4.18.0) guards.
+- **No project-level hooks** — hooks load from `~/.codex/hooks.json` and from installed plugins,
+  never from a hooks file committed in the repo. Both `.codex/hooks.json` and `.agents/hooks.json`
+  were placed in a live Codex session; neither fired and neither produced a hook-trust entry. A
+  repo-local hook is therefore Claude-only unless it ships through the plugin.
+
+Plugin-shipped hooks do work under both tools: Codex exports `PLUGIN_ROOT` alongside a
+`CLAUDE_PLUGIN_ROOT` compatibility alias, so `${CLAUDE_PLUGIN_ROOT}` resolves in each; guard with
+`[ -z "${PLUGIN_ROOT:-}" ] && exit 0` for Codex-only behaviour.
+
 ## [4.19.0] - 2026-08-03 — The update button stops jamming after one press
 
 ### The scaffold updater no longer disables itself
