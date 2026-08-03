@@ -27,6 +27,49 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.17.0] - 2026-08-03 — The installer stops building its changelist the two forbidden ways
+
+### `install.ps1`: a spec that cannot sweep, written in bytes p4 accepts
+
+#### Fixed
+- **The new changelist could inherit the user's default one.** CL creation started from
+  `& p4 change -o`, whose new-changelist form pre-fills `Files:` with **every** file currently open
+  in the default change — so an install would silently drag unrelated work into its own CL and
+  submit it under a scaffold description. The spec is now built in-script with **no `Files:`
+  section at all**, which removes the possibility rather than working around it. Both the team's
+  own `review-and-submit` skill and the `feedback_p4_change_default_contamination` note have warned
+  against `p4 change -o | p4 change -i` for exactly this reason.
+- **The spec was rejected by p4 anyway.** Piping it in from PowerShell prepends a UTF-8 BOM and p4
+  fails the whole spec with `Unknown field name`. Now written via
+  `[System.IO.File]::WriteAllText(..., UTF8Encoding($false))` and redirected with
+  `cmd /c "p4 change -i < <file>"`. Note for future editors: `<` is a **reserved, unimplemented**
+  operator in PowerShell 5.1 and 7 alike — `p4 change -i < $f` is a parse error, and piping instead
+  reintroduces the BOM.
+- **The default CL tag violated the convention the audit greps for.** `[scaffold]` is a single tag;
+  submit audits expect `[jobFamily][name]`. Now `[scaffold][install]`, still overridable via
+  `installedProject.clTagPrefix`.
+
+#### Added
+- **Post-creation assertion**: the installer now verifies `p4 opened -c <newCL>` is empty before its
+  first `p4 edit`/`add` and aborts otherwise — a last line of defence that also closes the window
+  between the preflight's default-CL check and the moment the CL is created.
+- **`scripts/lib/P4Spec.ps1`** (`New-P4ChangeSpecText`, `Write-P4SpecFile`) and
+  **`scripts/run-p4spec-tests.ps1`**. The logic was extracted precisely so it can be tested: the
+  CL-creation branch sits inside `if ($Changes.Count -ne 0)`, so a no-op install never reaches it
+  and only a genuinely destructive write would exercise it live. The suite asserts no `Files:`
+  section, no BOM, tab-indented description lines, a double-bracket tag, that `p4 change -i` accepts
+  the spec, and — with a file deliberately opened in `default` — that the file **stays there** and
+  the new CL comes up empty. P4-dependent cases SKIP when no client is reachable, so
+  filesystem-only consumers can still run the suite.
+
+#### Changed
+- The write gate no longer pipes its preflight through `Out-Null`. Report-only findings (v4.16.0's
+  check 5b `WARN` lines) were being discarded in the one context where they matter most.
+
+Verified against a live consumer at preflight 10/10: 8/8 spec assertions pass, and with `default`
+deliberately dirtied the anti-sweep case reports "1 file(s) stayed put" — a behavioural proof, not a
+shape assertion. Test changelists are deleted in teardown.
+
 ## [4.16.0] - 2026-08-03 — The write gate stops crashing, and stops judging consumers by their own files
 
 ### `run-skeleton-preflight.ps1`: correct, portable, and no longer fatal on a missing root
