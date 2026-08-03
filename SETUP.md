@@ -29,8 +29,29 @@ server-side Submit-Audit.
 **Codex** (if you use it): the marketplace isn't auto-registered there — once:
 ```
 codex plugin marketplace add vladSirin/myst-agentic-workflow
+codex plugin add myst-dev-kit@myst
 ```
-then `/plugins` → *Myst Team Plugins* → install `myst-dev-kit` → new session.
+then start a new session. (`/plugins` → *Myst Team Plugins* → install works too.)
+Verify with `codex plugin list` — `myst-dev-kit@myst` shows `installed, enabled`.
+
+**Keeping Codex up to date** — one command, and it is *not* the same shape as Claude's:
+```
+codex plugin marketplace upgrade
+```
+That is the whole update. Codex has **no `plugin update` subcommand**; refreshing the
+marketplace snapshot replaces the installed plugin in place — verified 4.18.0 → 4.19.0,
+cache directory and all, with no follow-up `codex plugin add`. (Claude is the opposite:
+`claude plugin update myst-dev-kit@myst`, and it needs a restart to take effect.)
+
+**What Codex does and does not get.** The plugin delivers the skills, both reviewer
+agents, the commands, and the Submit-Audit bridge. It does **not** give Codex the
+always-on rules: Codex has no `.claude/rules/` equivalent and reads `AGENTS.md` only,
+which is why every always-on rule needs an `AGENTS.md` counterpart (enforced by
+`check-rule-parity.sh`). Project-level hooks are also unavailable — Codex loads hooks
+from `~/.codex/hooks.json` and from installed plugins, never from a hooks file in the
+repo (measured: a project `.codex/hooks.json` and a project `.agents/hooks.json` were
+both ignored by a live session). Any repo-local hook a consuming project relies on is
+Claude-only unless it ships through the plugin.
 
 **Don't want the plugin?** Decline the prompt, or opt out permanently in your
 `.claude/settings.local.json`:
