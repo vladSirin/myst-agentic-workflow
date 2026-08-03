@@ -27,6 +27,42 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.23.0] - 2026-08-04 — `doc-audit.sh` stops reporting health it never checked
+
+### The SessionStart doc audit was a false green
+
+#### Fixed
+- **It only ever looked at the top level.** `for file in "$DOCS_DIR"/*.md` meant every
+  subdirectory was invisible. On the reference consumer that hid **24 of 60** docs, and the hook
+  printed `Doc audit: all clean.` over a tree containing 7 lifecycle violations. A check that
+  cannot see most of what it claims to cover is worse than no check, because people trust it.
+  Now recurses.
+- **The self-reference in its header pointed at a path that does not exist**
+  (`Claude/DocumentStandard.md` → `.claude/rules/DocumentStandard.md`).
+
+#### Added
+- **Lifecycle checks** — the drift mode filename rules structurally cannot catch: a doc whose
+  declared `Status:` contradicts its own filename. Flags `_WIP` files marked `COMPLETE`/`DEPRECATED`,
+  `ToBeDeleted_` files marked `COMPLETE`/`WIP` or carrying no status at all, and `WIP` docs missing
+  the `_WIP` suffix. Status parsing is deliberately tolerant (`**Status**: X`, `**Status** X`,
+  `**Status:** X`, trailing emoji or parentheticals; case-insensitive, first match wins).
+- `game_direction_` joins the valid prefixes — a real, in-use convention that was simply undocumented.
+
+#### Deliberately exempt
+`adr/` (numbered `0001-…` ADR convention) and `_Raw/` (leads-only source material whose names come
+from the source) are exempt from the **prefix** check only; banned suffixes and lifecycle still
+apply. Without those two exemptions, recursing produces 18 false positives — enough noise to make
+the whole audit ignorable.
+
+#### Measured, not assumed
+The status window is **20 lines**, not the ~8 first drafted. One real doc carries a deprecation
+banner above its title and declares its status on line 11; an 8-line window silently missed it — a
+false negative on precisely the drift the check exists to find. Widening from 12 to 30 lines changed
+nothing across a 60-file tree, so 20 buys the catch without inviting prose false-positives.
+
+Still advisory: exits 0 on violations, and the failure-isolated rule-parity chain (`--advisory ||
+true`) is unchanged, because this runs at every teammate's SessionStart under a timeout.
+
 ## [4.22.0] - 2026-08-03 — `upgrade.ps1` no longer lets the template overrule the consumer
 
 ### Data-loss fix: human-owned files could be silently overwritten
