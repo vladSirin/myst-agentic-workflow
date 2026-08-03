@@ -28,9 +28,27 @@ try {
     New-Item -ItemType Directory -Path "$t\.claude\skills\zoom-out" -Force | Out-Null
     Set-Content -LiteralPath "$t\.claude\skills\zoom-out\SKILL.md" -Value 'retired skill body'
     $zoomHash = GH "$t\.claude\skills\zoom-out\SKILL.md"
+    #  (d) PRESERVE-BY-OWNERSHIP: a file the consumer marked human-owned whose on-disk
+    #      content MATCHES its recorded baseline. The hash guard cannot fire here -- the
+    #      baseline was taken from the already-forked bytes, which is what happens when a
+    #      file is customized before bootstrap, or any time install.ps1 re-baselines.
+    #      Only the installed manifest's ownership says "don't touch this". The package
+    #      template claims this path as installer-owned/copy, so without that carry-forward
+    #      the regenerated manifest silently overrules the consumer and the content is lost.
+    $ownDoc = "$t\Docs\agents\domain.md"
+    Set-Content -LiteralPath $ownDoc -Value "team-specific domain model - do not clobber" -NoNewline
+    $ownHash = GH $ownDoc
+
     $mp = "$t\Docs\agents\scaffold-manifest.json"
     $mb = [IO.File]::ReadAllBytes($mp); if ($mb[0] -eq 0xEF) { $mb = $mb[3..($mb.Length-1)] }
     $man = [Text.Encoding]::UTF8.GetString($mb) | ConvertFrom-Json
+    foreach ($fe in $man.files) {
+        if ($fe.path -eq 'Docs/agents/domain.md') {
+            $fe.contentHash    = $ownHash          # baseline == disk: hash guard is blind
+            $fe.writablePolicy = 'human-owned'     # the consumer's decision
+            $fe.mergeStrategy  = 'manual-only'
+        }
+    }
     $entry = [pscustomobject]@{
         path='.claude/skills/zoom-out/SKILL.md'; tool='claude'; owner='package'; ownerOverlay='core'
         sourceTemplate=$null; sourceCommit='retired'; hashPolicy='sha256'; contentHash=$zoomHash
@@ -50,6 +68,11 @@ try {
 
     # 5. Assertions
     if ((Test-Path $tdd) -and (GH $tdd) -eq $tddCustom) { Ok 'PRESERVE: customized issue-tracker kept byte-for-byte' } else { Bad 'preserve' 'issue-tracker customization was overwritten' }
+    if ((Test-Path $ownDoc) -and (GH $ownDoc) -eq $ownHash) {
+        Ok 'PRESERVE: human-owned file with baseline == disk survives (template ownership must not overrule the consumer)'
+    } else {
+        Bad 'preserve-by-ownership' 'a file marked human-owned in the installed manifest was overwritten from the template'
+    }
     if (Test-Path "$t\Docs\agents\triage-labels.md") { Ok 'ADD: deleted core doc (triage-labels) re-added' } else { Bad 'add' 'triage-labels not re-added' }
     if (-not (Test-Path "$t\.claude\skills\zoom-out")) { Ok 'REMOVE: retired skill (zoom-out) removed + dir pruned - the CL 3.6 detrack path' } else { Bad 'remove' 'zoom-out still present' }
 

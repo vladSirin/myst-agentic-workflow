@@ -81,6 +81,11 @@ $GameDocsRoot = Prop $old.installedProject 'gameDocsRoot'; if (-not $GameDocsRoo
 $Tools    = @($old.files | ForEach-Object { $_.tool } | Where-Object { $_ -and $_ -ne 'common' } | Sort-Object -Unique) -join ','
 $Overlays = @($old.overlays) -join ','
 $oldHash = @{}; foreach ($e in $old.files) { if ($e.hashPolicy -eq 'sha256' -and $e.contentHash) { $oldHash[$e.path] = $e.contentHash } }
+# Ownership decisions the CONSUMER already made. The regenerated manifest comes from
+# the package template, which naturally claims every file it ships as installer-owned
+# -- so without this the template silently overrules a consumer that had deliberately
+# marked a file human-owned, and the refresh overwrites their content.
+$oldByPath = @{}; foreach ($e in $old.files) { $oldByPath[$e.path] = $e }
 
 Write-Host "=============================================================="
 Write-Host "myst-agentic-workflow upgrade.ps1  v$ScriptVersion"
@@ -122,6 +127,27 @@ foreach ($e in $new.files) {
         $disk = Get-Hash $fp
         $e.contentHash = $disk
         if ($e.mergeStrategy -eq 'manual-only') { $preserve += "$($e.path) (human-owned)"; continue }
+
+        # Carry forward protection the INSTALLED manifest records. $e comes from the
+        # regenerated (template-derived) manifest, so its writablePolicy/mergeStrategy
+        # are the package's opinion, not the consumer's. A file the consumer marked
+        # human-owned must stay human-owned.
+        #
+        # This is not belt-and-braces for the hash check below -- it is the ONLY guard
+        # that fires for a file customized BEFORE its baseline was recorded. In that
+        # case on-disk == baseline (the baseline was taken FROM the customized bytes),
+        # so the customization is invisible to any hash comparison, and the file would
+        # be classified "untouched" and overwritten. Every legitimate re-baseline
+        # (install.ps1 refreshes contentHash on each write) makes that more likely,
+        # not less.
+        $oldEntry = $oldByPath[$e.path]
+        if ($oldEntry -and (($oldEntry.writablePolicy -eq 'human-owned') -or ($oldEntry.mergeStrategy -eq 'manual-only'))) {
+            $e.mergeStrategy  = 'manual-only'
+            $e.writablePolicy = 'human-owned'
+            $preserve += "$($e.path) (human-owned in the installed manifest)"
+            continue
+        }
+
         $base = $oldHash[$e.path]
         if ($base -and $disk -ne $base -and (Get-RawHash $fp) -ne $base) { # user customized -> PRESERVE (dual-scheme: unchanged under normalized OR raw)
             $e.mergeStrategy  = 'manual-only'
