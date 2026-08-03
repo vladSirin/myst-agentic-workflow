@@ -27,6 +27,49 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.21.0] - 2026-08-03 — Editing a file you are supposed to edit no longer closes the write gate
+
+### Check 4 stops revision-tracking the files humans co-own
+
+#### Fixed
+- **v4.19.0 unjammed installer writes; hand edits still jammed the gate.** Block-scoped entries —
+  `CLAUDE.md`, `AGENTS.md`, `.p4ignore` — are *shared*: the installer owns the generated block and
+  humans own everything around it. Editing your own region is the intended workflow, but it bumps
+  the depot revision, the manifest doesn't follow, and check 4 red-lighted write mode. In one day of
+  ordinary work this fired three times and was hand-corrected three times before the pattern was
+  noticed at all.
+- Check 4 now **skips block-scoped entries**, counts them, and says so in its own result line
+  (`3 block-scoped entries not revision-tracked; blockHash guards them (check 2)`) — visible, not
+  silent. Their real protection is check 2's `blockHash`, which covers exactly the installer-owned
+  bytes between the markers and is unaffected by edits outside them. Revision movement on these
+  files is expected behaviour, not drift.
+
+#### Also: `run-pending-opens-tests.ps1` had been red since 4.16.0 — and nobody noticed
+That suite covers checks 4 and 5 through a fake-`p4` shim, i.e. exactly the code 4.16.0 changed.
+It was left broken because that release was verified against three suites instead of all sixteen.
+Three separate causes, now fixed:
+- **The shim did not know `p4 where`.** 4.16.0 stopped hardcoding the depot root and began calling
+  `p4 -ztag -F "%depotFile%" where`; the shim's `switch` saw `-ztag` as the verb and fell through to
+  `default { exit 0 }`, silently returning nothing. It now strips p4's global flags before
+  dispatching, and implements `where` (`FAKE_P4_DEPOT_ROOT`, defaulting to the fixtures' depot).
+- **The fixtures built a nested array.** `@( (New-Entry ...), (New-LocalOnlyEntries) )` embedded a
+  2-element array as a single "entry", so `$e.<field>` member-enumerated into `Object[]`. It had
+  been harmless only by luck — every earlier check skipped that pseudo-entry via a truthy
+  `$e.localOnly`; the first check to read `$e.owner` instead crashed on it. `Write-Fixture-Manifest`
+  now flattens, and materialises a fake package root so `sourceTemplate` entries resolve.
+- **Scenario F asserted semantics that were deliberately removed.** It required an unmanaged depot
+  file to *fail* check 5; since 4.16.0 that is reported by check 5b and does not gate. F now asserts
+  the behaviour we actually want: reported by name, exit 0.
+
+All sixteen suites pass.
+
+#### Deliberately not weakened
+Copy-strategy entries — where the installer owns the *whole* file, so any revision change genuinely
+is drift — are untouched. Verified by injecting a false revision on one and confirming check 4 still
+fails by name (`manifest=99 head=2`) before restoring it. The `depotRevision` field is left in place
+on block-scoped entries: `diff-installed.ps1` still uses it to annotate a hash mismatch, which is
+informational and never gating.
+
 ## [4.20.0] - 2026-08-03 — Codex is documented as a first-class tool, from a sequence that was actually run
 
 ### `SETUP.md` + `docs/install.md`: the plugin half, and how Codex differs

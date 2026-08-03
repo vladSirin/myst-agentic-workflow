@@ -155,10 +155,20 @@ if (-not $p4Available) {
     Skip '4. depotRevision == headRev for all managed' 'p4 client not reachable'
 } else {
     $drift = @()
+    $blockScoped = 0
     $pendingAddActions = @('add','branch','move/add')
     foreach ($e in $m.files) {
         if ($e.localOnly) { continue }
         if ($e.hashPolicy -eq 'self-excluded') { continue }
+        # Block-scoped files (CLAUDE.md, AGENTS.md, .p4ignore) are SHARED: the
+        # installer owns the generated block, humans own everything around it. A
+        # human editing their own region legitimately bumps the depot revision, so
+        # revision-tracking them means the write gate closes every time someone
+        # edits a file they are supposed to edit. Their real guard is check 2's
+        # blockHash, which covers exactly the installer-owned bytes and is
+        # unaffected by edits outside the markers. Revision drift here is expected
+        # behaviour, not drift -- counted and reported, never gating.
+        if ($e.hashPolicy -eq 'block-scoped') { $blockScoped++; continue }
         $relKey = $e.path.Replace('\','/')
         if ($pendingOpens.ContainsKey($relKey) -and $pendingAddActions -contains $pendingOpens[$relKey]) {
             continue
@@ -183,7 +193,8 @@ if (-not $p4Available) {
         }
         $drift += "$($e.path) (manifest=$($e.depotRevision) head=$head)"
     }
-    if ($drift.Count -eq 0) { Ok '4. depotRevision == headRev for all managed' }
+    $bsNote = if ($blockScoped -gt 0) { "$blockScoped block-scoped entr$(if($blockScoped -eq 1){'y'}else{'ies'}) not revision-tracked; blockHash guards them (check 2)" } else { '' }
+    if ($drift.Count -eq 0) { Ok '4. depotRevision == headRev for all managed' $bsNote }
     else { Bad '4. depotRevision == headRev for all managed' ($drift -join '; ') }
 }
 
