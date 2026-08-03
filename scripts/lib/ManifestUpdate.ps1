@@ -55,6 +55,20 @@ function Update-ManifestForChanges {
             $hashByPath[$c.Path] = @{ Field = 'blockHash'; Value = (Get-MarkerBlockHash -Path $c.Target -Id $id) }
         }
     }
+
+    # 2b. Optional depotRevision, supplied by the CALLER -- this library stays
+    #     Perforce-free so filesystem-only consumers are unaffected. Without this,
+    #     a write left the manifest naming the pre-submit revision forever: preflight
+    #     check 4 went red, the write gate refused every subsequent run, and someone
+    #     had to hand-edit the numbers. install.ps1 passes head+1 for an edit and 1
+    #     for an add; check 4 tolerates that while the file is open, and it becomes
+    #     exact on submit.
+    $revByPath = @{}
+    foreach ($c in $Changes) {
+        if ($null -ne $c.PSObject.Properties['DepotRevision'] -and $null -ne $c.DepotRevision) {
+            $revByPath[$c.Path] = [int]$c.DepotRevision
+        }
+    }
     $now = (Get-Date).ToString('o')
 
     # 3. Walk lines (LF-normalized for matching). Track current entry by its
@@ -68,7 +82,16 @@ function Update-ManifestForChanges {
             $cur = $Matches[1]
             continue
         }
-        if ($null -eq $cur -or -not $hashByPath.ContainsKey($cur)) { continue }
+        if ($null -eq $cur) { continue }
+
+        # depotRevision is independent of the hash map: a caller may supply a
+        # revision for an entry whose hash did not change (and vice versa).
+        if ($revByPath.ContainsKey($cur) -and $ln -match '^(\s+"depotRevision":\s+)([^,]*?)(,?\s*)$') {
+            $linesArr[$i] = $Matches[1] + [string]$revByPath[$cur] + $Matches[3]
+            continue
+        }
+
+        if (-not $hashByPath.ContainsKey($cur)) { continue }
         $info = $hashByPath[$cur]
 
         if ($info.Field -eq 'contentHash' -and $ln -match '^(\s+"contentHash":\s+)([^,]*?)(,?\s*)$') {

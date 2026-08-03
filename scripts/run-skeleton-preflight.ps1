@@ -168,7 +168,20 @@ if (-not $p4Available) {
             if ($null -ne $e.depotRevision) { $drift += "$($e.path) (manifest=$($e.depotRevision) head=missing)" }
             continue
         }
-        if ($e.depotRevision -ne $head) { $drift += "$($e.path) (manifest=$($e.depotRevision) head=$head)" }
+        if ($e.depotRevision -eq $head) { continue }
+        # A file open for EDIT in a pending CL is about to become head+1, and the
+        # installer records that value at write time so the manifest is correct the
+        # instant the CL submits. Tolerate exactly that, and only while the file is
+        # actually open -- an abandoned CL leaves head+1 with no open file, which
+        # still fails, correctly and loudly. Self-clearing: after submit head catches
+        # up and the entry matches exactly.
+        $pendingEditActions = @('edit','integrate')
+        if ($pendingOpens.ContainsKey($relKey) -and
+            $pendingEditActions -contains $pendingOpens[$relKey] -and
+            $e.depotRevision -eq ($head + 1)) {
+            continue
+        }
+        $drift += "$($e.path) (manifest=$($e.depotRevision) head=$head)"
     }
     if ($drift.Count -eq 0) { Ok '4. depotRevision == headRev for all managed' }
     else { Bad '4. depotRevision == headRev for all managed' ($drift -join '; ') }
