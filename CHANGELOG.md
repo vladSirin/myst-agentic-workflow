@@ -27,6 +27,46 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.16.0] - 2026-08-03 — The write gate stops crashing, and stops judging consumers by their own files
+
+### `run-skeleton-preflight.ps1`: correct, portable, and no longer fatal on a missing root
+
+#### Fixed
+- **The preflight crashed before finishing.** Check 5's `& p4 have` was the one unguarded native
+  call in the script (`:33` and `:51` were already wrapped): p4 writes its ordinary "file(s) not on
+  client" notice to stderr, which `$ErrorActionPreference = 'Stop'` turns into a terminating error,
+  so checks 5–10 never ran and the failure looked like a failed check rather than a crash. Now
+  routed through `cmd /c "... 2>nul"` — the mechanism check 6 already used — with per-root
+  accounting so an unresolvable root is reported, never rendered as "nothing found".
+- **The depot root was hardcoded to `//UEPrototype/main/` in four places** (`p4 opened` parsing,
+  the head-revision lookup, the `p4 have` query and its result regex) inside a package whose
+  premise is reuse. Now derived per consumer via `p4 -ztag -F "%depotFile%" where "<TargetRoot>/..."`.
+  Note for anyone tempted by the shorter route: `p4 info`'s `clientRoot` is a **local** path, so
+  using it would make every depot query match nothing and turn the gate into a silent pass.
+
+#### Changed
+- **Check 5 now asks a question a project-agnostic package can answer.** It used to fail when any
+  depot-tracked file under `.claude/`, `Docs/agents/` or `Docs/MustRead/` was absent from the
+  manifest — unanswerable by construction, because every consumer legitimately keeps its own rules
+  and scripts under those roots. On this repo that was six consumer-owned files, none of them
+  shipped by the package, permanently blocking write mode. Recording them in an *install* manifest
+  would have grown the gate with content the package does not own.
+  The check now runs the other way: **every entry with `owner ∈ (package, overlay)` must still
+  resolve to a live `sourceTemplate` on disk.** Two independent sources (consumer manifest vs
+  package filesystem), so it can genuinely fail; it catches the *stale managed entry* — still
+  claimed, source retired. Entries with `hashPolicy: self-excluded` are exempt (the manifest's own
+  entry is generated, never rendered). It needs no Perforce, so filesystem-only consumers get it too.
+- **New check 5b keeps the old scan as report-only**, via a new `WARN` level surfaced in the closing
+  banner. It preserves the orphan signal without the power to block a consumer for owning files.
+- New optional `-PackageRoot` parameter (body default, not a param-block default — `$PSScriptRoot`
+  is empty while param defaults are evaluated under `-File`).
+
+Verified on a live consumer: the preflight now reports all ten checks instead of dying after four;
+check 5 passes across 13 package/overlay entries with no consumer file added to any manifest; and
+both failure branches were exercised, not assumed — a deliberately broken `sourceTemplate` in a copy
+of the manifest makes check 5 fail by name, and a target outside the client view skips the
+depot-aware checks cleanly.
+
 ## [4.15.0] - 2026-08-02 — An explicit per-CL submit instruction IS the approval
 
 ### `review-and-submit`: define the one approval instead of re-asking for it
