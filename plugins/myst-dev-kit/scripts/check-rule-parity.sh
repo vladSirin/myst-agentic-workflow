@@ -88,8 +88,17 @@ for rule in "$RULES_DIR"/*.md; do
   fi
 done
 
-if [ ${#missing[@]} -eq 0 ] && [ ${#advisory_missing[@]} -eq 0 ]; then
-  echo "Rule parity: all $checked rule(s) have an $AGENTS_MD counterpart."
+if [ ${#missing[@]} -eq 0 ]; then
+  # Path-scoped rules are summarised, never enumerated, when nothing is actually
+  # wrong. They load on match for Claude, so their absence from AGENTS.md is a
+  # nuance, not a defect -- and this runs at every SessionStart. Printing the same
+  # two names forever is how a channel stops being read, which then hides the
+  # finding that matters.
+  if [ ${#advisory_missing[@]} -gt 0 ]; then
+    echo "Rule parity: OK — $checked rule(s) checked (${#advisory_missing[@]} path-scoped rule(s) have no $AGENTS_MD mention; they load on match for Claude, so this is informational only)."
+  else
+    echo "Rule parity: all $checked rule(s) have an $AGENTS_MD counterpart."
+  fi
   exit 0
 fi
 

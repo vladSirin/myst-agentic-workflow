@@ -359,14 +359,41 @@ $( ($readOnly | Select-Object -First 5 | ForEach-Object { '  - ' + $_.Path }) -j
         $newFiles = @()
         try {
             # Pre-write: p4 edit existing files (makes them writable; opens them in $targetCL).
+            #
+            # Also stamp the revision each file WILL have once this CL is submitted, so
+            # Update-ManifestForChanges can record it. Without this the manifest kept
+            # naming the pre-submit revision, preflight check 4 went red after every
+            # write, and the gate refused all subsequent runs until someone hand-edited
+            # the numbers. An edit lands at head+1; a new file lands at 1. Check 4
+            # tolerates head+1 while the file is open for edit, and the value becomes
+            # exact the moment the CL submits.
             if ($UsePerforce) {
                 foreach ($c in $Changes) {
                     if (Test-Path -LiteralPath $c.Target) {
+                        $head = $null
+                        $prevEA = $ErrorActionPreference; $ErrorActionPreference = 'SilentlyContinue'
+                        $fstat = & cmd /c "p4 fstat -T headRev ""$($c.Target)"" 2>nul"
+                        $ErrorActionPreference = $prevEA
+                        foreach ($fl in $fstat) { if ($fl -match 'headRev\s+(\d+)') { $head = [int]$Matches[1]; break } }
+                        # No headRev: not in the depot yet (staged add). It lands at 1.
+                        $nextRev = if ($null -eq $head) { 1 } else { $head + 1 }
+                        $c | Add-Member -NotePropertyName 'DepotRevision' -NotePropertyValue $nextRev -Force
+
                         & p4 edit -c $targetCL $c.Target | Out-Null
                         Register-OpenedFile -JournalPath $jrnPath -Path $c.Target
                     } else {
+                        $c | Add-Member -NotePropertyName 'DepotRevision' -NotePropertyValue 1 -Force
                         $newFiles += $c.Target   # p4 add deferred until after commit (file must exist)
                     }
+                }
+
+                # The manifest is about to be rewritten by Update-ManifestForChanges,
+                # so open it too. It is +w (writable without checkout), so skipping
+                # this left it modified-but-unopened after every write: excluded from
+                # the CL it belongs to, and a stray in the next person's reconcile.
+                if (Test-Path -LiteralPath $InstalledManifestPath) {
+                    & p4 edit -c $targetCL $InstalledManifestPath | Out-Null
+                    Register-OpenedFile -JournalPath $jrnPath -Path $InstalledManifestPath
                 }
             }
 

@@ -27,6 +27,57 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.19.0] - 2026-08-03 — The update button stops jamming after one press
+
+### The scaffold updater no longer disables itself
+
+#### Fixed
+- **A scaffold write left the gate permanently closed.** `Update-ManifestForChanges` refreshed
+  `contentHash` but never `depotRevision` (its header scoped it to three fields; `grep -c
+  depotRevision` → 0). So after any write + submit, the manifest still named the *pre-submit*
+  revision, preflight check 4 went red, and `install.ps1` — which gates write mode on all ten
+  checks — refused every subsequent run. Unjamming it meant hand-editing revision numbers, which is
+  a maintainer-only operation. The likely history of this area: someone ran an update once, the gate
+  closed behind them, and the crash fixed in 4.16.0 sat undiscovered behind a door nobody could open.
+- Now `install.ps1` stamps the revision each file **will have** once its changelist submits
+  (`head + 1` for an edit, `1` for an add) and `Update-ManifestForChanges` records it **only when
+  the caller supplies one** — the library stays Perforce-free, so filesystem-only consumers are
+  untouched. Preflight check 4 tolerates `head + 1` **while the file is open for edit in a pending
+  changelist**, and the value becomes exact the moment the CL submits.
+
+#### Why live state rather than the field that already exists
+`pendingChangelist` sits on every manifest entry and looked purpose-built for this — but it is only
+ever written as `null` at init and read by nothing. It was rejected anyway: a stored flag outlives
+its truth (precedent: a retired overlay that printed `mode=live` from a state directory already
+deleted). `p4 opened` cannot go stale, check 4 already consults it, and an abandoned changelist
+therefore fails loudly instead of being tolerated forever.
+
+- **The installer rewrote the manifest without checking it out.** `scaffold-manifest.json` is `+w`
+  (writable without a Perforce checkout), so `Update-ManifestForChanges` silently left it
+  modified-but-unopened after every write: excluded from the changelist it belongs to, and a stray
+  in the next person's `p4 reconcile`. Found while verifying the revision fix — the previous two
+  changelists had it opened by hand without anyone noticing the installer should have. It is now
+  opened alongside the files it describes.
+
+#### Changed
+- `check-rule-parity.sh` summarises path-scoped rules instead of enumerating them when nothing is
+  wrong. It runs at every SessionStart; printing the same two names forever is how a channel stops
+  being read, which then hides the finding that matters. A real failure still lists everything.
+
+Verified on a live consumer rather than in a harness — a real package change pushed through
+`update.ps1` write mode:
+
+- The installer created a correctly-tagged changelist, verified it empty, opened **both** the
+  changed file and the manifest, and left **no stray** (`p4 reconcile -n` → *"No file(s) to
+  reconcile"*).
+- Preflight reported **10/10 with the write still pending** — manifest at `head + 1`, file open for
+  edit, tolerance applied. That state was previously an automatic red.
+- **Failure branch exercised, not assumed**: the changelist was reverted and deleted instead of
+  submitted, leaving the manifest naming a revision that will never exist. Check 4 went red by name
+  (`manifest=2 head=1`), confirming the tolerance is scoped to genuinely open files.
+- `run-manifest-update-tests.ps1` 10/10 with 4 new cases, including the filesystem-only path that
+  must leave the field untouched.
+
 ## [4.18.0] - 2026-08-03 — Always-on Claude rules must have a Codex counterpart
 
 ### `check-rule-parity.sh`: the drift that nothing was watching

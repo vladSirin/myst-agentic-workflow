@@ -181,6 +181,65 @@ if ($hLf -eq $hCrlf -and $hLf -eq $hBom) {
     Ok 'contentHash is EOL/BOM-invariant (LF == CRLF == BOM+CRLF)'
 } else { Bad 'contentHash EOL/BOM-invariant' "lf=$hLf crlf=$hCrlf bom=$hBom" }
 
+# ----------------------------------------------------------------------------
+# 6. depotRevision is written only when the CALLER supplies one.
+#    The library must stay Perforce-free: a filesystem-only consumer passes no
+#    revision and its manifest must come back untouched in that field. When a
+#    revision IS supplied (install.ps1 does it under -UsePerforce), it must land,
+#    even for an entry whose content hash did not change -- otherwise the manifest
+#    keeps naming the pre-submit revision, preflight check 4 stays red, and the
+#    write gate refuses every later run.
+# ----------------------------------------------------------------------------
+$revDir  = Join-Path $tmp 'revcase'
+New-Item -ItemType Directory -Force -Path $revDir | Out-Null
+$revTarget = Join-Path $revDir 'tracked.md'
+Set-Content -LiteralPath $revTarget -Value "hello" -NoNewline
+$revManifest = Join-Path $revDir 'manifest.json'
+$revJson = @'
+{
+  "schemaVersion": 3,
+  "files": [
+    {
+      "path": "tracked.md",
+      "hashPolicy": "sha256",
+      "contentHash": "sha256:stale",
+      "depotRevision": 7,
+      "lastCheckedAt": "2020-01-01T00:00:00.0000000+00:00"
+    },
+    {
+      "path": "untouched.md",
+      "hashPolicy": "sha256",
+      "contentHash": "sha256:keepme",
+      "depotRevision": 3,
+      "lastCheckedAt": "2020-01-01T00:00:00.0000000+00:00"
+    }
+  ]
+}
+'@
+Set-Content -LiteralPath $revManifest -Value $revJson
+
+# (a) caller supplies a revision -> it lands
+$withRev = [pscustomobject]@{ Path='tracked.md'; Strategy='copy'; Target=$revTarget; DepotRevision=8 }
+Update-ManifestForChanges -ManifestPath $revManifest -Changes @($withRev)
+$after = Get-Content -Raw $revManifest | ConvertFrom-Json
+$tracked   = $after.files | Where-Object { $_.path -eq 'tracked.md' }
+$untouched = $after.files | Where-Object { $_.path -eq 'untouched.md' }
+if ($tracked.depotRevision -eq 8) { Ok 'depotRevision written when the caller supplies one' }
+else { Bad 'depotRevision written when supplied' "got $($tracked.depotRevision), expected 8" }
+if ($tracked.contentHash -ne 'sha256:stale') { Ok 'contentHash still refreshed alongside the revision' }
+else { Bad 'contentHash refreshed alongside revision' 'hash was not updated' }
+if ($untouched.depotRevision -eq 3 -and $untouched.contentHash -eq 'sha256:keepme') {
+    Ok 'entries not in the change set are left alone'
+} else { Bad 'entries not in the change set are left alone' "rev=$($untouched.depotRevision) hash=$($untouched.contentHash)" }
+
+# (b) no revision supplied (filesystem-only consumer) -> field untouched
+Set-Content -LiteralPath $revManifest -Value $revJson
+$noRev = [pscustomobject]@{ Path='tracked.md'; Strategy='copy'; Target=$revTarget }
+Update-ManifestForChanges -ManifestPath $revManifest -Changes @($noRev)
+$after2 = (Get-Content -Raw $revManifest | ConvertFrom-Json).files | Where-Object { $_.path -eq 'tracked.md' }
+if ($after2.depotRevision -eq 7) { Ok 'depotRevision untouched when no revision is supplied (filesystem-only path)' }
+else { Bad 'depotRevision untouched without a supplied revision' "got $($after2.depotRevision), expected 7" }
+
 Remove-Item -Recurse -Force $tmp -ErrorAction SilentlyContinue
 
 Write-Output ""
