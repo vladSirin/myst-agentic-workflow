@@ -62,13 +62,31 @@ function Write-Fixture-Manifest($root, $files) {
     if (-not (Test-Path -LiteralPath $manifestDir)) {
         New-Item -ItemType Directory -Path $manifestDir -Force | Out-Null
     }
+    # FLATTEN. Callers pass e.g. @( (New-Entry ...), (New-LocalOnlyEntries) ) where
+    # the helper returns an ARRAY -- without this the manifest gets a nested array
+    # as a single "entry", and $e.<field> then member-enumerates into Object[].
+    # It went unnoticed because every earlier check skipped that pseudo-entry via a
+    # truthy $e.localOnly; the first check to read $e.owner instead crashed on it.
+    $flat = @($files | ForEach-Object { $_ })
     $obj = [pscustomobject]@{
         schemaVersion = 3
         toolCapabilities = [pscustomobject]@{}
-        files = $files
+        files = $flat
     }
     $json = $obj | ConvertTo-Json -Depth 10
     [System.IO.File]::WriteAllText($manifestFull, $json, [System.Text.UTF8Encoding]::new($false))
+
+    # Materialise a fake PACKAGE root alongside the fixture, holding one file per
+    # sourceTemplate. Check 5 asserts that every package/overlay-owned entry still
+    # resolves to a live template, so a fixture whose templates do not exist would
+    # fail for a reason the scenario is not about.
+    foreach ($e in $flat) {
+        if (-not $e.sourceTemplate) { continue }
+        $tpl = Join-Path (Join-Path $root '_fakepkg') $e.sourceTemplate
+        $tplDir = Split-Path -Parent $tpl
+        if (-not (Test-Path -LiteralPath $tplDir)) { New-Item -ItemType Directory -Path $tplDir -Force | Out-Null }
+        Set-Content -LiteralPath $tpl -Value 'fixture template' -NoNewline
+    }
 }
 
 function Invoke-Preflight($root) {
@@ -77,7 +95,8 @@ function Invoke-Preflight($root) {
     $prev = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
     try {
         $out = & powershell.exe -NoProfile -ExecutionPolicy Bypass `
-            -File (Join-Path $here 'run-skeleton-preflight.ps1') -TargetRoot $root 2>&1
+            -File (Join-Path $here 'run-skeleton-preflight.ps1') -TargetRoot $root `
+            -PackageRoot (Join-Path $root '_fakepkg') 2>&1
         return [pscustomobject]@{ Code = $LASTEXITCODE; Out = ($out | Out-String) }
     } finally {
         $ErrorActionPreference = $prev
@@ -234,8 +253,16 @@ $env:FAKE_P4_HAVE = @(
     "//UEPrototype/main/.claude/skills/stray.md#1"
 ) -join "`n"
 $resF = Invoke-Preflight $rootF
-if ($resF.Code -ne 0 -and $resF.Out -match 'FAIL\s+5\.') { Ok 'F. real unmanaged still fails check 5 (no false negatives)' }
-else { Bad 'F. real unmanaged still fails check 5' "code=$($resF.Code)`n$($resF.Out)" }
+# Semantics changed deliberately in 4.16.0: an unmanaged depot-tracked file under a
+# scaffold root is REPORTED by check 5b and no longer gates. A consumer's own rules
+# and scripts legitimately live under those roots, so failing on them made the write
+# gate unusable for every project that owns anything there. What must NOT regress is
+# the reporting: silence would hide a genuine orphan.
+if ($resF.Code -eq 0 -and $resF.Out -match 'WARN\s+5b\.' -and $resF.Out -match 'stray\.md') {
+    Ok 'F. real unmanaged is reported by check 5b and does not gate'
+} else {
+    Bad 'F. real unmanaged is reported by check 5b and does not gate' "code=$($resF.Code)`n$($resF.Out)"
+}
 
 # Cleanup fake-p4 dir.
 Reset-Env
