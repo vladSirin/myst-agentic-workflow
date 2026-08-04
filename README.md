@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-16%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.24.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-16%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.24.1-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -52,6 +52,29 @@ codex plugin marketplace add vladSirin/myst-agentic-workflow
 ```
 
 Both tools read their native manifest from the same repo (`.claude-plugin/marketplace.json` for Claude Code, `.agents/plugins/marketplace.json` for Codex; consistency is enforced by `scripts/run-marketplace-tests.ps1` + `claude plugin validate`). The repo is public today, so installs need no auth (if it goes private later: collaborator access + `gh auth login`).
+
+### Keeping the plugin up to date
+
+**The two tools do not work the same way. Do not infer one from the other** — both sequences below were verified by running them across a real version bump.
+
+```bash
+# Claude Code — refresh the marketplace, THEN update the plugin, then restart.
+claude plugin marketplace update myst
+claude plugin update myst-dev-kit@myst      # "Restart to apply changes"
+
+# Codex — refreshing the marketplace IS the update. No second command.
+codex plugin marketplace upgrade
+```
+
+- **Claude**: a marketplace refresh alone does **not** move an installed plugin; it stays pinned until the explicit `plugin update`, and the new version loads on the next session.
+- **Codex**: `marketplace upgrade` replaces the installed plugin in place, cache directory and all. There is no `codex plugin update` subcommand.
+- Verify with `claude plugin list` / `codex plugin list`. Note Codex's VERSION column reports the *marketplace snapshot*; to confirm what is actually installed, look under `~/.codex/plugins/cache/<marketplace>/<plugin>/<version>/`.
+- Inside a Claude Code session without the `/plugin` command (e.g. some IDE extensions), the same commands work from a terminal — `claude plugin …` is a plain CLI subcommand.
+
+**Two Codex limits worth knowing before you design around them** (measured, not inferred):
+
+- **No auto-loaded rules directory.** Codex reads `AGENTS.md` and nothing else, so an always-on `.claude/rules/*.md` reaches Claude and never reaches Codex. `check-rule-parity.sh` guards that gap.
+- **No project-level hooks.** Codex loads hooks from `~/.codex/hooks.json` and from installed plugins only; a hooks file committed in the repo is ignored. A repo-local hook is Claude-only unless it ships through the plugin.
 
 Notes:
 - The plugin's `hooks/hooks.json` delivers the client Submit-Audit warning **to Codex only** — under Claude Code the bridge no-ops because the consumer project's committed `.claude/settings.json` already registers the same audit (no double warnings). On consumers without the Myst governance core, the hook exits silently.

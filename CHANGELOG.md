@@ -27,6 +27,23 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.24.1] - 2026-08-04 — README documents how to UPDATE the plugin, not just install it
+
+#### Fixed
+- The README explained how to install the plugin for both tools and **never once mentioned
+  updating it** (`grep -c "plugin update" README.md` → 0). v4.20.0 documented the verified
+  sequences in `SETUP.md` and `docs/install.md` but left the front door — the file most people
+  read first — with no way to get a newer version.
+- Adds a *Keeping the plugin up to date* section with both sequences, the per-tool difference
+  called out explicitly (Claude needs `marketplace update` **then** `plugin update` **then** a
+  restart; Codex's `marketplace upgrade` **is** the whole update, and no `codex plugin update`
+  subcommand exists), how to verify each, and the note that `claude plugin …` works from a plain
+  terminal when a session has no `/plugin` command.
+- Carries the two measured Codex limits — no auto-loaded rules directory, no project-level hooks —
+  so nobody designs around capabilities Codex does not have.
+
+Docs only; no behaviour change, hence a patch bump.
+
 ## [4.24.0] - 2026-08-04 — The write gate stops policing files the installer does not own
 
 ### Checks 2 and 4 exempt `human-owned` entries
