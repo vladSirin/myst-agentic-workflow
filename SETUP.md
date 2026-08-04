@@ -14,6 +14,30 @@ Governance is **advisory everywhere**: nothing blocks your work; non-compliant
 submits are warned about in-session and posted to Feishu `#cl-audit` by the
 server-side Submit-Audit.
 
+## Just ask the agent (fastest path)
+
+After `p4 sync`, you don't have to remember any of the commands below. Paste this
+into Claude Code or Codex:
+
+> **Install or update my myst-dev-kit plugin, verify the version, and tell me what I still have to do myself.**
+
+The agent can run the whole sequence for either tool — marketplace refresh,
+install-or-update, and the version check — because `claude plugin …` and
+`codex plugin …` are ordinary CLI subcommands, not in-session magic. It works
+even in an IDE session that has no `/plugin` command.
+
+Two things it **cannot** do, so expect them:
+
+- **Restart your Claude session.** Claude loads the new version on the next
+  session start; the agent will tell you, but you have to do it. (Codex applies
+  the upgrade in place — no restart.)
+- **Approve its own commands.** You may get a permission prompt the first time.
+
+Nothing else is needed: the rules, hooks, and team docs already arrived with
+`p4 sync`. The plugin is the only piece that travels separately.
+
+The manual steps follow, for when you'd rather drive.
+
 ## Standard user (sync and go)
 
 1. `p4 sync` the project. The committed core arrives by itself.
