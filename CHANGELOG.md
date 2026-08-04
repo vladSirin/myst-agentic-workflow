@@ -27,6 +27,20 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.24.2] - 2026-08-04 — `SETUP.md`: one line to hand the whole thing to an agent
+
+#### Added
+- A *Just ask the agent* section at the top of `SETUP.md` with a single copy-paste prompt:
+  *"Install or update my myst-dev-kit plugin, verify the version, and tell me what I still have to
+  do myself."*
+- Works for either tool, and in IDE sessions with no `/plugin` command, because `claude plugin …`
+  and `codex plugin …` are ordinary CLI subcommands rather than in-session features.
+- States the two things the agent **cannot** do, so nobody is left waiting on them: it cannot
+  restart your Claude session (Codex applies in place; Claude needs the restart), and it may need
+  you to approve the commands the first time.
+
+The manual steps stay exactly where they were, below, for anyone who would rather drive.
+
 ## [4.24.1] - 2026-08-04 — README documents how to UPDATE the plugin, not just install it
 
 #### Fixed
