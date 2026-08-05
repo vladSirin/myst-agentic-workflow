@@ -27,6 +27,39 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.25.1] - 2026-08-05 — The plugin's cross-tool capability contract, written down and checked
+
+#### Added
+- **`docs/tool-capability-matrix.md`** — the plugin ships one tree and two manifests, so
+  Claude and Codex do not receive the same capabilities. That was true, deliberate, and
+  recorded nowhere.
+
+  The matrix records what reaches which tool with an **evidence class per row** — measured /
+  declared / convention / unverified — so a believed-but-never-run claim cannot pass as a
+  measured one. The `commands/` row is honestly marked *unverified*: nobody has confirmed
+  Codex discovers them. Every gap names its fallback, because a capability with no fallback
+  is a silent hole.
+- **`scripts/check-plugin-parity.ps1`** — asserts the matrix against the tree: every
+  capability directory has a row, the manifests declare what the matrix says, and no
+  description promises a capability its own tool cannot run. Advisory mode for CI.
+
+  It checks declarations and files, **not runtime behaviour** — the same distinction
+  `check-rule-parity.sh` draws between proving a counterpart exists and proving it is good.
+  A maintainer script (package `scripts/`), not consumer-delivered.
+
+#### Fixed
+- **The Codex plugin description advertised both reviewer agents.** Codex has no subagent
+  mechanism, so `agents/` ships inert there; the description promised a capability the tool
+  cannot run and never mentioned that `review-changes` is the actual Codex review path. Both
+  corrected. `check-plugin-parity.ps1` reproduces the finding if the fix is reverted.
+- **`toolCapabilities.deviations` cited `.Codex/workflows/AutoPlanMode.md`**, which does not
+  exist in the package. The one field designed to record tool deviations had been wrong for
+  some time. Replaced with the three that are real, two of them measured.
+- **`scripts/` had no matrix row at all** — found by the new check on its first run.
+
+Same root cause as 4.25.0: an invariant that is true when written, has no check, and is
+relied on later. That one got a script and a generator; this one got a matrix and a check.
+
 ## [4.25.0] - 2026-08-05 — Two invariants that were prose, made checkable
 
 #### Added
@@ -61,6 +94,7 @@ and the README badge. Update all five in the same commit; the badge is the one t
 
 Both changes come from the same root cause: an invariant that is true when written, has no
 check, and is relied on later. One got a script; the other got a generator.
+
 
 ## [4.24.2] - 2026-08-04 — `SETUP.md`: one line to hand the whole thing to an agent
 

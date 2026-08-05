@@ -46,16 +46,19 @@
         }
     },
     "toolCapabilities": {
+        "_comment": "Known tool deviations. Keep in step with docs/tool-capability-matrix.md, which carries the evidence class for each row; scripts/check-plugin-parity.ps1 asserts the matrix against the package tree.",
         "codex": {
             "planMode": "tool-capability-profile-required",
             "deviations": [
-                "Current .Codex/workflows/AutoPlanMode.md requires rewrite before packaging as reusable core"
+                "No subagents: the two reviewer agents (architecture-reviewer, radical-design-critic) are Claude-only. Codex reviews run inline via the review-changes skill.",
+                "No rules directory: Codex reads AGENTS.md only, so every always-on .claude/rules/*.md needs a counterpart there (check-rule-parity.sh)",
+                "No project-level hooks (measured): hooks reach Codex only from ~/.codex/hooks.json or an installed plugin's hooks.json, so a repo-local hook is Claude-only"
             ]
         },
         "claudeCode": {
             "planMode": "tool-capability-profile-required",
             "deviations": [
-                "Current .claude/workflows/AutoPlanMode.md requires tool-profile review before packaging as reusable core"
+                "Plugin skills/hooks are discovered by convention rather than declared in .claude-plugin/plugin.json, unlike the Codex manifest which declares both explicitly"
             ]
         }
     },
