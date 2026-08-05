@@ -27,6 +27,41 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.25.0] - 2026-08-05 — Two invariants that were prose, made checkable
+
+#### Added
+- **`check-rules-alignment.sh`** — a sibling to `check-rule-parity.sh`, wired into
+  `doc-audit.sh` at SessionStart as `--advisory`, gating when run directly.
+
+  The parity check proves a rule is *mentioned* in `AGENTS.md` and says so in its own
+  header — it would exit 0 with the shared hard-rules section completely rewritten.
+  Projects that keep one hard-rules baseline across both tools therefore had an invariant
+  nothing checked. This diffs the `## Hard rules` section of `CLAUDE.md` against
+  `AGENTS.md`'s and reports the hunk count.
+
+  It reports divergence, it does not judge it: a per-tool difference is legitimate and
+  common, so the output means "confirm each of these is deliberate", never "these are
+  defects". No-ops cleanly on projects without a shared `## Hard rules` section, and on
+  projects with no `AGENTS.md`.
+
+#### Changed
+- **`review-and-submit`** — the Review Record's `Verdict: … (N passes; …)` line must now be
+  **generated from a verdict list and written last**, not typed.
+
+  It is the one field in a CL description that cannot be true until the review ends, so a
+  multi-pass review invalidates a hand-written one every time a pass lands. Observed in
+  practice on a nine-pass review: the line was stale in four consecutive passes, and the
+  reviewer's own suggested correction to it was itself stale on arrival — it proposed a
+  final verdict of GREEN in the same message that returned BLOCKING.
+
+  The rule generalises past that field, and the skill now says so: any derived figure in a
+  description — byte counts, file counts, finding tallies — gets re-derived from the live
+  artifact at submit time or left out. A number measured at review time and frozen into a
+  description is wrong by submit time more often than not.
+
+Both changes come from the same root cause: an invariant that is true when written, has no
+check, and is relied on later. One got a script; the other got a generator.
+
 ## [4.24.2] - 2026-08-04 — `SETUP.md`: one line to hand the whole thing to an agent
 
 #### Added

@@ -95,6 +95,15 @@ if [ -x ".claude/scripts/check-rule-parity.sh" ] || [ -f ".claude/scripts/check-
   bash .claude/scripts/check-rule-parity.sh --advisory || true
 fi
 
+# Hard-rules alignment. Sibling of the parity check, separate on purpose: parity
+# proves a rule is MENTIONED in AGENTS.md, this proves the shared hard-rules
+# section has not drifted between the two files. Same failure isolation, same
+# advisory-here / gating-when-run-directly contract. No-ops on projects that do
+# not keep a shared '## Hard rules' section.
+if [ -x ".claude/scripts/check-rules-alignment.sh" ] || [ -f ".claude/scripts/check-rules-alignment.sh" ]; then
+  bash .claude/scripts/check-rules-alignment.sh --advisory || true
+fi
+
 if [ ${#violations[@]} -eq 0 ]; then
   echo "Doc audit: all clean."
 else
