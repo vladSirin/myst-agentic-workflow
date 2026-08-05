@@ -365,6 +365,23 @@ Findings:
 **Rules:**
 
 - One `Reviewer: {name} - Verdict: {GREEN|WARNING|BLOCKING}` line per reviewer that ran. The verdict shown is the **final pass** verdict; note the pass count if more than one.
+- **Generate that line — do not type it, and write it last.** It is the one field in the
+  description that cannot be true until the review ends, and a multi-pass review will
+  invalidate a hand-written one every time a pass lands. Keep the verdicts in a list and
+  derive count, sequence and headline from it, so they cannot disagree with each other:
+
+  ```python
+  VERDICTS = ["BLOCKING", "WARNING", "GREEN"]   # append each pass as it lands
+  DESC = (DESC.replace("__N__", str(len(VERDICTS)))
+              .replace("__SEQ__", ", ".join(VERDICTS))
+              .replace("__FINAL__", VERDICTS[-1]))
+  assert "__" not in DESC, "unfilled template token"
+  ```
+
+  Then regenerate immediately before `p4 submit`. The same applies to any other derived
+  figure you put in a description — byte counts, file counts, finding tallies: re-derive
+  them from the live artifact at submit time, or leave them out. A number measured at
+  review time and frozen into a description is wrong by submit time more often than not.
 - Fast-path self-review: `Reviewer: self - Verdict: GREEN (quick review: config-only, 3 files)` and `Findings: none`.
 - `Findings:` one-liners only, each prefixed with its disposition: `[FIXED]` (fixed before submit), `[ACCEPTED]` (submitting with it), `[DEFERRED]` (tracked for later).
 - Cap at ~6 finding lines; summarize overflow as `- ...and N more INFO items (see review transcript)`.

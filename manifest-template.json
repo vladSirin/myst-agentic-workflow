@@ -162,6 +162,22 @@
             "blockHashPolicy": "not-applicable"
         },
         {
+            "path": ".claude/scripts/check-rules-alignment.sh",
+            "tool": "claude",
+            "owner": "package",
+            "ownerOverlay": "core",
+            "sourceTemplate": "plugins/myst-dev-kit/scripts/check-rules-alignment.sh",
+            "sourceCommit": "<resolved-by-init-consumer>",
+            "hashPolicy": "sha256",
+            "mergeStrategy": "copy",
+            "localOnly": false,
+            "writablePolicy": "installer-owned",
+            "baselineState": "submitted",
+            "upstreamDerived": false,
+            "upstreamLicense": null,
+            "blockHashPolicy": "not-applicable"
+        },
+        {
             "path": ".p4ignore",
             "tool": "common",
             "owner": "overlay",
