@@ -406,6 +406,14 @@ After the Review Record block is in place:
 1. **Run repo preflight validators** — on any warning or non-zero exit: report it, fix, and re-run before submitting:
    1. Project preflight checks (e.g. `check-uproject-assoc.sh` under your tool's scripts dir — `.claude/scripts/` or `.Codex/scripts/` — when the `ue` overlay is installed).
    2. `submit-audit-warn.sh --check-cl {CL_ID}` when the Submit-Audit hook is installed — client mirror of the server audit: `[JobFamily][Name]` tags, review-block presence, and EOL flips (Edit/Write tools silently convert CRLF→LF on text source). Normalize any flagged file LF→CRLF as the **last** content change before submit.
+
+      > **Exit 0 means "no check produced a warning" — NOT "this CL was audited and is clean."**
+      > A nonexistent CL number, an already-submitted CL, a garbage CL id, and an unreachable
+      > `p4` all fetch zero files, so no check fires, so the run exits 0 and prints nothing —
+      > *identical* to a genuinely clean CL. **Confirm the CL is pending** (`p4 opened -c {CL_ID}`
+      > lists its files) before citing a silent run as evidence; otherwise the silence is
+      > telling you nothing. A mistyped CL number is a likelier operator error than a mistyped
+      > flag, and it reports green.
 2. Run `p4 submit -c {CL_ID}` or create new CL with the files
 3. Report submission result — confirm with `p4 changes -m 1 -s submitted` and report the final submitted CL number
 4. Note any post-submit verification needed

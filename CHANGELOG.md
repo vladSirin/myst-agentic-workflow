@@ -27,6 +27,25 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.25.2] - 2026-08-05 — Preflight step 2 says what a silent run does and does not license
+
+#### Fixed
+- **`review-and-submit` preflight step 2** told the agent to run
+  `submit-audit-warn.sh --check-cl {CL_ID}` and handled only the failure direction ("on any
+  warning or non-zero exit: report it"). It never said what **exit 0** licenses — and an agent
+  citing a silent run reads the skill, not the script header.
+
+  Measured: a nonexistent CL number, an already-submitted CL, a garbage CL id, and an
+  unreachable `p4` all fetch zero files, so no check fires, so the run exits 0 and prints
+  nothing — **identical to a genuinely clean CL**. A mistyped CL number reports green.
+
+  Step 2 now carries the contract and the one-line confirmation that makes a silent run
+  citable: check the CL is pending first.
+
+This is the origin point of the citation, not a duplicate of the script-side warning. The
+consumer-side script header can only be read by someone already looking at the script; this
+is read by the agent that is about to cite the result.
+
 ## [4.25.1] - 2026-08-05 — The plugin's cross-tool capability contract, written down and checked
 
 #### Added
