@@ -168,10 +168,26 @@ than inferred:
   fired). A repo-local hook a project depends on is therefore Claude-only unless it
   ships through the plugin.
 
-Plugin-shipped hooks work under both: Codex exports `PLUGIN_ROOT` alongside a
-`CLAUDE_PLUGIN_ROOT` compatibility alias, so `${CLAUDE_PLUGIN_ROOT}` resolves in each.
-Guard with `[ -z "${PLUGIN_ROOT:-}" ] && exit 0` when a hook must run under Codex only
-(see `scripts/submit-audit-bridge.sh`).
+Plugin-shipped hooks are the delivery path for both tools, and `${CLAUDE_PLUGIN_ROOT}`
+resolves in each — Codex ships that name as a compatibility alias (it is present in
+`codex.exe`).
+
+**When a hook must run under one tool only, gate on the tool you want to EXCLUDE.**
+`[ -n "${CLAUDECODE:-}" ] && exit 0` skips under Claude Code and runs everywhere else.
+Do not gate on a marker of the tool you want to include: an unknown or renamed host then
+takes the *silent* branch, and a hook that never fires is indistinguishable from a hook
+that fired and found nothing.
+
+> **Corrected in 4.26.0.** Releases 4.13.0–4.25.2 documented the opposite — that Codex
+> exports a native `PLUGIN_ROOT` — and shipped `[ -z "${PLUGIN_ROOT:-}" ] && exit 0` as the
+> worked example. It does not: in `codex.exe` 0.146.0 the string `PLUGIN_ROOT` occurs exactly
+> once, as a substring of `CLAUDE_PLUGIN_ROOT`, and `CODEX_PLUGIN_ROOT` occurs zero times
+> (control: `CODEX_HOME` occurs 53 times, so env names are stored in the clear and a zero is
+> meaningful). That variable was unset on **every** host, so the gate was always true and
+> `submit-audit-bridge.sh` never ran the audit for anyone, on any tool, for its whole life.
+> Still open, and not settled by that evidence: whether Codex plugin hooks fire **at all**.
+> Nobody has yet observed one. Set `MYST_AUDIT_DEBUG=1` and make a hook fire — the bridge
+> announces every exit path, so total silence means it never ran.
 
 ## 3. Update from upstream
 
