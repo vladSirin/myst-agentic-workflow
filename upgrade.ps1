@@ -117,6 +117,19 @@ foreach ($e in $new.files) {
     if ($e.localOnly -or $e.hashPolicy -eq 'self-excluded' -or $e.hashPolicy -eq 'runtime-mutable') { continue }
     $fp = Join-Path $TargetRoot $e.path
     $exists = Test-Path -LiteralPath $fp
+    # Preserve consumer-recorded evidence annotations across regeneration -- the
+    # template-derived entry lacks them, and losing them is the recorded
+    # "re-baselining erases evidence" failure class. Defensive: today's fields
+    # regenerate identically; this guards the first entry that grows a note.
+    $oldAnn = $oldByPath[$e.path]
+    if ($oldAnn) {
+        foreach ($fld in @('blockHashReason','selfHashReason')) {
+            if ($oldAnn.PSObject.Properties.Match($fld).Count -gt 0 -and $null -ne $oldAnn.$fld) {
+                if ($e.PSObject.Properties.Match($fld).Count -gt 0) { $e.$fld = $oldAnn.$fld }
+                else { $e | Add-Member -NotePropertyName $fld -NotePropertyValue $oldAnn.$fld -Force }
+            }
+        }
+    }
     if ($e.hashPolicy -eq 'sha256') {
         if (-not $exists) {
             if ($e.mergeStrategy -ne 'manual-only') { $add += $e.path }   # new installable file -> ADD
@@ -180,21 +193,35 @@ foreach ($e in $old.files) {
 $adopt=@()
 if ($VC -eq 'perforce') {
     $depotPrefix = $null
-    $w = (& p4 -ztag -F "%depotFile%" where (Join-Path $TargetRoot 'Docs\agents\scaffold-manifest.json') 2>$null) -join ''
-    if ($w -match '^(//.+)/Docs/agents/scaffold-manifest\.json') { $depotPrefix = $Matches[1] }
+    # EAP scoped: under PS 5.1, EAP='Stop' + a native stderr redirection is a
+    # terminating error (same class fixed in update.ps1 step 1).
+    $prevEap = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+    try {
+        $w = @(& p4 -ztag -F "%depotFile%" where (Join-Path $TargetRoot 'Docs\agents\scaffold-manifest.json') 2>$null)
+    } finally { $ErrorActionPreference = $prevEap }
+    # Client views with exclusion mappings emit several records; exclusions start
+    # with '-'. Take the LAST inclusion record -- the old `-join ''` concatenation
+    # only landed on the right one by regex-greediness accident.
+    foreach ($wline in $w) {
+        if ($wline -match '^-') { continue }
+        if ($wline -match '^(//.+)/Docs/agents/scaffold-manifest\.json$') { $depotPrefix = $Matches[1] }
+    }
     if ($depotPrefix) {
         # Build rel -> headRev for live (non-deleted) depot files. Scan the scaffold dir-roots
         # recursively AND root-level files ('*'), since managed root files (.p4ignore, AGENTS.md,
         # CLAUDE.md) also need their depotRevision re-baselined for preflight check 4.
         $headRev=@{}
-        foreach ($pat in @('.claude/...','.Codex/...','Docs/agents/...','Docs/MustRead/...','*')) {
-            $fs = & p4 -ztag -F "%depotFile%|%headRev%|%headAction%" fstat "$depotPrefix/$pat" 2>$null
-            foreach ($line in $fs) {
-                $p = $line -split '\|'; if ($p.Count -lt 3) { continue }
-                if ($p[2] -match 'delete') { continue }                          # deleted at head -> not present
-                if ($p[0] -match ('^' + [regex]::Escape($depotPrefix) + '/(.+)$')) { $headRev[$Matches[1].Replace('\','/')] = $p[1] }
+        $prevEap = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+        try {
+            foreach ($pat in @('.claude/...','.Codex/...','Docs/agents/...','Docs/MustRead/...','*')) {
+                $fs = @(& p4 -ztag -F "%depotFile%|%headRev%|%headAction%" fstat "$depotPrefix/$pat" 2>$null)
+                foreach ($line in $fs) {
+                    $p = $line -split '\|'; if ($p.Count -lt 3) { continue }
+                    if ($p[2] -match 'delete') { continue }                          # deleted at head -> not present
+                    if ($p[0] -match ('^' + [regex]::Escape($depotPrefix) + '/(.+)$')) { $headRev[$Matches[1].Replace('\','/')] = $p[1] }
+                }
             }
-        }
+        } finally { $ErrorActionPreference = $prevEap }
         # Adopt pre-existing unmanaged depot files as project-owned (preserve + satisfy check 5).
         # Only files under the managed scaffold roots are in check 5's scope -- never adopt root files.
         $managedRootRe = '^(\.claude|\.Codex|Docs/agents|Docs/MustRead)/'
@@ -204,12 +231,28 @@ if ($VC -eq 'perforce') {
             if ($newPaths[$rel] -or $retiredSet[$rel]) { continue }
             $fp = Join-Path $TargetRoot $rel
             if (-not (Test-Path -LiteralPath $fp)) { continue }
-            $new.files += [pscustomobject]@{
-                path=$rel; tool='common'; owner='project'; ownerOverlay=$null; sourceTemplate=$null
-                sourceCommit='project-local'; hashPolicy='sha256'; contentHash=(Get-Hash $fp); depotRevision=[int]$headRev[$rel]
-                mergeStrategy='manual-only'; localOnly=$false; writablePolicy='human-owned'
-                baselineState='adopted-on-upgrade'; upstreamDerived=$false; upstreamLicense=$null
-                blockHashPolicy='not-applicable'
+            # Pending-adds emit fstat records with EMPTY headRev, and [int]'' coerces
+            # to 0 where the re-baseline comment below promises null. Guard the cast.
+            $hr = if ("$($headRev[$rel])" -match '^\d+$') { [int]$headRev[$rel] } else { $null }
+            $oldAdopt = $oldByPath[$rel]
+            if ($oldAdopt) {
+                # Entry exists in the INSTALLED manifest (prior adopt / manual project
+                # entry) but not in the regenerated template manifest: keep the
+                # consumer's entry verbatim, refreshing only the recomputed fields.
+                # Defensive insurance -- today's project-owned entries regenerate
+                # field-identically; this protects the first one that grows a note.
+                $oldAdopt.contentHash = (Get-Hash $fp)
+                if ($oldAdopt.PSObject.Properties.Match('depotRevision').Count -gt 0) { $oldAdopt.depotRevision = $hr }
+                else { $oldAdopt | Add-Member -NotePropertyName depotRevision -NotePropertyValue $hr -Force }
+                $new.files += $oldAdopt
+            } else {
+                $new.files += [pscustomobject]@{
+                    path=$rel; tool='common'; owner='project'; ownerOverlay=$null; sourceTemplate=$null
+                    sourceCommit='project-local'; hashPolicy='sha256'; contentHash=(Get-Hash $fp); depotRevision=$hr
+                    mergeStrategy='manual-only'; localOnly=$false; writablePolicy='human-owned'
+                    baselineState='adopted-on-upgrade'; upstreamDerived=$false; upstreamLicense=$null
+                    blockHashPolicy='not-applicable'
+                }
             }
             $newPaths[$rel]=$true; $adopt += $rel
         }
@@ -218,7 +261,7 @@ if ($VC -eq 'perforce') {
         foreach ($e in $new.files) {
             if ($e.localOnly -or $e.hashPolicy -eq 'self-excluded') { continue }
             $rel = $e.path.Replace('\','/')
-            $val = if ($headRev.ContainsKey($rel)) { [int]$headRev[$rel] } else { $null }
+            $val = if ($headRev.ContainsKey($rel) -and "$($headRev[$rel])" -match '^\d+$') { [int]$headRev[$rel] } else { $null }
             if ($e.PSObject.Properties.Match('depotRevision').Count -gt 0) { $e.depotRevision = $val }
             else { $e | Add-Member -NotePropertyName depotRevision -NotePropertyValue $val -Force }
         }
