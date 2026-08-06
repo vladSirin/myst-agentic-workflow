@@ -27,6 +27,68 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.27.0] - 2026-08-06 — CI exists, and its first run found that the installer never worked without Perforce
+
+#### Added
+
+- **`.github/workflows/tests.yml`** — there was no CI. `run-*-tests.ps1` ran only when a human
+  remembered to type it, so *"the suite is green"* was never a property of `main`, only of the
+  last time someone looked. It was **red on `main` from PR #65 through PR #66** and was found by
+  accident while editing a nearby file.
+
+  Runs all 16 suites on every PR, on `windows-latest` (these scripts are written for Windows —
+  `run-marketplace-tests.ps1` does `-replace '/','\'` before `Join-Path`; CI runs the same code
+  the maintainer runs, not a port of it). Every suite runs even after one fails. **SKIP counts
+  are surfaced per suite**, because `run-p4spec-tests.ps1` skips its P4 cases and still exits 0
+  with no `p4` client — a green build with skips is weaker than one without, and the summary now
+  says so instead of hiding it. Empty discovery is a hard error: zero suites matched would
+  otherwise pass as green.
+
+  Second check: both README badges are asserted against the tree — suite count against the number
+  of `run-*-tests.ps1`, version against `package-manifest.json`. Both are hand-maintained numbers
+  that drift silently; the version badge sat at v4.24.2 through two releases.
+
+#### Fixed
+
+- **`setup.ps1` failed outright on any machine without the Perforce CLI.** The version-control
+  auto-detection probed with `& p4 -F "%clientRoot%" -ztag info 2>$null`. `2>$null` redirects a
+  *native* command's stderr; it does not suppress `CommandNotFoundException`, which PowerShell
+  raises before any process starts — and `setup.ps1` runs under `$ErrorActionPreference = 'Stop'`.
+
+  So the documented one-command install **terminated**, and the road to `filesystem` mode — which
+  `README.md` advertises as the default when there is no `.p4ignore` — ran straight through that
+  unguarded call. Measured, old vs new, with `p4` hidden from PATH:
+
+  | | exit | p4 crash | files installed |
+  |---|---|---|---|
+  | before | 1 | yes | **0** |
+  | after | 0 | no | 12 |
+
+  This could not be seen on a Perforce workstation, which is every machine the package has ever
+  been developed or tested on. Found by CI on its first run.
+
+- **All 38 `.ps1` files were UTF-8 with no BOM and carried 40 non-ASCII characters** (38 em-dashes,
+  one en-dash, one section sign). Windows PowerShell 5.1 — which this package spawns as
+  `powershell.exe` children — reads a BOM-less script in the system ANSI codepage. Under cp1252 the
+  em-dash's third byte `0x94` decodes to `U+201D RIGHT DOUBLE QUOTATION MARK`, and PowerShell
+  accepts smart quotes as string delimiters, so the string terminates early. That was the
+  `ParserError` at `migrate-retired-skills.ps1:44`.
+
+  Never seen because the maintainer's ANSI codepage is **65001 (UTF-8)**; GitHub runners are 1252.
+  These suites had never run on a standard Windows codepage.
+
+  Fixed as ASCII rather than by adding BOMs, deliberately: the Edit/Write tooling used on this repo
+  strips BOMs, so a BOM fix would be silently undone by the next edit and the bug would return with
+  no diff to show for it. Covers `scripts/`, `scripts/lib/` (dot-sourced, same exposure) and the
+  root wrappers.
+
+#### Consumer impact
+
+**None for an existing install.** Nothing in this release is copied into a consumer project — these
+are run-from-the-clone installer scripts plus maintainer CI. Skills, hooks, rules and agents are
+untouched; no plugin update or restart is needed. What changes is **onboarding for anyone not on a
+Perforce machine**, who previously could not install the package at all.
+
 ## [4.26.0] - 2026-08-06 — The Submit-Audit bridge had never run, on any host, ever
 
 #### Fixed
