@@ -22,7 +22,13 @@ param(
     [string[]] $Classification = @(),
     [string]   $TargetRoot     = '',
     [string]   $PackageRoot    = '',
-    [switch]   $Yes
+    [switch]   $Yes,
+    # -Force forwards promote-from-project.ps1's upstream-divergence override.
+    # It used to be hard-coded on every write, silently bypassing that refusal
+    # (audit 2026-08-06); now it is a deliberate choice.
+    [switch]   $Force,
+    # Proceed even when the clone is behind origin/main (freshness gate below).
+    [switch]   $AllowStale
 )
 
 $ErrorActionPreference = 'Stop'
@@ -106,8 +112,45 @@ for ($i = 0; $i -lt $Paths.Count; $i++) {
 Write-Host "=============================================================="
 Write-Host ""
 
+# --- Step 0: freshness gate ---
+# Promoting from a stale clone silently overwrites newer upstream template
+# content in the working tree (audit 2026-08-06). Fetch, then refuse when the
+# clone is behind origin/main; -AllowStale overrides deliberately.
+Write-Host "[0/3] Freshness check (git fetch)..."
+$fetchOk = $false; $behind = 0
+$prevEap = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+try {
+    Push-Location $PackageRoot
+    try {
+        & git fetch origin 2>&1 | Out-Null
+        $fetchOk = ($LASTEXITCODE -eq 0)
+        if ($fetchOk) {
+            $counts = & git rev-list --left-right --count 'HEAD...origin/main' 2>$null
+            if ($LASTEXITCODE -eq 0 -and "$counts" -match '^\s*(\d+)\s+(\d+)') { $behind = [int]$Matches[2] }
+        }
+    } finally { Pop-Location }
+} finally { $ErrorActionPreference = $prevEap }
+if (-not $fetchOk) {
+    Write-Host "  WARNING: git fetch failed (offline?). Proceeding against the local clone;" -ForegroundColor Yellow
+    Write-Host "  verify freshness manually before opening a PR." -ForegroundColor Yellow
+} elseif ($behind -gt 0) {
+    if ($AllowStale) {
+        Write-Host "  Clone is $behind commit(s) behind origin/main; -AllowStale set, continuing." -ForegroundColor Yellow
+    } else {
+        Write-Host ""
+        Write-Host "ERROR: package clone is $behind commit(s) behind origin/main." -ForegroundColor Yellow
+        Write-Host "Promoting now could overwrite newer upstream content. Update first:"
+        Write-Host "  git -C '$PackageRoot' pull"
+        Write-Host "or pass -AllowStale to proceed deliberately."
+        exit 2
+    }
+} else {
+    Write-Host "  Clone is up to date with origin/main."
+}
+Write-Host ""
+
 # --- Step 1: dry-run promote ---
-Write-Host "[1/2] Dry-run promote (preview)..."
+Write-Host "[1/3] Dry-run promote (preview)..."
 Write-Host ""
 $dryArgs = @(
     '-TargetRoot', $TargetRoot, '-PackageRoot', $PackageRoot,
@@ -121,23 +164,27 @@ if ($LASTEXITCODE -ne 0) {
 # --- Step 2: confirm + write ---
 Write-Host ""
 Write-Host "=============================================================="
+$forceNote = if ($Force) { ' -Force' } else { '' }
 if (-not $Yes) {
-    $reply = Read-Host "[2/2] Promote to package via -Mode Write -Force? [y/N]"
+    $reply = Read-Host "[2/3] Promote to package via -Mode Write$forceNote? [y/N]"
     if ($reply -notmatch '^(y|yes)$') {
         Write-Host "Declined. Re-run with -Yes to skip this prompt."
         exit 1
     }
 } else {
-    Write-Host "[2/2] -Yes specified -- proceeding to write."
+    Write-Host "[2/3] -Yes specified -- proceeding to write."
 }
 Write-Host "=============================================================="
 Write-Host ""
 
 $writeArgs = @(
     '-TargetRoot', $TargetRoot, '-PackageRoot', $PackageRoot,
-    '-Paths') + $Paths + @('-Classification') + $resolved + @('-Mode','Write','-Force')
+    '-Paths') + $Paths + @('-Classification') + $resolved + @('-Mode','Write')
+if ($Force) { $writeArgs += '-Force' }
 & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PackageRoot 'scripts\promote-from-project.ps1') @writeArgs
 if ($LASTEXITCODE -ne 0) {
+    Write-Host "If the refusal was 'upstream divergence', review the package-side change," -ForegroundColor Yellow
+    Write-Host "merge your edit on top of it, or re-run with -Force to overwrite deliberately." -ForegroundColor Yellow
     Write-Error "Write-mode promote failed (exit $LASTEXITCODE)."
     exit 2
 }

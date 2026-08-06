@@ -95,7 +95,28 @@ function Add-JournalStage {
     # Ensure parent directory exists (fresh install case for nested target paths).
     $dir = Split-Path -Parent $Target
     if ($dir -and -not (Test-Path -LiteralPath $dir)) { New-Item -ItemType Directory -Path $dir -Force | Out-Null }
-    $bytes = [System.Text.Encoding]::UTF8.GetBytes(($Content -replace "`r`n","`n"))
+    # EOL policy (audit 2026-08-06): the previous unconditional CRLF->LF flip
+    # rewrote whole CRLF consumer files (the P4 depot's .md scaffold is CRLF) on
+    # every content change. Policy: .sh targets are ALWAYS LF (bash-safe on any
+    # host); every other target preserves its existing dominant EOL; a target
+    # that does not yet exist gets LF. WRITE PATH ONLY -- the comparison path
+    # (Read-NormalizedText / `$rendered -ne $current`) stays LF-normalized;
+    # changing THAT would break the install/compare identical-bytes guarantee
+    # and rewrite CRLF targets on every run.
+    $lfText = ($Content -replace "`r`n","`n")
+    $useCrlf = $false
+    if (-not ($Target -match '\.sh$')) {
+        if (Test-Path -LiteralPath $Target) {
+            try {
+                $curText   = [System.Text.Encoding]::UTF8.GetString([System.IO.File]::ReadAllBytes($Target))
+                $crlfCount = ([regex]::Matches($curText, "`r`n")).Count
+                $nlTotal   = ([regex]::Matches($curText, "`n")).Count
+                if ($nlTotal -gt 0 -and ($crlfCount * 2) -gt $nlTotal) { $useCrlf = $true }
+            } catch { $useCrlf = $false }
+        }
+    }
+    if ($useCrlf) { $lfText = ($lfText -replace "`n","`r`n") }
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes($lfText)
     $fs = [System.IO.File]::Open($temp, [System.IO.FileMode]::Create, [System.IO.FileAccess]::Write)
     try { $fs.Write($bytes, 0, $bytes.Length); $fs.Flush($true) } finally { $fs.Dispose() }
 
