@@ -49,10 +49,26 @@ $vers = @(@($cme.version, $cp.version, $xp.version, $pkgVer) | Sort-Object -Uniq
 if ($vers.Count -eq 1) { Ok "version lockstep across manifests + package-manifest ($($vers[0]))" }
 else { Bad 'version lockstep' ($vers -join ' vs ') }
 
-# --- 5. Description agrees (claude marketplace entry + both plugin manifests) ---
-$descs = @(@($cme.description, $cp.description, $xp.description) | Sort-Object -Unique)
-if ($descs.Count -eq 1) { Ok 'description identical across manifests' }
-else { Bad 'description' "$($descs.Count) distinct descriptions" }
+# --- 5. Description: lockstep on the Claude side; the Codex manifest MAY diverge, but only
+# on the record. The two tools genuinely do not receive the same capabilities, so forcing one
+# string across both manifests forces one of them to lie. v4.25.1 diverged the Codex
+# description deliberately (to state that the Markdown reviewer agents do not run there) and
+# turned this check red; it stayed red through v4.25.2 because nobody re-read the suite after
+# merging. Allowing the divergence unconditionally would just delete the check, so: divergence
+# is legal exactly when the Codex description points at the doc that explains it.
+$claudeDescs = @(@($cme.description, $cp.description) | Sort-Object -Unique)
+if ($claudeDescs.Count -ne 1) {
+    Bad 'description (claude side)' "$($claudeDescs.Count) distinct - marketplace entry and plugin manifest must agree"
+}
+elseif ($xp.description -eq $cp.description) {
+    Ok 'description identical across all manifests'
+}
+elseif ($xp.description -match 'tool-capability-matrix') {
+    Ok 'description diverges for Codex, and cites tool-capability-matrix.md for why'
+}
+else {
+    Bad 'description (codex)' 'diverges from the Claude manifests without citing docs/tool-capability-matrix.md - state the capability difference on the record or keep the strings identical'
+}
 
 # --- 6. Sources resolve to the same plugin dir; both plugin manifests live in it ---
 $cSrc = $cme.source            # claude: plain relative string
@@ -83,10 +99,25 @@ if ($hooks) {
         $script = Join-Path $pluginDir ($Matches[1] -replace '/','\')
         if (Test-Path -LiteralPath $script) { Ok "hook bridge script exists ($($Matches[1]))" }
         else { Bad 'hook bridge script' "referenced but missing: $($Matches[1])" }
-        # the Claude-side no-op gate must precede any stdin read (double-fire guard)
+        # The Claude-side no-op gate must precede any stdin read (double-fire guard), AND it
+        # must test a variable that actually exists. Until 4.26.0 this test asserted the literal
+        # `[ -z "${PLUGIN_ROOT:-}" ] && exit 0` - a gate on a variable no host ever sets, so it
+        # was always true and the bridge never ran the audit for anyone. The test did not merely
+        # miss that: it PINNED it, because any correct fix reported as a regression. A test that
+        # asserts an implementation string cannot notice the string is wrong. So assert the two
+        # PROPERTIES instead, and name the host explicitly.
         $body = Get-Content -Raw -LiteralPath $script
-        if ($body -match '(?m)^\[ -z "\$\{PLUGIN_ROOT:-\}" \] && exit 0') { Ok 'bridge gates on PLUGIN_ROOT before reading stdin' }
-        else { Bad 'bridge gate' 'PLUGIN_ROOT no-op gate not found - Claude Code would double-warn' }
+        $gateLine = ($body -split "`n" | Select-String -Pattern 'exit 0' | Select-Object -First 1)
+        $stdinLine = ($body -split "`n" | Select-String -Pattern 'exec bash' | Select-Object -First 1)
+        if ($body -match 'CLAUDECODE') {
+            if ($gateLine -and $stdinLine -and $gateLine.LineNumber -lt $stdinLine.LineNumber) {
+                Ok 'bridge gates on CLAUDECODE (a var Claude Code really exports) before reading stdin'
+            } else { Bad 'bridge gate order' 'gate must precede the exec that hands stdin to the audit' }
+        }
+        elseif ($body -match 'PLUGIN_ROOT:-') {
+            Bad 'bridge gate' 'gates on PLUGIN_ROOT, which NO host sets (verified against codex.exe 0.146.0) - the bridge would never run the audit on any host'
+        }
+        else { Bad 'bridge gate' 'no recognisable host gate - Claude Code would double-warn' }
     } else { Bad 'hook command shape' "expected `${CLAUDE_PLUGIN_ROOT}/... in: $cmd" }
 }
 

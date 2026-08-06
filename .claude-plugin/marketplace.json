@@ -11,7 +11,7 @@
             "source": "./plugins/myst-dev-kit",
             "displayName": "Myst Dev Kit",
             "description": "Team dev kit: 30 skills - engineering/productivity (spec, TDD, triage, debugging, grilling, teaching...) plus the team process rules as on-demand skills (review-and-submit, changelist-verification, pre-implementation-gate...), both review agents (architecture-reviewer, radical-design-critic), sync-build-submit + package commands, and the Codex-side Submit-Audit warning bridge.",
-            "version": "4.25.2",
+            "version": "4.26.0",
             "license": "MIT",
             "repository": "https://github.com/vladSirin/myst-agentic-workflow",
             "category": "productivity",

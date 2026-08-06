@@ -27,6 +27,71 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.26.0] - 2026-08-06 — The Submit-Audit bridge had never run, on any host, ever
+
+#### Fixed
+
+- **`submit-audit-bridge.sh` gated on a variable that does not exist.** Its guard was
+  `[ -z "${PLUGIN_ROOT:-}" ] && exit 0`, on the belief — documented in its own header, and
+  repeated in `docs/install.md` and this changelog — that Codex exports a native `PLUGIN_ROOT`
+  alongside the `CLAUDE_PLUGIN_ROOT` compat alias.
+
+  It does not. In `codex.exe` 0.146.0 (323 MB) the string `PLUGIN_ROOT` occurs **exactly once**,
+  as a substring of `CLAUDE_PLUGIN_ROOT`; `CODEX_PLUGIN_ROOT` occurs zero times. Control proving
+  the zero is meaningful, since env names are stored in the clear: `CODEX_HOME` occurs 53 times
+  by the identical grep. `PLUGIN_ROOT` was therefore unset on **every** host, the gate was
+  always true, and the bridge exited 0 before doing anything — for its entire life, under both
+  tools. Every Codex teammate has been submitting with no client-side Submit-Audit warning, in
+  a state **indistinguishable from clean**: no missing-`Ticket:` warning, no non-ASCII warning,
+  no BP-Pins warning.
+
+  The gate now tests `CLAUDECODE`, which Claude Code really does export (read from a live
+  shell) and which Codex aliases zero times — along with `CLAUDE_PROJECT_DIR`, `CLAUDE_PID` and
+  `AI_AGENT`, so Codex aliases no Claude host marker at all, unlike `CLAUDE_PLUGIN_ROOT`.
+
+- **The direction of the gate was the actual defect**, not the variable name. Testing for a
+  marker of the host you want to *include* sends every unknown, renamed or future host down the
+  silent branch. Testing for the host you want to *exclude* sends them down the running branch,
+  where the worst case is one duplicate advisory warning. A hook that never fires is
+  indistinguishable from a hook that fired and found nothing — which is why this survived from
+  4.13.0 to 4.25.2 with nobody noticing.
+
+- **`run-marketplace-tests.ps1` was pinning the bug in place.** Check 9 asserted the literal
+  string `[ -z "${PLUGIN_ROOT:-}" ] && exit 0` and reported `Bad 'bridge gate'` if it was
+  missing — so the suite reported **green on the broken gate and would have reported a
+  regression on any correct fix**. It now asserts the two properties that matter (a gate on a
+  real host marker, ordered before the `exec` that hands stdin to the audit) and fails loudly
+  and specifically if it ever sees `PLUGIN_ROOT` again. A test that asserts an implementation
+  string cannot notice that the string is wrong.
+
+- **`MYST_AUDIT_DEBUG=1`** makes every bridge exit path announce itself on stderr. This exists
+  because the fix is **not** verifiable by reading it: a rename is not the fix, an observed run
+  is. Total silence under that flag means the script never ran at all.
+
+#### Changed
+
+- **`docs/tool-capability-matrix.md` — three rows corrected against measurement.**
+  - `agents/` said Codex "has no subagent mechanism", evidence `measured by absence`. False:
+    `~/.codex/agents/` holds **22 `.toml` agents** including `code-reviewer`, and `codex.exe`
+    names `subagents` 19 times as a plugin resource kind. **4.25.0 stripped the two reviewer
+    agents from the Codex plugin description on this false premise.** They do ship inert, but
+    because they are Markdown and Codex agents are TOML — a closable gap, not a missing feature.
+  - `scripts/` claimed 8 files "neither tool loads as a plugin capability". There are **5**, and
+    `submit-audit-bridge.sh` is loaded by the plugin hook loader and appears in no manifest.
+  - `hooks/` was marked `measured` for Codex. That measurement only covered *project*-level
+    hooks failing to load. **Nobody has observed a plugin hook firing under Codex** — and the
+    one plugin hook that exists could not have, per the fix above. Now `unverified`.
+- **`"measured by absence" is named as an invalid evidence class**, with the rule that a
+  negative claim needs a control: name something you *would* have found by the same method and
+  show that you found it. It produced two wrong rows in one table.
+
+#### Still open
+
+Whether Codex plugin hooks fire **at all**. The strings evidence proves the variable was wrong;
+it cannot distinguish "wrong variable" from "plugin hooks never fire under Codex". Both are
+consistent with everything observed. Verify with `MYST_AUDIT_DEBUG=1` in a live Codex session —
+and upgrade the Codex plugin first, since a stale cache measures the wrong build.
+
 ## [4.25.2] - 2026-08-05 — Preflight step 2 says what a silent run does and does not license
 
 #### Fixed
@@ -329,6 +394,11 @@ wrong, which is precisely why the sequence was executed before being documented.
 Plugin-shipped hooks do work under both tools: Codex exports `PLUGIN_ROOT` alongside a
 `CLAUDE_PLUGIN_ROOT` compatibility alias, so `${CLAUDE_PLUGIN_ROOT}` resolves in each; guard with
 `[ -z "${PLUGIN_ROOT:-}" ] && exit 0` for Codex-only behaviour.
+
+> **This paragraph is wrong; corrected in 4.26.0 and left in place as the record.** Codex exports
+> no native `PLUGIN_ROOT` — it occurs once in `codex.exe`, inside `CLAUDE_PLUGIN_ROOT`. The guard
+> above was true on every host, so `submit-audit-bridge.sh` never ran. Gate on `CLAUDECODE`
+> instead. Whether plugin hooks fire under Codex at all remains unverified.
 
 ## [4.19.0] - 2026-08-03 — The update button stops jamming after one press
 
@@ -990,6 +1060,9 @@ the package being behind, not the consumer being wrong.
   Under Claude Code the bridge no-ops (gates on Codex's native `PLUGIN_ROOT` env var)
   because the project's committed settings.json already registers that hook; on
   consumers without the governance core it exits silently.
+  > **Corrected in 4.26.0, kept as the record:** there is no native `PLUGIN_ROOT`. The gate
+  > was true on every host, so this bridge no-opped under Codex too and never ran the audit
+  > for anyone from this release until 4.26.0.
 - **`plugins/myst-dev-kit/LICENSE`** — MIT + mattpocock/skills attribution travels with
   plugin installs (installs copy only the plugin dir).
 - **`scripts/run-marketplace-tests.ps1`** (17 checks): four-manifest consistency
