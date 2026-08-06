@@ -7,7 +7,7 @@ How to get the Myst team's AI setup on your machine. Two archetypes; pick yours.
 | Layer | Delivered by | Contains |
 |---|---|---|
 | **Committed core** | Perforce sync (automatic) | Team `CLAUDE.md`/`AGENTS.md`, `.claude/settings.json` (hooks + marketplace registration), rules, hook scripts, team docs (`Docs/MustRead`, `Docs/agents`) |
-| **Dev kit** | `myst-dev-kit` plugin (this repo) | 30 skills, both review agents, `sync-build-submit` + package commands, the Codex Submit-Audit warning bridge |
+| **Dev kit** | `myst-dev-kit` plugin (this repo) | 30 skills, both review agents (Claude only), `sync-build-submit` + package commands, the Submit-Audit warning bridge (Codex; verified firing 2026-08-06) |
 | **Personal kit** | you, outside Perforce | `~/.claude/`, `CLAUDE.local.md`, `.claude/settings.local.json`, own skills/plugins |
 
 Governance is **advisory everywhere**: nothing blocks your work; non-compliant
@@ -67,8 +67,13 @@ marketplace snapshot replaces the installed plugin in place — verified 4.18.0 
 cache directory and all, with no follow-up `codex plugin add`. (Claude is the opposite:
 `claude plugin update myst-dev-kit@myst`, and it needs a restart to take effect.)
 
-**What Codex does and does not get.** The plugin delivers the skills, both reviewer
-agents, the commands, and the Submit-Audit bridge. It does **not** give Codex the
+**What Codex does and does not get.** The plugin delivers the skills, the commands, and
+the Submit-Audit bridge — the bridge was **verified firing under Codex on 2026-08-06**, the
+first time that had ever been observed; before v4.26.0 it had never run, on any host, because
+it gated on a variable no host sets. The two reviewer agents ship but **do not run under
+Codex**: they are Markdown and Codex agents are TOML, so nothing consumes them (Codex does
+have a subagent mechanism — porting is open work, not a missing feature). It does **not**
+give Codex the
 always-on rules: Codex has no `.claude/rules/` equivalent and reads `AGENTS.md` only,
 which is why every always-on rule needs an `AGENTS.md` counterpart (enforced by
 `check-rule-parity.sh`). Project-level hooks are also unavailable — Codex loads hooks

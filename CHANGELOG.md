@@ -27,6 +27,33 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.27.1] - 2026-08-06 - The Codex hook was watched firing, so the docs stop hedging
+
+#### Fixed (documentation - no behavioural change)
+
+- **The `hooks/` row goes back to `measured`, with the right evidence this time.** v4.26.0
+  honestly downgraded it to `unverified`: the old "measured" only ever covered *project*-level
+  hooks failing to load, and nobody had watched a **plugin** hook fire under Codex. That has now
+  been observed end-to-end - `${CLAUDE_PLUGIN_ROOT}` resolves, the gate passes, and the bridge
+  reaches `exec` on the consumer's real `submit-audit-warn.sh`, on two consecutive tool calls.
+
+  Three hypotheses died with it: hook trust is **not** required for plugin hooks, `"matcher":
+  "Bash"` **does** match Codex's shell tool (which logs as `exec` and runs `pwsh.exe`), and
+  **`CODEX_HOME` is empty inside the hook subprocess** despite appearing 53 times in `codex.exe`.
+  That last one matters most: `CODEX_HOME` was the obvious variable to gate on, and doing so
+  would have shipped a second dead gate failing exactly as `PLUGIN_ROOT` did. Gating on the host
+  you want to **exclude** is what made it work.
+
+  Also recorded, because it produced a completely convincing false negative for several rounds:
+  **two copies of an installed Codex plugin exist and only one runs** - the `plugins/cache/` copy
+  is live, the `.tmp/marketplaces/` copy is inert.
+
+- **`SETUP.md` and `README.md` claimed the plugin gives Codex "both reviewer agents".** It does
+  not, and this survived the v4.25.0 pass that was supposed to fix exactly this claim. They ship
+  but cannot run: they are Markdown and Codex agents are TOML. Corrected in both, alongside the
+  Submit-Audit bridge claim - which was false for two years and is now true, so it is stated with
+  its verification date rather than left true by luck.
+
 ## [4.27.0] - 2026-08-06 — CI exists, and its first run found that the installer never worked without Perforce
 
 #### Added

@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-16%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.27.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-16%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.27.1-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -39,7 +39,7 @@ All three dry-run first, prompt before writing, and auto-derive their configurat
 
 ## Install as a plugin (marketplace)
 
-The repo is a **plugin marketplace** for both tools — since v4.0.0 the plugin IS the delivery path for the kit (the installer only bootstraps the committed core). One plugin is published: **`myst-dev-kit`** — 30 skills (engineering + productivity + the team process rules as on-demand skills), both review agents, `sync-build-submit` and package commands, and the Codex-side Submit-Audit warning bridge.
+The repo is a **plugin marketplace** for both tools — since v4.0.0 the plugin IS the delivery path for the kit (the installer only bootstraps the committed core). One plugin is published: **`myst-dev-kit`** — 30 skills (engineering + productivity + the team process rules as on-demand skills), both review agents (Claude only — they are Markdown, and Codex agents are TOML), `sync-build-submit` and package commands, and the Codex-side Submit-Audit warning bridge.
 
 ```bash
 # Claude Code
@@ -77,7 +77,7 @@ codex plugin marketplace upgrade
 - **No project-level hooks.** Codex loads hooks from `~/.codex/hooks.json` and from installed plugins only; a hooks file committed in the repo is ignored. A repo-local hook is Claude-only unless it ships through the plugin.
 
 Notes:
-- The plugin's `hooks/hooks.json` delivers the client Submit-Audit warning **to Codex only** — under Claude Code the bridge no-ops because the consumer project's committed `.claude/settings.json` already registers the same audit (no double warnings). On consumers without the Myst governance core, the hook exits silently.
+- The plugin's `hooks/hooks.json` delivers the client Submit-Audit warning **to Codex only** — under Claude Code the bridge no-ops because the consumer project's committed `.claude/settings.json` already registers the same audit (no double warnings). On consumers without the Myst governance core, the hook exits silently. **Verified firing under Codex 2026-08-06** (`docs/tool-capability-matrix.md`); it had never run on any host before v4.26.0.
 - `agents/` (radical-design-critic) is Claude-only — Codex ignores the directory.
 - Former always-on workflows are now **on-demand skills** with trigger-strength descriptions (`review-and-submit`, `changelist-verification`, `pre-implementation-gate`, ...) — advisory by design; the server-side Submit-Audit is the enforcement backstop.
 

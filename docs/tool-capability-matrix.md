@@ -32,7 +32,7 @@ specific, source-derived claim that turns out to be wrong.
 | Capability | Count | Claude | Codex | Evidence |
 |---|---|---|---|---|
 | `skills/` | 30 | convention (no `skills` key in `.claude-plugin/plugin.json`) | **declared** — `"skills": "./skills/"` | declared (Codex) / convention (Claude) |
-| `hooks/` | 1 entry | plugin hooks load; project `.claude/settings.json` hooks **also** load | **declared** — `"hooks": "./hooks/hooks.json"`. Project-level hooks **never** load | measured — `.codex/hooks.json` and `.agents/hooks.json` were each placed in a repo and a live `codex exec` run for both; neither fired |
+| `hooks/` | 1 entry | plugin hooks load; project `.claude/settings.json` hooks **also** load | **declared** — `"hooks": "./hooks/hooks.json"`. Project-level hooks **never** load | **measured (2026-08-06)** — plugin hook observed firing under Codex end-to-end (see below). Project-level hooks separately measured NOT to load: `.codex/hooks.json` and `.agents/hooks.json` were each placed in a repo and a live `codex exec` run for both; neither fired |
 | `commands/` | 3 | convention | convention | **unverified** — neither manifest declares `commands`, and no one has confirmed Codex discovers them |
 | `agents/` | 2 | convention — `architecture-reviewer`, `radical-design-critic` | **ship inert — but not for the reason stated until 4.26.0.** Codex *does* have a subagent mechanism; these two files are Markdown and Codex agents are TOML, so nothing consumes them | measured — `~/.codex/agents/` holds 22 `.toml` agents incl. `code-reviewer`; `codex.exe` names `subagents` 19 times as a plugin resource kind. Whether Codex's loader accepts *plugin-delivered* agents is **unverified** |
 | `scripts/` | 5 | 4 are copied into the consumer's `.claude/scripts/` by `install.ps1`; `submit-audit-bridge.sh` is **not** — it stays in the plugin and is loaded by the plugin hook loader | same split | declared — the 4 are `sourceTemplate` entries in `manifest-template.json`; the bridge is referenced by `hooks/hooks.json` as `${CLAUDE_PLUGIN_ROOT}/scripts/…` and appears in no manifest |
@@ -59,12 +59,37 @@ Markdown and Codex's are TOML. Porting `agents/*.md` to TOML and declaring them 
 whether Codex's loader accepts plugin-delivered agents at all. The `review-changes` skill stays
 the fallback meanwhile — it is a genuine one, which is why this went unnoticed.
 
-**Also not closed — and it outranks both:** `hooks/hooks.json` is the delivery path this table
-calls **measured**, but that measurement only ever covered *project*-level hooks failing to
-load. **Nobody has observed a plugin hook firing under Codex.** For its entire life the one
-plugin hook that exists gated on a variable no host sets, so its silence proved nothing either
-way. Until someone runs Codex with `MYST_AUDIT_DEBUG=1` and sees the bridge announce itself,
-"plugin hooks work under Codex" is `unverified`, not `measured`.
+**Closed 2026-08-06 by an observed run — this was the table's longest-standing hole.** v4.26.0
+downgraded the `hooks/` row to `unverified` because the existing "measured" only ever covered
+*project*-level hooks failing to load; nobody had watched a **plugin** hook fire under Codex, and
+the one plugin hook that exists had spent its whole life gated on a variable no host sets, so its
+silence proved nothing.
+
+It has now been watched. Method — an unconditional file-write marker injected into the installed
+bridge (stderr is not surfaced by `codex exec`, so a file is the only unambiguous signal), then
+`codex exec` run with Claude's env markers stripped. Result, on two consecutive tool calls:
+
+```
+hook: PreToolUse ×2 -> both Completed        (the user's own shim + the plugin's)
+[CACHE] bridge entered   CLAUDECODE=[]  CODEX_HOME=[]
+  -> REACHED EXEC: AUDIT=[<repo>/.claude/scripts/submit-audit-warn.sh] exists=[yes]
+```
+
+Measured inside that hook subprocess, and each one retires a hypothesis:
+
+| Fact | Consequence |
+|---|---|
+| `${CLAUDE_PLUGIN_ROOT}` **resolves** | the documented delivery mechanism is real |
+| `CLAUDECODE` is **empty** | the v4.26.0 gate correctly identifies non-Claude |
+| **`CODEX_HOME` is empty** | it appears 53× in `codex.exe` but is **not exported to hooks**. Gating on it — which was the obvious candidate — would have shipped a second dead gate, failing exactly as `PLUGIN_ROOT` did |
+| `"matcher": "Bash"` **matches** | Codex's shell tool logs as `exec` and runs `pwsh.exe`, yet the Claude-flavoured matcher still matches. Never a blocker |
+| No `[hooks.state]` entry exists for it | plugin hooks do **not** require persisted trust |
+
+> **Two copies of an installed Codex plugin exist and only one runs.**
+> `~/.codex/plugins/cache/<mkt>/<plugin>/<version>/` is live;
+> `~/.codex/.tmp/marketplaces/<mkt>/plugins/<plugin>/` is a full, inert copy. Instrumenting the
+> wrong one yields a completely convincing false negative — it cost several rounds here before
+> tagging both copies with distinct markers made the experiment identify its own subject.
 
 ## Rules for changing this
 
