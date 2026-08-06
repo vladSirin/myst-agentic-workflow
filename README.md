@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-16%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.27.1-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-18%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.28.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -183,7 +183,7 @@ We track upstream **faithfully** — name + body + architecture + verbatim front
 - **Project specifics live only in overlays**, never in the base. `diagnosing-bugs` → `ue` overlay `UE-NOTES.md` (automation / `-ExecCmds` loops, `p4` bisection, editor HITL). `resolving-merge-conflicts` → `perforce` overlay `P4-NOTES.md` (P4 text merges). `to-tickets` follows upstream's removal of HITL/AFK slice-typing — AFK-readiness rides the triage label instead.
 - **Renamed (followed upstream):** `diagnose` → `diagnosing-bugs`. **Removed (followed upstream):** `zoom-out`, `caveman`, `write-a-skill` (replaced by `writing-great-skills`).
 - **Skipped (out of scope):** `ask-matt` (personal/branded), `prototype` (web-bound). **Deferred:** `decision-mapping` (upstream marks it in-progress).
-- Everything else is byte-faithful to upstream HEAD `6eeb81b`.
+- Everything else is byte-faithful to upstream HEAD `e9fcdf9`.
 
 ### Process-rule skills (formerly always-on workflows)
 
@@ -197,7 +197,7 @@ Converted to on-demand skills in v4.0.0 — each carries a trigger-strength desc
 | [`review-and-submit`](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md) | "review and submit" / any p4 submit | Pre-submit protocol: reviewer routing, Review Record block, preflight validators. |
 | [`auto-plan-mode`](plugins/myst-dev-kit/skills/auto-plan-mode/SKILL.md) | start of non-trivial implementation | Decide whether to enter plan mode before coding. |
 
-(The former `design-workflow` skill merged into [`design`](plugins/myst-dev-kit/skills/design/SKILL.md) in v7.0.0 -- the doc naming/location/reviewer-routing rules now live in that skill's [PROCESS.md](plugins/myst-dev-kit/skills/design/PROCESS.md).)
+(The former `design-workflow` skill merged into [`design`](plugins/myst-dev-kit/skills/design/SKILL.md) in v4.28.0 -- the doc naming/location/reviewer-routing rules now live in that skill's [PROCESS.md](plugins/myst-dev-kit/skills/design/PROCESS.md).)
 
 ### Agents
 
@@ -327,7 +327,7 @@ myst-agentic-workflow/
 
 ## Status
 
-**v4.0.0** — Role shift: the plugin owns the kit (29 skills incl. the process rules as on-demand skills, both review agents, commands, Codex audit bridge); the installer only bootstraps the committed core (bibles, docs, rules, scripts). Existing consumers converge via `upgrade.ps1 -Apply`. Previously — **v3.0.0** — Marketplace restructure: OpenCode support retired (tool scope is Claude Code + Codex); the per-tool template mirror collapsed into ONE shared source at `plugins/myst-dev-kit/` (skills/agents/commands/workflows live once; the manifest maps each file to both `.claude/` and `.Codex/` targets); overlays flattened the same way. Skills remain vendored **verbatim** from upstream `mattpocock/skills` HEAD (`6eeb81b`) — project specifics live in overlays, never in the base (see [ADR-0002](docs/adr-0002-vendor-and-overlay-not-fork.md), [ADR-0003](docs/adr-0003-verbatim-skill-format.md)). Full history in [CHANGELOG.md](CHANGELOG.md).
+**v4.28.0** — Audit hardening: catalog trimmed to 24 skills (5 personal skills removed; `design-workflow` merged into `design` + `PROCESS.md`); PS 5.1 crash class fixed across the lifecycle scripts (EAP/stderr, measured); provenance stamping; installer EOL policy; doc-audit ~20x faster with a version-staleness nudge; linkcheck now guards `plugins/`; 18 test suites incl. PS 5.1 gates. One breaking edge: `promote.ps1` requires an explicit `-Force` for divergent promotions (the refusal prints the remedy). Previously — **v4.0.0** — Role shift: the plugin owns the kit (29 skills incl. the process rules as on-demand skills, both review agents, commands, Codex audit bridge); the installer only bootstraps the committed core (bibles, docs, rules, scripts). Existing consumers converge via `upgrade.ps1 -Apply`. Previously — **v3.0.0** — Marketplace restructure: OpenCode support retired (tool scope is Claude Code + Codex); the per-tool template mirror collapsed into ONE shared source at `plugins/myst-dev-kit/` (skills/agents/commands/workflows live once; the manifest maps each file to both `.claude/` and `.Codex/` targets); overlays flattened the same way. Skills remain vendored **verbatim** from upstream `mattpocock/skills` HEAD (`6eeb81b`) — project specifics live in overlays, never in the base (see [ADR-0002](docs/adr-0002-vendor-and-overlay-not-fork.md), [ADR-0003](docs/adr-0003-verbatim-skill-format.md)). Full history in [CHANGELOG.md](CHANGELOG.md).
 
 ## What `runtime-mutable` means
 
@@ -346,7 +346,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the version history.
 
 ## License
 
-MIT. Bundles content adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, pinned at commit `6eeb81b`) — attribution preserved in [LICENSE](LICENSE).
+MIT. Bundles content adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, pinned at commit `e9fcdf9`) — attribution preserved in [LICENSE](LICENSE).
 
 ## Contributing
 

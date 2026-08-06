@@ -3,7 +3,7 @@
 Companion to [SKILL.md](SKILL.md) — this file is the **process authority** for design
 documents: naming, location, reviewer routing, iteration/verdict rules, and the
 finalization lifecycle. SKILL.md automates the flow; when the two ever disagree, this
-file wins. (Merged from the former `design-workflow` skill in v7.0.0.)
+file wins. (Merged from the former `design-workflow` skill in v4.28.0.)
 
 ## Automatic Detection
 

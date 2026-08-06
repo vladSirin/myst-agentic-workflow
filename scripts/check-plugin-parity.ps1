@@ -107,7 +107,7 @@ if ($claude.version -ne $codex.version) {
 }
 
 # --- 5. the matrix Count column matches the tree ------------------------------------
-# Section 1 only proves a ROW exists; a stale count (e.g. '30' skills surviving the v7.0.0
+# Section 1 only proves a ROW exists; a stale count (e.g. '30' skills surviving the v4.28.0
 # removals) sailed through. Numeric Count cells are asserted against the number of entries
 # in the capability directory; non-numeric cells (hooks/ says '1 entry') are skipped.
 foreach ($line in ($matrix -split "`n")) {

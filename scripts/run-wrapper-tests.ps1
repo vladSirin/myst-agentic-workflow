@@ -48,7 +48,12 @@ if ($r.Out -match 'Overlays\s*:\s*core') { Ok 'update.ps1 derives Overlays from 
 else { Bad 'update.ps1 derives Overlays' 'Overlays line not found' }
 Remove-Item -Recurse -Force $t -ErrorAction SilentlyContinue
 
-# --- Test 3: promote.ps1 infers classification from manifest ---
+# --- Test 3: promote.ps1 -Force contract + classification inference ---
+# Since -Force became an explicit opt-in (audit 2026-08-06), a real promotion
+# (which by definition diverges from the upstream template) REFUSES without it.
+# Pin BOTH sides of the contract: refusal-then-Force. -AllowStale keeps the
+# freshness gate out of these tests -- a PR branch is legitimately "behind"
+# origin/main and CI must not flake on that.
 $t = New-TempTarget
 $null = Invoke-PS (Join-Path $pkg 'setup.ps1') @('-TargetRoot',$t,'-ProjectName','P1','-Yes')
 
@@ -56,16 +61,25 @@ $null = Invoke-PS (Join-Path $pkg 'setup.ps1') @('-TargetRoot',$t,'-ProjectName'
 $localFile = Join-Path $t 'Docs\agents\issue-tracker.md'
 Add-Content -Path $localFile -Value "`n# Test marker $(Get-Date -Format 'HHmmss')"
 
+# 3a: WITHOUT -Force -> refuses (non-zero), package file untouched
 $r = Invoke-PS (Join-Path $pkg 'promote.ps1') @(
-    '-TargetRoot', $t, '-Paths', 'Docs/agents/issue-tracker.md', '-Yes'
+    '-TargetRoot', $t, '-Paths', 'Docs/agents/issue-tracker.md', '-Yes', '-AllowStale'
 )
-if ($r.Code -eq 0) { Ok 'promote.ps1 -Yes exit 0' }
-else { Bad 'promote.ps1 -Yes exit 0' "exit=$($r.Code)`n$($r.Out)" }
+if ($r.Code -ne 0) { Ok 'promote.ps1 without -Force refuses (divergence)' }
+else { Bad 'promote.ps1 without -Force refuses' "expected non-zero, got 0" }
+$pkgFile = Join-Path $pkg 'templates\common\docs\agents\issue-tracker.md'
+if (Select-String -Path $pkgFile -Pattern 'Test marker' -Quiet) {
+    Bad 'refusal left package tree untouched' 'marker leaked into package file'
+} else { Ok 'refusal left package tree untouched' }
+
+# 3b: WITH -Force -> writes, classification inferred
+$r = Invoke-PS (Join-Path $pkg 'promote.ps1') @(
+    '-TargetRoot', $t, '-Paths', 'Docs/agents/issue-tracker.md', '-Yes', '-Force', '-AllowStale'
+)
+if ($r.Code -eq 0) { Ok 'promote.ps1 -Force -Yes exit 0' }
+else { Bad 'promote.ps1 -Force -Yes exit 0' "exit=$($r.Code)`n$($r.Out)" }
 if ($r.Out -match 'reusable-core\s+\(inferred\)') { Ok 'promote.ps1 inferred classification' }
 else { Bad 'promote.ps1 inferred classification' 'inference marker not present' }
-
-# Verify package file got the change
-$pkgFile = Join-Path $pkg 'templates\common\docs\agents\issue-tracker.md'
 if (Select-String -Path $pkgFile -Pattern 'Test marker' -Quiet) { Ok 'promote.ps1 wrote change to package tree' }
 else { Bad 'promote.ps1 wrote change' 'package file does not show marker' }
 

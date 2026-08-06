@@ -423,7 +423,7 @@ re-installing to revert (if accidental).
 
 ### 6.3 `-Force` required for promotion
 
-See [§4.1](#41-why--force-is-currently-required). Conservative default; will
+See [§4.3](#43-why--force-is-currently-required). Conservative default; will
 relax when the package has real `sourceCommit` values.
 
 ### 6.4 Conflict outcomes

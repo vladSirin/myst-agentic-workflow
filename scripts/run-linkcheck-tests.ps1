@@ -23,7 +23,7 @@ function Bad($n, $why) { Write-Host ("[FAIL] {0}: {1}" -f $n,$why); $script:fail
 
 # --- Allow-list: known dangling refs pending reconciliation (ADR-0002 drifts) ---
 # Key: "<tool-agnostic-source>|<rawTarget>".  Value: reason.
-# EMPTY as of the v7.0.0 sweep: the workflows/AgenticWorkflow.md-era cross-overlay
+# EMPTY as of the v4.28.0 sweep: the workflows/AgenticWorkflow.md-era cross-overlay
 # entries matched nothing on the current tree (those workflow files became plugin
 # skills) and were pruned. Add entries ONLY for a known, accepted drift, with a
 # reason; each entry is debt.
