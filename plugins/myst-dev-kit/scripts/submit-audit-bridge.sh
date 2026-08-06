@@ -39,8 +39,10 @@
 #
 # VERIFYING A FIX HERE. A rename is not the fix; an OBSERVED run is. Set MYST_AUDIT_DEBUG=1
 # and make a hook fire - every exit path below announces itself. Total silence means the
-# script never ran at all, which is a DIFFERENT and still-open failure: nobody has yet
-# observed ANY plugin hook firing under Codex.
+# script never ran at all. (The once-open question is settled: this bridge WAS watched
+# firing under Codex on 2026-08-06 -- see the v4.27.1 release notes. Re-verify with the
+# debug env after any hooks.json or host-version change; the observation is per-setup,
+# not a permanent guarantee.)
 #
 # NOTE: gate on env BEFORE touching stdin - the audit script reads the hook JSON
 # from stdin, so this bridge must exec it with stdin intact.

@@ -9,12 +9,31 @@ package changes and apply them to this project.
 
 ## What you do
 
-1. **Find the package root**. Read `Docs/agents/scaffold-manifest.json` in the
-   project; the `package.source` field has the GitHub URL. Look for an existing
-   local clone of that repo (commonly under `c:/_LocalDev/` or
-   `~/code/`). If none found, ask the user where their clone is.
+1. **Find the package root**. Claude Code auto-maintains a full git clone of the
+   package as the marketplace directory:
+   `~/.claude/plugins/marketplaces/myst` — prefer it (creating a second clone
+   elsewhere invites divergence). If it is absent (e.g. Codex-only machine),
+   read `Docs/agents/scaffold-manifest.json`; the `package.source` field has the
+   GitHub URL — then ask the user where their clone is rather than guessing
+   paths.
 
-2. **Run `update.ps1`** from the package root, targeted at this project:
+2. **Pick the right script — this decides whether new files can arrive.**
+   `update.ps1` refreshes files already tracked by the INSTALLED manifest; it
+   structurally cannot ADD files a newer package introduced or REMOVE retired
+   ones. `upgrade.ps1` regenerates the manifest from the new template and can.
+   Decide by version jump: compare the consumer manifest's `package.version`
+   against the package clone's `package-manifest.json` version.
+   - Same MAJOR.MINOR (patch drift only) → `update.ps1` is enough.
+   - MINOR or MAJOR jump (the CHANGELOG's contract: those may add/retire files)
+     → run `upgrade.ps1` instead, then follow its plan output.
+
+   ```powershell
+   $Pkg    = '<package-root>'
+   $Target = '<this-project-root>'
+   & "$Pkg/update.ps1" -TargetRoot $Target      # patch-level refresh
+   # -- or, on a version jump: --
+   & "$Pkg/upgrade.ps1" -TargetRoot $Target     # adds new / retires old files
+   ```
 
    ```powershell
    $Pkg    = '<package-root>'
@@ -22,12 +41,11 @@ package changes and apply them to this project.
    & "$Pkg/update.ps1" -TargetRoot $Target
    ```
 
-   The script:
-   - `git pull`s the package clone
-   - runs `compare-with-package` (aborts on conflicts)
-   - dry-runs the install
-   - prompts the user before writing
-   - auto-wraps in `-UsePerforce -Changelist new` if the consumer manifest
+   Both scripts:
+   - `git pull` the package clone (update.ps1; upgrade.ps1 expects a fresh clone)
+   - preview the plan / dry-run before writing
+   - prompt the user before writing
+   - auto-wrap in `-UsePerforce -Changelist new` when the consumer manifest
      declares `versionControl='perforce'`
 
 3. **Surface the dry-run output** to the user. Let them see what would change

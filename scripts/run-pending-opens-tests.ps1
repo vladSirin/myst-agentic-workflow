@@ -1,4 +1,4 @@
-﻿# run-pending-opens-tests.ps1 -- Preflight checks 4 and 5 must distinguish
+# run-pending-opens-tests.ps1 -- Preflight checks 4 and 5 must distinguish
 # pending-CL state (open-for-add, open-for-delete) from real drift / real
 # unmanaged files. Uses a fake p4 shim (scripts/fake-p4.ps1) prepended to
 # PATH so checks run end-to-end without touching the live depot.
