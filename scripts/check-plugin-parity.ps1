@@ -106,6 +106,24 @@ if ($claude.version -ne $codex.version) {
     $findings += "plugin version differs between manifests: '$($claude.version)' vs '$($codex.version)'"
 }
 
+# --- 5. the matrix Count column matches the tree ------------------------------------
+# Section 1 only proves a ROW exists; a stale count (e.g. '30' skills surviving the v7.0.0
+# removals) sailed through. Numeric Count cells are asserted against the number of entries
+# in the capability directory; non-numeric cells (hooks/ says '1 entry') are skipped.
+foreach ($line in ($matrix -split "`n")) {
+    if ($line -match '^\|\s*`([A-Za-z0-9-]+)/`\s*\|\s*([^|]+)\|') {
+        $capName  = $Matches[1]
+        $countRaw = $Matches[2].Trim()
+        if ($countRaw -notmatch '^\d+$') { continue }   # tolerate prose cells like '1 entry'
+        $capPath = Join-Path $plugin $capName
+        if (-not (Test-Path $capPath)) { continue }     # missing dirs are section 1's finding
+        $actual = @(Get-ChildItem -Path $capPath).Count
+        if ($actual -ne [int]$countRaw) {
+            $findings += "matrix Count for '$capName/' says $countRaw but the tree has $actual entries"
+        }
+    }
+}
+
 # --- report -----------------------------------------------------------------------
 if ($findings.Count -eq 0) {
     Write-Host "Plugin parity: OK - $($capDirs.Count) capability dir(s) documented, manifests consistent."

@@ -5,28 +5,28 @@ description: "Team delivery process (discussion -> spec -> tickets -> triage -> 
 
 # Agentic Workflow
 
-## Scope and relationship to the design-workflow skill
+## Scope and relationship to the design skill
 
 This workflow is the **end-to-end shape** for non-trivial work: discussion → captured intent (spec) → planned slices (tickets) → triaged → built → verified → submitted.
 
-For work involving **game design** (mechanics, UX, levels, player experience), the Discussion phase is **extended** via the [design-workflow](../design-workflow/SKILL.md) skill — that produces a finalized design doc in the game project's Docs dir (`Myst_Proto/Docs/` here; see the CLAUDE.md Project section), and the spec phase here references it. For pure code / system / bugfix work, Discussion can stay in chat and you jump straight to the spec (`/to-spec`).
+For work involving **game design** (mechanics, UX, levels, player experience), the Discussion phase is **extended** via the [design](../design/SKILL.md) skill (process rules: [design/PROCESS.md](../design/PROCESS.md)) — that produces a finalized design doc in the game project's Docs dir (`Myst_Proto/Docs/` here; see the CLAUDE.md Project section), and the spec phase here references it. For pure code / system / bugfix work, Discussion can stay in chat and you jump straight to the spec (`/to-spec`).
 
 Three flow shapes the project supports:
 
 | Work shape | Flow |
 |---|---|
-| **Game design + implementation** | `design-workflow` → finalized doc → **this workflow** (Spec → Tickets → Triage → Implement → Verify → Review/Submit), with the spec referencing the design doc |
+| **Game design + implementation** | `design` skill → finalized doc → **this workflow** (Spec → Tickets → Triage → Implement → Verify → Review/Submit), with the spec referencing the design doc |
 | **Pure code / system / bugfix** | **This workflow** directly; Discussion happens in chat |
-| **Pure game design, no code** | `design-workflow` only — no spec/tickets needed |
+| **Pure game design, no code** | `design` skill only — no spec/tickets needed |
 
-Examples that go straight to this workflow (no design-workflow Discussion):
+Examples that go straight to this workflow (no `design`-skill Discussion):
 
 - Refactor or extend a subsystem (Flow, Objective, FrogEvent integration, etc.)
 - Fix a bug or regression
 - Build a tool, pipeline, or CI mechanism
 - Integrate a new plugin or library
 
-If you're not sure which shape: would the deliverable be read primarily by a game designer / LD → use `design-workflow` first. Read primarily by an engineer → jump straight here.
+If you're not sure which shape: would the deliverable be read primarily by a game designer / LD → use the `design` skill first. Read primarily by an engineer → jump straight here.
 
 ---
 

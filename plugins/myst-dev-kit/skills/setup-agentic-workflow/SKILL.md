@@ -94,9 +94,11 @@ Use the upgrade path, which preserves local customizations:
 
 ## Step 6 — Done: tell the user what's next
 
-- **Configure the issue tracker / triage labels / domain docs:** run **`/setup-matt-pocock-skills`** —
-  the engineering skills read the config it writes. This skill (`setup-agentic-workflow`) installs the
-  toolset; `setup-matt-pocock-skills` wires up the project conventions.
+- **Configure the issue tracker / triage labels / domain docs:** the installer renders
+  `Docs/agents/issue-tracker.md`, `triage-labels.md`, and `domain.md` into the project — the
+  engineering skills read those. If they are missing, follow the setup flow in the package's
+  SETUP.md. This skill (`setup-agentic-workflow`) installs the toolset; SETUP.md covers the
+  project-convention wiring.
 - **If `ue` was installed:** open the `sync-build-submit` command and fill its `<DEPOT_ROOT>` /
   `<PROJECT_ROOT>` / `<GAME_DIR>` / `<UPROJECT>` / `<EDITOR_TARGET>` placeholders.
 - Skills live under each tool dir; read `CLAUDE.md` / `AGENTS.md` for the skill list and workspace rules.
