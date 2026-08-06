@@ -1,4 +1,4 @@
-# run-promotion-e2e-tests.ps1 — Phase 4 verification gate (issue 12)
+# run-promotion-e2e-tests.ps1 - Phase 4 verification gate (issue 12)
 #
 # Two scenarios, end-to-end in a filesystem-only fixture (no Perforce):
 #   1. Edit -> classify -> promote -> verify parity (compare reports clean)

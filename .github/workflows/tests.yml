@@ -1,0 +1,139 @@
+name: tests
+
+# WHY THIS EXISTS
+#
+# There was no CI. `run-*-tests.ps1` ran only when a human remembered to type it, so "the
+# suite is green" was never a property of main - only of the last time someone looked.
+# It was RED on main from PR #65 through PR #66 and nobody noticed; it was found by
+# accident while editing a nearby file. A 17-check suite nobody runs is documentation.
+#
+# Windows runner on purpose: these scripts are written for and maintained on Windows
+# (run-marketplace-tests.ps1 does `-replace '/','\'` before Join-Path, for one). CI should
+# run the same code the maintainer runs, not a port of it.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# A second push to the same PR makes the first run's answer worthless - cancel it.
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  suites:
+    runs-on: windows-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # run-wrapper-tests.ps1 drives git; compare-with-package walks history.
+          fetch-depth: 0
+
+      - name: Identify the environment
+        shell: pwsh
+        run: |
+          "pwsh   : $($PSVersionTable.PSVersion)"
+          "git    : $(git --version)"
+          "p4     : $(if (Get-Command p4 -ErrorAction SilentlyContinue) { 'present' } else { 'ABSENT - p4-dependent cases will SKIP (see summary)' })"
+
+      - name: Give git an identity
+        shell: pwsh
+        # Suites that exercise the update/promote wrappers may commit in a fixture repo.
+        run: |
+          git config --global user.email "ci@example.invalid"
+          git config --global user.name  "myst CI"
+          git config --global init.defaultBranch main
+
+      - name: Run every suite
+        id: suites
+        shell: pwsh
+        run: |
+          $suites = Get-ChildItem scripts/run-*-tests.ps1 | Sort-Object Name
+          if ($suites.Count -eq 0) { throw "no suites matched scripts/run-*-tests.ps1 - discovery is broken, which would otherwise pass as green" }
+          "Discovered $($suites.Count) suites.`n"
+
+          $rows = @()
+          foreach ($s in $suites) {
+              $name = $s.BaseName -replace '^run-|-tests$',''
+              "::group::$name"
+              $sw  = [Diagnostics.Stopwatch]::StartNew()
+              # Run every suite even after one fails. Stopping at the first failure means
+              # fixing it only to discover the next on the following run.
+              $out = & pwsh -NoProfile -File $s.FullName 2>&1 | Out-String
+              $code = $LASTEXITCODE
+              $sw.Stop()
+              $out
+              "::endgroup::"
+
+              # Surface SKIPs. A suite that skips its real cases because a tool is absent
+              # exits 0 and looks identical to one that verified everything - that is the
+              # exact failure class this repo keeps hitting.
+              $skips = ([regex]::Matches($out, '(?m)^\s*SKIP\s')).Count
+
+              $rows += [pscustomobject]@{
+                  Suite = $name
+                  Result = $(if ($code -eq 0) { 'pass' } else { 'FAIL' })
+                  Exit = $code
+                  Skipped = $skips
+                  Sec = [math]::Round($sw.Elapsed.TotalSeconds, 1)
+              }
+          }
+
+          $failed  = @($rows | Where-Object { $_.Exit -ne 0 })
+          $skipped = @($rows | Where-Object { $_.Skipped -gt 0 })
+
+          # Job summary - the thing a human actually reads on a red build.
+          $md  = "## Test suites`n`n"
+          $md += "| Suite | Result | Skipped | Sec |`n|---|---|---|---|`n"
+          foreach ($r in $rows) {
+              $mark = if ($r.Exit -eq 0) { ':white_check_mark: pass' } else { ':x: **FAIL**' }
+              $sk   = if ($r.Skipped -gt 0) { ":warning: $($r.Skipped)" } else { '0' }
+              $md  += "| $($r.Suite) | $mark | $sk | $($r.Sec) |`n"
+          }
+          $md += "`n**$($rows.Count - $failed.Count)/$($rows.Count) suites green.**`n"
+          if ($skipped.Count -gt 0) {
+              $md += "`n> :warning: $($skipped.Count) suite(s) skipped cases - usually no p4 client on the runner. "
+              $md += "Skipped cases are NOT verified; a green build with skips is weaker than a green build without.`n"
+          }
+          $md | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+
+          $rows | Format-Table -AutoSize | Out-String -Width 200
+
+          if ($failed.Count -gt 0) {
+              foreach ($f in $failed) { "::error title=suite failed::$($f.Suite) exited $($f.Exit)" }
+              throw "$($failed.Count) of $($rows.Count) suites failed"
+          }
+          "All $($rows.Count) suites green."
+
+      - name: README badge agrees with reality
+        shell: pwsh
+        # The badge drifts silently: it sat at v4.24.2 through two releases, and the suite
+        # count is the same kind of hand-maintained number. Assert both against the tree.
+        run: |
+          $readme = Get-Content -Raw README.md
+          $actual = (Get-ChildItem scripts/run-*-tests.ps1).Count
+          $ok = $true
+
+          if ($readme -match 'tests-(\d+)%20suites%20passing') {
+              $claimed = [int]$Matches[1]
+              if ($claimed -ne $actual) {
+                  "::error title=badge drift::README claims $claimed suites; the tree has $actual"
+                  $ok = $false
+              } else { "suite-count badge: $actual, correct" }
+          } else { "::warning title=badge::no suite-count badge found in README.md" }
+
+          $ver = (Get-Content -Raw package-manifest.json | ConvertFrom-Json).package.version
+          if (-not $ver) { $ver = (Get-Content -Raw package-manifest.json | ConvertFrom-Json).version }
+          if ($readme -match 'version-v([0-9]+\.[0-9]+\.[0-9]+)-blue') {
+              if ($Matches[1] -ne $ver) {
+                  "::error title=badge drift::README badge says v$($Matches[1]); package-manifest.json says $ver"
+                  $ok = $false
+              } else { "version badge: v$ver, correct" }
+          } else { "::warning title=badge::no version badge found in README.md" }
+
+          if (-not $ok) { throw "README badge does not match the tree" }

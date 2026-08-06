@@ -1,7 +1,7 @@
-# migrate-retired-skills.ps1 — remove skills retired/renamed by the upstream convergence (v2.5.0–v2.11.x)
+# migrate-retired-skills.ps1 - remove skills retired/renamed by the upstream convergence (v2.5.0-v2.11.x)
 #
 # The installer adds/updates manifest entries but does NOT delete files removed from the
-# manifest. When upgrading an OLD consumer install, the retired skills linger as orphans —
+# manifest. When upgrading an OLD consumer install, the retired skills linger as orphans -
 # and in Perforce write-mode, preflight check 5 ("no unmanaged scaffold files") will BLOCK
 # the upgrade until they're gone. Run this once before/with the upgrade.
 #
@@ -35,11 +35,11 @@ foreach ($td in $toolDirs) {
 }
 
 Write-Output "=============================================================="
-Write-Output "migrate-retired-skills — target: $TargetRoot"
+Write-Output "migrate-retired-skills - target: $TargetRoot"
 Write-Output "mode: $(if ($Apply) { 'APPLY' } else { 'DRY-RUN (no changes)' })$(if ($UsePerforce) { ' [Perforce]' })"
 Write-Output "=============================================================="
 if ($found.Count -eq 0) {
-    Write-Output "No retired skills/commands found. Nothing to migrate — you're clean."
+    Write-Output "No retired skills/commands found. Nothing to migrate - you're clean."
     exit 0
 }
 Write-Output "Retired items present ($($found.Count)):"

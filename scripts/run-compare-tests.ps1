@@ -1,4 +1,4 @@
-# run-compare-tests.ps1 — compare-with-package.ps1 verification (issue 10)
+# run-compare-tests.ps1 - compare-with-package.ps1 verification (issue 10)
 #
 # Builds a synthetic 3-file fixture (package + pinned-snapshot + target) and
 # exercises each of the four outcomes plus the meta-conflict path.

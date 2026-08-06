@@ -59,8 +59,20 @@ if ([string]::IsNullOrWhiteSpace($VersionControl)) {
     if (Test-Path (Join-Path $TargetRoot '.p4ignore')) {
         $VersionControl = 'perforce'
     } else {
-        $p4Info = & p4 -F "%clientRoot%" -ztag info 2>$null
-        if ($LASTEXITCODE -eq 0 -and $p4Info -and $TargetRoot.ToLower().StartsWith(([string]$p4Info).ToLower())) {
+        # Probe p4 ONLY if the client exists. `2>$null` redirects a native command's
+        # stderr; it does NOT suppress CommandNotFoundException, which is a PowerShell
+        # error raised before any process starts. Without this guard, every machine
+        # lacking the Perforce CLI - which is most of them, and precisely the
+        # "filesystem mode" path the README advertises - took a visible error on the
+        # documented one-command install. Found by CI on its first run; it could never
+        # be seen on a Perforce workstation.
+        $p4Info = $null
+        $p4Ok = $false
+        if (Get-Command p4 -ErrorAction SilentlyContinue) {
+            $p4Info = & p4 -F "%clientRoot%" -ztag info 2>$null
+            $p4Ok = ($LASTEXITCODE -eq 0)
+        }
+        if ($p4Ok -and $p4Info -and $TargetRoot.ToLower().StartsWith(([string]$p4Info).ToLower())) {
             $VersionControl = 'perforce'
         } elseif (Test-Path (Join-Path $TargetRoot '.git')) {
             $VersionControl = 'git'

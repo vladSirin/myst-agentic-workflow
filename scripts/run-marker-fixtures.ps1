@@ -1,4 +1,4 @@
-# run-marker-fixtures.ps1 — Marker Specification verification (plan v1.6 line 403-405)
+# run-marker-fixtures.ps1 - Marker Specification verification (plan v1.6 line 403-405)
 #
 # Proves the installer REFUSES TO WRITE under every pathological case, with
 # exit code 2 and ZERO file mutation. Also proves CRLF/BOM normalization

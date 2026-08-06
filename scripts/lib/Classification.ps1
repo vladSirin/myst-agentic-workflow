@@ -1,4 +1,4 @@
-# Classification.ps1 — Ownership bucket taxonomy (issue 09)
+# Classification.ps1 - Ownership bucket taxonomy (issue 09)
 #
 # Maps every manifest entry to exactly one of four mutually-exclusive ownership
 # buckets, used by diff-installed.ps1, promote-from-project.ps1, and

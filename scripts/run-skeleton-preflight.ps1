@@ -1,4 +1,4 @@
-# run-skeleton-preflight.ps1 — Skeleton-phase preflight (plan v1.6 lines 793-802)
+# run-skeleton-preflight.ps1 - Skeleton-phase preflight (plan v1.6 lines 793-802)
 #
 # Runs the 10-point checklist that gates Skeleton-phase write-mode enablement.
 # Read-only: never writes. Exits 0 if all checks pass, 1 if any fail.
@@ -96,7 +96,7 @@ if ($p4Available -and $depotRoot) {
     $openedRx = '^' + [regex]::Escape("$depotRoot/") + '(\S+)#\d+\s+-\s+(\S+)\s'
     foreach ($line in $opened) {
         # Format: <depotRoot>/<rel>#<rev> - <action> [default change|change <CL>] (<type>)
-        # <action> may contain '/' (move/add, move/delete) — capture greedy-friendly.
+        # <action> may contain '/' (move/add, move/delete) - capture greedy-friendly.
         if ($line -match $openedRx) {
             $pendingOpens[$Matches[1]] = $Matches[2]
         }

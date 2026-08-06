@@ -1,4 +1,4 @@
-# run-classification-tests.ps1 — Ownership bucket verification (issue 09)
+# run-classification-tests.ps1 - Ownership bucket verification (issue 09)
 #
 #   exit 0 : all checks pass
 #   exit 1 : one or more checks failed

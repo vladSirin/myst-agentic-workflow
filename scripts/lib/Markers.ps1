@@ -1,4 +1,4 @@
-# Markers.ps1 — Marker Specification implementation (plan v1.6 lines 368-405)
+# Markers.ps1 - Marker Specification implementation (plan v1.6 lines 368-405)
 #
 # Pure, READ-ONLY parser. It never writes a file. Any marker ambiguity is a
 # hard error: callers map it to exit code 2 and refuse to write (plan line 391).

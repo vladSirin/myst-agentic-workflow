@@ -1,4 +1,4 @@
-# install.ps1 — myst-agentic-workflow scaffold installer
+# install.ps1 - myst-agentic-workflow scaffold installer
 # Applies package templates + overlays to a consuming project. -Mode Write is
 # gated by run-skeleton-preflight.ps1 (10/10 required) and uses InstallJournal
 # for atomic-rename across the staged set.
@@ -307,7 +307,7 @@ $( ($readOnly | Select-Object -First 5 | ForEach-Object { '  - ' + $_.Path }) -j
         if ($UsePerforce -and $targetCL -eq 'new') {
             # W4 (issue 15 review): parameterize the CL tag prefix via the consuming
             # project's installedProject.clTagPrefix. Default to [scaffold][install]
-            # so the description is editable before submit (see perforce-consumer.md §3)
+            # so the description is editable before submit (see perforce-consumer.md section 3)
             # and still satisfies the [jobFamily][name] convention audits grep for.
             $clTag = "[scaffold][install]"
             if ($InstalledManifest.PSObject.Properties.Match('installedProject').Count -gt 0 -and

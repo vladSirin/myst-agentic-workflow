@@ -1,6 +1,6 @@
 # run-linkcheck-tests.ps1 -- intra-package link-existence lint (ADR-0002 principle #4)
 #
-# Enforces "completeness is part of faithful — no dangling references": every
+# Enforces "completeness is part of faithful - no dangling references": every
 # relative markdown link from a skill/workflow/command file to a package file
 # (a companion like CONTEXT-FORMAT.md / AGENT-BRIEF.md / scripts/*.sh, or a
 # sibling workflow) must resolve to a file that actually ships in the package.
@@ -88,8 +88,8 @@ Write-Host '=============================================================='
 if ($fail -gt 0) {
     Write-Host ''
     Write-Host 'A reference points at a package file that does not ship. Either add the'
-    Write-Host 'file (faithful restore), re-point the link, or — if it is a known, accepted'
-    Write-Host 'drift — add it to $allow with a reason. Consumer artifacts are auto-skipped.'
+    Write-Host 'file (faithful restore), re-point the link, or - if it is a known, accepted'
+    Write-Host 'drift - add it to $allow with a reason. Consumer artifacts are auto-skipped.'
     exit 1
 }
 exit 0

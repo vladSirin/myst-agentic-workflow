@@ -4,9 +4,9 @@
 # (ADR: vendor-and-overlay + core-local). A re-vendor from mattpocock/skills only ever writes
 # under templates/{tool}/.{tool}/skills/<upstream-name>/, so:
 #   1. Every upstreamDerived=true entry must carry an upstreamLicense (provenance is complete).
-#   2. No LOCAL-origin (upstreamDerived=false) SKILL may live under templates/.../skills/ — local
+#   2. No LOCAL-origin (upstreamDerived=false) SKILL may live under templates/.../skills/ - local
 #      skills must live in an overlay (e.g. overlays/core-local/), which re-vendor never touches.
-#      (Local non-skill content — commands/workflows/agents/scripts — may stay in templates/,
+#      (Local non-skill content - commands/workflows/agents/scripts - may stay in templates/,
 #      because the upstream skill sync does not target those directories.)
 $ErrorActionPreference = 'Stop'
 $pkg = (Resolve-Path "$PSScriptRoot\..").Path

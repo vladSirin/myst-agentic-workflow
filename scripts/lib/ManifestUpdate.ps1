@@ -1,4 +1,4 @@
-# ManifestUpdate.ps1 — Update-ManifestForChanges (issue 08)
+# ManifestUpdate.ps1 - Update-ManifestForChanges (issue 08)
 #
 # Surgical line-level rewrite of scaffold-manifest.json so that the per-entry
 # hash fields reflect what was actually just written to disk. Called as the
