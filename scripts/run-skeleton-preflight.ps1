@@ -289,20 +289,38 @@ if (-not $p4Available -or -not $depotRoot) {
 }
 
 # 6. Local-only files are ignored (i.e., not opened in P4).
+# Nuance (2026-08-06, found live during a consumer upgrade): "local-only" means
+# the INSTALLER never writes them -- it does not mean the file cannot be
+# depot-tracked. The reference consumer commits .claude/settings.json as team
+# configuration BY DESIGN, and a teammate editing it in a pending CL is normal
+# workflow, not an accident; the old blanket FAIL made every legitimate
+# settings.json edit block every upgrade run. The hazard this check exists for
+# is local STATE being ADDED to the depot (a settings.local.json or a lock file
+# swept into a CL). So: opened + already-depot-tracked (headRev exists) -> OK
+# with a note; opened + NOT in the depot (pending add) -> FAIL as before.
 if (-not $p4Available) {
     Skip '6. local-only files are not in P4 opens' 'p4 client not reachable'
 } else {
-    $openedLocal = @()
+    $openedLocalAdd = @(); $openedLocalTracked = @()
     $prev = $ErrorActionPreference; $ErrorActionPreference = 'SilentlyContinue'
     $opened = (& cmd /c "p4 opened 2>nul")
     $ErrorActionPreference = $prev
     foreach ($e in $m.files) {
         if (-not $e.localOnly) { continue }
         $needle = $e.path.Replace('\','/')
-        if ($opened -match [regex]::Escape($needle)) { $openedLocal += $needle }
+        if ($opened -match [regex]::Escape($needle)) {
+            $hr = $null
+            if ($depotRoot) { $hr = P4HeadRev "$depotRoot/$needle" }
+            if ($null -ne $hr) { $openedLocalTracked += $needle } else { $openedLocalAdd += $needle }
+        }
     }
-    if ($openedLocal.Count -eq 0) { Ok '6. local-only files are not in P4 opens' "$(($m.files | Where-Object {$_.localOnly}).Count) localOnly entries" }
-    else { Bad '6. local-only files are not in P4 opens' ($openedLocal -join '; ') }
+    if ($openedLocalAdd.Count -gt 0) {
+        Bad '6. local-only files are not in P4 opens' ("pending ADD of local state: " + ($openedLocalAdd -join '; '))
+    } elseif ($openedLocalTracked.Count -gt 0) {
+        Ok '6. local-only files are not in P4 opens' ("depot-tracked team config open in a pending CL (legitimate): " + ($openedLocalTracked -join '; '))
+    } else {
+        Ok '6. local-only files are not in P4 opens' "$(($m.files | Where-Object {$_.localOnly}).Count) localOnly entries"
+    }
 }
 
 # 7. Tool capability deviations reported (informational unless missing).
