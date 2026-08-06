@@ -86,6 +86,20 @@ if (-not $pkgSha) {
 }
 if (-not $pkgSha) { $pkgSha = 'unknown' }
 
+# --- Resolve package version ---
+# package-manifest.json is authoritative. The template's hardcoded package block
+# rotted at 1.0.0/7489cad for every consumer (audit 2026-08-06) because this
+# script copied it verbatim; the template now carries sentinels instead.
+$pkgVersion = $null
+$pkgManPath2 = Join-Path $PackageRoot 'package-manifest.json'
+if (Test-Path -LiteralPath $pkgManPath2) {
+    try {
+        $pkgMan2 = Get-Content -Raw $pkgManPath2 | ConvertFrom-Json
+        if ($pkgMan2.package -and $pkgMan2.package.version) { $pkgVersion = [string]$pkgMan2.package.version }
+    } catch { }
+}
+if (-not $pkgVersion) { $pkgVersion = 'unknown' }
+
 # --- Resolve tool / overlay selection ---
 $selectedTools = if ($Tools -eq 'all') { @('codex','claude','common') }
                  else { @(($Tools -split ',') | ForEach-Object { $_.Trim().ToLower() }) }
@@ -157,7 +171,12 @@ $installedProject = [pscustomobject]@{
 
 $out = [pscustomobject]@{
     schemaVersion    = 3
-    package          = $tpl.package
+    package          = [pscustomobject]@{
+        name         = $tpl.package.name
+        version      = $pkgVersion
+        source       = $tpl.package.source
+        sourceCommit = $pkgSha
+    }
     installer        = [pscustomobject]@{
         version     = $ScriptVersion
         lastRunAt   = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss+00:00")

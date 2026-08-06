@@ -400,13 +400,36 @@ $( ($readOnly | Select-Object -First 5 | ForEach-Object { '  - ' + $_.Path }) -j
             foreach ($c in $Changes) { Add-JournalStage -JournalPath $jrnPath -Target $c.Target -Content $c.Rendered }
             $manifestPathForAction = $InstalledManifestPath
             $changesForAction      = @($Changes)
+            # Provenance stamp (audit 2026-08-06): version/SHA of the package being
+            # installed RIGHT NOW, so the consumer's package block stops rotting at
+            # its init-time values. Guarded: a non-git package copy or missing
+            # package-manifest stamps nothing rather than failing the write.
+            $pkgVerForAction = ''
+            $pkgShaForAction = ''
+            try {
+                $pmp = Join-Path $PackageRoot 'package-manifest.json'
+                if (Test-Path -LiteralPath $pmp) {
+                    $pmj = Get-Content -LiteralPath $pmp -Raw | ConvertFrom-Json
+                    if ($pmj.package -and $pmj.package.version) { $pkgVerForAction = [string]$pmj.package.version }
+                }
+            } catch { }
+            $prevEapPkg = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+            try {
+                Push-Location $PackageRoot
+                try {
+                    $shaOut = & git rev-parse HEAD 2>$null
+                    if ($LASTEXITCODE -eq 0 -and $shaOut) { $pkgShaForAction = ([string]($shaOut | Select-Object -First 1)).Trim() }
+                } finally { Pop-Location }
+            } catch { }
+            finally { $ErrorActionPreference = $prevEapPkg }
             # The scriptblock runs inside Complete-JournalCommit's scope,
             # where Update-ManifestForChanges isn't visible. Dot-source the
             # lib at the call site to make the function callable in any scope.
             $manifestUpdateLib = Join-Path $PSScriptRoot 'lib\ManifestUpdate.ps1'
             $manifestUpdate = {
                 . $manifestUpdateLib
-                Update-ManifestForChanges -ManifestPath $manifestPathForAction -Changes $changesForAction
+                Update-ManifestForChanges -ManifestPath $manifestPathForAction -Changes $changesForAction `
+                    -PackageVersion $pkgVerForAction -PackageSourceCommit $pkgShaForAction
             }.GetNewClosure()
             Complete-JournalCommit -JournalPath $jrnPath -ManifestUpdateAction $manifestUpdate
 

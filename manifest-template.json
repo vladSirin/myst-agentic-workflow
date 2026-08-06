@@ -3,9 +3,9 @@
     "_comment": "Canonical manifest template for new consumers. Copied + customized by scripts/init-consumer.ps1. Per-install fields (contentHash, blockHash, depotRevision, pendingChangelist, lastCheckedAt) populated by install.ps1 on first run.",
     "package": {
         "name": "myst-agentic-workflow",
-        "version": "1.0.0",
+        "version": "<resolved-by-init-consumer>",
         "source": "https://github.com/vladSirin/myst-agentic-workflow",
-        "sourceCommit": "7489cad34ede03a90cb3329d4db56a3b0b73b122"
+        "sourceCommit": "<resolved-by-init-consumer>"
     },
     "installer": {
         "version": "<resolved-by-init-consumer>",

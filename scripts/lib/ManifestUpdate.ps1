@@ -29,7 +29,13 @@ function Update-ManifestForChanges {
         [Parameter(Mandatory)][string] $ManifestPath,
         # Each change must carry: .Path, .Strategy, .Target, and (for block-scoped)
         # one of .GeneratedBlockId / .AppendFragmentId.
-        [Parameter(Mandatory)][array]  $Changes
+        [Parameter(Mandatory)][array]  $Changes,
+        # Optional provenance stamp (audit 2026-08-06): nothing on the update path
+        # ever refreshed package.version/sourceCommit, so the consumer manifest
+        # said "1.0.0 @ 7489cad" forever while running 4.x content and every
+        # staleness diagnosis lied. Callers pass the version/SHA just installed.
+        [string] $PackageVersion = '',
+        [string] $PackageSourceCommit = ''
     )
 
     # 1. Read manifest preserving BOM + line-ending convention.
@@ -76,8 +82,22 @@ function Update-ManifestForChanges {
     #    lastCheckedAt for entries in $hashByPath.
     $linesArr = ($text -replace "`r`n","`n" -replace "`r","`n").Split("`n")
     $cur = $null
+    $inPackage = $false
     for ($i = 0; $i -lt $linesArr.Count; $i++) {
         $ln = $linesArr[$i]
+        # Package-provenance stamp, scoped STRICTLY to the "package": { block --
+        # a bare "version" match would also hit the installer block below it.
+        if ($ln -match '^\s+"package":\s*\{\s*$') { $inPackage = $true; continue }
+        if ($inPackage) {
+            if ($PackageVersion -and $ln -match '^(\s+"version":\s+)"[^"]*"(,?\s*)$') {
+                $linesArr[$i] = $Matches[1] + '"' + $PackageVersion + '"' + $Matches[2]; continue
+            }
+            if ($PackageSourceCommit -and $ln -match '^(\s+"sourceCommit":\s+)"[^"]*"(,?\s*)$') {
+                $linesArr[$i] = $Matches[1] + '"' + $PackageSourceCommit + '"' + $Matches[2]; continue
+            }
+            if ($ln -match '^\s+\},?\s*$') { $inPackage = $false }
+            continue
+        }
         if ($ln -match '^\s+"path":\s+"([^"]+)",\s*$') {
             $cur = $Matches[1]
             continue
