@@ -137,3 +137,27 @@ jobs:
           } else { "::warning title=badge::no version badge found in README.md" }
 
           if (-not $ok) { throw "README badge does not match the tree" }
+
+  # RED-FIRST PROOF (this branch only, never merges): runs the PS 5.1 git-pull
+  # regression test against THIS tree's UNFIXED update.ps1 under real
+  # powershell.exe. Expected conclusion on this branch: FAILURE - that failure
+  # IS the evidence artifact the fix PR cites. Deliberately excludes the
+  # parse/BOM gates so the red is exactly the 5.1 regression and nothing else.
+  ps51-redproof:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Give git an identity
+        shell: pwsh
+        run: |
+          git config --global user.email "ci@example.invalid"
+          git config --global user.name  "myst CI"
+          git config --global init.defaultBranch main
+      - name: PS 5.1 git-pull regression (EXPECTED RED on this branch)
+        shell: pwsh
+        run: |
+          & powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\run-ps51-pull-tests.ps1
+          exit $LASTEXITCODE
