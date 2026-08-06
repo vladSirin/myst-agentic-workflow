@@ -13,6 +13,18 @@
 #                                   as "<depot>=<rev>" entries joined by `;`.
 #   FAKE_P4_DEPOT_ROOT           -- Depot root returned by 'p4 where'. Defaults to
 #                                   //UEPrototype/main to match the existing fixtures.
+#   FAKE_P4_WHERE_FILE           -- When set, 'p4 where <file>' outputs THIS depot
+#                                   path verbatim (the per-file mapping upgrade.ps1
+#                                   parses) instead of the '<root>/...' form.
+#   FAKE_P4_FSTAT_RECORDS        -- Newline-joined '<depot>|<headRev>|<headAction>'
+#                                   lines for the -F "%depotFile%|%headRev%|%headAction%"
+#                                   fstat form (upgrade.ps1's ADOPT scan). A pending-add
+#                                   is a record with an EMPTY headRev field. When set,
+#                                   every fstat call returns all records (callers key
+#                                   by path, so surplus records are inert).
+#
+# 'p4 change -o' returns a minimal spec; 'p4 change -i' always answers
+# "Change 123 created." -- enough for the CL-wrapping code paths under test.
 $ErrorActionPreference = 'Continue'
 $argv = $args
 
@@ -34,11 +46,30 @@ if ($argv.Count -eq 0) { exit 0 }
 
 switch ($argv[0]) {
     'where' {
+        # Per-file mapping form (upgrade.ps1 parses the manifest's depot path).
+        if ($env:FAKE_P4_WHERE_FILE) {
+            Write-Output $env:FAKE_P4_WHERE_FILE
+            exit 0
+        }
         # Real p4 maps a local path to its depot path; the preflight takes the
         # first non-exclusion line and strips the trailing '/...'.
         $root = $env:FAKE_P4_DEPOT_ROOT
         if (-not $root) { $root = '//UEPrototype/main' }
         Write-Output ($root + '/...')
+        exit 0
+    }
+    'change' {
+        if ($argv -contains '-o') {
+            Write-Output 'Change: new'
+            Write-Output 'Client: fake-client'
+            Write-Output 'User:   fake-user'
+            Write-Output 'Status: new'
+            Write-Output 'Description:'
+            Write-Output "`t<enter description here>"
+            exit 0
+        }
+        # 'change -i' (spec on stdin): pretend creation succeeded.
+        Write-Output 'Change 123 created.'
         exit 0
     }
     'info' {
@@ -61,6 +92,17 @@ switch ($argv[0]) {
         exit 0
     }
     'fstat' {
+        # Record form: -F "%depotFile%|%headRev%|%headAction%" fstat <pattern>
+        # (upgrade.ps1 ADOPT scan). Returns every seeded record for any pattern.
+        # Emitted line-by-line: when this shim is dispatched via a .ps1 wrapper
+        # (in-process), a single multi-line string would reach the caller as ONE
+        # element and the second record would be swallowed by the first parse.
+        if ($env:FAKE_P4_FSTAT_RECORDS) {
+            foreach ($line in ($env:FAKE_P4_FSTAT_RECORDS -split "`r?`n")) {
+                if ($line) { Write-Output $line }
+            }
+            exit 0
+        }
         # Expected: fstat -T headRev <depot-path>
         $depot = $null
         for ($i = 1; $i -lt $argv.Count; $i++) {

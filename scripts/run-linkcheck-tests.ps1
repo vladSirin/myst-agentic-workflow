@@ -23,18 +23,11 @@ function Bad($n, $why) { Write-Host ("[FAIL] {0}: {1}" -f $n,$why); $script:fail
 
 # --- Allow-list: known dangling refs pending reconciliation (ADR-0002 drifts) ---
 # Key: "<tool-agnostic-source>|<rawTarget>".  Value: reason.
-$allow = @{
-    # triage companions dropped on original vendoring (Phase 1 fix pending)
-    # tdd companions dropped (Phase 1 fix pending)
-    # improve-codebase-architecture / codebase-design companions RESOLVED v4.9.0
-    #   (HTML-REPORT.md + DEEPENING.md restored to their skill dirs; ica/ removed)
-    # grill-with-docs companions (Phase 1 fix pending)
-    # write-a-skill REFERENCE.md never existed upstream@pin (fenced example text; benign)
-    # cross-overlay workflow refs: resolve only when the named overlay is co-installed
-    'workflows/AgenticWorkflow.md|DesignWorkflow.md'                    = 'cross-overlay: DesignWorkflow ships in myst-project overlay (tracked in ADR-0002 drifts)'
-    'workflows/PlanPriority.md|DesignWorkflow.md'                       = 'cross-overlay: DesignWorkflow ships in myst-project overlay'
-    'workflows/AutoPlanMode.md|ChangelistVerification.md'              = 'cross-overlay: ChangelistVerification ships in perforce overlay'
-}
+# EMPTY as of the v7.0.0 sweep: the workflows/AgenticWorkflow.md-era cross-overlay
+# entries matched nothing on the current tree (those workflow files became plugin
+# skills) and were pruned. Add entries ONLY for a known, accepted drift, with a
+# reason; each entry is debt.
+$allow = @{}
 
 # Consumer artifacts (created in the consumer repo, never shipped) -> skip
 function Test-ConsumerArtifact([string] $target) {
@@ -55,7 +48,7 @@ function Get-ToolAgnosticSource([string] $relPath) {
     return $r
 }
 
-$roots = @('templates','overlays') | ForEach-Object { Join-Path $pkg $_ }
+$roots = @('templates','overlays','plugins') | ForEach-Object { Join-Path $pkg $_ }
 $files = foreach ($root in $roots) {
     if (Test-Path $root) { Get-ChildItem -Path $root -Recurse -File -Filter '*.md' }
 }

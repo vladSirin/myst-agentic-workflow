@@ -82,6 +82,103 @@ try {
 }
 finally { Remove-Item -Recurse -Force $t -ErrorAction SilentlyContinue }
 
+# --- ADOPT-path cases (Perforce reconcile) -----------------------------------
+# Pins two behaviors of upgrade.ps1's ADOPT scan:
+#   (a) an entry already present in the INSTALLED manifest as owner=project is
+#       kept VERBATIM through the reconcile -- custom fields (notes),
+#       baselineState and sourceCommit survive; only contentHash/depotRevision
+#       are recomputed;
+#   (b) a pending-add (fstat record with an EMPTY headRev field) adopts with
+#       depotRevision null -- NOT 0 (the unguarded [int]'' coercion).
+# Uses the fake-p4 shim (scripts/fake-p4.ps1: FAKE_P4_WHERE_FILE +
+# FAKE_P4_FSTAT_RECORDS) so no live depot is involved. The package side is a
+# COPY whose install.ps1 is a stub: the unit under test is the reconcile and
+# the manifest write, which upgrade.ps1 completes BEFORE the install phase;
+# install behavior has its own suites.
+$t2       = Join-Path $env:TEMP ('upgt-adopt-' + [guid]::NewGuid().ToString('N'))
+$fpkgRoot = Join-Path $t2 'pkg'
+$cons     = Join-Path $t2 'consumer'
+$shim2    = Join-Path $t2 'p4shim'
+$origPath2 = $env:PATH
+try {
+    New-Item -ItemType Directory -Path $fpkgRoot, $cons, $shim2 -Force | Out-Null
+    Copy-Item -Recurse (Join-Path $pkg 'scripts') (Join-Path $fpkgRoot 'scripts')
+    Copy-Item (Join-Path $pkg 'manifest-template.json') $fpkgRoot
+    Copy-Item (Join-Path $pkg 'package-manifest.json') $fpkgRoot
+    Set-Content -LiteralPath (Join-Path $fpkgRoot 'scripts\install.ps1') -Value "# test stub: the ADOPT cases assert on the reconciled manifest, which upgrade.ps1 writes before install runs`nexit 0"
+
+    # TWO dispatchers, deliberately. upgrade.ps1's fstat format string carries
+    # '|' characters; routing that through a .bat means cmd.exe re-parses the
+    # argument and an unquoted '|' becomes a pipe operator (real p4.exe never
+    # goes through cmd, so only a .bat shim hits this). PowerShell resolves the
+    # .ps1 ahead of the .bat, so in-PowerShell p4 calls get intact args, while
+    # upgrade's `cmd /c "p4 change -i < spec"` still finds the .bat.
+    @"
+@echo off
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$pkg\scripts\fake-p4.ps1" %*
+"@ | Set-Content -Path (Join-Path $shim2 'p4.bat') -Encoding ASCII
+    @"
+& "$pkg\scripts\fake-p4.ps1" @args
+exit `$LASTEXITCODE
+"@ | Set-Content -Path (Join-Path $shim2 'p4.ps1') -Encoding ASCII
+
+    # Old consumer manifest via the real init-consumer (VC=perforce), then mutated.
+    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $fpkgRoot 'scripts\init-consumer.ps1') `
+        -TargetRoot $cons -PackageRoot $fpkgRoot -ProjectName AdoptTest `
+        -VersionControl perforce -Tools claude -Overlays core *> (Join-Path $t2 'init.log')
+    if ($LASTEXITCODE -ne 0) { Bad 'ADOPT fixture' 'init-consumer failed'; Get-Content (Join-Path $t2 'init.log') -Tail 10 | Write-Host; throw 'adopt-fixture' }
+
+    $mp2 = Join-Path $cons 'Docs\agents\scaffold-manifest.json'
+    $mb2 = [IO.File]::ReadAllBytes($mp2); if ($mb2[0] -eq 0xEF) { $mb2 = $mb2[3..($mb2.Length-1)] }
+    $man2 = [Text.Encoding]::UTF8.GetString($mb2) | ConvertFrom-Json
+    $man2.files += [pscustomobject]@{
+        path='.claude/rules/TeamRule.md'; tool='common'; owner='project'; ownerOverlay=$null
+        sourceTemplate=$null; sourceCommit='project-local'; hashPolicy='sha256'
+        contentHash='sha256:stale'; depotRevision=3; mergeStrategy='manual-only'; localOnly=$false
+        writablePolicy='human-owned'; baselineState='adopted-on-upgrade'
+        upstreamDerived=$false; upstreamLicense=$null; blockHashPolicy='not-applicable'
+        notes='evidence: reviewed in CL 999; do not clobber'
+    }
+    [IO.File]::WriteAllText($mp2, ($man2 | ConvertTo-Json -Depth 100), (New-Object Text.UTF8Encoding($true)))
+
+    # On-disk files: TeamRule exists at depot head; PendingRule exists but is a
+    # pending add (its fstat record below carries an EMPTY headRev).
+    New-Item -ItemType Directory -Path (Join-Path $cons '.claude\rules') -Force | Out-Null
+    Set-Content -LiteralPath (Join-Path $cons '.claude\rules\TeamRule.md') -Value 'team rule body' -NoNewline
+    Set-Content -LiteralPath (Join-Path $cons '.claude\rules\PendingRule.md') -Value 'pending-add body' -NoNewline
+
+    $env:PATH = "$shim2;$origPath2"
+    $env:FAKE_P4_WHERE_FILE    = '//fake/depot/Docs/agents/scaffold-manifest.json'
+    $env:FAKE_P4_FSTAT_RECORDS = "//fake/depot/.claude/rules/TeamRule.md|7|edit`n//fake/depot/.claude/rules/PendingRule.md||add"
+
+    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $pkg 'upgrade.ps1') `
+        -TargetRoot $cons -PackageRoot $fpkgRoot -Apply -Yes *> (Join-Path $t2 'apply.log')
+    if ($LASTEXITCODE -eq 0) { Ok 'ADOPT: perforce upgrade -Apply exit 0 under the fake-p4 shim' }
+    else { Bad 'ADOPT: apply exit' "exit $LASTEXITCODE"; Get-Content (Join-Path $t2 'apply.log') -Tail 15 | Write-Host }
+
+    $mb3 = [IO.File]::ReadAllBytes($mp2); if ($mb3[0] -eq 0xEF) { $mb3 = $mb3[3..($mb3.Length-1)] }
+    $man3 = [Text.Encoding]::UTF8.GetString($mb3) | ConvertFrom-Json
+    $team = $man3.files | Where-Object { $_.path -eq '.claude/rules/TeamRule.md' }
+    $pend = $man3.files | Where-Object { $_.path -eq '.claude/rules/PendingRule.md' }
+
+    if ($team -and $team.notes -eq 'evidence: reviewed in CL 999; do not clobber' -and
+        $team.baselineState -eq 'adopted-on-upgrade' -and $team.sourceCommit -eq 'project-local' -and
+        $team.writablePolicy -eq 'human-owned') {
+        Ok 'ADOPT (a): project-owned entry kept verbatim -- notes/baselineState/sourceCommit survive'
+    } else { Bad 'ADOPT (a): field preservation' ("entry=" + ($team | ConvertTo-Json -Compress)) }
+    if ($team -and $team.depotRevision -eq 7 -and $team.contentHash -ne 'sha256:stale') {
+        Ok 'ADOPT (a): recomputed fields refreshed (depotRevision=headRev, contentHash re-baselined)'
+    } else { Bad 'ADOPT (a): recomputed fields' ("entry=" + ($team | ConvertTo-Json -Compress)) }
+    if ($pend -and $null -eq $pend.depotRevision -and $pend.owner -eq 'project' -and $pend.baselineState -eq 'adopted-on-upgrade') {
+        Ok 'ADOPT (b): pending-add (empty headRev) adopts with depotRevision null, NOT 0'
+    } else { Bad 'ADOPT (b): pending-add depotRevision' ("entry=" + ($pend | ConvertTo-Json -Compress)) }
+}
+finally {
+    $env:PATH = $origPath2
+    Remove-Item Env:FAKE_P4_WHERE_FILE, Env:FAKE_P4_FSTAT_RECORDS -ErrorAction SilentlyContinue
+    Remove-Item -Recurse -Force $t2 -ErrorAction SilentlyContinue
+}
+
 Write-Host ''
 Write-Host '=============================================================='
 Write-Host ("Upgrade tests: {0} passed, {1} failed" -f $pass, $fail)

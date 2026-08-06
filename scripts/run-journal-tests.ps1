@@ -102,6 +102,40 @@ if ($threw -and $rA -eq 'A-orig' -and $rB -eq 'B-orig' -and $rC -eq 'C-orig' -an
     Ok "BLOCKING-2 fix: mid-commit failure restores ALL prior renames from baks"
 } else { Bad "BLOCKING-2 fix" "threw=$threw  A='$rA' B='$rB' C='$rC' committed=$($j3.committed)" }
 
+# 8. EOL policy at the WRITE path (audit 2026-08-06). Two clauses only:
+#    .sh targets are ALWAYS LF; every other target preserves its existing
+#    dominant EOL; a target that does not yet exist gets LF. Pinned here
+#    because Add-JournalStage is the single shared write path -- the
+#    comparison path (Read-NormalizedText) stays LF-normalized by design and
+#    must NOT grow EOL awareness.
+function Test-HasCR([string]$p) { ([System.IO.File]::ReadAllBytes($p) -contains [byte]13) }
+$eolJournal = Join-Path $tmp '.scratch\j-eol.journal'
+$eCrlfMd = Join-Path $tmp 'EOL-CRLF.md'
+$eLfMd   = Join-Path $tmp 'EOL-LF.md'
+$eSh     = Join-Path $tmp 'EOL-SCRIPT.sh'
+$eNew    = Join-Path $tmp 'EOL-NEW.md'
+[System.IO.File]::WriteAllText($eCrlfMd, "old1`r`nold2`r`n")
+[System.IO.File]::WriteAllText($eLfMd,   "old1`nold2`n")
+[System.IO.File]::WriteAllText($eSh,     "#!/bin/sh`r`necho old`r`n")   # CRLF on disk; must converge to LF
+New-WriteJournal -JournalPath $eolJournal | Out-Null
+Add-JournalStage -JournalPath $eolJournal -Target $eCrlfMd -Content "new1`nnew2`n"      # LF-rendered content
+Add-JournalStage -JournalPath $eolJournal -Target $eLfMd   -Content "new1`r`nnew2`r`n"  # CRLF content input
+Add-JournalStage -JournalPath $eolJournal -Target $eSh     -Content "#!/bin/sh`r`necho new`r`n"
+Add-JournalStage -JournalPath $eolJournal -Target $eNew    -Content "fresh1`r`nfresh2`n"
+Complete-JournalCommit -JournalPath $eolJournal -ManifestUpdateAction { }
+if ((Test-HasCR $eCrlfMd) -and ([System.IO.File]::ReadAllText($eCrlfMd) -eq "new1`r`nnew2`r`n")) {
+    Ok "EOL: CRLF .md target stays CRLF through a content update"
+} else { Bad "EOL: CRLF .md target stays CRLF" ("bytes=" + [System.IO.File]::ReadAllText($eCrlfMd).Replace("`r","\r").Replace("`n","\n")) }
+if (-not (Test-HasCR $eLfMd) -and ([System.IO.File]::ReadAllText($eLfMd) -eq "new1`nnew2`n")) {
+    Ok "EOL: LF .md target stays LF even when the staged content arrives CRLF"
+} else { Bad "EOL: LF .md target stays LF" ("bytes=" + [System.IO.File]::ReadAllText($eLfMd).Replace("`r","\r").Replace("`n","\n")) }
+if (-not (Test-HasCR $eSh)) {
+    Ok "EOL: .sh target becomes LF regardless of its previous EOL (bash-safe)"
+} else { Bad "EOL: .sh target becomes LF" ("bytes=" + [System.IO.File]::ReadAllText($eSh).Replace("`r","\r").Replace("`n","\n")) }
+if ((Test-Path $eNew) -and -not (Test-HasCR $eNew)) {
+    Ok "EOL: new file (no existing target) gets the stated LF fallback"
+} else { Bad "EOL: new file gets LF" ("bytes=" + [System.IO.File]::ReadAllText($eNew).Replace("`r","\r").Replace("`n","\n")) }
+
 Remove-Item -Recurse -Force $tmp -ErrorAction SilentlyContinue
 Write-Output ""
 Write-Output "=============================================================="
