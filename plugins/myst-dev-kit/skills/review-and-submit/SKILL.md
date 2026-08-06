@@ -146,7 +146,7 @@ The user can always force a full agent review ("full review CL {N}"). When in do
 **Before launching reviewers**, check whether related design/plan documents exist and are up to date:
 
 1. **Search for related docs**:
-   - `Glob: {{game_docs_root}}/*{feature_keyword}*.md`
+   - Glob `*{feature_keyword}*.md` in the game project's Docs dir (`Myst_Proto/Docs/` here; see the CLAUDE.md Project section)
    - Look for `plan_*.md`, `design_*.md` matching the changelist's feature or system
 
 2. **For each related doc found**, verify:
@@ -163,8 +163,10 @@ The user can always force a full agent review ("full review CL {N}"). When in do
 
      | Status | Document | Issue |
      |--------|----------|-------|
-     | MISSING | {{game_docs_root}}/plan_{feature}.md | No plan doc exists for this feature |
-     | STALE | {{game_docs_root}}/design_{system}.md | CL work not reflected; phase status not updated |
+     | MISSING | <game Docs dir>/plan_{feature}.md | No plan doc exists for this feature |
+     | STALE | <game Docs dir>/design_{system}.md | CL work not reflected; phase status not updated |
+
+     (<game Docs dir> = the game project's Docs dir -- `Myst_Proto/Docs/` here; see the CLAUDE.md Project section.)
 
      **Proposed actions:**
      1. Create/update the above docs to reflect current state

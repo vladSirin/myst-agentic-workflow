@@ -26,6 +26,19 @@ Even when directly asked, you **MUST**:
 - **Adding new files** to `_Raw/` (importing new raw materials) — this is additive and does not alter existing sources.
 - **Citing or linking** raw files from derivative docs elsewhere in `Docs/`.
 
+## Enforcement Scope (what actually blocks)
+
+So nobody mistakes policy for mechanism:
+
+- **Agent Edit calls, and Write calls that overwrite an EXISTING `_Raw/` file**, are
+  blocked at write time by a consumer-side PreToolUse hook **where the consumer has
+  wired one** (e.g. a `.claude/scripts` raw-protect hook registered in the project's
+  committed settings). Without such a hook, this document is policy only.
+- **Adding a genuinely new file** under `_Raw/` is allowed -- additive imports do not
+  alter existing sources (see Allowed Operations above).
+- **Shell writes (`mv`/`rm`/redirection) and `p4` operations (`edit`/`delete`/`move`)**
+  are not blocked by any hook; they are caught only by the advisory submit-time audit.
+
 ## Rationale
 
 Raw materials are the ground truth imported from external authorities (design leads, publishers, reference documents). Silent or well-intentioned edits to these sources corrupt the reference chain and can invalidate downstream work that depends on them. Protection is absolute to prevent drift.

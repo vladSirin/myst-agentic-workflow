@@ -7,12 +7,15 @@ How to get the Myst team's AI setup on your machine. Two archetypes; pick yours.
 | Layer | Delivered by | Contains |
 |---|---|---|
 | **Committed core** | Perforce sync (automatic) | Team `CLAUDE.md`/`AGENTS.md`, `.claude/settings.json` (hooks + marketplace registration), rules, hook scripts, team docs (`Docs/MustRead`, `Docs/agents`) |
-| **Dev kit** | `myst-dev-kit` plugin (this repo) | 30 skills, both review agents (Claude only), `sync-build-submit` + package commands, the Submit-Audit warning bridge (Codex; verified firing 2026-08-06) |
+| **Dev kit** | `myst-dev-kit` plugin (this repo) | 24 skills, both review agents (Claude only), `sync-build-submit` + package commands, the Submit-Audit warning bridge (Codex; verified firing 2026-08-06) |
 | **Personal kit** | you, outside Perforce | `~/.claude/`, `CLAUDE.local.md`, `.claude/settings.local.json`, own skills/plugins |
 
 Governance is **advisory everywhere**: nothing blocks your work; non-compliant
 submits are warned about in-session and posted to Feishu `#cl-audit` by the
 server-side Submit-Audit.
+
+The full skills catalog (all 24, with when-to-use guidance) lives in the package
+README's [Reference section](README.md#reference).
 
 ## Just ask the agent (fastest path)
 
@@ -64,8 +67,19 @@ codex plugin marketplace upgrade
 ```
 That is the whole update. Codex has **no `plugin update` subcommand**; refreshing the
 marketplace snapshot replaces the installed plugin in place — verified 4.18.0 → 4.19.0,
-cache directory and all, with no follow-up `codex plugin add`. (Claude is the opposite:
-`claude plugin update myst-dev-kit@myst`, and it needs a restart to take effect.)
+cache directory and all, with no follow-up `codex plugin add`.
+
+**Keeping Claude Code up to date** is the opposite shape — TWO steps, then a restart:
+```
+claude plugin marketplace update myst
+claude plugin update myst-dev-kit@myst
+```
+then start a new session. The marketplace refresh alone updates nothing you have
+installed, and the plugin update without the refresh can only see the old marketplace
+snapshot -- you need both, in that order. What "latest" means is authoritative in ONE
+place: the CHANGELOG head in your local marketplace clone
+(`~/.claude/plugins/marketplaces/myst/CHANGELOG.md`), which is exactly what the
+`marketplace update` step moves.
 
 **What Codex does and does not get.** The plugin delivers the skills, the commands, and
 the Submit-Audit bridge — the bridge was **verified firing under Codex on 2026-08-06**, the
