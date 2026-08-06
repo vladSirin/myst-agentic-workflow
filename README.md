@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-16%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.27.1-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-18%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.28.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -26,7 +26,7 @@ $Pkg = "$PWD/myst-agentic-workflow"
 
 That's it for the **committed core** (bible generated-blocks, team docs, rules, hook scripts, `.p4ignore` fragment). The skills/agents/commands kit installs separately as a **plugin** (see next section) — `setup.ps1` no longer file-copies it.
 
-Three lifecycle commands cover the entire flow:
+Four lifecycle commands cover the entire flow:
 
 ```powershell
 & "$Pkg/setup.ps1"   -TargetRoot $Target  [-Yes]                        # first-time install
@@ -35,11 +35,11 @@ Three lifecycle commands cover the entire flow:
 & "$Pkg/promote.ps1" -TargetRoot $Target -Paths '<file>'                # push local improvements out
 ```
 
-All three dry-run first, prompt before writing, and auto-derive their configuration from your installed manifest.
+All four dry-run first, prompt before writing, and auto-derive their configuration from your installed manifest.
 
 ## Install as a plugin (marketplace)
 
-The repo is a **plugin marketplace** for both tools — since v4.0.0 the plugin IS the delivery path for the kit (the installer only bootstraps the committed core). One plugin is published: **`myst-dev-kit`** — 30 skills (engineering + productivity + the team process rules as on-demand skills), both review agents (Claude only — they are Markdown, and Codex agents are TOML), `sync-build-submit` and package commands, and the Codex-side Submit-Audit warning bridge.
+The repo is a **plugin marketplace** for both tools — since v4.0.0 the plugin IS the delivery path for the kit (the installer only bootstraps the committed core). One plugin is published: **`myst-dev-kit`** — 24 skills (engineering + productivity + the team process rules as on-demand skills), both review agents (Claude only — they are Markdown, and Codex agents are TOML), `sync-build-submit` and package commands, and the Codex-side Submit-Audit warning bridge.
 
 ```bash
 # Claude Code
@@ -97,7 +97,7 @@ Claude Code and Codex each have their own config dirs (`.claude/`, `.Codex/`). W
 
 Files like `CLAUDE.md`, `AGENTS.md`, and `.p4ignore` are *co-owned*: humans author the bulk of them, agents need to inject a block. A naive installer that overwrites the whole file destroys your project bible on first run.
 
-**The fix:** the [**Marker Specification**](docs/install.md#6-troubleshooting) defines hard parsing rules — whole-line markers, LF normalization, BOM stripping, CommonMark code-fence exclusion, refuse-to-write on ambiguity. The installer only ever touches bytes strictly between `<!-- AGENTIC-SCAFFOLD:BEGIN -->` and `<!-- AGENTIC-SCAFFOLD:END -->`. 14/14 pathological fixtures verify it.
+**The fix:** the [**Marker Specification**](docs/install.md#65-marker-specification) defines hard parsing rules — whole-line markers, LF normalization, BOM stripping, CommonMark code-fence exclusion, refuse-to-write on ambiguity. The installer only ever touches bytes strictly between `<!-- AGENTIC-SCAFFOLD:BEGIN -->` and `<!-- AGENTIC-SCAFFOLD:END -->`. 14/14 pathological fixtures verify it.
 
 ### #3: Half-installed scaffolds
 
@@ -127,7 +127,7 @@ Perforce projects have specific failure modes a generic installer ignores — re
 
 ### Lifecycle commands (top-level)
 
-The three commands you'll actually run.
+The four commands you'll actually run.
 
 | Command | Purpose |
 |---|---|
@@ -136,47 +136,45 @@ The three commands you'll actually run.
 | [`upgrade.ps1`](upgrade.ps1) | Major-version upgrade of an existing consumer: regenerate manifest, add new, refresh untouched, **preserve customizations**, remove retired. Preview by default; `-Apply` (Perforce CL). |
 | [`promote.ps1`](promote.ps1) | Push local improvements to package: auto-classify + dry-run + write. |
 
-### Skills (shared source, installed under `.claude/` and `.Codex/`)
+### Skills (shipped in the `myst-dev-kit` plugin)
 
-The engineering/productivity set is adapted from [mattpocock/skills](https://github.com/mattpocock/skills) at pinned commit `6eeb81b`, MIT-licensed, attribution preserved, vendored **verbatim**. Since v4.0.0 the bundle also carries the local-origin skills (design, roundtable, setup wizard) and the **team process rules converted to on-demand skills**. **30 skills total**; every link resolves to `plugins/myst-dev-kit/skills/<name>/SKILL.md`.
+The engineering/productivity set is adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, attribution preserved in [LICENSE](LICENSE); the pinned commit is recorded in `package-manifest.json`), vendored **verbatim**. The bundle also carries the local-origin skills (design, review-changes, roundtable, setup wizard) and the **team process rules converted to on-demand skills**. **24 skills total**; every skill name below links to its real `SKILL.md` under `plugins/myst-dev-kit/skills/`.
 
 **Engineering**
 
 | Skill | Use it when |
 |---|---|
-| `/diagnosing-bugs` | A hard bug / perf regression: build a feedback loop → reproduce + minimise → hypothesise → instrument → fix + regression-test. |
-| `/tdd` | Build a feature / fix a bug with red-green-refactor, one vertical slice at a time. |
-| `/improve-codebase-architecture` | Find deepening opportunities; informed by CONTEXT.md and docs/adr/. |
-| `/codebase-design` | Shared vocabulary for designing deep modules and seams. |
-| `/domain-modeling` | Actively build/sharpen the domain model — challenge terms, write the glossary + ADRs inline. |
-| `/grill-with-docs` | Stress-test a plan against the project's domain language before a non-trivial change. |
-| `/to-spec` | Turn the current conversation into a spec. |
-| `/to-tickets` | Break a spec/plan into independently-grabbable vertical-slice tickets. |
-| `/triage` | Move tickets through the lifecycle state machine. |
-| `/implement` | Implement a planned slice from a spec/ticket. |
-| `/resolving-merge-conflicts` | Resolve merge conflicts (Perforce text-merge notes via the `perforce` overlay). |
-| `/setup-matt-pocock-skills` | One-time: configure the issue tracker + triage labels. |
+| [`/diagnosing-bugs`](plugins/myst-dev-kit/skills/diagnosing-bugs/SKILL.md) | A hard bug / perf regression: build a feedback loop, reproduce + minimise, hypothesise, instrument, fix + regression-test. |
+| [`/tdd`](plugins/myst-dev-kit/skills/tdd/SKILL.md) | Build a feature / fix a bug with red-green-refactor, one vertical slice at a time. |
+| [`/improve-codebase-architecture`](plugins/myst-dev-kit/skills/improve-codebase-architecture/SKILL.md) | Scan a codebase for deepening opportunities, presented as a visual HTML report, then grill through the one you pick. |
+| [`/codebase-design`](plugins/myst-dev-kit/skills/codebase-design/SKILL.md) | Shared vocabulary for designing deep modules and seams. |
+| [`/domain-modeling`](plugins/myst-dev-kit/skills/domain-modeling/SKILL.md) | Actively build/sharpen the domain model -- challenge terms, write the glossary + ADRs inline. |
+| [`/grill-with-docs`](plugins/myst-dev-kit/skills/grill-with-docs/SKILL.md) | Stress-test a plan against the project's domain language before a non-trivial change; writes ADRs + glossary as it goes. |
+| [`/research`](plugins/myst-dev-kit/skills/research/SKILL.md) | Investigate a question against high-trust primary sources and capture the findings as a Markdown file in the repo -- reading legwork you can delegate. |
+| [`/to-spec`](plugins/myst-dev-kit/skills/to-spec/SKILL.md) | Turn the current conversation into a spec on the issue tracker (specs start `needs-triage`). |
+| [`/to-tickets`](plugins/myst-dev-kit/skills/to-tickets/SKILL.md) | Break a spec/plan into independently-grabbable vertical-slice tickets. |
+| [`/triage`](plugins/myst-dev-kit/skills/triage/SKILL.md) | Move tickets through the lifecycle state machine. |
+| [`/implement`](plugins/myst-dev-kit/skills/implement/SKILL.md) | Implement a planned slice from a spec/ticket. |
+| [`/resolving-merge-conflicts`](plugins/myst-dev-kit/skills/resolving-merge-conflicts/SKILL.md) | Resolve merge conflicts (Perforce text-merge notes ship in the skill's `P4-NOTES.md`). |
 
 **Productivity**
 
 | Skill | Use it when |
 |---|---|
-| `/grilling` | Relentless plan/design interview until shared understanding (`grill-me` / `grill-with-docs` delegate here). |
-| `/grill-me` | Shorthand entry to a `/grilling` session. |
-| `/handoff` | Compact the session into a handoff doc for another agent. |
-| `/teach` | Stateful, multi-session teaching workspace (user-invoked). |
-| `/writing-great-skills` | Author high-quality skills (reference + glossary). |
-| `/edit-article` | Edit / rewrite an article. |
-| `/obsidian-vault` | Search / create / manage Obsidian notes. |
+| [`/grilling`](plugins/myst-dev-kit/skills/grilling/SKILL.md) | Relentless plan/design interview until shared understanding (`grill-with-docs` delegates here). |
+| [`/handoff`](plugins/myst-dev-kit/skills/handoff/SKILL.md) | Compact the session into a handoff doc for another agent. |
+| [`/writing-great-skills`](plugins/myst-dev-kit/skills/writing-great-skills/SKILL.md) | Author high-quality skills (reference + glossary). |
 
 **Local (not from upstream)**
 
 | Skill | Use it when |
 |---|---|
-| `/roundtable` | Multi-perspective design discussion when one viewpoint isn't enough. |
-| `/setup-agentic-workflow` | Interactive wizard to install/upgrade the scaffold in a project — detects the environment, proposes tools + overlays, asks one question at a time, dry-runs, then writes (front-end over `setup.ps1`/`upgrade.ps1`). |
+| [`/design`](plugins/myst-dev-kit/skills/design/SKILL.md) | Create a design document with reviewer-agent feedback and iterate to approval; the team's doc-process rules (naming, lifecycle, BLOCKING/WARNING/INFO) live in the companion [PROCESS.md](plugins/myst-dev-kit/skills/design/PROCESS.md). |
+| [`/review-changes`](plugins/myst-dev-kit/skills/review-changes/SKILL.md) | Pre-submit review of a CL/diff INLINE when reviewer subagents are unavailable (e.g. under Codex); same rubrics, same parseable `Verdict:` line. |
+| [`/roundtable`](plugins/myst-dev-kit/skills/roundtable/SKILL.md) | Multi-perspective design discussion when one viewpoint isn't enough. |
+| [`/setup-agentic-workflow`](plugins/myst-dev-kit/skills/setup-agentic-workflow/SKILL.md) | Interactive wizard to install/upgrade the scaffold in a project -- detects the environment, proposes tools + overlays, asks one question at a time, dry-runs, then writes (front-end over `setup.ps1`/`upgrade.ps1`). |
 
-Plus package-management commands `/update-myst-skills` (sync upstream in) and `/promote-myst-skills` (push a local improvement out); overlay-only additions `/sync-build-submit` (`ue`), `/design` + `architecture-reviewer` (`myst-project`).
+Plus the plugin **commands** (not skills): `/update-myst-skills` (sync upstream in), `/promote-myst-skills` (push a local improvement out), and `/sync-build-submit` (UE build-machine pipeline).
 
 ### Divergence from upstream (and why)
 
@@ -185,7 +183,7 @@ We track upstream **faithfully** — name + body + architecture + verbatim front
 - **Project specifics live only in overlays**, never in the base. `diagnosing-bugs` → `ue` overlay `UE-NOTES.md` (automation / `-ExecCmds` loops, `p4` bisection, editor HITL). `resolving-merge-conflicts` → `perforce` overlay `P4-NOTES.md` (P4 text merges). `to-tickets` follows upstream's removal of HITL/AFK slice-typing — AFK-readiness rides the triage label instead.
 - **Renamed (followed upstream):** `diagnose` → `diagnosing-bugs`. **Removed (followed upstream):** `zoom-out`, `caveman`, `write-a-skill` (replaced by `writing-great-skills`).
 - **Skipped (out of scope):** `ask-matt` (personal/branded), `prototype` (web-bound). **Deferred:** `decision-mapping` (upstream marks it in-progress).
-- Everything else is byte-faithful to upstream HEAD `6eeb81b`.
+- Everything else is byte-faithful to upstream HEAD `e9fcdf9`.
 
 ### Process-rule skills (formerly always-on workflows)
 
@@ -193,12 +191,13 @@ Converted to on-demand skills in v4.0.0 — each carries a trigger-strength desc
 
 | Skill | Fires when | What it enforces |
 |---|---|---|
-| `agentic-workflow` | non-trivial feature work starts | Discussion → spec → tickets → triage → impl → verify → review/submit. |
-| `pre-implementation-gate` | before drafting a multi-CL plan | **HARD RULE**: spec/tickets/triage must exist first. |
-| `changelist-verification` | any multi-CL task | **HARD RULE**: CL-by-CL execution, never batched. Stop between CLs for verification. |
-| `review-and-submit` | "review and submit" / any p4 submit | Pre-submit protocol: reviewer routing, Review Record block, preflight validators. |
-| `auto-plan-mode` | start of non-trivial implementation | Decide whether to enter plan mode before coding. |
-| `design-workflow` | writing/updating a design doc | Doc naming, location, reviewer-agent routing, iteration loop. |
+| [`agentic-workflow`](plugins/myst-dev-kit/skills/agentic-workflow/SKILL.md) | non-trivial feature work starts | Discussion → spec → tickets → triage → impl → verify → review/submit. |
+| [`pre-implementation-gate`](plugins/myst-dev-kit/skills/pre-implementation-gate/SKILL.md) | before drafting a multi-CL plan | **HARD RULE**: spec/tickets/triage must exist first. |
+| [`changelist-verification`](plugins/myst-dev-kit/skills/changelist-verification/SKILL.md) | any multi-CL task | **HARD RULE**: CL-by-CL execution, never batched. Stop between CLs for verification. |
+| [`review-and-submit`](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md) | "review and submit" / any p4 submit | Pre-submit protocol: reviewer routing, Review Record block, preflight validators. |
+| [`auto-plan-mode`](plugins/myst-dev-kit/skills/auto-plan-mode/SKILL.md) | start of non-trivial implementation | Decide whether to enter plan mode before coding. |
+
+(The former `design-workflow` skill merged into [`design`](plugins/myst-dev-kit/skills/design/SKILL.md) in v4.28.0 -- the doc naming/location/reviewer-routing rules now live in that skill's [PROCESS.md](plugins/myst-dev-kit/skills/design/PROCESS.md).)
 
 ### Agents
 
@@ -211,15 +210,17 @@ Specialized subagents available via the agent tool.
 
 ### Overlays
 
-Tools and rules layered on top of the core for specific environments.
+An overlay is a **logical name in the manifest** (`-Overlays ...`), not necessarily a directory: since v4.0.0 most former overlay content ships inside the `myst-dev-kit` plugin, so the on-disk `overlays/` directory holds only what must still be file-copied into a consumer -- `ue/` and `myst-project/` (see [overlays/README.md](overlays/README.md)).
 
-| Overlay | When | What it adds |
-|---|---|---|
-| `core` | always | The core skills + workflows + agent above. The portable layer (vendored from upstream). |
-| `core-local` | always (force-added) | **Package-invented (non-upstream)** skills, kept physically separate from vendored content so an upstream re-sync can't clobber them. Holds `roundtable` + `setup-agentic-workflow`. See [ADR-0004](docs/adr-0004-local-origin-provenance-and-core-local.md). |
-| `perforce` | `setup.ps1` auto-adds if `.p4ignore` or in P4 client | 3 Perforce workflows (CL-by-CL, review/submit, VC conventions). |
-| `ue` | `setup.ps1` auto-adds if `*.uproject` present | UE sync-build-submit slash command + UE-pattern `.p4ignore` fragment. |
-| `myst-project` | **never auto-added**; reference example | Original Myst_Proto-specific content. See [overlay README](overlays/myst-project/README.md). |
+| Overlay name | On disk today | When | What selecting it installs today |
+|---|---|---|---|
+| `core` | `templates/` + `plugins/myst-dev-kit/scripts/` (no `overlays/` dir) | always | The committed-core bootstrap: bible generated-blocks, consumer docs (MustRead, `Docs/agents/`), session hook scripts. |
+| `core-local` | -- (name retired; content in the plugin) | accepted, installs nothing new | Package-invented skills (`roundtable`, `setup-agentic-workflow`) ship via the plugin now. See [ADR-0004](docs/adr-0004-local-origin-provenance-and-core-local.md). |
+| `perforce` | -- (name retired; content in the plugin) | accepted, installs nothing new | The CL workflows are on-demand plugin skills now (`changelist-verification`, `review-and-submit`); P4 merge notes ride the `resolving-merge-conflicts` skill. |
+| `ue` | `overlays/ue/` | `setup.ps1` auto-adds if `*.uproject` present | UE-pattern `.p4ignore` fragment, plus the `check-uproject-assoc.sh` guard (sourced from the plugin's scripts). |
+| `myst-project` | `overlays/myst-project/` | **never auto-added**; reference example | Original Myst_Proto-specific committed-core content. See [overlay README](overlays/myst-project/README.md). |
+
+Retired names old manifests may still carry (`afk-autonomy`, legacy alias `ue-perforce`) remain accepted and install nothing.
 
 ## FAQ
 
@@ -244,7 +245,7 @@ For generally-useful content: write it in your project first, then `promote.ps1`
 The scripts are PowerShell — Windows-first. PowerShell 7+ runs on Linux/Mac but the install paths assume Windows-style separators in some places. Not currently tested cross-platform. If you're on Mac/Linux and want to adopt: open an issue, the path layer is straightforward to generalize.
 
 **What's the difference between `setup.ps1` and the scripts under `scripts/`?**
-The three top-level scripts (`setup.ps1`, `update.ps1`, `promote.ps1`) are one-command wrappers with sensible defaults. The scripts under `scripts/` are the underlying primitives — useful for CI integration, scripting multi-project rollouts, or debugging. Both paths are documented in [`docs/install.md`](docs/install.md).
+The four top-level scripts (`setup.ps1`, `update.ps1`, `upgrade.ps1`, `promote.ps1`) are one-command wrappers with sensible defaults. The scripts under `scripts/` are the underlying primitives — useful for CI integration, scripting multi-project rollouts, or debugging. Both paths are documented in [`docs/install.md`](docs/install.md).
 
 **Why a manifest at all? Why not just `cp -r`?**
 Three reasons. **Drift detection** — without a manifest of expected hashes, `compare-with-package.ps1` can't distinguish "user edited this" from "package upgraded this". **Block-scoped editing** — co-owned files (`CLAUDE.md`, `.p4ignore`) need per-block hashes, not whole-file. **Provenance** — every entry records `sourceCommit`, so you can prove what version your install corresponds to.
@@ -272,49 +273,61 @@ You don't — `update.ps1` runs `git pull` for you by default. Pass `-NoPull` if
 myst-agentic-workflow/
 ├── README.md
 ├── CHANGELOG.md
+├── CONTRIBUTING.md
+├── SETUP.md                       # Myst team onboarding (both archetypes)
 ├── LICENSE
 ├── package-manifest.json          # schema v3 + package metadata
 ├── manifest-template.json         # canonical entry list for new consumers
 ├── setup.ps1                      # first-time install
 ├── update.ps1                     # sync upstream changes in
+├── upgrade.ps1                    # major-version jump (preserves customizations)
 ├── promote.ps1                    # push local improvements out
+├── .github/workflows/tests.yml    # CI: every scripts/run-*-tests.ps1 suite, each PR/push
+├── .claude-plugin/marketplace.json  # plugin marketplace (Claude Code native)
+├── .agents/plugins/marketplace.json # plugin marketplace (Codex native; same content, enforced by test)
 ├── docs/
 │   ├── install.md                 # full install/update/promote/upstream-sync guide
+│   ├── upgrade.md                 # existing-consumer major-version upgrade guide
 │   ├── perforce-consumer.md       # UE+P4 addendum
+│   ├── tool-capability-matrix.md  # what each tool loads (and deliberately does not)
 │   ├── adr-0001-extract-reusable-core-decisions.md
 │   ├── adr-0002-vendor-and-overlay-not-fork.md
-│   └── adr-0003-verbatim-skill-format.md
-├── .claude-plugin/marketplace.json# plugin marketplace (Claude Code native)
-├── .agents/plugins/marketplace.json# plugin marketplace (Codex native; same content, enforced by test)
+│   ├── adr-0003-verbatim-skill-format.md
+│   └── adr-0004-local-origin-provenance-and-core-local.md
 ├── plugins/myst-dev-kit/
 │   ├── .claude-plugin/plugin.json # dual plugin manifests (one per tool)
 │   ├── .codex-plugin/plugin.json
+│   ├── agents/                    # architecture-reviewer + radical-design-critic (Claude only)
+│   ├── commands/                  # promote-myst-skills, sync-build-submit, update-myst-skills
 │   ├── hooks/hooks.json           # Codex Submit-Audit warn bridge (no-ops under Claude Code)
-│   └── ...                        # the core skills + workflows + agents + commands (ONE shared source for both tools)
+│   ├── scripts/                   # consumer hook scripts (doc-audit, rule parity, ...)
+│   └── skills/                    # the 24 skills (ONE shared source for both tools)
 ├── templates/
 │   ├── claude/CLAUDE.md           # per-tool bible templates (generated-block sources)
 │   ├── codex/AGENTS.md
 │   └── common/docs/               # tool-neutral consumer docs (MustRead, agents/)
 ├── overlays/
-│   ├── perforce/                  # CL workflow, review-and-submit, VC rules
-│   ├── ue/                        # sync-build-submit, UE p4ignore fragment
+│   ├── ue/                        # UE-pattern p4ignore fragment
 │   └── myst-project/              # reference example only — DO NOT INSTALL
-├── scripts/
-│   ├── init-consumer.ps1          # bootstrap a fresh manifest (used by setup.ps1)
-│   ├── install.ps1                # DryRun default; Write preflight-gated
-│   ├── compare-with-package.ps1   # cross-repo drift + conflict report
-│   ├── diff-installed.ps1         # local drift report
-│   ├── promote-from-project.ps1   # underlying promote primitive
-│   ├── check-mattpocock-updates.ps1
-│   ├── run-skeleton-preflight.ps1 # 10-point write-mode gate
-│   ├── migrate-retired-skills.ps1 # upgrade helper: remove retired skills from old installs
-│   └── run-*-tests.ps1            # test suites (link-existence, provenance, e2e, ...)
-└── fixtures/                      # E2E install fixtures
+└── scripts/
+    ├── init-consumer.ps1          # bootstrap a fresh manifest (used by setup.ps1)
+    ├── install.ps1                # DryRun default; Write preflight-gated
+    ├── compare-with-package.ps1   # cross-repo drift + conflict report
+    ├── diff-installed.ps1         # local drift report
+    ├── promote-from-project.ps1   # underlying promote primitive
+    ├── migrate-retired-skills.ps1 # upgrade helper: remove retired skills from old installs
+    ├── check-mattpocock-updates.ps1
+    ├── check-plugin-parity.ps1    # tool-capability matrix vs the plugin tree
+    ├── run-skeleton-preflight.ps1 # 10-point write-mode gate
+    ├── validate-markers.ps1       # Marker Specification CLI entry point
+    ├── fake-p4.ps1                # test-only p4 shim (used by the test suites)
+    ├── lib/                       # Markers, Render, InstallJournal, Classification, ...
+    └── run-*-tests.ps1            # test suites — CI discovers and runs every one
 ```
 
 ## Status
 
-**v4.0.0** — Role shift: the plugin owns the kit (29 skills incl. the process rules as on-demand skills, both review agents, commands, Codex audit bridge); the installer only bootstraps the committed core (bibles, docs, rules, scripts). Existing consumers converge via `upgrade.ps1 -Apply`. Previously — **v3.0.0** — Marketplace restructure: OpenCode support retired (tool scope is Claude Code + Codex); the per-tool template mirror collapsed into ONE shared source at `plugins/myst-dev-kit/` (skills/agents/commands/workflows live once; the manifest maps each file to both `.claude/` and `.Codex/` targets); overlays flattened the same way. Skills remain vendored **verbatim** from upstream `mattpocock/skills` HEAD (`6eeb81b`) — project specifics live in overlays, never in the base (see [ADR-0002](docs/adr-0002-vendor-and-overlay-not-fork.md), [ADR-0003](docs/adr-0003-verbatim-skill-format.md)). Full history in [CHANGELOG.md](CHANGELOG.md).
+**v4.28.0** — Audit hardening: catalog trimmed to 24 skills (5 personal skills removed; `design-workflow` merged into `design` + `PROCESS.md`); PS 5.1 crash class fixed across the lifecycle scripts (EAP/stderr, measured); provenance stamping; installer EOL policy; doc-audit ~20x faster with a version-staleness nudge; linkcheck now guards `plugins/`; 18 test suites incl. PS 5.1 gates. One breaking edge: `promote.ps1` requires an explicit `-Force` for divergent promotions (the refusal prints the remedy). Previously — **v4.0.0** — Role shift: the plugin owns the kit (29 skills incl. the process rules as on-demand skills, both review agents, commands, Codex audit bridge); the installer only bootstraps the committed core (bibles, docs, rules, scripts). Existing consumers converge via `upgrade.ps1 -Apply`. Previously — **v3.0.0** — Marketplace restructure: OpenCode support retired (tool scope is Claude Code + Codex); the per-tool template mirror collapsed into ONE shared source at `plugins/myst-dev-kit/` (skills/agents/commands/workflows live once; the manifest maps each file to both `.claude/` and `.Codex/` targets); overlays flattened the same way. Skills remain vendored **verbatim** from upstream `mattpocock/skills` HEAD (`6eeb81b`) — project specifics live in overlays, never in the base (see [ADR-0002](docs/adr-0002-vendor-and-overlay-not-fork.md), [ADR-0003](docs/adr-0003-verbatim-skill-format.md)). Full history in [CHANGELOG.md](CHANGELOG.md).
 
 ## What `runtime-mutable` means
 
@@ -333,7 +346,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the version history.
 
 ## License
 
-MIT. Bundles content adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, pinned at commit `6eeb81b`) — attribution preserved in [LICENSE](LICENSE).
+MIT. Bundles content adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, pinned at commit `e9fcdf9`) — attribution preserved in [LICENSE](LICENSE).
 
 ## Contributing
 

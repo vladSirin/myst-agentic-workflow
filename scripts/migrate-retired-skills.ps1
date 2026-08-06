@@ -6,6 +6,8 @@
 # the upgrade until they're gone. Run this once before/with the upgrade.
 #
 # Retired: zoom-out, caveman, write-a-skill (removed) and diagnose (renamed -> diagnosing-bugs).
+# v4.28.0: obsidian-vault, teach, edit-article, grill-me, setup-matt-pocock-skills (removed)
+#         and design-workflow (merged into design; process content now in design/PROCESS.md).
 #
 # DRY-RUN by default (lists what it would remove). Use -Apply to act.
 #   Filesystem consumers: -Apply removes the files.
@@ -19,7 +21,9 @@ param(
 $ErrorActionPreference = 'Stop'
 
 $toolDirs = @('.claude', '.Codex')
-$retiredSkills   = @('zoom-out', 'caveman', 'write-a-skill', 'diagnose')   # diagnose -> diagnosing-bugs
+$retiredSkills   = @('zoom-out', 'caveman', 'write-a-skill', 'diagnose',   # diagnose -> diagnosing-bugs
+                     'obsidian-vault', 'teach', 'edit-article', 'grill-me',
+                     'setup-matt-pocock-skills', 'design-workflow')        # design-workflow -> merged into design (v4.28.0)
 $retiredCommands = @('caveman.md', 'write-a-skill.md')                      # old command wrappers, if present
 
 $found = New-Object System.Collections.Generic.List[object]

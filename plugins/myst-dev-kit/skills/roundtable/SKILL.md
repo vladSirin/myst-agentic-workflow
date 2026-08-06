@@ -86,7 +86,7 @@ Format:
 「{next guiding question}」
 
 ─────────────────────────────────────────────────
-Commands: 可 (continue) │ 止 (conclude) │ 深入此节 (deepen this section) │ 引入新人物 (add a figure)
+Commands: 可 / "continue" │ 止 / "conclude" │ 深入此节 / "deepen" │ 引入新人物 / "invite <name>"
 ─────────────────────────────────────────────────
 ```
 
@@ -96,17 +96,17 @@ Commands: 可 (continue) │ 止 (conclude) │ 深入此节 (deepen this sectio
 
 After each synthesis, wait for the user's command:
 
-| Command | Action |
+| Command (CN / EN) | Action |
 |---------|--------|
-| `可` | Accept the next guiding question; begin the next round |
-| `止` | End the discussion; generate Knowledge Network |
-| `深入此节` | Stay on the current contradiction; formulate a *more specific* version of it as the new guiding question |
-| `引入新人物` | Ask the user for a name; introduce that figure with stance + MBTI, have them respond to the current guiding question |
+| `可` / `continue` | Accept the next guiding question; begin the next round |
+| `止` / `conclude` (or `stop`) | End the discussion; generate Knowledge Network |
+| `深入此节` / `deepen` | Stay on the current contradiction; formulate a *more specific* version of it as the new guiding question |
+| `引入新人物` / `invite <name>` | Ask the user for a name (or use the one given); introduce that figure with stance + MBTI, have them respond to the current guiding question |
 | *(no command / other text)* | Treat as user interjection — moderator acknowledges it, integrates it into the next guiding question |
 
 ---
 
-### KNOWLEDGE NETWORK (on `止`)
+### KNOWLEDGE NETWORK (on `止` / `conclude`)
 
 When the user concludes the session, generate a final synthesis:
 

@@ -24,6 +24,18 @@ $ErrorActionPreference = 'Stop'
 $ScriptVersion = '0.1.0-update'
 if ([string]::IsNullOrWhiteSpace($PackageRoot)) { $PackageRoot = $PSScriptRoot }
 
+# Package version for the banner -- the frozen internal $ScriptVersion confused
+# logs and CL descriptions (audit 2026-08-06); show both.
+$PackageVersion = 'unknown'
+try {
+    $pmPath = Join-Path $PackageRoot 'package-manifest.json'
+    if (Test-Path -LiteralPath $pmPath) {
+        $pm = Get-Content -LiteralPath $pmPath -Raw | ConvertFrom-Json
+        if ($pm.package -and $pm.package.version) { $PackageVersion = $pm.package.version }
+        elseif ($pm.version) { $PackageVersion = $pm.version }
+    }
+} catch { }
+
 # --- Resolve TargetRoot ---
 if ([string]::IsNullOrWhiteSpace($TargetRoot)) {
     $TargetRoot = (Get-Location).Path
@@ -67,7 +79,7 @@ $VersionControl = if ($man.installedProject.PSObject.Properties.Match('versionCo
 # --- Banner ---
 Write-Host ""
 Write-Host "=============================================================="
-Write-Host "myst-agentic-workflow update.ps1  v$ScriptVersion"
+Write-Host "myst-agentic-workflow update.ps1  package v$PackageVersion (wrapper $ScriptVersion)"
 Write-Host "=============================================================="
 Write-Host ("Package        : {0}" -f $PackageRoot)
 Write-Host ("Target         : {0}" -f $TargetRoot)
@@ -82,7 +94,17 @@ if (-not $NoPull) {
     Write-Host "[1/4] Refreshing package clone (git pull)..."
     Push-Location $PackageRoot
     try {
-        & git pull 2>&1 | ForEach-Object { Write-Host "  $_" }
+        # git writes its ref-transfer summary ("From github.com ...") to STDERR by
+        # design. Under Windows PowerShell 5.1, EAP='Stop' + a stderr redirection
+        # turns that into a terminating NativeCommandError -- i.e. the script died
+        # exactly when a pull had content. Scope EAP around the native call
+        # (run-skeleton-preflight.ps1 P4HeadRev pattern) and judge $LASTEXITCODE.
+        $prevEap = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+        try {
+            & git pull 2>&1 | ForEach-Object { Write-Host "  $_" }
+        } finally {
+            $ErrorActionPreference = $prevEap
+        }
         if ($LASTEXITCODE -ne 0) {
             Write-Error "git pull failed in $PackageRoot. Resolve manually and rerun, or pass -NoPull to skip."
             exit 2

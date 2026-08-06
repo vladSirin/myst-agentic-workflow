@@ -27,6 +27,107 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.28.0] - 2026-08-06 - Audit hardening: the kit fixes what its own audit found
+
+MINOR per this file's own rules: every change below reaches consumers automatically
+(plugin update + upgrade.ps1) - including the removals, which the rules explicitly
+class as MINOR. The one **breaking edge** is called out under Changed. A four-agent
+user-perspective audit of the whole kit (2026-08-06) drove all of it; the fix plan
+survived four adversarial review rounds before execution.
+
+#### Removed (consumer-visible; migrate-retired-skills.ps1 carries the list)
+
+- **Five personal/off-topic skills**: `obsidian-vault` (hardcoded personal vault path,
+  model-invocable on every machine), `teach`, `edit-article`, `grill-me` (pure alias
+  of `grilling`), `setup-matt-pocock-skills` (could rewrite installer-owned
+  `Docs/agents/*` in scaffold-managed repos). Catalog is now 24 skills, all
+  team-relevant. Bootstrap references repoint to SETUP.md.
+- **`design-workflow` merged into `design`**: one skill, one process truth. The
+  automation flow stays in `design/SKILL.md`; ALL process authority (naming, suffix
+  lifecycle, reviewer routing, BLOCKING/WARNING/INFO vocabulary) lives in the new
+  `design/PROCESS.md` - with design-workflow's rules winning every historical
+  contradiction ("remove `_WIP`, never `_Updated`" - the /design flow previously
+  instructed exactly the suffixes doc-audit bans).
+
+#### Changed
+
+- **BREAKING EDGE - `promote.ps1` requires an explicit `-Force` for divergent
+  promotions.** It was hard-coded on every write, silently bypassing
+  promote-from-project's upstream-divergence refusal; a stale clone could overwrite
+  newer upstream work. Now: freshness gate (fetch + refuse when behind origin/main,
+  `-AllowStale` to override) and `-Force` only when you pass it. The refusal prints
+  the remedy. Wrapper tests pin both sides of the new contract.
+- `setup.ps1` auto-wraps `-UsePerforce -Changelist new` (parity with update/upgrade):
+  fresh P4-consumer installs no longer land scaffold files unopened in any CL.
+- `/update-myst-skills` routes MINOR/MAJOR version jumps to `upgrade.ps1` (update.ps1
+  structurally cannot add or retire files) and points at the auto-maintained
+  marketplace clone instead of duplicate-clone hunting.
+- `doc-audit.sh`: single-pass rewrite, measured 13.6s -> 0.7s on the reference tree
+  (it ran at every SessionStart including /clear and /compact); status matching is
+  field-anchored (line start or pipe-segment - both measured forms) so prose cannot
+  shadow the real field; two-tier docs-root sanity (unrendered {{token}} -> loud
+  ERROR, absent dir -> quiet note; still always exit 0); NEW local-files-only
+  version-staleness nudge (installed cache vs marketplace clone).
+- Skill content truth pass: P4-NOTES/UE-NOTES finally linked (they were orphaned
+  while git-centric instructions shipped on a Perforce team); `implement`/`tdd`
+  route to review-and-submit; reviewer agents referenced by their NAMESPACED names
+  (`myst-dev-kit:architecture-reviewer` - bare names do not resolve, live-confirmed);
+  `to-spec` starts specs at `needs-triage` per the documented flow; stale
+  CamelCase rule-file references fixed across seven files; unrendered
+  `{{game_docs_root}}` tokens replaced with resolution rules (doc-audit.sh keeps
+  its real installer token); radical-design-critic verdict placement pinned +
+  de-emoji'd; auto-plan-mode gains the worked examples its rule doc promised.
+
+#### Fixed
+
+- **Windows PowerShell 5.1 crash class across the lifecycle scripts** (measured:
+  EAP='Stop' + ANY native stderr redirection throws, 2>$null included):
+  `update.ps1` died exactly when a pull had content; setup/upgrade p4 probes died
+  on p4-present-but-stderr. All native calls EAP-scoped; `$LASTEXITCODE` judged.
+  CI could never see this class (pwsh-only) - the new `ps51-gates` job runs the
+  parse gate AND the git-pull regression under real powershell.exe.
+- **Provenance rot**: consumer manifests recorded `package.version: 1.0.0` forever.
+  Triple fix (ManifestUpdate stamp + install threading + init-consumer resolution
+  with template sentinels); staleness diagnostics stop lying.
+- **upgrade.ps1 reconcile guards**: evidence annotations (blockHashReason) carried
+  forward across regeneration; ADOPT constructor reuses the installed manifest's
+  entry (defensive - protects the first entry that grows a note); depotRevision
+  cast guarded (pending-adds emit empty headRev; `[int]''` silently coerced to 0
+  against the code's own stated null intent); p4-where parse stops relying on
+  regex-greediness accident.
+- **InstallJournal EOL policy** (write path only): `.sh` always LF; everything else
+  preserves the target's existing EOL; new files LF. The old unconditional
+  CRLF->LF flip rewrote whole CRLF consumer files on every content change. The
+  comparison path stays LF-normalized (the install/compare identical-bytes
+  guarantee). Journal tests cover all four cases.
+- Docs truth pass: README layout tree/overlays table/skills tables match the
+  repository that actually exists (with resolving links, now CI-guarded);
+  SETUP.md documents the required two-step plugin update; CONTRIBUTING
+  acknowledges CI and five version sites; install.md drops the stale
+  never-observed Codex-hook claim, gains the Marker Specification section, and
+  fixes its dangling links; the creatives MustRead stops advertising three tools
+  (both languages); DocumentStandard overlay's dead DesignWorkflow.md pointer
+  fixed; submit-audit-bridge header claim corrected.
+- Package `.sh` normalized to LF with a narrow `.gitattributes` (`*.sh` only);
+  the one stray UTF-8 BOM stripped.
+
+#### Tests (16 -> 18 suites; CI-asserted count follows the glob)
+
+- NEW `run-hook-tests.ps1`: package-shipped bash hooks, pinned exit codes with
+  fixtures (the missing-fixture branch is a pinned NEGATIVE, never a vacuous pass);
+  the unrendered-token loud branch is itself asserted.
+- NEW `run-ps51-pull-tests.ps1`: the git-pull regression end-to-end under real
+  powershell.exe against a local bare-repo fixture.
+- `run-linkcheck-tests.ps1` scans `plugins/` (the removals/merge are now a standing
+  machine gate, not a one-shot grep); dead legacy allow-list pruned to empty.
+- `run-upgrade-tests.ps1`: ADOPT preservation + pending-add depotRevision:null
+  cases via the fake-p4 shim. `run-journal-tests.ps1`: four EOL write-path cases.
+- `run-wrapper-tests.ps1`: pins the promote refusal-then-`-Force` contract.
+- `check-plugin-parity.ps1`: Count-column assertion (tolerant of the non-numeric
+  `1 entry` cell).
+
+Historical ADRs intentionally untouched; they describe the tree as it was.
+
 ## [4.27.1] - 2026-08-06 - The Codex hook was watched firing, so the docs stop hedging
 
 #### Fixed (documentation - no behavioural change)

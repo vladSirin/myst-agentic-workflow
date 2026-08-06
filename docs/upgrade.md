@@ -34,7 +34,7 @@ preflight check 2 (on-disk hash must equal manifest hash), which any local edit 
 
 | Bucket | Action |
 |---|---|
-| **ADD** | New skills/files in the current package (e.g. `diagnosing-bugs`, `codebase-design`, `domain-modeling`, `grilling`, `teach`, `writing-great-skills`, `implement`, `setup-matt-pocock-skills`, `resolving-merge-conflicts`, `edit-article`, `obsidian-vault`, plus companions) are installed. |
+| **ADD** | New skills/files in the current package (e.g. `diagnosing-bugs`, `codebase-design`, `domain-modeling`, `grilling`, `writing-great-skills`, `implement`, `resolving-merge-conflicts`, `research`, `review-changes`, plus companions) are installed. |
 | **REFRESH** | Files you did **not** modify are updated to the current package version (e.g. the verbatim-frontmatter format change to carried skills). |
 | **PRESERVE** | Files you **customized** (on-disk differs from the install baseline) are left untouched, and marked `manual-only`/`human-owned` so they're never auto-overwritten. The plan lists each. |
 | **BLOCK-REFRESH** | `AGENTS.md` / `CLAUDE.md` / `.p4ignore` managed blocks are refreshed in place; your content outside the markers is preserved. |

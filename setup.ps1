@@ -69,8 +69,16 @@ if ([string]::IsNullOrWhiteSpace($VersionControl)) {
         $p4Info = $null
         $p4Ok = $false
         if (Get-Command p4 -ErrorAction SilentlyContinue) {
-            $p4Info = & p4 -F "%clientRoot%" -ztag info 2>$null
-            $p4Ok = ($LASTEXITCODE -eq 0)
+            # Get-Command guards CommandNotFound only. Under PS 5.1, EAP='Stop' +
+            # ANY native stderr redirection (2>$null included -- measured
+            # 2026-08-06, RemoteException on 5.1.26100) is a terminating error the
+            # moment p4 exists but writes stderr (expired ticket, connection
+            # refused). Scope EAP around the probe and judge $LASTEXITCODE.
+            $prevEap = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+            try {
+                $p4Info = & p4 -F "%clientRoot%" -ztag info 2>$null
+                $p4Ok = ($LASTEXITCODE -eq 0)
+            } finally { $ErrorActionPreference = $prevEap }
         }
         if ($p4Ok -and $p4Info -and $TargetRoot.ToLower().StartsWith(([string]$p4Info).ToLower())) {
             $VersionControl = 'perforce'
@@ -173,6 +181,15 @@ $writeArgs = @(
     '-Overlays', $Overlays
     '-Mode', 'Write'
 )
+# Perforce parity with update.ps1/upgrade.ps1: without this, a fresh P4-consumer
+# install landed every scaffold file on disk UNOPENED (silent reconcile debt),
+# and on pre-synced read-only files the write refused with a remedy this wrapper
+# could not pass through (audit 2026-08-06).
+if ($VersionControl -eq 'perforce') {
+    $writeArgs += @('-UsePerforce', '-Changelist', 'new')
+    Write-Host "Perforce detected: wrapping in -UsePerforce -Changelist new"
+    Write-Host ""
+}
 & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PkgRoot 'scripts\install.ps1') @writeArgs
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Write-mode install failed (exit $LASTEXITCODE)."

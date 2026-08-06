@@ -109,25 +109,24 @@ Determine what's in the changelist:
 Determine which reviewer(s) to launch based on changelist contents:
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                      Content Type Routing                           │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  Design docs / UX changes       →  radical-design-critic           │
-│  (*.md in Docs/, UI blueprints,                                     │
-│   player-facing features)                                           │
-│                                                                     │
-│  Code / Architecture changes    →  architecture-reviewer           │
-│  (*.cpp, *.h, *.as, plugin code,                                    │
-│   subsystems, API changes)                                          │
-│                                                                     │
-│  Mixed changes                  →  BOTH agents (parallel)          │
-│  (feature with code + docs/UX)                                      │
-│                                                                     │
-│  Config / Asset only            →  Quick self-review (no agent)    │
-│  (*.ini, *.uasset tweaks)                                           │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│                          Content Type Routing                          │
+│                                                                        │
+│  Design docs / UX changes    →  myst-dev-kit:radical-design-critic    │
+│  (*.md in Docs/, UI blueprints,                                        │
+│   player-facing features)                                              │
+│                                                                        │
+│  Code / Architecture changes →  myst-dev-kit:architecture-reviewer    │
+│  (*.cpp, *.h, *.as, plugin code,                                       │
+│   subsystems, API changes)                                             │
+│                                                                        │
+│  Mixed changes               →  BOTH agents (parallel)                 │
+│  (feature with code + docs/UX)                                         │
+│                                                                        │
+│  Config / Asset only         →  Quick self-review (no agent)           │
+│  (*.ini, *.uasset tweaks)                                              │
+│                                                                        │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Fast path (small, non-risky CLs)
@@ -147,7 +146,7 @@ The user can always force a full agent review ("full review CL {N}"). When in do
 **Before launching reviewers**, check whether related design/plan documents exist and are up to date:
 
 1. **Search for related docs**:
-   - `Glob: {{game_docs_root}}/*{feature_keyword}*.md`
+   - Glob `*{feature_keyword}*.md` in the game project's Docs dir (`Myst_Proto/Docs/` here; see the CLAUDE.md Project section)
    - Look for `plan_*.md`, `design_*.md` matching the changelist's feature or system
 
 2. **For each related doc found**, verify:
@@ -164,8 +163,10 @@ The user can always force a full agent review ("full review CL {N}"). When in do
 
      | Status | Document | Issue |
      |--------|----------|-------|
-     | MISSING | {{game_docs_root}}/plan_{feature}.md | No plan doc exists for this feature |
-     | STALE | {{game_docs_root}}/design_{system}.md | CL work not reflected; phase status not updated |
+     | MISSING | <game Docs dir>/plan_{feature}.md | No plan doc exists for this feature |
+     | STALE | <game Docs dir>/design_{system}.md | CL work not reflected; phase status not updated |
+
+     (<game Docs dir> = the game project's Docs dir -- `Myst_Proto/Docs/` here; see the CLAUDE.md Project section.)
 
      **Proposed actions:**
      1. Create/update the above docs to reflect current state
@@ -183,11 +184,11 @@ The user can always force a full agent review ("full review CL {N}"). When in do
 
 ### 5. Launch Reviewer Agent(s)
 
-Use the Task tool with the appropriate subagent_type:
+Use the Agent tool with the appropriate subagent_type — always the **namespaced** names `myst-dev-kit:radical-design-critic` / `myst-dev-kit:architecture-reviewer` (bare names fail to resolve):
 
 > **Effort barbell:** reviewing is judgment work — launch reviewers at their defined model/effort, never downgraded to save tokens. Only mechanical stages (file inventories, node censuses, link sweeps) run cheap (`effort: low` agents or `model: haiku` spawns).
 
-#### For radical-design-critic
+#### For myst-dev-kit:radical-design-critic
 
 ```
 Review the following changelist for submission readiness: {changelist name}
@@ -226,7 +227,7 @@ The parent session parses the literal `Verdict:` token — do not omit
 or paraphrase it.
 ```
 
-#### For architecture-reviewer
+#### For myst-dev-kit:architecture-reviewer
 
 ```
 Review the following changelist for submission readiness: {changelist name}
@@ -414,6 +415,15 @@ After the Review Record block is in place:
       > lists its files) before citing a silent run as evidence; otherwise the silence is
       > telling you nothing. A mistyped CL number is a likelier operator error than a mistyped
       > flag, and it reports green.
+   3. **BP-Pins disclosure line** — required whenever the CL is Blueprint-facing (adds, renames,
+      or changes the signature of anything BP-exposed, or documents a wiring recipe / pin-level
+      instruction): the CL description must carry at least one disclosure line, and BOTH when
+      partially verified:
+      - `BP-Pins: verified <node, node, ...>`
+      - `BP-Pins: unverified <node> (<reason>)`
+      Never let "I read the C++" stand in for it, and never omit the line to avoid writing
+      "unverified" (where the Submit-Audit hook is installed, it warns when a BP-facing CL
+      lacks the line).
 2. Run `p4 submit -c {CL_ID}` or create new CL with the files
 3. Report submission result — confirm with `p4 changes -m 1 -s submitted` and report the final submitted CL number
 4. Note any post-submit verification needed
@@ -424,7 +434,7 @@ After the Review Record block is in place:
 
 | User Says | Action |
 |-----------|--------|
-| "review and submit FrogEvent fixes" | Search for recent FrogEvent changes, launch architecture-reviewer |
+| "review and submit FrogEvent fixes" | Search for recent FrogEvent changes, launch myst-dev-kit:architecture-reviewer |
 | "review and submit CL 12345" | Query `p4 describe 12345`, route to appropriate reviewer(s) |
 | "review and submit Phase 8 LD Triggers" | Find Phase 8 related files, likely launch both reviewers |
 

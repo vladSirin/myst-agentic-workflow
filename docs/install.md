@@ -185,9 +185,11 @@ that fired and found nothing.
 > (control: `CODEX_HOME` occurs 53 times, so env names are stored in the clear and a zero is
 > meaningful). That variable was unset on **every** host, so the gate was always true and
 > `submit-audit-bridge.sh` never ran the audit for anyone, on any tool, for its whole life.
-> Still open, and not settled by that evidence: whether Codex plugin hooks fire **at all**.
-> Nobody has yet observed one. Set `MYST_AUDIT_DEBUG=1` and make a hook fire — the bridge
-> announces every exit path, so total silence means it never ran.
+> The once-open question -- whether Codex plugin hooks fire at all -- is settled: the
+> bridge WAS watched firing under Codex on 2026-08-06 (see the v4.27.1 release notes).
+> Re-verify with `MYST_AUDIT_DEBUG=1` after any hooks.json or host-version change -- the
+> bridge announces every exit path, so total silence means it never ran; the observation
+> is per-setup, not a permanent guarantee.
 
 ## 3. Update from upstream
 
@@ -421,7 +423,7 @@ re-installing to revert (if accidental).
 
 ### 6.3 `-Force` required for promotion
 
-See [§4.1](#41-why--force-is-currently-required). Conservative default; will
+See [§4.3](#43-why--force-is-currently-required). Conservative default; will
 relax when the package has real `sourceCommit` values.
 
 ### 6.4 Conflict outcomes
@@ -434,6 +436,38 @@ re-promote / re-install.
 The `conflict` outcome only appears when `-PinnedSnapshotRoot` is supplied;
 without it, all diffs are reported as `downstream-edit` (we can't tell the
 direction of the change).
+
+### 6.5 Marker Specification
+
+The parsing rules for generated-block / append-fragment markers
+(`<!-- AGENTIC-SCAFFOLD:BEGIN id=... -->` ... `<!-- AGENTIC-SCAFFOLD:END id=... -->`).
+Implemented by [`scripts/lib/Markers.ps1`](../scripts/lib/Markers.ps1) (a pure,
+read-only parser); `scripts/validate-markers.ps1` is the CLI entry point, and
+`scripts/run-marker-fixtures.ps1` holds the 14 pathological fixtures that pin
+the behavior. The hard rules, as the code implements them:
+
+- **Whole-line markers.** A marker must be a whole line, with at most 3 leading
+  spaces. Comment style follows the file type: HTML comments for `.md`;
+  `#`-comments for `.p4ignore`, extensionless files, and everything else.
+- **LF normalization.** Files are read as UTF-8 and CRLF / lone-CR line endings
+  are normalized to LF before parsing. Block content and block hashes are always
+  computed over the LF form, so a client's CRLF checkout (e.g. Perforce
+  `LineEnd: local` on Windows) never changes a block hash.
+- **BOM stripping.** A leading UTF-8 BOM is stripped on read and never
+  reintroduced by the parser.
+- **Code-fence exclusion.** A marker-looking line inside a fenced code block
+  (three-plus backticks or tildes, CommonMark) or an indented code block (4+
+  leading spaces or a tab) is inert -- documentation can SHOW markers without
+  them being parsed as markers. This is also why the leading-whitespace budget
+  is 3 spaces: at 4, the line IS an indented code block.
+- **Ambiguity refuses.** Per id there must be exactly one BEGIN and one END,
+  with BEGIN before END, no nesting, no overlap. Zero, multiple, unbalanced, or
+  inverted markers are a hard error: callers map it to exit code 2 and refuse to
+  write rather than guess.
+- **Block content** is the lines strictly between the BEGIN and END marker
+  lines. The `sha256=` value embedded on a BEGIN line is informational
+  redundancy only -- the manifest's `blockHash` is authoritative and the
+  embedded value is never trusted.
 
 ---
 
@@ -454,28 +488,30 @@ Brief signature reference. Run any script with `-?` for parameter details.
 ### 7.1 Test runners (verification surface)
 
 These exist in `scripts/` to prove the package works; consumers don't usually
-run them, but reviewers might:
+run them, but reviewers might. **One suite per `scripts/run-*-tests.ps1` file --
+the glob is the authoritative count** (18 files match as of this edit; CI in
+`.github/workflows/tests.yml` discovers suites by the same glob and runs every
+one on each PR/push, and asserts the README badge against that count). The
+suites cover, among other things: the marker parser's pathological fixtures,
+the install journal's crash/recovery model (including EOL policy), manifest
+rewrites, the ownership-classification taxonomy, cross-repo compare outcomes,
+promote round-trips and the promotion e2e loop, marketplace-manifest lockstep,
+intra-package link existence, upgrade reconciliation (preserve/adopt), the
+package-shipped bash hooks, and the PowerShell 5.1 `git pull` regression.
 
-- `run-marker-fixtures.ps1` — 14 pathological cases for the marker parser
-- `run-journal-tests.ps1` — 10 tests for the crash/recovery model
-- `run-manifest-update-tests.ps1` — 5 tests for in-place manifest rewrites
-- `run-classification-tests.ps1` — 16 tests for the 4-bucket ownership taxonomy
-- `run-compare-tests.ps1` — 5 tests for the 4 cross-repo outcomes + meta-conflict
-- `run-promote-tests.ps1` — 4 tests for promote-from-project Write mode
-- `run-promotion-e2e-tests.ps1` — 5 tests for the full edit→classify→promote→parity loop
-
-Total: 59 tests across 7 runners.
+(`run-marker-fixtures.ps1` and `run-skeleton-preflight.ps1` are entry points
+invoked by suites/installs rather than suites themselves.)
 
 ---
 
 ## 8. Where to read more
 
 - [`perforce-consumer.md`](perforce-consumer.md) — Perforce-specific install/promote workflow.
-- [ADR 0001](../../UE_Blank_Proto/Docs/adr/0001-extract-reusable-core-decisions.md)
+- [ADR 0001](adr-0001-extract-reusable-core-decisions.md)
   — Design rationale for boundary / parameterization / sequencing decisions.
-- [Plan v1.6](../../UE_Blank_Proto/Myst_Proto/Docs/plan_agentic_scaffolding_packaging_WIP.md)
-  — Full workstream plan with phase definitions.
+- Plan v1.6 (`plan_agentic_scaffolding_packaging_WIP.md`) — the full workstream
+  plan with phase definitions. It lives in the origin Myst project's Perforce
+  depot (the implementation precedent), not in this repository.
 
-The plan and ADR are in the Myst project (the implementation precedent); they
-will move into the package once the package is published on GitHub as part of
-a future phase beyond plan v1.6.
+The ADR ships in this repo's `docs/`; the plan remains in the Myst project and
+would only move here if that planning history is ever published.

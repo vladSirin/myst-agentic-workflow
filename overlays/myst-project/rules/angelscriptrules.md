@@ -13,3 +13,6 @@ description: When writing AngelScript code
 **Mechanism:** Ensures consistency with established patterns, prevents reinventing the wheel, and maintains style uniformity across the codebase.
 > [!TIP]
 > For complex systems (e.g., Animation, GAS, Audio), prioritize `split_fiction_scripts` as it contains battle-tested, shipped code.
+
+> [!NOTE]
+> **Enforcement scope (accepted gap):** where a consumer project wires a write-time hook to enforce AngelScript naming/placement rules, that hook sees only the agent's Write/Edit tool calls -- file writes made through Bash/PowerShell/python (or any other shell command) bypass it. Those scripted writes are caught only by the advisory submit-time audit, so treat the hook as a guardrail, not a guarantee.

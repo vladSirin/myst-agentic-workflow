@@ -22,7 +22,7 @@ junior team member who can:
 
 These tools work in your terminal or editor. You talk to them in plain English.
 
-There are three supported tools — you only need one:
+There are two supported tools — you only need one:
 
 | Tool | Where it runs | You activate it by |
 |------|--------------|-------------------|
@@ -186,7 +186,7 @@ For technical questions about the AI setup: ask the project lead or check
 
 这些工具在你的编辑器或命令行终端里运行。你用日常中文和它交流就行。
 
-目前支持三种工具，你只需要用一个：
+目前支持两种工具，你只需要用一个：
 
 | 工具 | 在哪运行 | 怎么启动 |
 |------|---------|---------|

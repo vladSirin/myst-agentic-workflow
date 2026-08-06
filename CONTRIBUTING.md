@@ -18,8 +18,10 @@ reviewed before it lands. The unit of review is the unit of installation.
    tree (shared source: `plugins/myst-dev-kit/...`).
 3. **One skill per PR.** Branch, commit, open a PR against `main`. Multi-skill
    PRs get asked to split — a reviewer must be able to hold the whole change.
-4. **Pass the mechanical bar** (CI-less for now — run locally, paste results in
-   the PR):
+4. **Pass the mechanical bar.** CI (`.github/workflows/tests.yml`) runs every
+   `scripts/run-*-tests.ps1` suite plus the PowerShell 5.1 gates on each PR and
+   push to `main` -- a red run blocks the merge. Run the same checks locally
+   before pushing:
    ```powershell
    claude plugin validate ./plugins/myst-dev-kit     # frontmatter, structure
    claude plugin validate .                          # marketplace manifest
@@ -32,10 +34,11 @@ reviewed before it lands. The unit of review is the unit of installation.
    below and approves. Fix-and-re-push until green.
 6. **Version bump on merge**: skill added or changed compatibly → MINOR;
    anything that breaks consumers (renamed skill, changed trigger contract,
-   removed content) → MAJOR. Bump all four version sites — `package-manifest.json`,
-   both `plugin.json` files, and the plugin entry in `.claude-plugin/marketplace.json`
+   removed content) → MAJOR. Bump all **five** version sites — `package-manifest.json`,
+   both `plugin.json` files, the plugin entry in `.claude-plugin/marketplace.json`
    (the marketplace entry version **pins updates**: forget it and consumers never
-   receive the release; `run-marketplace-tests.ps1` fails the lockstep check for you).
+   receive the release; `run-marketplace-tests.ps1` fails the lockstep check for you),
+   and the README version badge (CI asserts the badge against the tree).
 7. Teammates receive it on their next plugin update — no Perforce interaction.
 
 ## Per-skill review checklist

@@ -1,0 +1,6 @@
+# Narrow by intent (audit 2026-08-06): .sh must be LF on every host -- stock
+# bash on macOS/Linux fails on CRLF scripts, and Windows Git Bash accepts LF.
+# NO blanket `* text=auto` here: .md/.ps1/.json conventions are governed by the
+# installer's EOL policy (InstallJournal.ps1) and consumer depot conventions;
+# renormalizing them package-wide would churn every clone.
+*.sh text eol=lf

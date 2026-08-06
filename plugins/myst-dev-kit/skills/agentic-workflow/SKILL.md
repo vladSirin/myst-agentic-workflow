@@ -5,28 +5,28 @@ description: "Team delivery process (discussion -> spec -> tickets -> triage -> 
 
 # Agentic Workflow
 
-## Scope and relationship to DesignWorkflow
+## Scope and relationship to the design skill
 
 This workflow is the **end-to-end shape** for non-trivial work: discussion → captured intent (spec) → planned slices (tickets) → triaged → built → verified → submitted.
 
-For work involving **game design** (mechanics, UX, levels, player experience), the Discussion phase is **extended** via [DesignWorkflow.md](DesignWorkflow.md) — that produces a finalized design doc in `{{game_docs_root}}/`, and the spec phase here references it. For pure code / system / bugfix work, Discussion can stay in chat and you jump straight to the spec (`/to-spec`).
+For work involving **game design** (mechanics, UX, levels, player experience), the Discussion phase is **extended** via the [design](../design/SKILL.md) skill (process rules: [design/PROCESS.md](../design/PROCESS.md)) — that produces a finalized design doc in the game project's Docs dir (`Myst_Proto/Docs/` here; see the CLAUDE.md Project section), and the spec phase here references it. For pure code / system / bugfix work, Discussion can stay in chat and you jump straight to the spec (`/to-spec`).
 
 Three flow shapes the project supports:
 
 | Work shape | Flow |
 |---|---|
-| **Game design + implementation** | `DesignWorkflow` → finalized doc → **this workflow** (Spec → Tickets → Triage → Implement → Verify → Review/Submit), with the spec referencing the design doc |
+| **Game design + implementation** | `design` skill → finalized doc → **this workflow** (Spec → Tickets → Triage → Implement → Verify → Review/Submit), with the spec referencing the design doc |
 | **Pure code / system / bugfix** | **This workflow** directly; Discussion happens in chat |
-| **Pure game design, no code** | `DesignWorkflow` only — no spec/tickets needed |
+| **Pure game design, no code** | `design` skill only — no spec/tickets needed |
 
-Examples that go straight to this workflow (no DesignWorkflow Discussion):
+Examples that go straight to this workflow (no `design`-skill Discussion):
 
 - Refactor or extend a subsystem (Flow, Objective, FrogEvent integration, etc.)
 - Fix a bug or regression
 - Build a tool, pipeline, or CI mechanism
 - Integrate a new plugin or library
 
-If you're not sure which shape: would the deliverable be read primarily by a game designer / LD → use `DesignWorkflow` first. Read primarily by an engineer → jump straight here.
+If you're not sure which shape: would the deliverable be read primarily by a game designer / LD → use the `design` skill first. Read primarily by an engineer → jump straight here.
 
 ---
 
@@ -40,14 +40,14 @@ Discussion -> Spec -> Tickets -> Triage -> Implement -> Verify -> Review/Submit
 
 ## Required references
 
-Before creating or updating specs, tickets, or workflow state, read:
+Before creating or updating specs, tickets, or workflow state, read (paths below are under the project's team docs root — `Docs/` in this project; see the CLAUDE.md Project section):
 
-- `{{docs_root}}/MustRead/MustRead_agentic_workflow.md`
-- `{{docs_root}}/agents/issue-tracker.md`
-- `{{docs_root}}/agents/triage-labels.md`
-- `{{docs_root}}/agents/domain.md`
+- `Docs/MustRead/MustRead_agentic_workflow.md`
+- `Docs/agents/issue-tracker.md`
+- `Docs/agents/triage-labels.md`
+- `Docs/agents/domain.md`
 
-If `CONTEXT.md` exists, read it before naming domain concepts. If relevant ADRs exist under `{{docs_root}}/adr/`, read them before proposing architecture changes.
+If `CONTEXT.md` exists, read it before naming domain concepts. If relevant ADRs exist under `Docs/adr/`, read them before proposing architecture changes.
 
 ## Stage rules
 
@@ -69,7 +69,7 @@ Avoid specific file paths or code snippets in ticket bodies because they go stal
 
 ### 4. Triage
 
-Use the status model in `{{docs_root}}/agents/triage-labels.md`.
+Use the status model in `Docs/agents/triage-labels.md` (team docs root — see the CLAUDE.md Project section).
 
 - `ready-for-agent`: agent can implement and verify every required check without human judgment.
 - `ready-for-human`: human-in-the-loop work or verification is required.
@@ -88,11 +88,11 @@ Use `/tdd` for planned feature work and `/diagnosing-bugs` for bugs or regressio
 
 ### 7. Review and submit
 
-For Perforce submission, follow `ReviewAndSubmit.md`. Never submit without explicit user approval.
+For Perforce submission, follow the `review-and-submit` skill. Never submit without explicit user approval.
 
 ## Guardrails
 
-- Search before creating a planning artifact: Glob `{{game_docs_root}}/plan_*.md`, `design_*.md` and `.scratch/*/spec.md` for the feature/system/phase name. If one exists, extend it rather than opening a second — duplicates don't error, they split the source of truth.
-- Do not batch multiple changelists without explicit user approval; follow `ChangelistVerification.md`.
-- Do not modify `{{game_docs_root}}/_Raw/` without the protected-material approval flow.
+- Search before creating a planning artifact: Glob `plan_*.md` and `design_*.md` under the game project's Docs dir (`Myst_Proto/Docs/` here; see the CLAUDE.md Project section), plus `.scratch/*/spec.md`, for the feature/system/phase name. If one exists, extend it rather than opening a second — duplicates don't error, they split the source of truth.
+- Do not batch multiple changelists without explicit user approval; follow the `changelist-verification` skill.
+- Do not modify the game Docs dir's `_Raw/` (`Myst_Proto/Docs/_Raw/` here) without the protected-material approval flow.
 - Keep ticket state changes explicit in the issue file's `Status:` line.

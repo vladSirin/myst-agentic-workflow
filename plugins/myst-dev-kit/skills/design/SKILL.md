@@ -1,6 +1,6 @@
 ---
 name: design
-description: "Create a design document with reviewer-agent feedback and iterate to approval. Use when the user asks to design a feature or system (/design)."
+description: "Create a design document with reviewer-agent feedback and iterate to approval. Use when the user asks to design a feature or system (/design), or when writing or updating any design doc."
 ---
 
 # Design Document Workflow
@@ -10,9 +10,11 @@ description: "Create a design document with reviewer-agent feedback and iterate 
 ## Purpose
 
 This skill automates the creation and review of design documents. When invoked for design or planning work, it:
-1. Creates a properly formatted design document in `{{game_docs_root}}/`
+1. Creates a properly formatted design document in the game project's Docs dir (`Myst_Proto/Docs/` here; see the CLAUDE.md Project section)
 2. Launches reviewer agents to critique the design
 3. Iterates on the document based on feedback
+
+**Process authority lives in [PROCESS.md](PROCESS.md)** — file naming, location, reviewer routing, iteration/verdict rules, and the finalization lifecycle. Read it before creating the file; this file is only the automation flow.
 
 ## Instructions
 
@@ -27,9 +29,7 @@ Ask the user clarifying questions if needed to understand:
 
 ### Step 2: Create the Document
 
-Create the document at `{{game_docs_root}}/` with this naming convention:
-- Design docs: `design_{feature_name}_WIP.md`
-- Plan docs: `plan_{feature_name}_WIP.md`
+Search for an existing related document first (see [PROCESS.md](PROCESS.md) §"Search before you create"), then create the document in the game Docs dir, named per the [PROCESS.md](PROCESS.md) naming table.
 
 Use this template structure:
 
@@ -124,45 +124,37 @@ Use this template structure:
 
 ### Step 3: Launch Reviewers
 
-After creating the initial document, launch reviewer agents using the Task tool:
+After creating the initial document, launch reviewer agents using the Agent tool, routed per the [PROCESS.md](PROCESS.md) routing table:
 
 > **Effort barbell:** design critique is judgment work — launch reviewers at their defined model/effort, never downgraded to save tokens. Only mechanical stages (file inventories, censuses, link sweeps) run cheap (`effort: low` agents or `model: haiku` spawns).
 
-**For Design Documents** (game mechanics, UX, features):
-- Launch `radical-design-critic` to stress-test the design for edge cases, UX concerns, and fragilities
+- **Design documents** (game mechanics, UX, features) → launch `myst-dev-kit:radical-design-critic`
+- **Architecture/implementation plans** (code structure, systems) → launch `myst-dev-kit:architecture-reviewer`
+- **Comprehensive designs** (UX + code) → launch both agents in parallel
 
-**For Architecture/Implementation Plans** (code structure, systems):
-- Launch `architecture-reviewer` to analyze architectural consistency and potential improvements
-
-**For Both** (comprehensive designs with UX + code):
-- Launch both agents in parallel
-
-Use this Task tool invocation pattern:
+Use this Agent tool invocation pattern — always the **namespaced** subagent_type (bare names fail to resolve); full reviewer prompts are in [PROCESS.md](PROCESS.md):
 
 ```
-Task tool with:
-  subagent_type: "radical-design-critic" OR "architecture-reviewer"
-  prompt: "Review the design document at {{game_docs_root}}/{filename}.md.
-           Analyze it for: {relevant concerns based on doc type}.
-           Provide specific, actionable feedback with line references.
-           Focus on: edge cases, failure modes, UX friction, architectural consistency,
-           missing considerations, and potential improvements.
-           Output a structured review with HIGH/MEDIUM/LOW priority items."
+Agent tool with:
+  subagent_type: "myst-dev-kit:radical-design-critic" OR "myst-dev-kit:architecture-reviewer"
+  prompt: "Review the design document at <game Docs dir>/{filename}.md. ..."
 ```
+
+Each reviewer ends its response with a literal `Verdict: GREEN | WARNING | BLOCKING` line — parse that token; never infer approval from prose.
 
 ### Step 4: Iterate on Feedback
 
+Apply the iteration and verdict rules in [PROCESS.md](PROCESS.md):
+
 1. Read the reviewer feedback
-2. Update the document to address HIGH and MEDIUM priority items
+2. Update the document to address BLOCKING and WARNING findings (or record an explicit accept/defer decision)
 3. Add a new entry to the Change Log
 4. Present the updated document to the user with a summary of changes
+5. Re-run the reviewer(s) after fixing BLOCKING findings
 
 ### Step 5: Mark Document Ready
 
-When iteration is complete:
-1. Rename file suffix from `_WIP` to appropriate status (`_Updated`, `_Final`, etc.)
-2. Update the **Status** header in the document
-3. Present final document to user
+When iteration is complete, finalize the filename and the **Status** header per the lifecycle in [PROCESS.md](PROCESS.md) §Finalize, then present the final document to the user.
 
 ---
 
@@ -171,18 +163,18 @@ When iteration is complete:
 User: "Design a checkpoint save system for the game"
 
 You would:
-1. Create `{{game_docs_root}}/design_checkpoint_save_system_WIP.md`
+1. Create `design_checkpoint_save_system_WIP.md` in the game Docs dir (`Myst_Proto/Docs/` here)
 2. Fill in the template with checkpoint system design
-3. Launch `architecture-reviewer` (since it's a code system)
-4. Launch `radical-design-critic` (since it affects player experience)
+3. Launch `myst-dev-kit:architecture-reviewer` (since it's a code system)
+4. Launch `myst-dev-kit:radical-design-critic` (since it affects player experience)
 5. Iterate based on feedback
-6. Present final document
+6. Finalize per [PROCESS.md](PROCESS.md) and present the final document
 
 ---
 
 ## Notes
 
-- Always check existing docs in `{{game_docs_root}}/` for related designs before starting
+- Always check existing docs in the game Docs dir (`Myst_Proto/Docs/` here) for related designs before starting
 - Reference `split_fiction_scripts/` for AngelScript patterns when applicable
 - Follow the project's established architecture patterns (FrogEvent, Subsystems, etc.)
 - Keep designs LD-friendly as per project philosophy

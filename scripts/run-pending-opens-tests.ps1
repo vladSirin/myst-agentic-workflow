@@ -1,4 +1,4 @@
-﻿# run-pending-opens-tests.ps1 -- Preflight checks 4 and 5 must distinguish
+# run-pending-opens-tests.ps1 -- Preflight checks 4 and 5 must distinguish
 # pending-CL state (open-for-add, open-for-delete) from real drift / real
 # unmanaged files. Uses a fake p4 shim (scripts/fake-p4.ps1) prepended to
 # PATH so checks run end-to-end without touching the live depot.
@@ -289,6 +289,46 @@ if ($resG.Code -eq 0 -and $resG.Out -notmatch 'FAIL\s+2\.' -and $resG.Out -notma
 } else {
     Bad 'G. human-owned file does not gate checks 2/4' "code=$($resG.Code)`n$($resG.Out)"
 }
+
+###############################################################################
+# Scenario H: check 6 split (2026-08-06) -- a DEPOT-TRACKED localOnly file
+# (the reference consumer commits .claude/settings.json as team config) open
+# for EDIT in a pending CL is legitimate workflow -> preflight passes.
+###############################################################################
+Reset-Env
+$rootH = New-FixtureRoot
+$hashH1 = Write-Fixture-File $rootH '.claude/skills/h.md' "eta`n"
+Write-Fixture-File $rootH '.claude/settings.json' "{}`n" | Out-Null
+Write-Fixture-Manifest $rootH @(
+    (New-Entry '.claude/skills/h.md' $hashH1 1),
+    (New-Entry '.claude/settings.json' 'sha256:0' $null $true),
+    (New-LocalOnlyEntries)
+)
+$env:FAKE_P4_FSTAT  = "//UEPrototype/main/.claude/skills/h.md=1;//UEPrototype/main/.claude/settings.json=8"
+$env:FAKE_P4_HAVE   = "//UEPrototype/main/.claude/skills/h.md#1`n//UEPrototype/main/.claude/settings.json#8"
+$env:FAKE_P4_OPENED = "//UEPrototype/main/.claude/settings.json#8 - edit change 999 (text+w)"
+$resH = Invoke-Preflight $rootH
+if ($resH.Code -eq 0 -and $resH.Out -match 'legitimate') { Ok 'H. depot-tracked localOnly open for edit passes check 6' }
+else { Bad 'H. depot-tracked localOnly open for edit passes check 6' "code=$($resH.Code)`n$($resH.Out)" }
+
+###############################################################################
+# Scenario I: check 6 regression -- localOnly state NOT in the depot, opened
+# for ADD (local state being swept into a CL) must still FAIL.
+###############################################################################
+Reset-Env
+$rootI = New-FixtureRoot
+$hashI1 = Write-Fixture-File $rootI '.claude/skills/i.md' "iota`n"
+Write-Fixture-File $rootI '.claude/settings.local.json' "{}`n" | Out-Null
+Write-Fixture-Manifest $rootI @(
+    (New-Entry '.claude/skills/i.md' $hashI1 1),
+    (New-LocalOnlyEntries)
+)
+$env:FAKE_P4_FSTAT  = "//UEPrototype/main/.claude/skills/i.md=1"
+$env:FAKE_P4_HAVE   = "//UEPrototype/main/.claude/skills/i.md#1"
+$env:FAKE_P4_OPENED = "//UEPrototype/main/.claude/settings.local.json#1 - add change 999 (text)"
+$resI = Invoke-Preflight $rootI
+if ($resI.Code -ne 0 -and $resI.Out -match 'pending ADD of local state') { Ok 'I. pending-ADD of local state still fails check 6' }
+else { Bad 'I. pending-ADD of local state still fails check 6' "code=$($resI.Code)`n$($resI.Out)" }
 
 # Cleanup fake-p4 dir.
 Reset-Env

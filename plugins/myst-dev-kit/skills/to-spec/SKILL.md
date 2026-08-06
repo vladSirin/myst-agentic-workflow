@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 This skill takes the current conversation context and codebase understanding and produces a spec (you may know this document as a PRD). Do NOT interview the user — just synthesize what you already know.
 
-The issue tracker and triage label vocabulary should have been provided to you — run `/setup-matt-pocock-skills` if not.
+The issue tracker and triage label vocabulary should have been provided to you (the installer renders `Docs/agents/issue-tracker.md` and `triage-labels.md` into the project). If not, the install is incomplete — follow the setup flow in the package's SETUP.md (myst-agentic-workflow repo).
 
 ## Process
 
@@ -16,7 +16,7 @@ The issue tracker and triage label vocabulary should have been provided to you �
 
 Check with the user that these seams match their expectations.
 
-3. Write the spec using the template below, then publish it to the project issue tracker. Apply the `ready-for-agent` triage label - no need for additional triage.
+3. Write the spec using the template below, then publish it to the project issue tracker. New specs start at `Status: needs-triage`. The flow from there: `/to-tickets` assigns lane labels (`ready-for-agent` / `ready-for-human` / `needs-info`) at ticket creation; `/triage` reclassifies later when a human needs to.
 
 <spec-template>
 

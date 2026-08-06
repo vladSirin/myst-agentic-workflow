@@ -31,7 +31,7 @@ specific, source-derived claim that turns out to be wrong.
 
 | Capability | Count | Claude | Codex | Evidence |
 |---|---|---|---|---|
-| `skills/` | 30 | convention (no `skills` key in `.claude-plugin/plugin.json`) | **declared** — `"skills": "./skills/"` | declared (Codex) / convention (Claude) |
+| `skills/` | 24 | convention (no `skills` key in `.claude-plugin/plugin.json`) | **declared** — `"skills": "./skills/"` | declared (Codex) / convention (Claude) |
 | `hooks/` | 1 entry | plugin hooks load; project `.claude/settings.json` hooks **also** load | **declared** — `"hooks": "./hooks/hooks.json"`. Project-level hooks **never** load | **measured (2026-08-06)** — plugin hook observed firing under Codex end-to-end (see below). Project-level hooks separately measured NOT to load: `.codex/hooks.json` and `.agents/hooks.json` were each placed in a repo and a live `codex exec` run for both; neither fired |
 | `commands/` | 3 | convention | convention | **unverified** — neither manifest declares `commands`, and no one has confirmed Codex discovers them |
 | `agents/` | 2 | convention — `architecture-reviewer`, `radical-design-critic` | **ship inert — but not for the reason stated until 4.26.0.** Codex *does* have a subagent mechanism; these two files are Markdown and Codex agents are TOML, so nothing consumes them | measured — `~/.codex/agents/` holds 22 `.toml` agents incl. `code-reviewer`; `codex.exe` names `subagents` 19 times as a plugin resource kind. Whether Codex's loader accepts *plugin-delivered* agents is **unverified** |

@@ -16,7 +16,7 @@ Before proposing any multi-CL implementation plan (`CL1`, `CL2`, `CL3`, ...), yo
 > [!CAUTION]
 > If the user asks for non-trivial implementation work and you find yourself drafting a 2+ CL plan, **STOP**.
 >
-> Implementation is the LAST phase of the workflow, not the first. Spec → Tickets → Triage come first (per `AgenticWorkflow.md`).
+> Implementation is the LAST phase of the workflow, not the first. Spec → Tickets → Triage come first (per the `agentic-workflow` skill).
 
 ---
 
@@ -82,7 +82,7 @@ The **ONLY** exceptions are:
 
 ## Plan-mode interaction
 
-This gate fires INSIDE plan mode. If you've already called `exit_plan_mode` and your plan body is "CL1 do X, CL2 do Y, CL3 do Z" with no ticket link, you skipped this gate. The correct plan body shapes are:
+This gate fires INSIDE plan mode. If you've already called `ExitPlanMode` and your plan body is "CL1 do X, CL2 do Y, CL3 do Z" with no ticket link, you skipped this gate. The correct plan body shapes are:
 
 - A **workflow plan**: "Create spec → discuss → break into tickets → triage → implement against triaged-ready ticket(s)."
 - A **CL plan against an existing ticket**: "Per ticket `.scratch/<slug>/issues/01-foo.md` (status: ready-for-agent or ready-for-human), implement CL1, CL2, CL3 ..."
@@ -105,7 +105,7 @@ Work on a `ready-for-human` ticket proceeds normally — the agent implements an
 
 ## Enforcement
 
-This rule is advisory (like `ChangelistVerification.md`). If you find yourself proposing CLs without checking `.scratch/`, you have violated this requirement. Catch yourself before presenting the plan, not after.
+This rule is advisory (like the `changelist-verification` skill). If you find yourself proposing CLs without checking `.scratch/`, you have violated this requirement. Catch yourself before presenting the plan, not after.
 
 Where the consumer repo runs the Submit-Audit client hook, a risky over-threshold CL whose description carries **neither** a `Ticket:` ref **nor** a `Workflow: skipped (<reason>)` line gets an advisory warning. The two canonical lines above are exactly what that check greps. **Agent-session-only**: the check exists only in the agent-side client hook — human teammates' CLs are exempt from this convention by design and must never be audited for it server-side.
 
@@ -113,9 +113,9 @@ Where the consumer repo runs the Submit-Audit client hook, a risky over-threshol
 
 ## Related
 
-- `AgenticWorkflow.md` — the seven-phase workflow this gate enforces.
-- `AutoPlanMode.md` — plan-mode requirement (this gate fires inside plan mode).
-- `ChangelistVerification.md` — CL-by-CL execution discipline (applies AFTER this gate passes).
+- The `agentic-workflow` skill — the seven-phase workflow this gate enforces.
+- The `auto-plan-mode` skill — plan-mode requirement (this gate fires inside plan mode).
+- The `changelist-verification` skill — CL-by-CL execution discipline (applies AFTER this gate passes).
 - `/to-spec` — skill to create a spec from current conversation context.
 - `/to-tickets` — skill to break a spec into vertical-slice tickets.
 - `/triage` — skill to route tickets through the status workflow.

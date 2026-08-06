@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Break a plan into independently-grabbable tickets using vertical slices (tracer bullets).
 
-The issue tracker and triage label vocabulary should have been provided to you — run `/setup-matt-pocock-skills` if not.
+The issue tracker and triage label vocabulary should have been provided to you (the installer renders `Docs/agents/issue-tracker.md` and `triage-labels.md` into the project). If not, the install is incomplete — follow the setup flow in the package's SETUP.md (myst-agentic-workflow repo).
 
 ## Process
 
