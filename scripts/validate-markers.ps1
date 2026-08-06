@@ -1,4 +1,4 @@
-# validate-markers.ps1 — read-only marker gate (plan v1.6 line 391)
+# validate-markers.ps1 - read-only marker gate (plan v1.6 line 391)
 #
 # Decides whether the installer is allowed to write a block-scoped file.
 # It NEVER writes. On ANY marker ambiguity it refuses and exits 2 (never a
@@ -41,18 +41,18 @@ catch [MarkerAmbiguityException] {
     $cat = $_.Exception.Category
     $postHash = Get-RawSha $File
     Write-Output "=============================================================="
-    Write-Output "MARKER AMBIGUITY — REFUSING TO WRITE (exit 2)"
+    Write-Output "MARKER AMBIGUITY - REFUSING TO WRITE (exit 2)"
     Write-Output "  file    : $File"
     Write-Output "  id      : $Id"
     Write-Output "  category: $cat"
     Write-Output "  message : $($_.Exception.Message)"
-    Write-Output "  mutation: $(if ($preHash -eq $postHash) { 'NONE (verified byte-identical)' } else { 'DETECTED — INVESTIGATE' })"
+    Write-Output "  mutation: $(if ($preHash -eq $postHash) { 'NONE (verified byte-identical)' } else { 'DETECTED - INVESTIGATE' })"
     Write-Output "=============================================================="
     exit 2
 }
 catch {
     $postHash = Get-RawSha $File
     Write-Output "RUNTIME FAILURE (exit 2): $($_.Exception.Message)"
-    Write-Output "  mutation: $(if ($preHash -eq $postHash) { 'NONE' } else { 'DETECTED — INVESTIGATE' })"
+    Write-Output "  mutation: $(if ($preHash -eq $postHash) { 'NONE' } else { 'DETECTED - INVESTIGATE' })"
     exit 2
 }

@@ -1,4 +1,4 @@
-# check-mattpocock-updates.ps1 — myst-agentic-workflow upstream checker (skeleton phase)
+# check-mattpocock-updates.ps1 - myst-agentic-workflow upstream checker (skeleton phase)
 # Compares pinned mattpocock/skills commit against remote HEAD. Read-only.
 #
 # Defaults are resolved from package-manifest.json (upstream.mattpocockSkills) so the

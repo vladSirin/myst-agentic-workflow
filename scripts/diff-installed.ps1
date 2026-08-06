@@ -1,4 +1,4 @@
-# diff-installed.ps1 — myst-agentic-workflow drift detection (skeleton phase)
+# diff-installed.ps1 - myst-agentic-workflow drift detection (skeleton phase)
 # Compares installed scaffold state against manifest. Read-only; never writes.
 param(
     [Parameter(Mandatory=$true)]  [string] $TargetRoot,
@@ -105,7 +105,7 @@ foreach ($entry in $m.files) {
     # sha256 whole-file
     if ($entry.hashPolicy -eq "sha256" -and $entry.mergeStrategy -in @("generated-block","append-fragment")) {
         $result.Category = "SCHEMA-VIOLATION"
-        $result.Detail = "generated-block/append-fragment with whole-file sha256 — invalid schema v3+"
+        $result.Detail = "generated-block/append-fragment with whole-file sha256 - invalid schema v3+"
         [void]$results.Add($result)
         continue
     }
@@ -125,7 +125,7 @@ foreach ($entry in $m.files) {
             $result.Detail = "human-owned file"
         } else {
             $result.Category = "drift-package-owned"
-            $result.Detail = "package-owned file; hash differs — requires resolution"
+            $result.Detail = "package-owned file; hash differs - requires resolution"
         }
     }
     [void]$results.Add($result)

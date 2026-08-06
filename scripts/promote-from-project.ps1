@@ -1,4 +1,4 @@
-# promote-from-project.ps1 — myst-agentic-workflow promotion tool (skeleton phase)
+# promote-from-project.ps1 - myst-agentic-workflow promotion tool (skeleton phase)
 # Copies proven downstream improvements back into the package. DryRun only until
 # classification is provided for every path. Write mode is gated.
 param(
@@ -28,12 +28,12 @@ if (($Paths.Count -ne $Classification.Count) -or ($Classification.Count -eq 0)) 
 Each path requires a classification. Provide -Classification for each -Path.
 
 Valid classifications:
-  reusable-core           — generic, no project/VC assumptions; move into templates/
-  perforce-overlay        — Perforce-specific (CL workflow); move into overlays/perforce/
-  ue-overlay              — Unreal-Engine specific (build, p4ignore); move into overlays/ue/
-  myst-project-overlay    — this-project specific; move into overlays/myst-project/
-  ue-perforce-overlay     — DEPRECATED v1.2.0; use perforce-overlay or ue-overlay
-  reject-local            — intentionally project-local; record reason in reject log
+  reusable-core           - generic, no project/VC assumptions; move into templates/
+  perforce-overlay        - Perforce-specific (CL workflow); move into overlays/perforce/
+  ue-overlay              - Unreal-Engine specific (build, p4ignore); move into overlays/ue/
+  myst-project-overlay    - this-project specific; move into overlays/myst-project/
+  ue-perforce-overlay     - DEPRECATED v1.2.0; use perforce-overlay or ue-overlay
+  reject-local            - intentionally project-local; record reason in reject log
 
 Usage:
   ./promote-from-project.ps1 -TargetRoot <path> `

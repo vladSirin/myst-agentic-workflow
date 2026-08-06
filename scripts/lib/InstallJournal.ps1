@@ -1,4 +1,4 @@
-# InstallJournal.ps1 — install crash/recovery model (plan v1.6 lines 598-606)
+# InstallJournal.ps1 - install crash/recovery model (plan v1.6 lines 598-606)
 #
 # A killed or interrupted install must never leave a half-written scaffold
 # with no recovery path. This module provides:

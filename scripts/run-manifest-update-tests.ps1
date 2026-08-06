@@ -1,4 +1,4 @@
-# run-manifest-update-tests.ps1 — Update-ManifestForChanges verification (issue 08)
+# run-manifest-update-tests.ps1 - Update-ManifestForChanges verification (issue 08)
 #
 #   exit 0 : all checks pass
 #   exit 1 : one or more checks failed
@@ -163,7 +163,7 @@ if ($threw2 -and $afterContent -eq 'BEFORE-STAGE') {
 # ----------------------------------------------------------------------------
 # 5. EOL/BOM invariance: Get-NormalizedContentHash must be identical across LF,
 #    CRLF, and BOM+CRLF encodings of the same content. An LF-only git checkout
-#    cannot exercise CRLF, so assert it explicitly here — this is what guards the
+#    cannot exercise CRLF, so assert it explicitly here - this is what guards the
 #    five contentHash sites against a raw-byte regression (a CRLF consumer would
 #    otherwise false-report drift; see CHANGELOG 4.8.0).
 # ----------------------------------------------------------------------------

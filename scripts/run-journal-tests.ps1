@@ -1,4 +1,4 @@
-# run-journal-tests.ps1 — crash/recovery model verification (plan v1.6 lines 598-606)
+# run-journal-tests.ps1 - crash/recovery model verification (plan v1.6 lines 598-606)
 #
 #   exit 0 : all checks pass
 #   exit 1 : one or more checks failed

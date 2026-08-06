@@ -1,4 +1,4 @@
-# run-promote-tests.ps1 — promote-from-project.ps1 write-mode verification (issue 11)
+# run-promote-tests.ps1 - promote-from-project.ps1 write-mode verification (issue 11)
 #
 #   exit 0 : all checks pass
 #   exit 1 : one or more checks failed

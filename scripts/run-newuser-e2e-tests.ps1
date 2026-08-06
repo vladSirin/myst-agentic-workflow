@@ -1,4 +1,4 @@
-# run-newuser-e2e-tests.ps1 — Phase 5 verification gate (issue 16)
+# run-newuser-e2e-tests.ps1 - Phase 5 verification gate (issue 16)
 #
 # Simulates a new adopter following docs/install.md against a fresh empty
 # target. Uses a synthetic 3-file package (one sentinel per tool) so the test

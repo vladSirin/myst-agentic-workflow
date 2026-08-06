@@ -1,4 +1,4 @@
-# Render.ps1 — shared render pipeline (issue 10)
+# Render.ps1 - shared render pipeline (issue 10)
 #
 # Single source of truth for "what does a template render to, when installed
 # into this target project?" Used by install.ps1 (to write) and

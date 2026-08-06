@@ -1,4 +1,4 @@
-# compare-with-package.ps1 — Cross-repo drift + conflict detection (issue 10)
+# compare-with-package.ps1 - Cross-repo drift + conflict detection (issue 10)
 #
 # Compares the installed scaffold (TargetRoot) against the package source
 # (PackageRoot). Per-entry outcome is one of:
