@@ -16,7 +16,7 @@ The issue tracker and triage label vocabulary should have been provided to you â
 
 Check with the user that these seams match their expectations.
 
-3. Write the spec using the template below, then publish it to the project issue tracker. Apply the `ready-for-agent` triage label - no need for additional triage.
+3. Write the spec using the template below, then publish it to the project issue tracker. New specs start at `Status: needs-triage`. The flow from there: `/to-tickets` assigns lane labels (`ready-for-agent` / `ready-for-human` / `needs-info`) at ticket creation; `/triage` reclassifies later when a human needs to.
 
 <spec-template>
 

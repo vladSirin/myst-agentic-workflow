@@ -272,12 +272,12 @@ If the process is still running, retry with `taskkill //PID <pid> //F`. Do NOT p
 
 ### 7. Tech Review
 
-Launch the `architecture-reviewer` agent to review the changelist. Provide:
+Launch the `myst-dev-kit:architecture-reviewer` agent (the namespaced name — bare `architecture-reviewer` fails to resolve) to review the changelist. Provide:
 - The CL number and description
 - The list of files being submitted (from `p4 describe -s <CL>`)
 - Any relevant context from the sync (what changed, which plugins rebuilt)
 
-**Submission ownership rule (HARD)**: the reviewer agent **must not** run `p4 submit`. Its job is to return a verdict — nothing more. The main session is the only actor permitted to submit. State this constraint explicitly in the agent prompt. (The `architecture-reviewer` agent itself also enforces this; see its "Submission Authority" rule.)
+**Submission ownership rule (HARD)**: the reviewer agent **must not** run `p4 submit`. Its job is to return a verdict — nothing more. The main session is the only actor permitted to submit. State this constraint explicitly in the agent prompt. (The `myst-dev-kit:architecture-reviewer` agent itself also enforces this; see its "Submission Authority" rule.)
 
 **Required reviewer output format**: the agent's response must contain a top-level `Verdict:` line with one of:
 - `Verdict: GREEN` — no issues, or INFO-only notes
@@ -310,4 +310,4 @@ Verify submission with `p4 changes -m 1 -s submitted` and report the final CL nu
 ## Notes
 
 - If binaries haven't changed (nothing to reconcile), report that and skip CL creation.
-- This workflow follows the project's changelist-verification rules (see the perforce overlay's `ChangelistVerification.md` / `ReviewAndSubmit.md`).
+- This workflow follows the project's changelist-verification rules (see the `changelist-verification` and `review-and-submit` skills).

@@ -16,7 +16,7 @@ Plan mode is for **alignment before commitment**. Use it when the cost of going 
 - **Multi-step plans** — when proposing more than a single immediate action
 - **Destructive or hard-to-reverse ops** — deletes, `p4 revert`, force pushes, migrations, dependency changes
 - **The user explicitly asks for a plan** — "give me a plan", "what's the approach", "let's think through this"
-- **About to propose CLs** — see [PreImplementationGate.md](PreImplementationGate.md) for the additional check that fires here
+- **About to propose CLs** — see the [pre-implementation-gate](../pre-implementation-gate/SKILL.md) skill for the additional check that fires here
 
 Enter plan mode yourself with `EnterPlanMode` — don't wait to be asked. Present the plan with `ExitPlanMode` and **wait for explicit user approval before executing.**
 
@@ -43,8 +43,15 @@ Approval doesn't carry across user instructions — each new task starts fresh o
 
 ---
 
+## Worked examples
+
+- **"Refactor the pace-request flags out of the camera component and route them through the tactical layer"** — ENTER. Coordinated edits across 2+ files, will be reviewed and submitted; alignment on the seam is cheaper than redoing the refactor.
+- **"Why is the editor throwing on load? Here's the log"** — SKIP. Read-only diagnosis (Read/Grep, `p4 describe`, logs). Stay out of plan mode even though the *subject* may end up being a big fix — what matters is what you are about to do now.
+- **"Fix the typo in the doc-audit banner"** — SKIP. Single-file edit, no architectural impact. Entering plan mode here is pure friction.
+- **"Implement tickets 01-03"** (multi-CL) — ENTER, and the [pre-implementation-gate](../pre-implementation-gate/SKILL.md) fires before the plan body: spec/tickets/triage must exist first.
+
 ## Related
 
-- [PreImplementationGate.md](PreImplementationGate.md) — when in plan mode for multi-CL work, this gate fires before the plan body is drafted.
-- [ChangelistVerification.md](ChangelistVerification.md) — once a plan is approved and multiple CLs are executing, this rule kicks in.
-- [DesignWorkflow.md](../design-workflow/SKILL.md) and [AgenticWorkflow.md](../agentic-workflow/SKILL.md) — both require searching for an existing plan/spec before creating a new one.
+- [pre-implementation-gate](../pre-implementation-gate/SKILL.md) — when in plan mode for multi-CL work, this gate fires before the plan body is drafted.
+- [changelist-verification](../changelist-verification/SKILL.md) — once a plan is approved and multiple CLs are executing, this rule kicks in.
+- [design-workflow](../design-workflow/SKILL.md) and [agentic-workflow](../agentic-workflow/SKILL.md) — both require searching for an existing plan/spec before creating a new one.

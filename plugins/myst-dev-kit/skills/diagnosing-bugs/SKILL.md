@@ -7,6 +7,8 @@ description: Diagnosis loop for hard bugs and performance regressions. Use when 
 
 A discipline for hard bugs. Skip phases only when explicitly justified.
 
+> **Perforce/UE project?** Read [UE-NOTES.md](UE-NOTES.md) first — it maps the web-flavoured loops below (curl, Playwright, `git bisect`) to UE automation tests, commandlets, and Perforce bisection.
+
 When exploring the codebase, read `CONTEXT.md` (if it exists) to get a clear mental model of the relevant modules, and check ADRs in the area you're touching.
 
 ## Phase 1 — Build a feedback loop

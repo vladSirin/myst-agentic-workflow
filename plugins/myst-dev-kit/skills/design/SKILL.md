@@ -10,7 +10,7 @@ description: "Create a design document with reviewer-agent feedback and iterate 
 ## Purpose
 
 This skill automates the creation and review of design documents. When invoked for design or planning work, it:
-1. Creates a properly formatted design document in `{{game_docs_root}}/`
+1. Creates a properly formatted design document in the game project's Docs dir (`Myst_Proto/Docs/` here; see the CLAUDE.md Project section)
 2. Launches reviewer agents to critique the design
 3. Iterates on the document based on feedback
 
@@ -27,7 +27,7 @@ Ask the user clarifying questions if needed to understand:
 
 ### Step 2: Create the Document
 
-Create the document at `{{game_docs_root}}/` with this naming convention:
+Create the document in the game Docs dir (`Myst_Proto/Docs/` here) with this naming convention:
 - Design docs: `design_{feature_name}_WIP.md`
 - Plan docs: `plan_{feature_name}_WIP.md`
 
@@ -142,7 +142,7 @@ Use this Task tool invocation pattern:
 ```
 Task tool with:
   subagent_type: "radical-design-critic" OR "architecture-reviewer"
-  prompt: "Review the design document at {{game_docs_root}}/{filename}.md.
+  prompt: "Review the design document at <game Docs dir>/{filename}.md.
            Analyze it for: {relevant concerns based on doc type}.
            Provide specific, actionable feedback with line references.
            Focus on: edge cases, failure modes, UX friction, architectural consistency,
@@ -171,7 +171,7 @@ When iteration is complete:
 User: "Design a checkpoint save system for the game"
 
 You would:
-1. Create `{{game_docs_root}}/design_checkpoint_save_system_WIP.md`
+1. Create `design_checkpoint_save_system_WIP.md` in the game Docs dir (`Myst_Proto/Docs/` here)
 2. Fill in the template with checkpoint system design
 3. Launch `architecture-reviewer` (since it's a code system)
 4. Launch `radical-design-critic` (since it affects player experience)
@@ -182,7 +182,7 @@ You would:
 
 ## Notes
 
-- Always check existing docs in `{{game_docs_root}}/` for related designs before starting
+- Always check existing docs in the game Docs dir (`Myst_Proto/Docs/` here) for related designs before starting
 - Reference `split_fiction_scripts/` for AngelScript patterns when applicable
 - Follow the project's established architecture patterns (FrogEvent, Subsystems, etc.)
 - Keep designs LD-friendly as per project philosophy
