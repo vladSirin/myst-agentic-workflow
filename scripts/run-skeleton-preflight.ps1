@@ -167,6 +167,7 @@ if (-not $p4Available) {
     $drift = @()
     $blockScoped = 0
     $humanOwned4 = 0
+    $unbaselined = 0
     $pendingAddActions = @('add','branch','move/add')
     foreach ($e in $m.files) {
         if ($e.localOnly) { continue }
@@ -188,6 +189,16 @@ if (-not $p4Available) {
         if ($pendingOpens.ContainsKey($relKey) -and $pendingAddActions -contains $pendingOpens[$relKey]) {
             continue
         }
+        # A null depotRevision is the ABSENCE of a recorded revision, not a claim
+        # that can contradict the depot. Entries created while their file was a
+        # pending ADD carry null by design (the cast guard's stated intent) -- and
+        # unlike the pending-EDIT tolerance below, which records head+1 and so
+        # self-clears on submit by construction, null can never match a head. So
+        # once such a CL submitted, this check gated the consumer's routine update
+        # path permanently, leaving upgrade.ps1 -- the heavyweight path a routine
+        # update exists to avoid -- as the only way out. Counted and reported; the
+        # write that follows this preflight is what baselines it.
+        if ($null -eq $e.depotRevision -or "$($e.depotRevision)" -eq '') { $unbaselined++; continue }
         $head = P4HeadRev ("$depotRoot/" + $e.path)
         if ($null -eq $head) {
             if ($null -ne $e.depotRevision) { $drift += "$($e.path) (manifest=$($e.depotRevision) head=missing)" }
@@ -211,6 +222,7 @@ if (-not $p4Available) {
     $notes4 = @()
     if ($blockScoped -gt 0) { $notes4 += "$blockScoped block-scoped entr$(if($blockScoped -eq 1){'y'}else{'ies'}) not revision-tracked; blockHash guards them (check 2)" }
     if ($humanOwned4 -gt 0) { $notes4 += "$humanOwned4 human-owned entr$(if($humanOwned4 -eq 1){'y'}else{'ies'}) not revision-tracked (the installer never writes them)" }
+    if ($unbaselined -gt 0) { $notes4 += "$unbaselined entr$(if($unbaselined -eq 1){'y'}else{'ies'}) not yet baselined (depotRevision null; the next write records it)" }
     $bsNote = $notes4 -join '; '
     if ($drift.Count -eq 0) { Ok '4. depotRevision == headRev for all managed' $bsNote }
     else { Bad '4. depotRevision == headRev for all managed' ($drift -join '; ') }
