@@ -27,6 +27,54 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.32.0] - 2026-08-07 - The last two silent paths
+
+MINOR: consumers get it automatically, and it changes what the check reports.
+
+4.31.0 closed two of the three ways the check could go quiet at the worst moment. The
+second review pass of the same consumer CL found the third, and a fourth reached through
+a different door. Both reviewers converged on the first one independently, again.
+
+#### Fixed
+
+- **A deleted bible file was still silent.** 4.31.0 hoisted the baseline read above the
+  two "nothing to compare" branches, but the file-EXISTENCE loop sat above that. So
+  deleting `AGENTS.md` outright - the widest form of the incident class, where Codex
+  reads nothing at all rather than reading Claude's rules - still printed
+  `no AGENTS.md - nothing to check`, exit 0, with a baseline on disk recording that it
+  had rules. The baseline read now precedes every early return, and the legitimate
+  silence this branch exists for (a project that never set the second tool up) is
+  exactly the no-baseline case, so the two are distinguishable.
+- **A corrupt baseline silently reverted to no-baseline mode.** An empty or
+  comments-only baseline - what a three-way merge of a unified diff produces - yielded
+  an empty signature, which every branch treated as "never recorded". Combined with a
+  collapse, that put the incident-class silence straight back. Absence and corruption
+  are different states; a present-but-signature-less baseline is now reported as
+  `CORRUPT or hand-merged` and exits 1.
+
+#### Changed
+
+- **The loud path no longer offers the silencer without the warning.** The `CHANGED`
+  message ended with `--write-baseline` and nothing else; the anti-reflex text lived in
+  the baseline header, i.e. inside the file that command overwrites, where the person
+  running it never had to read it. The warning now sits at the decision point.
+- **The `DISAPPEARED` message leads with "restore", not "delete".** It previously
+  offered deleting the baseline first - a single `rm` that converts the loudest alarm
+  into permanent good news, since nothing tracks the baseline's absence. Deleting is
+  still the right move when the divergences were dropped on purpose; it now comes
+  second and asks for the decision to be argued in the CL description.
+- **Creatives on-ramp: step 0 is now getting a seat.** The section began at "install the
+  extension", but Claude Code demands a sign-in the moment it starts and will not run
+  without an account - so a designer on a fresh machine hit a login wall with no named
+  person to ask. It also told the reader they did not need "the terminal version" and
+  then asked them to run two commands in a terminal; it now points at VS Code's built-in
+  terminal instead of contradicting itself.
+
+#### Added
+
+- `run-hook-tests.ps1`: cases for the deleted file and the signature-less baseline, both
+  written red against 4.31.0 first (15 passed, 2 failed), green after. Suite total 17.
+
 ## [4.31.0] - 2026-08-07 - The baseline now guards the case it was built for
 
 MINOR: consumers get it automatically, and it changes what the check reports.
