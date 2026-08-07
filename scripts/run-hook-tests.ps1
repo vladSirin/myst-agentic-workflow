@@ -33,7 +33,11 @@ $cases = @(
     'check-rules-alignment: baseline recorded -> quiet OK, exit 0',
     'check-rules-alignment: divergence set changed -> loud, exit 1',
     'check-rules-alignment: changed + --advisory -> loud, exit 0',
-    'check-rules-alignment: NO baseline -> legacy hunk advisory, exit 1'
+    'check-rules-alignment: NO baseline -> legacy hunk advisory, exit 1',
+    'check-rules-alignment: sanctioned divergences DISAPPEARED -> loud, exit 1',
+    'check-rules-alignment: hard-rules section GONE -> loud, exit 1',
+    'check-rules-alignment: lockstep edit near a divergence stays quiet',
+    'check-rules-alignment: --write-baseline refuses over a stale baseline'
 )
 
 # Resolve bash: PATH first, then Git-for-Windows' bin/ next to git.exe, then the
@@ -216,6 +220,76 @@ try {
     if ($r.Code -eq 1 -and $r.Out -match 'hunk\(s\)' -and $r.Out -match 'Confirm each') {
         Ok $cases[10]
     } else { Bad $cases[10] "code=$($r.Code) out=$($r.Out)" }
+
+    # 7e. THE INCIDENT CLASS THIS CHECK EXISTS FOR. Someone "makes the two files
+    #     match" and every sanctioned per-tool qualifier vanishes from AGENTS.md --
+    #     the silent-reversal shape. The sections are now identical, so the pre-4.31
+    #     code returned "sections are identical", exit 0: its single most reassuring
+    #     message, emitted at the exact moment Codex lost its rules. A baseline
+    #     asserting N sanctioned divergences is positive evidence they should still
+    #     be there, and it was sitting on disk unread.
+    $cw7e = Join-Path $t 'align-collapse'; New-Item -ItemType Directory -Path $cw7e -Force | Out-Null
+    [IO.File]::WriteAllText((Join-Path $cw7e 'CLAUDE.md'), $claudeRules, [Text.UTF8Encoding]::new($false))
+    [IO.File]::WriteAllText((Join-Path $cw7e 'AGENTS.md'), $agentsRules, [Text.UTF8Encoding]::new($false))
+    $null = Invoke-Hook -Script (Join-Path $hookDir 'check-rules-alignment.sh') -HookArgs @('--write-baseline') -Cwd $cw7e
+    # AGENTS.md is overwritten from CLAUDE.md: the divergence is gone, not resolved.
+    [IO.File]::WriteAllText((Join-Path $cw7e 'AGENTS.md'), $claudeRules, [Text.UTF8Encoding]::new($false))
+    $r = Invoke-Hook -Script (Join-Path $hookDir 'check-rules-alignment.sh') -Cwd $cw7e
+    if ($r.Code -eq 1 -and $r.Out -match 'DISAPPEARED') {
+        Ok $cases[11]
+    } else { Bad $cases[11] "code=$($r.Code) out=$($r.Out)" }
+
+    # 7f. Same blind spot, second door: the '## Hard rules' heading is renamed or the
+    #     section deleted from AGENTS.md. Extraction returns empty and the pre-4.31
+    #     code said "nothing to check", exit 0 -- while a baseline recorded that there
+    #     WAS something to check. (The old message also claimed "in both files" when
+    #     it fires if EITHER is empty.)
+    $cw7f = Join-Path $t 'align-gone'; New-Item -ItemType Directory -Path $cw7f -Force | Out-Null
+    [IO.File]::WriteAllText((Join-Path $cw7f 'CLAUDE.md'), $claudeRules, [Text.UTF8Encoding]::new($false))
+    [IO.File]::WriteAllText((Join-Path $cw7f 'AGENTS.md'), $agentsRules, [Text.UTF8Encoding]::new($false))
+    $null = Invoke-Hook -Script (Join-Path $hookDir 'check-rules-alignment.sh') -HookArgs @('--write-baseline') -Cwd $cw7f
+    [IO.File]::WriteAllText((Join-Path $cw7f 'AGENTS.md'), "# Agents`n`n## House rules`n`n1. Never touch the vendor tree.`n`n## Deeper docs`n", [Text.UTF8Encoding]::new($false))
+    $r = Invoke-Hook -Script (Join-Path $hookDir 'check-rules-alignment.sh') -Cwd $cw7f
+    if ($r.Code -eq 1 -and $r.Out -match 'DISAPPEARED|GONE|no longer') {
+        Ok $cases[12]
+    } else { Bad $cases[12] "code=$($r.Code) out=$($r.Out)" }
+
+    # 7g. The property the header CLAIMS: an edit that leaves the divergence SET alone
+    #     must not re-flag. With 3 lines of diff context in the signature this was
+    #     false -- an identical, lockstep reword within 3 lines of a divergence fired
+    #     the alarm even though nothing diverged differently. Measured on the real
+    #     bibles before the fix: 14 of 31 signature lines were context, so ~39% of the
+    #     section was false-alarm surface. False alarms are how --write-baseline
+    #     becomes muscle memory, which is how the whole mechanism dies.
+    $cw7g = Join-Path $t 'align-lockstep'; New-Item -ItemType Directory -Path $cw7g -Force | Out-Null
+    [IO.File]::WriteAllText((Join-Path $cw7g 'CLAUDE.md'), $claudeRules, [Text.UTF8Encoding]::new($false))
+    [IO.File]::WriteAllText((Join-Path $cw7g 'AGENTS.md'), $agentsRules, [Text.UTF8Encoding]::new($false))
+    $null = Invoke-Hook -Script (Join-Path $hookDir 'check-rules-alignment.sh') -HookArgs @('--write-baseline') -Cwd $cw7g
+    # Rule 1 is adjacent to the rule-2 divergence. Edit it IDENTICALLY in both files:
+    # the divergence set is provably unchanged, so this must stay quiet.
+    foreach ($f in @('CLAUDE.md','AGENTS.md')) {
+        $p = Join-Path $cw7g $f
+        $txt = [IO.File]::ReadAllText($p).Replace('1. Never touch the vendor tree.', '1. Never touch the vendored engine tree.')
+        [IO.File]::WriteAllText($p, $txt, [Text.UTF8Encoding]::new($false))
+    }
+    $r = Invoke-Hook -Script (Join-Path $hookDir 'check-rules-alignment.sh') -HookArgs @('--advisory') -Cwd $cw7g
+    if ($r.Code -eq 0 -and $r.Out -match 'unchanged') {
+        Ok $cases[13]
+    } else { Bad $cases[13] "code=$($r.Code) out=$($r.Out)" }
+
+    # 7h. --write-baseline must not leave a STALE baseline in place when the sections
+    #     have collapsed to identical. The old code printed "nothing to record" and
+    #     returned 0, leaving the previous signature on disk -- so the 7e state
+    #     persisted silently even after someone tried to re-record.
+    $cw7h = Join-Path $t 'align-staleWrite'; New-Item -ItemType Directory -Path $cw7h -Force | Out-Null
+    [IO.File]::WriteAllText((Join-Path $cw7h 'CLAUDE.md'), $claudeRules, [Text.UTF8Encoding]::new($false))
+    [IO.File]::WriteAllText((Join-Path $cw7h 'AGENTS.md'), $agentsRules, [Text.UTF8Encoding]::new($false))
+    $null = Invoke-Hook -Script (Join-Path $hookDir 'check-rules-alignment.sh') -HookArgs @('--write-baseline') -Cwd $cw7h
+    [IO.File]::WriteAllText((Join-Path $cw7h 'AGENTS.md'), $claudeRules, [Text.UTF8Encoding]::new($false))
+    $r = Invoke-Hook -Script (Join-Path $hookDir 'check-rules-alignment.sh') -HookArgs @('--write-baseline') -Cwd $cw7h
+    if ($r.Code -ne 0 -and $r.Out -match 'DISAPPEARED|refus') {
+        Ok $cases[14]
+    } else { Bad $cases[14] "code=$($r.Code) out=$($r.Out)" }
 }
 finally { Remove-Item -Recurse -Force $t -ErrorAction SilentlyContinue }
 
