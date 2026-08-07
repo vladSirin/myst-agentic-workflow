@@ -39,7 +39,8 @@ $cases = @(
     'check-rules-alignment: lockstep edit near a divergence stays quiet',
     'check-rules-alignment: --write-baseline refuses over a stale baseline',
     'check-rules-alignment: a bible FILE is gone -> loud, exit 1',
-    'check-rules-alignment: signature-less baseline -> loud CORRUPT, exit 1'
+    'check-rules-alignment: signature-less baseline -> loud CORRUPT, exit 1',
+    'check-rules-alignment: --write-baseline RECOVERS a corrupt baseline'
 )
 
 # Resolve bash: PATH first, then Git-for-Windows' bin/ next to git.exe, then the
@@ -329,6 +330,26 @@ try {
     if ($r.Code -eq 1 -and $r.Out -match 'CORRUPT') {
         Ok $cases[16]
     } else { Bad $cases[16] "code=$($r.Code) out=$($r.Out)" }
+
+    # 7k. RECOVERY, not just detection. 4.32.0's CORRUPT guard sat above the
+    #     --write-baseline handler, so the message told the operator to "re-record it
+    #     from reviewed files" and then refused to do exactly that. The only exit left
+    #     was deleting the file -- the one untracked, irreversible action this design
+    #     works to make expensive, reached at the end of a dead end during an incident.
+    #
+    #     --write-baseline is allowed through HERE but still refused on the DISAPPEARED
+    #     paths: there a real record exists and re-recording would overwrite evidence;
+    #     a corrupt baseline has no evidence left to protect.
+    $cw7k = Join-Path $t 'align-recover'; New-Item -ItemType Directory -Path $cw7k -Force | Out-Null
+    [IO.File]::WriteAllText((Join-Path $cw7k 'CLAUDE.md'), $claudeRules, [Text.UTF8Encoding]::new($false))
+    [IO.File]::WriteAllText((Join-Path $cw7k 'AGENTS.md'), $agentsRules, [Text.UTF8Encoding]::new($false))
+    New-Item -ItemType Directory -Path (Join-Path $cw7k '.claude') -Force | Out-Null
+    [IO.File]::WriteAllText((Join-Path $cw7k '.claude\rules-alignment.baseline'), "# header only`n", [Text.UTF8Encoding]::new($false))
+    $w = Invoke-Hook -Script (Join-Path $hookDir 'check-rules-alignment.sh') -HookArgs @('--write-baseline') -Cwd $cw7k
+    $r = Invoke-Hook -Script (Join-Path $hookDir 'check-rules-alignment.sh') -HookArgs @('--advisory') -Cwd $cw7k
+    if ($w.Code -eq 0 -and $r.Code -eq 0 -and $r.Out -match 'unchanged') {
+        Ok $cases[17]
+    } else { Bad $cases[17] "write=$($w.Code) check=$($r.Code) out=$($r.Out)" }
 }
 finally { Remove-Item -Recurse -Force $t -ErrorAction SilentlyContinue }
 
