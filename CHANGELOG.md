@@ -27,6 +27,44 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.29.0] - 2026-08-07 - Drift detection, not difference detection
+
+MINOR per this file's own rules: both changes reach consumers automatically (plugin update
++ update.ps1), and one is a behaviour change to a shipped script. The follow-up ticket that
+requested this work proposed PATCH; the table above says otherwise, and the table wins.
+
+#### Changed
+
+- **`check-rules-alignment.sh` gains baseline mode.** It reported every difference between
+  the two bibles' hard-rules sections, forever. But on a project supporting both harnesses,
+  permanent sanctioned divergence is the DESIGN, not the defect - so the advisory printed at
+  every SessionStart asking for a confirmation no consumer had any way to record. That is how
+  the detector built for the silent-reversal incident class turns into background noise, which
+  is worse than not shipping it: it still looks like coverage.
+  With `.claude/rules-alignment.baseline` present the check reports only what CHANGED since
+  that file was written - the signal its own header claimed to be for since it was written.
+  Without a baseline, behaviour is byte-identical to 4.28.0; baseline mode is opt-in by the
+  file's presence and nothing else.
+  - `--write-baseline` records the current set; `--baseline <file>` overrides the path.
+  - The signature is a unified diff with `@@` line numbers stripped, stored as readable text
+    (not a hash) so a reviewer can see exactly what was sanctioned. An unrelated edit
+    elsewhere in the section does not re-flag the set; a change to WHICH rules diverge does.
+    Measured on the real Myst bibles: rewording one Claude-only qualifier fires the check
+    while the hunk COUNT stays at 2 - a count-based comparison would have missed it.
+  - `--advisory` still exits 0 on every path. A SessionStart hook must never fail a session.
+
+#### Added
+
+- **Creatives MustRead gains a "Getting set up" section** (EN + CN): three install steps, the
+  two-command update, and a pointer to SETUP.md as the authority. SETUP.md lives in this
+  repository - invisible to a designer browsing the project's `Docs/MustRead/`, which is where
+  they actually look; the doc previously ended at "ask the project lead". Commands and a
+  pointer only, never copied process prose: duplicated prose is the thing that drifts apart.
+- `run-hook-tests.ps1`: four cases covering baseline recorded / changed / changed-under-
+  advisory, plus a backward-compat pin that the no-baseline path still behaves exactly as
+  before. The three baseline cases were written red and confirmed failing against the 4.28.0
+  script before the fix existed.
+
 ## [4.28.0] - 2026-08-06 - Audit hardening: the kit fixes what its own audit found
 
 MINOR per this file's own rules: every change below reaches consumers automatically
