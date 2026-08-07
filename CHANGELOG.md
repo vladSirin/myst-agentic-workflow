@@ -27,6 +27,66 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.31.0] - 2026-08-07 - The baseline now guards the case it was built for
+
+MINOR: consumers get it automatically, and it changes what the check reports.
+
+Two independent reviewers converged on the same hole in 4.29.0 during the reference
+consumer's review pass. Both were right, and both defects were reproduced before fixing.
+
+#### Fixed
+
+- **The check was SILENT on the exact incident class it exists for.** If someone "made the
+  two files match" - deleting every Codex-only qualifier from AGENTS.md, which is the
+  silent-reversal shape this detector descends from - the sections became identical and
+  the script printed `hard-rules sections are identical`, exit 0. Its single most
+  reassuring message, emitted at the precise moment Codex lost its rules. Same for a
+  renamed or deleted `## Hard rules` heading: `nothing to check`, exit 0.
+  Both paths returned before the baseline was ever read. A recorded baseline is positive
+  evidence that a difference BELONGED there, so absence of a difference is only good news
+  if nobody wrote that one was expected. The baseline is now read first and both paths
+  report `N sanctioned divergence(s) have DISAPPEARED` and exit 1.
+  `--write-baseline` hits the same guard deliberately: it used to print "nothing to
+  record" and leave the stale baseline on disk, so the collapse persisted silently even
+  after someone tried to re-record it.
+- **The signature carried diff CONTEXT, so it re-flagged edits that changed nothing.**
+  The header claimed "an unrelated edit elsewhere in the section does NOT re-flag the
+  set". That was false: with 3 lines of context, an identical LOCKSTEP edit made to both
+  files within 3 lines of a divergence fired the alarm. Measured on the reference
+  consumer's bibles - 14 of 31 signature lines were context, making ~39% of the
+  hard-rules section a false-alarm surface. Now `diff -U0`: the diverging lines and
+  nothing else, which is what "the divergence set" actually means. The header's claim is
+  now true rather than qualified.
+  This matters beyond tidiness: false alarms are how `--write-baseline` becomes muscle
+  memory, and a rubber-stamped baseline is a dead check that still looks green.
+- **`no '## Hard rules' section in both files`** fired when EITHER file lacked one - and
+  mis-described the more dangerous case. It now names the file that is actually missing it.
+
+#### Changed
+
+- The generated baseline header now carries the anti-reflex instruction (read what
+  changed before re-recording; a rubber stamp is a dead check) rather than one passing
+  clause. Previously that guidance existed only in a consumer's `.scratch/` ticket, which
+  no package consumer ever sees.
+- **Correction to the 4.29.0 entry below:** it says the no-baseline path is "byte-identical
+  to 4.28.0". Exit code and finding are identical; stdout gains two lines pointing at
+  `--write-baseline`. The behaviour is compatible, the bytes are not. Recorded here rather
+  than edited above, because a shipped entry describing what a release did should not be
+  quietly rewritten.
+
+#### Added
+
+- `run-hook-tests.ps1`: four cases - divergences disappeared, section gone, lockstep edit
+  stays quiet, and `--write-baseline` refusing over a stale baseline. All four written red
+  against 4.30.0 first (11 passed, 4 failed), green after. Suite total 15.
+- The creatives MustRead "Getting set up" section gains what a non-engineer actually
+  needs: **step 0, install Claude Code** (it previously began at "open the project",
+  assuming the tool was already there); an explicit note of WHERE each command is typed
+  (chat box vs terminal - the likeliest silent failure); a one-line gloss of "skills";
+  and an absolute URL for the package repository. Naming SETUP.md without a way to reach
+  it left ticket 05's own stated problem - "invisible to a teammate browsing
+  Docs/MustRead/" - standing.
+
 ## [4.30.0] - 2026-08-07 - A null revision is not a claim
 
 MINOR: consumers get it automatically, and it changes when a write gate opens.

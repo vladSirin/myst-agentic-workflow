@@ -31,25 +31,41 @@ There are two supported tools — you only need one:
 
 ## Getting Set Up
 
-Claude Code, in three steps:
+Claude Code, from nothing:
 
-1. Open this project in VS Code and let Claude Code trust the repo. The team's
-   plugin marketplace is already registered by the committed
-   `.claude/settings.json` — you do not add it yourself.
-2. Accept the **myst-dev-kit** plugin prompt. Missed it? Type
-   `/plugin install myst-dev-kit@myst`.
-3. Restart Claude Code and type `/` — the team's skills should be listed.
+1. **Install it.** Get VS Code, then install the **Claude Code** extension from
+   the VS Code extension marketplace. (There is also a desktop app and a
+   terminal version — you do not need them. One is enough.)
+2. **Open this project in VS Code** and click **Trust** when Claude Code asks
+   whether to trust the repo. The team's plugin marketplace is already set up
+   by a file in the project, so you do not add it yourself.
+3. **Say yes to the "myst-dev-kit" plugin prompt.** If you missed it, type this
+   *into the Claude Code chat box*, the same place you type questions:
 
-To update later, run both commands, then restart:
+   ```
+   /plugin install myst-dev-kit@myst
+   ```
+
+4. **Restart Claude Code**, then type `/` in the chat box. You should see a list
+   of the team's **skills** — ready-made commands like `/design` and
+   `/review-and-submit` that follow our process for you. If the list is there,
+   you are done.
+
+**Updating later.** These two go in a **terminal** (not the chat box) — then
+restart Claude Code:
 
 ```
 claude plugin marketplace update myst
 claude plugin update myst-dev-kit@myst
 ```
 
-Setting up Codex, or anything that goes wrong: the full guide is SETUP.md in the
-myst-agentic-workflow repository, and it is the authority. This section is
-deliberately just the on-ramp.
+**If something goes wrong, or you use Codex instead**, the full guide is
+`SETUP.md` here:
+
+    https://github.com/vladSirin/myst-agentic-workflow
+
+That guide is the authority; this section is deliberately just the on-ramp. The
+repository is public, so the link works without any special access.
 
 ## What Can You Ask Them to Do?
 
@@ -217,23 +233,36 @@ For technical questions about the AI setup: ask the project lead or check
 
 ## 快速安装
 
-Claude Code，三步搞定：
+从零开始装Claude Code：
 
-1. 用VS Code打开本项目，让Claude Code信任这个仓库。团队的插件市场已经由入库的
-   `.claude/settings.json`注册好了，不需要你自己添加。
-2. 接受 **myst-dev-kit** 插件安装提示。错过提示了就输入
-   `/plugin install myst-dev-kit@myst`。
-3. 重启Claude Code，输入 `/`，应该能看到团队的skills列表。
+1. **先装好。** 装VS Code，然后在VS Code扩展市场里搜 **Claude Code** 装上。
+   （另外还有桌面版和命令行版，你不需要，装一个就够了。）
+2. **用VS Code打开本项目**，Claude Code问你要不要信任这个仓库时点 **Trust**。
+   团队的插件市场已经由项目里的配置文件注册好了，不需要你自己添加。
+3. **看到 "myst-dev-kit" 插件提示就同意安装。** 错过提示了，就在
+   *Claude Code的聊天输入框里*（跟你平时提问的地方一样）输入：
 
-以后更新：两条命令都要跑，然后重启。
+   ```
+   /plugin install myst-dev-kit@myst
+   ```
+
+4. **重启Claude Code**，在聊天框里输入 `/`。应该能看到团队的 **skills** 列表，
+   也就是 `/design`、`/review-and-submit` 这类现成命令，它们会带着你走团队流程。
+   能看到列表就说明装好了。
+
+**以后更新。** 下面两条要在 **终端** 里跑（不是聊天框），跑完重启Claude Code：
 
 ```
 claude plugin marketplace update myst
 claude plugin update myst-dev-kit@myst
 ```
 
-Codex的安装方式，以及任何出问题的情况：完整指南是myst-agentic-workflow仓库里的
-SETUP.md，以它为准。这一节只是快速上手入口。
+**出问题了，或者你用的是Codex**：完整指南是下面这个仓库里的 `SETUP.md`：
+
+    https://github.com/vladSirin/myst-agentic-workflow
+
+以那份指南为准，这一节只是快速上手入口。这个仓库是公开的，链接直接就能打开，
+不需要额外权限。
 
 ## 可以帮做什么？
 
