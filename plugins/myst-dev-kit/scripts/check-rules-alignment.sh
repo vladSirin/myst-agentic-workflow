@@ -30,10 +30,19 @@
 #   Without one, behaviour is unchanged from v4.28.0 and earlier: baseline mode is opt-in
 #   by the file's presence and nothing else.
 #
-#   The recorded signature is a unified diff with the @@ line numbers stripped, so an
-#   unrelated edit elsewhere in the section does NOT re-flag the set, while a change to
-#   WHICH rules diverge does. It is stored as readable diff text, not a hash, so a
-#   reviewer can see exactly what was sanctioned.
+#   The recorded signature is a ZERO-CONTEXT unified diff with the @@ line numbers
+#   stripped: the diverging lines and nothing else. So an edit that leaves the
+#   divergence set alone does not re-flag it -- including an identical, lockstep edit
+#   made to BOTH files right next to a divergence, which a context-carrying signature
+#   flagged (that was true of 4.29.0-4.30.0; see the -U0 note further down). A change
+#   to WHICH lines diverge does re-flag, which is the point.
+#
+#   It is stored as readable diff text, not a hash, so a reviewer can see exactly what
+#   was sanctioned.
+#
+#   The baseline is also consulted on the two paths that report NOTHING to compare --
+#   sections identical, or a section missing. Those are what a silent reversal looks
+#   like, and a recorded baseline is evidence that a difference belonged there.
 #
 # USAGE
 #   check-rules-alignment.sh [--advisory] [--baseline <file>] [--write-baseline]
@@ -91,12 +100,57 @@ extract_rules() {
 a="$(extract_rules "$CLAUDE_MD")"
 b="$(extract_rules "$AGENTS_MD")"
 
+# Read the baseline BEFORE the two early returns below. It is positive evidence about
+# what these sections are SUPPOSED to look like, and the two "nothing to see here"
+# paths are exactly the shapes a silent reversal takes:
+#   - the sections became identical  -> every per-tool qualifier was deleted
+#   - a section went missing         -> the heading was renamed or the block removed
+# Both used to exit 0 with the script's most reassuring wording, at the precise moment
+# the thing it watches for had happened. Absence of a difference is only good news if
+# nobody recorded that a difference belonged there.
+baseline_sig=""
+if [ -f "$BASELINE" ]; then
+  # Comment lines are stripped before comparing. A diff body line can begin with ' ',
+  # '-', '+', '@' or '\', never '#', so this cannot eat signature data.
+  baseline_sig="$(grep -v '^#' "$BASELINE" 2>/dev/null || true)"
+fi
+base_hunks=0
+if [ -n "$baseline_sig" ]; then
+  base_hunks="$(printf '%s\n' "$baseline_sig" | grep -c '^@@' || true)"
+fi
+
+report_disappeared() {
+  echo "Rules alignment: ${base_hunks} sanctioned divergence(s) have DISAPPEARED."
+  echo "  $1"
+  echo "  $BASELINE recorded them, so this is a CHANGE to the set, not the absence of one."
+  echo "  If they were removed deliberately, delete the baseline. If not, restore them:"
+  echo "  an AGENTS.md overwritten from CLAUDE.md silently loses every Codex-only rule."
+  [ "$ADVISORY" -eq 1 ] && exit 0
+  exit 1
+}
+
 if [ -z "$a" ] || [ -z "$b" ]; then
-  echo "Rules alignment: no '## Hard rules' section in both files — nothing to check."
+  # Name the file that is actually missing a section. The old message said "in both
+  # files" while the condition fires when EITHER is empty -- which is the more
+  # dangerous case and the one it mis-described.
+  if   [ -z "$a" ] && [ -z "$b" ]; then missing="both files"
+  elif [ -z "$a" ];                then missing="$CLAUDE_MD"
+  else                                  missing="$AGENTS_MD"
+  fi
+  if [ -n "$baseline_sig" ]; then
+    report_disappeared "No '## Hard rules' section in $missing."
+  fi
+  echo "Rules alignment: no '## Hard rules' section in $missing — nothing to check."
   exit 0
 fi
 
 if [ "$a" = "$b" ]; then
+  if [ -n "$baseline_sig" ]; then
+    # Fires for --write-baseline too, deliberately: the old code printed "nothing to
+    # record" and left the stale baseline on disk, so the collapse persisted silently
+    # even after someone tried to re-record it.
+    report_disappeared "The two sections are now identical."
+  fi
   if [ "$WRITE_BASELINE" -eq 1 ]; then
     echo "Rules alignment: sections are identical - nothing to record, no baseline written."
     echo "  (with no divergence to sanction, any future difference is news and should be loud)"
@@ -111,11 +165,23 @@ trap 'rm -f "$tmp_a" "$tmp_b"' EXIT
 printf '%s\n' "$a" > "$tmp_a"
 printf '%s\n' "$b" > "$tmp_b"
 
-# The signature: unified diff minus its two header lines (mktemp names are random, so
-# they can never be part of a stable signature) and minus the @@ line numbers.
+# The signature: unified diff with ZERO context, minus its two header lines (mktemp
+# names are random, so they can never be part of a stable signature) and minus the @@
+# line numbers.
+#
+# -U0 is load-bearing, not a formatting preference. With the default 3 lines of
+# context the signature contained the unchanged lines AROUND each divergence, so an
+# edit that left the divergence set completely alone still re-flagged it if it landed
+# within 3 lines of one. Measured on a real consumer's bibles: 14 of 31 signature
+# lines were context, making ~39% of the hard-rules section a false-alarm surface.
+# That matters because false alarms are exactly how "just re-record the baseline"
+# becomes muscle memory, and a rubber-stamped baseline is a dead check that still
+# looks green. With -U0 the signature is the changed lines and nothing else, which is
+# what "the divergence set" actually means.
+#
 # tail -n +3 rather than a grep on '^---' / '^+++': a REMOVED markdown rule renders as
 # '----', which such a grep would silently eat.
-signature="$(diff -u "$tmp_a" "$tmp_b" 2>/dev/null | tail -n +3 | sed 's/^@@ .*/@@/')"
+signature="$(diff -U0 "$tmp_a" "$tmp_b" 2>/dev/null | tail -n +3 | sed 's/^@@ .*/@@/')"
 hunks="$(printf '%s\n' "$signature" | grep -c '^@@' || true)"
 
 if [ "$WRITE_BASELINE" -eq 1 ]; then
@@ -130,28 +196,26 @@ if [ "$WRITE_BASELINE" -eq 1 ]; then
     echo "#"
     echo "# Generated by: check-rules-alignment.sh --write-baseline"
     echo "#"
-    echo "# Below is a unified diff with line numbers stripped. An unrelated edit elsewhere"
-    echo "# in the section does NOT re-flag the set; a change to WHICH rules diverge does."
-    echo "# Re-record only after confirming the new divergence is intentional."
+    echo "# Below is a ZERO-CONTEXT unified diff with line numbers stripped: the diverging"
+    echo "# lines and nothing else. An edit that leaves the divergence set alone does not"
+    echo "# re-flag it; a change to WHICH lines diverge does."
+    echo "#"
+    echo "# DO NOT re-record just to make the check quiet. Read what changed first: this"
+    echo "# file is the record of which per-tool differences the team has agreed to, and"
+    echo "# re-recording without reading turns it into a rubber stamp - a dead check that"
+    echo "# still looks green. If the sanctioned set really changed, say so in the CL."
     printf '%s\n' "$signature"
   } > "$BASELINE" || { echo "Rules alignment: could not write $BASELINE." >&2; exit 1; }
   echo "Rules alignment: baseline recorded - ${hunks:-?} sanctioned divergence(s) -> $BASELINE"
   exit 0
 fi
 
-# Comment lines are stripped from the recorded file before comparing. A diff body line
-# can begin with ' ', '-', '+', '@' or '\', never '#', so this cannot eat signature data.
-baseline_sig=""
-if [ -f "$BASELINE" ]; then
-  baseline_sig="$(grep -v '^#' "$BASELINE" 2>/dev/null || true)"
-fi
-
+# $baseline_sig and $base_hunks were read above, before the early returns.
 if [ -n "$baseline_sig" ]; then
   if [ "$signature" = "$baseline_sig" ]; then
     echo "Rules alignment: OK - ${hunks:-?} sanctioned divergence(s), unchanged."
     exit 0
   fi
-  base_hunks="$(printf '%s\n' "$baseline_sig" | grep -c '^@@' || true)"
   echo "Rules alignment: hard-rules divergence CHANGED since the recorded baseline."
   echo "  Baseline ($BASELINE) sanctioned ${base_hunks:-?} hunk(s); the files now differ in ${hunks:-?}."
   echo "  Review the change, then re-record it if it is deliberate:"
