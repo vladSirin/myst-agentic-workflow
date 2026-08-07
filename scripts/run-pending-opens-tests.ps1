@@ -12,6 +12,9 @@
 #   D. Mixed         -- B and C together (simulates structural CL).      PASS 10/10.
 #   E. Real drift    -- manifest depotRevision != headRev, no opens.    FAIL on check 4.
 #   F. Real unmanaged-- depot file absent from manifest, NOT in opens.  FAIL on check 5.
+#   G-I. human-owned / check 6 split (see inline headers).
+#   J. Add-then-submit -- entry recorded null while the add was pending;
+#                       after submit head=1. Must PASS: null is not a claim.
 $ErrorActionPreference = 'Stop'
 $here = $PSScriptRoot
 $pass = 0; $fail = 0
@@ -329,6 +332,37 @@ $env:FAKE_P4_OPENED = "//UEPrototype/main/.claude/settings.local.json#1 - add ch
 $resI = Invoke-Preflight $rootI
 if ($resI.Code -ne 0 -and $resI.Out -match 'pending ADD of local state') { Ok 'I. pending-ADD of local state still fails check 6' }
 else { Bad 'I. pending-ADD of local state still fails check 6' "code=$($resI.Code)`n$($resI.Out)" }
+
+###############################################################################
+# Scenario J: pending-ADD then SUBMIT (2026-08-07). An entry created while its
+# file was a pending add carries depotRevision=null -- correct at that moment,
+# and check 4 skips it while the add is still open (scenario B). But once the CL
+# SUBMITS, head becomes 1 and null matches nothing, so the entry gated the
+# consumer's routine update path permanently. The only exit was upgrade.ps1 --
+# the heavyweight path a routine update exists to avoid.
+#
+# Contrast the pending-EDIT tolerance directly above it in check 4, which records
+# head+1 and therefore self-clears on submit by construction. The add path had no
+# such value: null is the ABSENCE of a recorded revision, not a claim that can
+# contradict the depot.
+#
+# Observed live on the reference consumer during the v4.29.0 propagation:
+# .claude/scripts/check-rules-alignment.sh, added by upgrade in change 2142 and
+# submitted as change 2145, blocked the next update.ps1 run outright.
+###############################################################################
+Reset-Env
+$rootJ = New-FixtureRoot
+$hashJ1 = Write-Fixture-File $rootJ '.claude/skills/j.md' "jota`n"
+Write-Fixture-Manifest $rootJ @(
+    (New-Entry '.claude/skills/j.md' $hashJ1 $null),
+    (New-LocalOnlyEntries)
+)
+# The add has SUBMITTED: head exists and nothing is open any more.
+$env:FAKE_P4_FSTAT = "//UEPrototype/main/.claude/skills/j.md=1"
+$env:FAKE_P4_HAVE  = "//UEPrototype/main/.claude/skills/j.md#1"
+$resJ = Invoke-Preflight $rootJ
+if ($resJ.Code -eq 0) { Ok 'J. null depotRevision after submit does not gate the write path' }
+else { Bad 'J. null depotRevision after submit does not gate the write path' "code=$($resJ.Code)`n$($resJ.Out)" }
 
 # Cleanup fake-p4 dir.
 Reset-Env

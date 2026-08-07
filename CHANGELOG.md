@@ -27,6 +27,32 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.30.0] - 2026-08-07 - A null revision is not a claim
+
+MINOR: consumers get it automatically, and it changes when a write gate opens.
+
+#### Fixed
+
+- **Preflight check 4 no longer locks the routine update path shut after a structural
+  CL submits.** An entry created while its file was a pending ADD carries
+  `depotRevision: null` - correct at that moment, and check 4 already skipped it while
+  the add was open. But once the CL submitted, head became 1 and null matched nothing,
+  so every subsequent `install.ps1 -Mode Write` (and therefore every `update.ps1`)
+  refused. The only escape was `upgrade.ps1` - the heavyweight path a routine update
+  exists to avoid, and the one that needs an empty default changelist.
+  Contrast the pending-EDIT tolerance immediately below it, which records `head + 1`
+  and therefore self-clears on submit by construction. The ADD path had no such value.
+  A null depotRevision is the ABSENCE of a recorded revision, not a claim that can
+  contradict the depot, so it is now counted and reported rather than gating; the write
+  that follows the preflight is what baselines it.
+  Real drift still fails (scenario E), and pending-ADD-of-local-state still fails
+  check 6 (scenario I) - this weakens neither.
+  - Found live on the reference consumer while propagating v4.29.0:
+    `.claude/scripts/check-rules-alignment.sh`, added by upgrade in change 2142 and
+    submitted as change 2145, blocked the next `update.ps1` outright.
+  - `run-pending-opens-tests.ps1` scenario J pins the add-then-submit sequence, written
+    red against 4.29.0 first.
+
 ## [4.29.0] - 2026-08-07 - Drift detection, not difference detection
 
 MINOR per this file's own rules: both changes reach consumers automatically (plugin update
