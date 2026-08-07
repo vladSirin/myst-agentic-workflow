@@ -1,6 +1,6 @@
 {
     "name": "myst-dev-kit",
-    "version": "4.32.0",
+    "version": "4.33.0",
     "description": "Team dev kit: 24 skills - engineering/productivity (spec, TDD, triage, debugging, grilling...) plus the team process rules as on-demand skills (review-and-submit, changelist-verification, pre-implementation-gate...), sync-build-submit + package commands, and the Submit-Audit warning bridge. Reviews run INLINE via the review-changes skill: the two reviewer agents ship as Markdown and Codex agents are TOML, so nothing here consumes them (Codex does have a subagent mechanism - porting them is open work, not a missing feature). See docs/tool-capability-matrix.md.",
     "author": {
         "name": "Sirin",

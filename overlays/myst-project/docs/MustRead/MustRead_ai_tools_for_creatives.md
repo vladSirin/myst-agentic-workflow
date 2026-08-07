@@ -55,9 +55,16 @@ Claude Code, from nothing:
    `/review-and-submit` that follow our process for you. If the list is there,
    you are done.
 
-**Updating later.** These two go in a **terminal**, not the chat box. You do not
-need to install anything extra for this: in VS Code, open **Terminal → New
-Terminal** and type them there. Restart Claude Code afterwards:
+**Updating later.** Easiest way — ask the assistant, in the chat box:
+
+```
+Install or update my myst-dev-kit plugin, verify the version, and tell me what
+I still have to do myself.
+```
+
+It will run the update and tell you if a restart is needed. If you would rather
+type the commands yourself, they go in a **terminal** (VS Code: **Terminal → New
+Terminal**), not the chat box, and you restart Claude Code afterwards:
 
 ```
 claude plugin marketplace update myst
@@ -257,8 +264,16 @@ For technical questions about the AI setup: ask the project lead or check
    也就是 `/design`、`/review-and-submit` 这类现成命令，它们会带着你走团队流程。
    能看到列表就说明装好了。
 
-**以后更新。** 下面两条要在 **终端** 里跑，不是聊天框。不需要额外装什么：在
-VS Code里点 **Terminal → New Terminal**，在那里面输入就行。跑完重启Claude Code：
+**以后更新。** 最省事的办法——在聊天框里直接跟助手说：
+
+```
+Install or update my myst-dev-kit plugin, verify the version, and tell me what
+I still have to do myself.
+```
+
+它会自己跑更新，然后告诉你要不要重启。如果你更想自己敲命令，下面两条要在
+**终端** 里跑（VS Code里点 **Terminal → New Terminal**），不是聊天框，跑完
+重启Claude Code：
 
 ```
 claude plugin marketplace update myst

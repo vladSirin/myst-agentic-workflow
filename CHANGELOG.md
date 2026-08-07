@@ -27,6 +27,45 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.33.0] - 2026-08-07 - Every loud path now names a way out
+
+MINOR: consumers get it automatically, and it changes what the check will do for you.
+
+Third review pass of the same consumer CL. The remaining findings were all in text and
+control flow added by 4.31.0/4.32.0 - the fixes had closed the holes but left the operator
+without a route through them.
+
+#### Fixed
+
+- **The CORRUPT branch was a recovery dead end.** Its own message said "re-record it from
+  reviewed files instead" - and the guard sat above the `--write-baseline` handler, so it
+  refused to do exactly that. Following the instruction literally hit the same error, and
+  the only remaining exit was deleting the file: the one untracked, irreversible action
+  this design works to make expensive, reached at the end of a dead end, during an
+  incident. `--write-baseline` now passes through the CORRUPT guard.
+  It is still refused on the DISAPPEARED paths, and the distinction is the point: there a
+  real record exists and re-recording would overwrite evidence; a corrupt baseline has no
+  evidence left to protect.
+
+#### Changed
+
+- **Every loud path now prints a command.** `DISAPPEARED` was the only one that printed
+  none - it said "restore them" with no `p4 revert`, no way to see what should have been
+  there, and no pointer to the doc that explains the escape hatch. Meanwhile deleting the
+  baseline was one command the operator already knew, so the effort gradient pointed at
+  the silencer. It now leads with the recovery commands and names
+  `Docs/agents/agent-context-parity.md`.
+- **Creatives update block leads with the ask-the-agent path.** It claimed "you do not
+  need to install anything extra" and then called `claude` from a terminal - an unverified
+  assertion that the VS Code extension puts the CLI on PATH. SETUP.md's own recommended
+  phrasing has no such dependency and works in an IDE session, so it goes first; the two
+  CLI commands remain as the fallback.
+
+#### Added
+
+- `run-hook-tests.ps1`: a case proving `--write-baseline` RECOVERS a corrupt baseline
+  rather than merely reporting it. Suite total 18.
+
 ## [4.32.0] - 2026-08-07 - The last two silent paths
 
 MINOR: consumers get it automatically, and it changes what the check reports.

@@ -110,11 +110,14 @@ report_disappeared() {
   echo "Rules alignment: ${base_hunks} sanctioned divergence(s) have DISAPPEARED."
   echo "  $1"
   echo "  $BASELINE recorded them, so this is a CHANGE to the set, not the absence of one."
-  echo "  If this was NOT deliberate, restore them: an AGENTS.md overwritten from or"
-  echo "  collapsed into CLAUDE.md silently loses every Codex-only rule."
+  echo "  If this was NOT deliberate, restore them - an AGENTS.md overwritten from or"
+  echo "  collapsed into CLAUDE.md silently loses every Codex-only rule. Start here:"
+  echo "    p4 revert $AGENTS_MD $CLAUDE_MD    # if the damage is local and unsubmitted"
+  echo "    cat $BASELINE                      # the divergences that should be there"
   echo "  If the per-tool differences really were dropped on purpose, delete the baseline"
-  echo "  and say why in the CL description - deleting it turns this check back into a"
-  echo "  plain difference detector, so that decision should be reviewed, not just made."
+  echo "  (p4 delete $BASELINE) and say why in the CL description - that turns this check"
+  echo "  back into a plain difference detector, so it should be reviewed, not just done."
+  echo "  Background: Docs/agents/agent-context-parity.md"
   [ "$ADVISORY" -eq 1 ] && exit 0
   exit 1
 }
@@ -122,10 +125,20 @@ report_disappeared() {
 # A baseline that EXISTS but carries no signature is CORRUPT, not absent -- emptied,
 # truncated, or reduced to its comment header by a three-way merge of a unified diff.
 # Treating it as "never recorded" would silently restore every hole above.
-if [ "$baseline_present" -eq 1 ] && [ -z "$baseline_sig" ]; then
+#
+# --write-baseline is deliberately allowed THROUGH this guard, unlike the DISAPPEARED
+# paths below. Those refuse because a real record exists and re-recording would
+# overwrite evidence; here there is nothing left to overwrite, so re-recording from
+# reviewed files is unambiguously the right move. Refusing it too left the operator in
+# a dead end whose only exit was deleting the file -- the one untracked, irreversible
+# action this whole design tries to make expensive.
+if [ "$baseline_present" -eq 1 ] && [ -z "$baseline_sig" ] && [ "$WRITE_BASELINE" -eq 0 ]; then
   echo "Rules alignment: $BASELINE exists but records no divergences - CORRUPT or hand-merged."
-  echo "  Read what happened to it before re-recording; do not just re-run --write-baseline."
-  echo "  (A baseline is never hand-merged: re-record it from reviewed files instead.)"
+  echo "  A baseline is never hand-merged. Recover it, in this order:"
+  echo "    p4 revert $BASELINE          # if it was mangled locally, this is the fix"
+  echo "    p4 sync -f $BASELINE         # or take the depot copy"
+  echo "  If the depot copy is the mangled one, check the bibles are right and re-record:"
+  echo "    bash $0 --write-baseline"
   [ "$ADVISORY" -eq 1 ] && exit 0
   exit 1
 fi
