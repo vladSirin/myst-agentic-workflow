@@ -33,9 +33,13 @@ There are two supported tools — you only need one:
 
 Claude Code, from nothing:
 
+0. **Get a seat first.** Claude Code asks you to sign in the moment it starts,
+   and it will not run without an account on the team plan. Ask the project
+   lead to set you up before you install anything — otherwise you will get
+   stuck at a login screen in step 1.
 1. **Install it.** Get VS Code, then install the **Claude Code** extension from
-   the VS Code extension marketplace. (There is also a desktop app and a
-   terminal version — you do not need them. One is enough.)
+   the VS Code extension marketplace. That is all you need — ignore the
+   separate desktop app.
 2. **Open this project in VS Code** and click **Trust** when Claude Code asks
    whether to trust the repo. The team's plugin marketplace is already set up
    by a file in the project, so you do not add it yourself.
@@ -51,8 +55,9 @@ Claude Code, from nothing:
    `/review-and-submit` that follow our process for you. If the list is there,
    you are done.
 
-**Updating later.** These two go in a **terminal** (not the chat box) — then
-restart Claude Code:
+**Updating later.** These two go in a **terminal**, not the chat box. You do not
+need to install anything extra for this: in VS Code, open **Terminal → New
+Terminal** and type them there. Restart Claude Code afterwards:
 
 ```
 claude plugin marketplace update myst
@@ -235,8 +240,10 @@ For technical questions about the AI setup: ask the project lead or check
 
 从零开始装Claude Code：
 
-1. **先装好。** 装VS Code，然后在VS Code扩展市场里搜 **Claude Code** 装上。
-   （另外还有桌面版和命令行版，你不需要，装一个就够了。）
+0. **先要账号。** Claude Code一启动就要登录，没有团队账号是用不了的。
+   装之前先找项目负责人给你开通，不然第1步装完会卡在登录界面。
+1. **装好它。** 装VS Code，然后在VS Code扩展市场里搜 **Claude Code** 装上。
+   装这一个就够了，单独的桌面版不用管。
 2. **用VS Code打开本项目**，Claude Code问你要不要信任这个仓库时点 **Trust**。
    团队的插件市场已经由项目里的配置文件注册好了，不需要你自己添加。
 3. **看到 "myst-dev-kit" 插件提示就同意安装。** 错过提示了，就在
@@ -250,7 +257,8 @@ For technical questions about the AI setup: ask the project lead or check
    也就是 `/design`、`/review-and-submit` 这类现成命令，它们会带着你走团队流程。
    能看到列表就说明装好了。
 
-**以后更新。** 下面两条要在 **终端** 里跑（不是聊天框），跑完重启Claude Code：
+**以后更新。** 下面两条要在 **终端** 里跑，不是聊天框。不需要额外装什么：在
+VS Code里点 **Terminal → New Terminal**，在那里面输入就行。跑完重启Claude Code：
 
 ```
 claude plugin marketplace update myst

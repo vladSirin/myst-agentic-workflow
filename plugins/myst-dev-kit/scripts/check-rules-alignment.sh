@@ -81,8 +81,60 @@ BASELINE="${BASELINE:-.claude/rules-alignment.baseline}"
 # that do not use this convention get a clean no-op, not a false finding.
 HEADING='^## Hard rules'
 
+# Read the baseline FIRST -- before every "nothing to compare" early return below.
+# It is positive evidence about what these files are SUPPOSED to look like, and there
+# are THREE shapes a silent reversal takes, all of which used to exit 0 with the
+# script's most reassuring wording at the precise moment the thing it watches for had
+# happened:
+#   - a bible FILE is gone            -> the widest form; Codex reads nothing at all
+#   - a section went missing          -> the heading was renamed or the block removed
+#   - the sections became identical   -> every per-tool qualifier was deleted
+# Absence of a difference is only good news if nobody recorded that a difference
+# belonged there. The legitimate silences these branches exist for -- a project that
+# never set the second tool up, or one with no hard-rules convention -- are exactly
+# the cases with NO baseline, so the baseline is what tells them apart.
+baseline_sig=""
+baseline_present=0
+if [ -f "$BASELINE" ]; then
+  baseline_present=1
+  # Comment lines are stripped before comparing. A diff body line can begin with ' ',
+  # '-', '+', '@' or '\', never '#', so this cannot eat signature data.
+  baseline_sig="$(grep -v '^#' "$BASELINE" 2>/dev/null || true)"
+fi
+base_hunks=0
+if [ -n "$baseline_sig" ]; then
+  base_hunks="$(printf '%s\n' "$baseline_sig" | grep -c '^@@' || true)"
+fi
+
+report_disappeared() {
+  echo "Rules alignment: ${base_hunks} sanctioned divergence(s) have DISAPPEARED."
+  echo "  $1"
+  echo "  $BASELINE recorded them, so this is a CHANGE to the set, not the absence of one."
+  echo "  If this was NOT deliberate, restore them: an AGENTS.md overwritten from or"
+  echo "  collapsed into CLAUDE.md silently loses every Codex-only rule."
+  echo "  If the per-tool differences really were dropped on purpose, delete the baseline"
+  echo "  and say why in the CL description - deleting it turns this check back into a"
+  echo "  plain difference detector, so that decision should be reviewed, not just made."
+  [ "$ADVISORY" -eq 1 ] && exit 0
+  exit 1
+}
+
+# A baseline that EXISTS but carries no signature is CORRUPT, not absent -- emptied,
+# truncated, or reduced to its comment header by a three-way merge of a unified diff.
+# Treating it as "never recorded" would silently restore every hole above.
+if [ "$baseline_present" -eq 1 ] && [ -z "$baseline_sig" ]; then
+  echo "Rules alignment: $BASELINE exists but records no divergences - CORRUPT or hand-merged."
+  echo "  Read what happened to it before re-recording; do not just re-run --write-baseline."
+  echo "  (A baseline is never hand-merged: re-record it from reviewed files instead.)"
+  [ "$ADVISORY" -eq 1 ] && exit 0
+  exit 1
+fi
+
 for f in "$CLAUDE_MD" "$AGENTS_MD"; do
   if [ ! -f "$f" ]; then
+    if [ -n "$baseline_sig" ]; then
+      report_disappeared "$f is not present at all."
+    fi
     echo "Rules alignment: no $f — nothing to check."
     exit 0
   fi
@@ -99,35 +151,6 @@ extract_rules() {
 
 a="$(extract_rules "$CLAUDE_MD")"
 b="$(extract_rules "$AGENTS_MD")"
-
-# Read the baseline BEFORE the two early returns below. It is positive evidence about
-# what these sections are SUPPOSED to look like, and the two "nothing to see here"
-# paths are exactly the shapes a silent reversal takes:
-#   - the sections became identical  -> every per-tool qualifier was deleted
-#   - a section went missing         -> the heading was renamed or the block removed
-# Both used to exit 0 with the script's most reassuring wording, at the precise moment
-# the thing it watches for had happened. Absence of a difference is only good news if
-# nobody recorded that a difference belonged there.
-baseline_sig=""
-if [ -f "$BASELINE" ]; then
-  # Comment lines are stripped before comparing. A diff body line can begin with ' ',
-  # '-', '+', '@' or '\', never '#', so this cannot eat signature data.
-  baseline_sig="$(grep -v '^#' "$BASELINE" 2>/dev/null || true)"
-fi
-base_hunks=0
-if [ -n "$baseline_sig" ]; then
-  base_hunks="$(printf '%s\n' "$baseline_sig" | grep -c '^@@' || true)"
-fi
-
-report_disappeared() {
-  echo "Rules alignment: ${base_hunks} sanctioned divergence(s) have DISAPPEARED."
-  echo "  $1"
-  echo "  $BASELINE recorded them, so this is a CHANGE to the set, not the absence of one."
-  echo "  If they were removed deliberately, delete the baseline. If not, restore them:"
-  echo "  an AGENTS.md overwritten from CLAUDE.md silently loses every Codex-only rule."
-  [ "$ADVISORY" -eq 1 ] && exit 0
-  exit 1
-}
 
 if [ -z "$a" ] || [ -z "$b" ]; then
   # Name the file that is actually missing a section. The old message said "in both
@@ -218,7 +241,9 @@ if [ -n "$baseline_sig" ]; then
   fi
   echo "Rules alignment: hard-rules divergence CHANGED since the recorded baseline."
   echo "  Baseline ($BASELINE) sanctioned ${base_hunks:-?} hunk(s); the files now differ in ${hunks:-?}."
-  echo "  Review the change, then re-record it if it is deliberate:"
+  echo "  READ what changed first - re-recording to silence this is how the baseline"
+  echo "  becomes a rubber stamp, and a rubber-stamped baseline is a dead check that"
+  echo "  still looks green. If the new divergence is deliberate, say so in the CL."
   echo "    diff <(sed -n '/## Hard rules/,/^## /p' $CLAUDE_MD) <(sed -n '/## Hard rules/,/^## /p' $AGENTS_MD)"
   echo "    bash $0 --write-baseline"
   [ "$ADVISORY" -eq 1 ] && exit 0

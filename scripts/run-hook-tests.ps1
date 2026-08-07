@@ -37,7 +37,9 @@ $cases = @(
     'check-rules-alignment: sanctioned divergences DISAPPEARED -> loud, exit 1',
     'check-rules-alignment: hard-rules section GONE -> loud, exit 1',
     'check-rules-alignment: lockstep edit near a divergence stays quiet',
-    'check-rules-alignment: --write-baseline refuses over a stale baseline'
+    'check-rules-alignment: --write-baseline refuses over a stale baseline',
+    'check-rules-alignment: a bible FILE is gone -> loud, exit 1',
+    'check-rules-alignment: signature-less baseline -> loud CORRUPT, exit 1'
 )
 
 # Resolve bash: PATH first, then Git-for-Windows' bin/ next to git.exe, then the
@@ -290,6 +292,43 @@ try {
     if ($r.Code -ne 0 -and $r.Out -match 'DISAPPEARED|refus') {
         Ok $cases[14]
     } else { Bad $cases[14] "code=$($r.Code) out=$($r.Out)" }
+
+    # 7i. The THIRD door into the same incident class, and the widest: the bible FILE
+    #     is gone, not just its section. 4.31.0 hoisted the baseline read above the
+    #     two "nothing to compare" branches but left the file-existence loop above
+    #     THAT, so a deleted AGENTS.md still exited 0 with "nothing to check" while a
+    #     baseline sat on disk recording that Codex had rules. With the section merely
+    #     collapsed Codex still reads Claude's rules; with the file deleted it reads
+    #     nothing at all.
+    #
+    #     The legitimate silence this branch exists for -- a project that never set
+    #     Codex up -- is exactly the case with NO baseline, so the baseline is what
+    #     tells the two apart.
+    $cw7i = Join-Path $t 'align-nofile'; New-Item -ItemType Directory -Path $cw7i -Force | Out-Null
+    [IO.File]::WriteAllText((Join-Path $cw7i 'CLAUDE.md'), $claudeRules, [Text.UTF8Encoding]::new($false))
+    [IO.File]::WriteAllText((Join-Path $cw7i 'AGENTS.md'), $agentsRules, [Text.UTF8Encoding]::new($false))
+    $null = Invoke-Hook -Script (Join-Path $hookDir 'check-rules-alignment.sh') -HookArgs @('--write-baseline') -Cwd $cw7i
+    Remove-Item -LiteralPath (Join-Path $cw7i 'AGENTS.md') -Force
+    $r = Invoke-Hook -Script (Join-Path $hookDir 'check-rules-alignment.sh') -Cwd $cw7i
+    if ($r.Code -eq 1 -and $r.Out -match 'DISAPPEARED') {
+        Ok $cases[15]
+    } else { Bad $cases[15] "code=$($r.Code) out=$($r.Out)" }
+
+    # 7j. A baseline that EXISTS but carries no signature -- emptied, truncated, or
+    #     left as comments by a three-way merge of a unified diff -- silently reverted
+    #     to no-baseline mode, because "" is indistinguishable from "never recorded".
+    #     Combined with a collapse that put the incident-class silence straight back:
+    #     "hard-rules sections are identical", exit 0. Absence and corruption are
+    #     different states and must not share a code path.
+    $cw7j = Join-Path $t 'align-corrupt'; New-Item -ItemType Directory -Path $cw7j -Force | Out-Null
+    [IO.File]::WriteAllText((Join-Path $cw7j 'CLAUDE.md'), $claudeRules, [Text.UTF8Encoding]::new($false))
+    [IO.File]::WriteAllText((Join-Path $cw7j 'AGENTS.md'), $claudeRules, [Text.UTF8Encoding]::new($false))
+    New-Item -ItemType Directory -Path (Join-Path $cw7j '.claude') -Force | Out-Null
+    [IO.File]::WriteAllText((Join-Path $cw7j '.claude\rules-alignment.baseline'), "# only a header survived the merge`n#`n", [Text.UTF8Encoding]::new($false))
+    $r = Invoke-Hook -Script (Join-Path $hookDir 'check-rules-alignment.sh') -Cwd $cw7j
+    if ($r.Code -eq 1 -and $r.Out -match 'CORRUPT') {
+        Ok $cases[16]
+    } else { Bad $cases[16] "code=$($r.Code) out=$($r.Out)" }
 }
 finally { Remove-Item -Recurse -Force $t -ErrorAction SilentlyContinue }
 
