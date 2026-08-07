@@ -1,6 +1,6 @@
 # AI Tools Guide for Designers & Artists 设计师与美术人员AI工具指南
 
-**Last Updated**: 2026-05-19
+**Last Updated**: 2026-08-07
 
 > **谁需要读这份文档？**
 > 任何使用AI助手进行日常工作的团队成员——关卡设计师、美术、动画师、TA、LD。
@@ -28,6 +28,28 @@ There are two supported tools — you only need one:
 |------|--------------|-------------------|
 | **Claude Code** | VS Code, terminal, or desktop app | Typing questions or commands |
 | **Codex** | VS Code extension | Typing questions or commands |
+
+## Getting Set Up
+
+Claude Code, in three steps:
+
+1. Open this project in VS Code and let Claude Code trust the repo. The team's
+   plugin marketplace is already registered by the committed
+   `.claude/settings.json` — you do not add it yourself.
+2. Accept the **myst-dev-kit** plugin prompt. Missed it? Type
+   `/plugin install myst-dev-kit@myst`.
+3. Restart Claude Code and type `/` — the team's skills should be listed.
+
+To update later, run both commands, then restart:
+
+```
+claude plugin marketplace update myst
+claude plugin update myst-dev-kit@myst
+```
+
+Setting up Codex, or anything that goes wrong: the full guide is SETUP.md in the
+myst-agentic-workflow repository, and it is the authority. This section is
+deliberately just the on-ramp.
 
 ## What Can You Ask Them to Do?
 
@@ -192,6 +214,26 @@ For technical questions about the AI setup: ask the project lead or check
 |------|---------|---------|
 | **Claude Code** | VS Code、终端或桌面应用 | 打字提问或输入命令 |
 | **Codex** | VS Code插件 | 打字提问或输入命令 |
+
+## 快速安装
+
+Claude Code，三步搞定：
+
+1. 用VS Code打开本项目，让Claude Code信任这个仓库。团队的插件市场已经由入库的
+   `.claude/settings.json`注册好了，不需要你自己添加。
+2. 接受 **myst-dev-kit** 插件安装提示。错过提示了就输入
+   `/plugin install myst-dev-kit@myst`。
+3. 重启Claude Code，输入 `/`，应该能看到团队的skills列表。
+
+以后更新：两条命令都要跑，然后重启。
+
+```
+claude plugin marketplace update myst
+claude plugin update myst-dev-kit@myst
+```
+
+Codex的安装方式，以及任何出问题的情况：完整指南是myst-agentic-workflow仓库里的
+SETUP.md，以它为准。这一节只是快速上手入口。
 
 ## 可以帮做什么？
 

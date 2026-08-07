@@ -29,7 +29,11 @@ $cases = @(
     'check-rules-alignment --advisory (no-op): exit 0',
     'check-uproject-assoc: allowed association -> exit 0',
     'check-uproject-assoc: NO .uproject -> exit 2 (negative pin)',
-    'submit-audit-bridge: CLAUDECODE=1 -> traced no-op, exit 0'
+    'submit-audit-bridge: CLAUDECODE=1 -> traced no-op, exit 0',
+    'check-rules-alignment: baseline recorded -> quiet OK, exit 0',
+    'check-rules-alignment: divergence set changed -> loud, exit 1',
+    'check-rules-alignment: changed + --advisory -> loud, exit 0',
+    'check-rules-alignment: NO baseline -> legacy hunk advisory, exit 1'
 )
 
 # Resolve bash: PATH first, then Git-for-Windows' bin/ next to git.exe, then the
@@ -164,6 +168,54 @@ try {
     if ($r.Code -eq 0 -and $r.Out -match 'no-op') {
         Ok $cases[6]
     } else { Bad $cases[6] "code=$($r.Code) out=$($r.Out)" }
+
+    # 7. check-rules-alignment.sh BASELINE MODE (v4.29.0).
+    #    Fixture: two bibles whose hard-rules sections differ ONLY by a deliberate
+    #    per-tool qualifier -- the permanent, correct state of any project that
+    #    supports both harnesses. Before baseline mode the check reported that
+    #    difference at every SessionStart forever, asking for a confirmation no
+    #    consumer could record.
+    $cw7 = Join-Path $t 'align-base'; New-Item -ItemType Directory -Path $cw7 -Force | Out-Null
+    $claudeRules = "# Bible`n`n## Hard rules`n`n1. Never touch the vendor tree.`n2. Agent writes are hook-blocked at write time.`n3. Start every task in a new named CL.`n`n## Deeper docs`n"
+    $agentsRules = "# Agents`n`n## Hard rules`n`n1. Never touch the vendor tree.`n2. Agent writes are hook-blocked at write time for Claude only.`n3. Start every task in a new named CL.`n`n## Deeper docs`n"
+    [IO.File]::WriteAllText((Join-Path $cw7 'CLAUDE.md'), $claudeRules, [Text.UTF8Encoding]::new($false))
+    [IO.File]::WriteAllText((Join-Path $cw7 'AGENTS.md'), $agentsRules, [Text.UTF8Encoding]::new($false))
+
+    # 7a. Record the sanctioned set, then re-run: QUIET, exit 0, no 'Confirm each' nag.
+    $w = Invoke-Hook -Script (Join-Path $hookDir 'check-rules-alignment.sh') -HookArgs @('--write-baseline') -Cwd $cw7
+    $r = Invoke-Hook -Script (Join-Path $hookDir 'check-rules-alignment.sh') -HookArgs @('--advisory') -Cwd $cw7
+    if ($w.Code -eq 0 -and (Test-Path -LiteralPath (Join-Path $cw7 '.claude\rules-alignment.baseline')) -and
+        $r.Code -eq 0 -and $r.Out -match 'unchanged' -and $r.Out -notmatch 'Confirm each') {
+        Ok $cases[7]
+    } else { Bad $cases[7] "write=$($w.Code) check=$($r.Code) out=$($r.Out)" }
+
+    # 7b. THE CASE THAT MATTERS: real drift still fires. Add a SECOND divergence the
+    #     baseline never recorded -> loud, exit 1. A baseline that silenced genuine
+    #     drift would be worse than the noise it replaced.
+    $agentsDrift = $agentsRules -replace '3\. Start every task in a new named CL\.', '3. Start every task in a new named CL; under Codex use the supplement.'
+    [IO.File]::WriteAllText((Join-Path $cw7 'AGENTS.md'), $agentsDrift, [Text.UTF8Encoding]::new($false))
+    $r = Invoke-Hook -Script (Join-Path $hookDir 'check-rules-alignment.sh') -Cwd $cw7
+    if ($r.Code -eq 1 -and $r.Out -match 'changed since') {
+        Ok $cases[8]
+    } else { Bad $cases[8] "code=$($r.Code) out=$($r.Out)" }
+
+    # 7c. Same stale state under --advisory: still loud, but exit 0. The SessionStart
+    #     contract (never fail a session start) outranks the finding.
+    $r = Invoke-Hook -Script (Join-Path $hookDir 'check-rules-alignment.sh') -HookArgs @('--advisory') -Cwd $cw7
+    if ($r.Code -eq 0 -and $r.Out -match 'changed since') {
+        Ok $cases[9]
+    } else { Bad $cases[9] "code=$($r.Code) out=$($r.Out)" }
+
+    # 7d. BACKWARD-COMPAT pin: a consumer that never records a baseline keeps the
+    #     pre-4.29.0 behaviour verbatim -- hunk count, 'Confirm each' guidance,
+    #     exit 1. Baseline mode is opt-in by the file's presence and nothing else.
+    $cw7d = Join-Path $t 'align-nobase'; New-Item -ItemType Directory -Path $cw7d -Force | Out-Null
+    [IO.File]::WriteAllText((Join-Path $cw7d 'CLAUDE.md'), $claudeRules, [Text.UTF8Encoding]::new($false))
+    [IO.File]::WriteAllText((Join-Path $cw7d 'AGENTS.md'), $agentsRules, [Text.UTF8Encoding]::new($false))
+    $r = Invoke-Hook -Script (Join-Path $hookDir 'check-rules-alignment.sh') -Cwd $cw7d
+    if ($r.Code -eq 1 -and $r.Out -match 'hunk\(s\)' -and $r.Out -match 'Confirm each') {
+        Ok $cases[10]
+    } else { Bad $cases[10] "code=$($r.Code) out=$($r.Out)" }
 }
 finally { Remove-Item -Recurse -Force $t -ErrorAction SilentlyContinue }
 
