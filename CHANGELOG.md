@@ -27,6 +27,37 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.34.0] - 2026-08-08 - The review gate stops multiplying its own passes
+
+MINOR: consumers get it automatically, and it changes when `review-and-submit` re-reviews.
+
+`review-and-submit` required a full reviewer pass after **any** fix, warning or blocker, and
+said nothing about *which* reviewers to re-run. A consumer CL took **four** passes under that
+rule. Passes 3 and 4 were both reached by fixing warnings, and both found only more prose -
+each one costing a full two-reviewer cycle to correct tooltip wording. The gate that actually
+protects anything is the human decision at Step 7, and burying it under passes that only find
+text weakens it rather than strengthening it.
+
+#### Changed
+
+- **Only a BLOCKING fix forces a re-review.** The hard rule is now "No direct submit after
+  fixing a BLOCKER" - a BLOCKING verdict is the reviewer's judgement that the CL is unsafe to
+  ship, and only its own re-verdict clears that. WARNING-only fixes are applied, recorded in
+  the Review Record as `[FIXED]` / `[ACCEPTED]` / `[DEFERRED]`, and go straight to Step 7.
+- **Re-review is scoped to the reviewers whose blockers you fixed**, not the whole panel, and
+  each is told what changed and what was declined. Re-running a reviewer whose findings you
+  did not act on invites fresh findings on unchanged code, which is the mechanism that turns
+  a two-pass review into a four-pass one.
+- This aligns `review-and-submit` with `skills/design/SKILL.md`, which already said "re-run
+  the reviewer(s) after fixing BLOCKING findings". The two skills disagreed; now they do not.
+
+#### Notes
+
+The safety property is preserved by one exception, and it is deliberately judged on the edit
+rather than the label: if a WARNING fix turns out to touch behaviour, change a signature, or
+widen scope, it counts as a blocker fix and re-reviews. The failure this guards against is a
+"tidy the wording" fix that quietly alters what ships.
+
 ## [4.33.0] - 2026-08-07 - Every loud path now names a way out
 
 MINOR: consumers get it automatically, and it changes what the check will do for you.

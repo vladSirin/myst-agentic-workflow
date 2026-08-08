@@ -307,13 +307,31 @@ After receiving reviewer feedback, present a structured summary:
 **DO NOT** proceed with any action until the user explicitly chooses an option.
 
 - If user says "submit" or "1" → Proceed with Perforce submission (only if no BLOCKING issues)
-- If user says "fix" or "2" → Address issues, then **re-run this protocol from Step 5** — never submit directly after fixing
-- If user specifies issues → Fix only those, then **re-run Steps 5–7** before submitting
+- If user says "fix" or "2" → Address issues, then re-review per the scoping rule below
+- If user specifies issues → Fix only those, then re-review per the scoping rule below
 - If user says "defer" → Acknowledge and await further instructions
 
 > [!CAUTION]
-> **HARD RULE — No direct submit after fixes.**
-> After applying any fix in response to a WARNING or BLOCKING verdict, you MUST re-run the reviewer (Step 5) and present a new summary (Step 6) before submitting. Fixes can introduce new issues; the only path to submission is a clean review pass — not "the fixes look obviously correct."
+> **HARD RULE — No direct submit after fixing a BLOCKER.**
+> After applying a fix in response to a **BLOCKING** finding, you MUST re-run the reviewer that raised it (Step 5) and present a new summary (Step 6) before submitting. Fixes can introduce new issues, and a BLOCKING verdict is that reviewer's judgement that the CL is not safe to ship — only its own re-verdict clears that, never "the fixes look obviously correct."
+
+**Re-review scope — two rules that keep passes from multiplying.**
+
+1. **Re-run only the reviewer(s) whose BLOCKING findings you addressed**, not the whole panel.
+   Tell each one exactly what changed, what you declined, and why. A reviewer whose findings
+   you did not act on has nothing to re-verify, and re-running it invites new findings on
+   unchanged code — which is how a two-pass review becomes a four-pass one.
+2. **WARNING-only fixes do NOT require a re-review.** Apply them, record the disposition in the
+   Review Record (`[FIXED]` / `[ACCEPTED]` / `[DEFERRED]`), and go to Step 7. A full pass for
+   prose, tooltip, clamp and comment edits costs a review cycle and buys nothing.
+
+   **Exception, and it is the whole safety property:** if a WARNING fix turns out to touch
+   behaviour, change a signature, or widen scope, it is no longer a warning fix — treat it as a
+   blocker fix and re-review. Judge by what the edit *did*, not by the severity label that
+   prompted it.
+
+Both rules are about cost, not rigour: the gate that matters is Step 7's human decision, and
+that gate is weakened, not strengthened, by burying it under passes that only find prose.
 
 > [!CAUTION]
 > **HARD RULE — HITL tickets are excluded from standing authorizations.**
