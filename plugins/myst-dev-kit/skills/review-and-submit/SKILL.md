@@ -188,6 +188,15 @@ Use the Agent tool with the appropriate subagent_type — always the **namespace
 
 > **Effort barbell:** reviewing is judgment work — launch reviewers at their defined model/effort, never downgraded to save tokens. Only mechanical stages (file inventories, node censuses, link sweeps) run cheap (`effort: low` agents or `model: haiku` spawns).
 
+> [!IMPORTANT]
+> **Supply the facts the reviewer cannot observe.** Reviewers read files, but may not be able
+> to open binary or serialized assets, query a live editor or service, or run the project's
+> tooling. When the CL touches any of that, read those facts yourself and put them in the
+> prompt: the property values, compile/validation status, node or schema shapes, the
+> before/after of a binary you diffed. Observed values, not your conclusions from them — and
+> mark which are observed and which you inferred, using the evidence ranking the reviewer is
+> being asked to apply.
+
 #### For myst-dev-kit:radical-design-critic
 
 ```
@@ -195,6 +204,9 @@ Review the following changelist for submission readiness: {changelist name}
 
 Files to review:
 {file list}
+
+Observed facts you cannot reach yourself (values read, not inferred):
+{observed facts, or "none - nothing in this CL required observation"}
 
 Critically analyze for:
 - Edge cases that could break the design
@@ -234,6 +246,9 @@ Review the following changelist for submission readiness: {changelist name}
 
 Files to review:
 {file list}
+
+Observed facts you cannot reach yourself (values read, not inferred):
+{observed facts, or "none - nothing in this CL required observation"}
 
 Analyze for:
 - Code Complete principles and best practices
@@ -320,7 +335,7 @@ After receiving reviewer feedback, present a structured summary:
 1. **Re-run only the reviewer(s) whose BLOCKING findings you addressed**, not the whole panel.
    Tell each one exactly what changed, what you declined, and why. A reviewer whose findings
    you did not act on has nothing to re-verify, and re-running it invites new findings on
-   unchanged code — which is how a two-pass review becomes a four-pass one.
+   unchanged code.
 2. **WARNING-only fixes do NOT require a re-review.** Apply them, record the disposition in the
    Review Record (`[FIXED]` / `[ACCEPTED]` / `[DEFERRED]`), and go to Step 7. A full pass for
    prose, tooltip, clamp and comment edits costs a review cycle and buys nothing.
@@ -329,9 +344,6 @@ After receiving reviewer feedback, present a structured summary:
    behaviour, change a signature, or widen scope, it is no longer a warning fix — treat it as a
    blocker fix and re-review. Judge by what the edit *did*, not by the severity label that
    prompted it.
-
-Both rules are about cost, not rigour: the gate that matters is Step 7's human decision, and
-that gate is weakened, not strengthened, by burying it under passes that only find prose.
 
 > [!CAUTION]
 > **HARD RULE — HITL tickets are excluded from standing authorizations.**
