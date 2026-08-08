@@ -27,6 +27,49 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.35.0] - 2026-08-08 - Reviewers stop guessing at what they cannot open
+
+MINOR: consumers get it automatically, and it changes what goes into a reviewer prompt.
+
+Reviewers have less tool reach than the session launching them. They read files, but they
+cannot necessarily open a binary or serialized asset, query a live editor or service, or run
+the project's tooling. Nothing in Step 5 told the caller to close that gap, so reviewers
+derived what they could not observe.
+
+Measured on the consumer CL that produced 4.34.0: one reviewer decoded property tags at byte
+offsets inside a serialized asset to recover values the launching session could read in a
+single call. A later pass tried the same and failed outright - the package format defeated a
+byte parse. And the one materially wrong conclusion in four review passes came from a
+reviewer reasoning about geometry it had no way to observe; it was refuted only when the
+launching session read the actual values and handed them over. Once facts were supplied in
+the prompt, both reviewers independently re-verified them instead of guessing.
+
+#### Changed
+
+- **Step 5 now requires the launching session to supply observed facts** when the CL touches
+  anything the reviewer cannot open: the property values read, compile/validation status,
+  node or schema shapes, the before/after of a binary diffed. Values, not conclusions drawn
+  from them - and labelled observed vs inferred, using the same evidence ranking the reviewer
+  is asked to apply.
+- **Both reviewer prompt templates gained an `Observed facts` slot**, so the requirement is a
+  field to fill rather than advice to remember. "none - nothing in this CL required
+  observation" is a valid answer and an explicit one.
+#### Removed
+
+- Two lines of justification prose from 4.34.0's re-review section. The rationale belongs in
+  this changelog and the PR, where it already is; the skill needs the instruction.
+
+#### Rejected, recorded here rather than in the skill
+
+- **Widening reviewer tool access** was the first instinct and it is wrong: several agents
+  concurrently querying a live service is flaky, measurement belongs in one place, and
+  judgment agents should not hold tools that can mutate state. An earlier draft also named a
+  specific MCP server inside the reviewer agent bodies, which would have failed the
+  CONTRIBUTING genericity bar - the core ships to consumers with different engines and no MCP
+  at all. Project-specific guidance belongs in the consumer's own rules.
+- This paragraph lived in the skill for one commit before being cut. A maintainer weighing
+  reviewer tool access reads the changelog, not the middle of Step 5.
+
 ## [4.34.0] - 2026-08-08 - The review gate stops multiplying its own passes
 
 MINOR: consumers get it automatically, and it changes when `review-and-submit` re-reviews.
