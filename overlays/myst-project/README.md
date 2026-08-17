@@ -10,9 +10,14 @@ content other consumers should install.
 | File | Why it's Myst-only |
 |---|---|
 | `rules/angelscriptrules.md` | Hardcodes paths `/Myst_Proto/Script/` and `/split_fiction_scripts/` |
-| `agents/architecture-reviewer.md` | Description specialized for "Unreal Engine projects"; references FrogEvent plugin and Flow Subsystem |
 | `docs/MustRead/MustRead_ai_tools_for_creatives.md` | Project-specific user manual for the Myst team |
-| `skills/design/SKILL.md` + workflow files | Tailored to Myst's review conventions and folder layout |
+| `workflows/*.md` | Tailored to Myst's document, script, and raw-materials conventions |
+
+(The reviewer agents used to be listed here as Myst-specialized. They are not:
+`agents/architecture-reviewer.md` ships stack-agnostic in the core plugin and
+discovers project conventions from the repo it is pointed at. The core
+`skills/design/` still carries some Myst-flavoured paths — tracked as genericity
+debt, not as overlay content.)
 
 One shared copy serves both tools (the manifest maps each file to `.claude/`
 and `.Codex/` targets).

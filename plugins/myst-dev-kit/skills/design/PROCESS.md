@@ -132,8 +132,9 @@ End your response with a single line of the form:
 Review the design document at <game Docs dir>/{filename}.md.
 
 Analyze for architectural consistency:
-- Alignment with existing patterns (FrogEvent, Subsystems, AngelScript)
-- Code Complete principles and best practices
+- Alignment with the patterns and conventions this project already established
+- The reviewer's canon (Code Complete, Readable Code, and the game/engine
+  sources where they apply) and best practices
 - Proper separation of concerns
 - API clarity and discoverability
 - Integration points with existing systems
@@ -159,7 +160,7 @@ End your response with a single line of the form:
 2. Fills in template with dialogue system design
 3. Launches both reviewers (it's UX + code):
    - `myst-dev-kit:radical-design-critic` → checks player experience, edge cases
-   - `myst-dev-kit:architecture-reviewer` → checks integration with FrogEvent, subsystems
+   - `myst-dev-kit:architecture-reviewer` → checks integration with the systems it already exists alongside
 4. Receives feedback, updates document (v1.1)
 5. Presents updated design with change summary
 6. User approves → renames to `design_npc_dialogue_system.md`

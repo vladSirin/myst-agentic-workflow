@@ -17,8 +17,9 @@ rubrics the dedicated reviewer agents use.
 2. **Load the rubrics** — read both agent definitions that ship in this plugin,
    at the plugin root's `agents/` dir (a sibling of `skills/` — from this file:
    `../../agents/`):
-   - `agents/architecture-reviewer.md` — Code Complete principles, SOLID,
-     UE5/AngelScript patterns, project conventions.
+   - `agents/architecture-reviewer.md` — its four-source canon (Code Complete,
+     Readable Code, and the game/engine sources where they apply), SOLID, and
+     the conventions the project itself establishes.
    - `agents/radical-design-critic.md` — edge cases, UX friction, hidden
      complexity, fragility, loopholes in behavioral/process text.
    Apply the architecture lens to code/config; the design-critic lens to

@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-18%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.35.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-18%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.36.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -205,7 +205,7 @@ Specialized subagents available via the agent tool.
 
 | Agent | Triggers on |
 |---|---|
-| `architecture-reviewer` | Post-implementation review. Code Complete + SOLID + project-specific patterns. (Ships in `myst-dev-kit` since v4.0.0 — UE-flavoured; adapt for your project.) |
+| `architecture-reviewer` | Post-implementation review. Judges against a four-source canon — Code Complete, The Art of Readable Code, and (for game/engine projects) Game Programming Patterns + Game Engine Architecture — plus the conventions it discovers in your repo. Stack-agnostic: it reads your `CLAUDE.md`/`AGENTS.md` and the code around the change instead of assuming an engine. |
 | `radical-design-critic` | Design docs / proposals. Stress-tests for edge cases, UX friction, hidden complexity. |
 
 ### Overlays
