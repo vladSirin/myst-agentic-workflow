@@ -251,8 +251,9 @@ Observed facts you cannot reach yourself (values read, not inferred):
 {observed facts, or "none - nothing in this CL required observation"}
 
 Analyze for:
-- Code Complete principles and best practices
-- Alignment with existing patterns (FrogEvent, Subsystems, AngelScript)
+- The reviewer's canon (Code Complete, Readable Code, and the game/engine
+  sources where they apply) and best practices
+- Alignment with the patterns and conventions this project already established
 - Proper separation of concerns
 - API clarity and discoverability
 - Integration points with existing systems
