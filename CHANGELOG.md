@@ -27,7 +27,43 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
-## [4.35.0] - 2026-08-08 - Reviewers stop guessing at what they cannot open
+## [4.36.0] - 2026-08-17 - The architecture reviewer stops assuming it works on Myst
+
+MINOR: consumers get it automatically; it changes what the reviewer agent believes about
+the project it is dropped into.
+
+`architecture-reviewer` carried Myst's own context in its prompt — FrogEvent, AngelScript,
+UE5 subsystem patterns, asset prefixes — in a kit whose stated design goal is engine- and
+project-agnosticism. Any consumer outside Myst got a reviewer primed to hunt patterns their
+repo does not contain.
+
+The rewrite replaces baked-in context with discovery and a named canon:
+
+- **"Know the project before you judge it"** — a cheapest-path discovery order (root agent
+  docs, then the change's neighbours, then build manifests), with deeper docs read only when
+  a specific finding depends on them, and a tiebreaker: project convention wins on style,
+  loses on correctness.
+- **Four-source canon with jurisdictions** — Code Complete (construction), The Art of
+  Readable Code (readability), Game Programming Patterns and Game Engine Architecture
+  (applied only when the project is game/engine-shaped). A cite-don't-name-drop guard keeps
+  the books as justification for standards, never as findings.
+- **"Runtime fitness (project-derived)"** replaces the UE5-specific axis: the same five
+  concern classes (ownership/lifetime, hot paths, framework-boundary exposure, concurrency,
+  resource loading), with specifics derived from the stack under review — on a UE project
+  the old UPROPERTY/Tick/Blueprint items fall out of it unchanged.
+
+Launch briefings in `review-and-submit` and `design`, the `review-changes` rubric summary,
+the README agent row, and the overlay README follow suit (the overlay README also stops
+listing two files the overlay never contained).
+
+Benchmarked before landing — 30 blind runs (5 cases x 2 arms x 3 reps, opus pinned,
+identical prompts/tools), graded against pre-written ground truth with a blind pairwise
+judge: recall 29/30 both arms, zero false BLOCKING on the clean control both arms,
+cost/time within noise (+2.8% tokens), blind preference 54% (null). The ship rationale is
+**genericity at zero measured quality cost**, not a quality improvement — the data does not
+support the stronger claim. Notable from the judging: the old arm's per-finding "Code
+Complete principle violated" lines were repeatedly flagged as deletable padding; the guard
+removes the habit.
 
 MINOR: consumers get it automatically, and it changes what goes into a reviewer prompt.
 
