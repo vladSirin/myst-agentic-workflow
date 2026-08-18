@@ -27,6 +27,61 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.37.0] - 2026-08-18 - The reviewer agents get pruned of what 4.36.0 made redundant
+
+MINOR: consumers get it automatically; four instructions change what the agents do, the rest
+is weight coming off.
+
+4.36.0 added the canon and the reasoning toolkit to the two reviewer agents. It did not remove
+what those additions duplicated. Read through `writing-great-skills`, both files were carrying
+the standard post-feature residue — the same meaning stated twice, a pile of no-ops, and two
+descriptions restating a single branch five and ten times.
+
+**Four fixes that change behaviour:**
+
+- `architecture-reviewer` was told to "ask for clarification when the code's intent is
+  ambiguous." A subagent has no user turn — it could only guess anyway or drop the finding.
+  Now the ambiguity **is** the finding: name both readings and what each implies.
+- `radical-design-critic` had no jurisdiction gate — it MUST-ed through six dimensions
+  including a six-bullet UX stress test, on plans with no user in them. Build scripts, CI
+  pipelines and infrastructure changes were getting manufactured UX findings. The dimensions
+  are now jurisdictions, with §2 gated on a user-facing surface.
+- The Verdict contract had drifted: 4.36.0 recorded it as "left byte-alike (parents parse
+  them)", but only the Submission Authority paragraphs were. The critic's hardened
+  "must be the LAST line … do not bury it mid-response" is now in both, verbatim, so `diff`
+  catches the next drift.
+- `architecture-reviewer` pointed at the `codebase-design` skill by bare name; plugin skills
+  resolve as `plugin:skill`. Now `myst-dev-kit:codebase-design`.
+
+**Weight removed:**
+
+- Both descriptions are always-resident and each described one branch. The reviewer restated
+  it five ways and then re-listed the canon the body already carries (81 -> 30 words); the
+  critic used ten nouns across two parallel lists (80 -> 42 words).
+- `architecture-reviewer`: the canon table and three of the four review axes rendered the
+  same content twice — the McConnell row and the Construction-quality axis were near-verbatim,
+  and so on for Boswell, Nystrom, Gregory. The table gates jurisdiction, so it stays; the
+  three duplicate axes go; `Runtime fitness (project-derived)` has no canon row and stays.
+  The trailing "Working principles" paragraph restated six things already said elsewhere.
+- `radical-design-critic`: Core Philosophy and Review Methodology §§2-5 were the same material
+  as beliefs and as actions, in a file that then spends a paragraph forbidding the framework
+  names in findings (11 bullets -> 3). The output section ran two parallel severity
+  vocabularies and a paragraph mapping one onto the other; the severity word now leads each
+  heading and the mapping is gone. Behavioural rules 1 and 9 instructed opposite things about
+  praising a good plan — merged, and stated positively.
+
+Net: bodies 1393 -> 1218 and 1738 -> 1619 words; descriptions 161 -> 72 words off the
+always-resident budget.
+
+**Not a quality claim.** The 4.36.0 benchmark ($99, 30 runs, blind-graded) was a null result —
+recall at ceiling in both arms, Verdict lines identical across every case. No benchmark was
+run for this pass and none is warranted: pruning makes no claim a benchmark could measure.
+Verified by `claude plugin validate`, the linkcheck suite, and a byte-diff of the shared
+contract block.
+
+Also clears the tag debt: 4.34.0, 4.35.0 and 4.36.0 were bumped and never tagged, against this
+file's own "tag it or don't bump it" rule. Tagged retroactively alongside v4.37.0.
+
 ## [4.36.0] - 2026-08-17 - The architecture reviewer stops assuming it works on Myst
 
 MINOR: consumers get it automatically; it changes what the reviewer agent believes about
