@@ -27,6 +27,68 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.37.0] - 2026-08-18 - The reviewer agents get pruned of what 4.36.0 made redundant
+
+MINOR: consumers get it automatically; four instructions change what the agents do, the rest
+is weight coming off.
+
+4.36.0 added the canon and the reasoning toolkit to the two reviewer agents. It did not remove
+what those additions duplicated. Read through `writing-great-skills`, both files were carrying
+the standard post-feature residue — the same meaning stated twice, a pile of no-ops, and two
+descriptions restating a single branch five and ten times.
+
+**Four fixes that change behaviour:**
+
+- `architecture-reviewer` was told to "ask for clarification when the code's intent is
+  ambiguous." A subagent has no user turn — it could only guess anyway or drop the finding.
+  Now the ambiguity **is** the finding: name both readings and what each implies.
+- `radical-design-critic` had no jurisdiction gate — it MUST-ed through six dimensions
+  including a six-bullet UX stress test, on plans with no user in them. Build scripts, CI
+  pipelines and infrastructure changes were getting manufactured UX findings. The dimensions
+  are now jurisdictions, with §2 gated on a user-facing surface.
+- The Verdict contract had drifted: 4.36.0 recorded it as "left byte-alike (parents parse
+  them)", but only the Submission Authority paragraphs were. The critic's hardened
+  "must be the LAST line … do not bury it mid-response" is now in both, verbatim, so `diff`
+  catches the next drift.
+- `architecture-reviewer` pointed at the `codebase-design` skill by bare name; plugin skills
+  resolve as `plugin:skill`. Now `myst-dev-kit:codebase-design`.
+
+**Weight removed:**
+
+- Both descriptions are always-resident and each described one branch. The reviewer restated
+  it five ways and then re-listed the canon the body already carries (81 -> 30 words); the
+  critic used ten nouns across two parallel lists (80 -> 42 words).
+- `architecture-reviewer`: the canon table and three of the four review axes rendered the
+  same content twice — the McConnell row and the Construction-quality axis were near-verbatim,
+  and so on for Boswell, Nystrom, Gregory. The table gates jurisdiction, so it stays; the
+  three duplicate axes go; `Runtime fitness (project-derived)` has no canon row and stays.
+  The trailing "Working principles" paragraph restated six things already said elsewhere.
+- `radical-design-critic`: Core Philosophy and Review Methodology §§2-5 were the same material
+  as beliefs and as actions, in a file that then spends a paragraph forbidding the framework
+  names in findings (11 bullets -> 3). The output section ran two parallel severity
+  vocabularies and a paragraph mapping one onto the other; the severity word now leads each
+  heading and the mapping is gone. Behavioural rules 1 and 9 instructed opposite things about
+  praising a good plan — merged, and stated positively.
+
+Net: bodies 1393 -> 1218 and 1738 -> 1619 words; descriptions 161 -> 72 words off the
+always-resident budget.
+
+**Not a quality claim.** The 4.36.0 benchmark ($99, 30 runs, blind-graded) was a null result —
+recall at ceiling in both arms, Verdict lines identical across every case. No benchmark was
+run for this pass and none is warranted: pruning makes no claim a benchmark could measure.
+Verified by `claude plugin validate`, the linkcheck suite, and a byte-diff of the shared
+contract block.
+
+Also clears two pieces of release-hygiene debt found on the way:
+
+- 4.34.0, 4.35.0 and 4.36.0 were bumped and never tagged, against this file's own "tag it or
+  don't bump it" rule. Tagged retroactively.
+- **4.35.0's entry had been deleted from this file.** It was written in `7904a36` and removed
+  by `311189d` ("bump to 4.36.0"), which was authored on a branch that predated 7904a36's
+  merge and overwrote the section when it landed. Restored verbatim from `7904a36`. The
+  release itself shipped intact — only its record was lost — but a changelog that silently
+  drops a version is worse than one that never had it, because nothing looks wrong.
+
 ## [4.36.0] - 2026-08-17 - The architecture reviewer stops assuming it works on Myst
 
 MINOR: consumers get it automatically; it changes what the reviewer agent believes about
@@ -105,6 +167,50 @@ the prompt, both reviewers independently re-verified them instead of guessing.
   at all. Project-specific guidance belongs in the consumer's own rules.
 - This paragraph lived in the skill for one commit before being cut. A maintainer weighing
   reviewer tool access reads the changelog, not the middle of Step 5.
+
+## [4.35.0] - 2026-08-08 - Reviewers stop guessing at what they cannot open
+
+MINOR: consumers get it automatically, and it changes what goes into a reviewer prompt.
+
+Reviewers have less tool reach than the session launching them. They read files, but they
+cannot necessarily open a binary or serialized asset, query a live editor or service, or run
+the project's tooling. Nothing in Step 5 told the caller to close that gap, so reviewers
+derived what they could not observe.
+
+Measured on the consumer CL that produced 4.34.0: one reviewer decoded property tags at byte
+offsets inside a serialized asset to recover values the launching session could read in a
+single call. A later pass tried the same and failed outright - the package format defeated a
+byte parse. And the one materially wrong conclusion in four review passes came from a
+reviewer reasoning about geometry it had no way to observe; it was refuted only when the
+launching session read the actual values and handed them over. Once facts were supplied in
+the prompt, both reviewers independently re-verified them instead of guessing.
+
+#### Changed
+
+- **Step 5 now requires the launching session to supply observed facts** when the CL touches
+  anything the reviewer cannot open: the property values read, compile/validation status,
+  node or schema shapes, the before/after of a binary diffed. Values, not conclusions drawn
+  from them - and labelled observed vs inferred, using the same evidence ranking the reviewer
+  is asked to apply.
+- **Both reviewer prompt templates gained an `Observed facts` slot**, so the requirement is a
+  field to fill rather than advice to remember. "none - nothing in this CL required
+  observation" is a valid answer and an explicit one.
+#### Removed
+
+- Two lines of justification prose from 4.34.0's re-review section. The rationale belongs in
+  this changelog and the PR, where it already is; the skill needs the instruction.
+
+#### Rejected, recorded here rather than in the skill
+
+- **Widening reviewer tool access** was the first instinct and it is wrong: several agents
+  concurrently querying a live service is flaky, measurement belongs in one place, and
+  judgment agents should not hold tools that can mutate state. An earlier draft also named a
+  specific MCP server inside the reviewer agent bodies, which would have failed the
+  CONTRIBUTING genericity bar - the core ships to consumers with different engines and no MCP
+  at all. Project-specific guidance belongs in the consumer's own rules.
+- This paragraph lived in the skill for one commit before being cut. A maintainer weighing
+  reviewer tool access reads the changelog, not the middle of Step 5.
+
 
 ## [4.34.0] - 2026-08-08 - The review gate stops multiplying its own passes
 
