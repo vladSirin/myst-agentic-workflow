@@ -27,6 +27,61 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.38.0] - 2026-08-18 - Review rounds converge by removing causes, not by capping rounds
+
+MINOR: consumers get it automatically. Four new re-review rules, the fast path wired to a skill
+that already shipped, and a sibling `RE-REVIEW.md`. Plugin skills reach consumers through the
+marketplace clone (`/plugin update myst-dev-kit@myst`), NOT through `upgrade.ps1` — that installer
+ships only manifest-declared consumer files and nothing under `plugins/`.
+
+Two transcript sweeps over this repo's own review history drove every line of this.
+
+**Sweep 1 — briefing.** ~48 re-review invocations across 4 sessions and 5 CLs: **100% delta-brief,
+0 full-template.** Re-reviews were already narrow. A rule mandating that was drafted and dropped —
+always-loaded text buying a behaviour already at 100% is sediment.
+
+**Sweep 2 — what late rounds found.** Fix-churn dominates: from pass 2 on, most findings are
+defects in the previous round's own fix, frequently in the prose written to explain the fix. Only
+1 of 3 long loops ended on GREEN; the others ended on a human override and on the agent giving up.
+
+**Four rules, each removing a measured cause of rounds** (in the new `RE-REVIEW.md`):
+
+- **Rule 3 — the fix answers the finding and nothing else.** Implement the finding, not the
+  reviewer's prescription (declare it in the brief if you adopt theirs); explanation goes in the
+  brief, not the artifact. Origin: a CL whose round 3 opened with three BLOCKING defects, all
+  introduced by round-2 fixes implementing prescriptions the reviewers later called wrong.
+- **Rule 4 — a closed list of findings that never cost a re-review**, at any severity: Review
+  Record, `[JobFamily][Name]` tag, EOL flip, non-ASCII description, an existing `Ticket:`, an
+  already-performed `BP-Pins:`. Closed on a principle — every item cannot change behaviour, and
+  every item has a validator behind it. `BP-Pins:` and `Ticket:` carry qualifiers precisely because
+  *doing* the verification or *creating* the ticket is the work, not the line.
+- **Rule 5 — one re-review per pass, not per finding.**
+- **Rule 6 — scope freezes when the review starts**, except what the fix itself requires.
+
+**No round cap, and that is a finding, not an omission.** Four cap designs were tried and measured:
+counting rounds fired on 5 of 5 CLs; counting BLOCKING volume fired on ~2 of 3, including the round
+that *caught* nine regressions; attributing findings to the last fix fired on ~3 of 3, because
+every brief is a delta brief — so "is this defect inside the last fix" is yes by construction and
+the detector measured the briefing convention, not fix quality. You cannot reliably detect a
+churning loop from inside it. Nothing in this release stops, asks, or shelves.
+
+**The fast path now invokes `myst-dev-kit:review-changes`.** It told the agent to "do a careful
+self-review of the diff" — no rubric, no verdict line — while `review-changes` has defined exactly
+that review since 4.1.0. It is documented in the README, CONTRIBUTING and the capability matrix,
+and **no skill invoked it**: `myst-dev-kit:review-changes` was 0 hits kit-wide.
+
+**`review-changes` gains its second branch and loses a contradiction.** Its opener read "when you
+cannot spawn a subagent", i.e. "not you", which would have defeated the fast path. And it loaded
+both reviewer rubrics whole — including a second-person "you MUST NOT run `p4 submit`" written for
+a subagent reporting to a parent, landing in the session that must submit. It now reads each rubric
+*except* its Submission Authority section and persona: an exclusion, so a renamed heading costs an
+extra section rather than silently half a rubric.
+
+**Structural.** The re-review rules moved out of `review-and-submit` Step 7 — already the file's
+densest region — into a sibling `RE-REVIEW.md` behind a markdown link. Rules 1-2 moved
+byte-identical except the header's hardcoded rule count. Rules 3 and 6 fire earlier than the
+launch-a-reviewer moment, so each is triggered from where it applies.
+
 ## [4.37.0] - 2026-08-18 - The reviewer agents get pruned of what 4.36.0 made redundant
 
 MINOR: consumers get it automatically; four instructions change what the agents do, the rest

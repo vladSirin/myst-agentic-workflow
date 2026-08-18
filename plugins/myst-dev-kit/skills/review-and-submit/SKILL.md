@@ -14,6 +14,8 @@ This rule applies to **every file modification** in a Perforce client, not just 
 > [!CAUTION]
 > `Modify file -> p4 edit/add -> Present status` — never `Modify -> Present -> (forget) -> try to submit later -> find dirty files outside any CL`.
 
+During an active review, a file the CL did not already contain goes in a NEW CL unless the fix itself requires it — [RE-REVIEW.md](RE-REVIEW.md) rule 6.
+
 When unsure which CL a file belongs in: put it in the **default change** and reorganize later via `p4 reopen -c <CL>`. Default-change files stay out of named-CL submits (`p4 submit -c` submits only that CL) and they WILL be tracked in `p4 opened`.
 
 ## Trigger
@@ -123,7 +125,7 @@ Determine which reviewer(s) to launch based on changelist contents:
 │  Mixed changes               →  BOTH agents (parallel)                 │
 │  (feature with code + docs/UX)                                         │
 │                                                                        │
-│  Config / Asset only         →  Quick self-review (no agent)           │
+│  Config / Asset only         →  Fast path: review-changes inline       │
 │  (*.ini, *.uasset tweaks)                                              │
 │                                                                        │
 └────────────────────────────────────────────────────────────────────────┘
@@ -133,9 +135,9 @@ Determine which reviewer(s) to launch based on changelist contents:
 
 If the CL is **non-risky** (contains no `.as`, `.cpp`, `.h`, `.hpp`, `.inl`, `.build.cs`, `.target.cs`, `.ini`, `.uproject`, `.uplugin`) **or** risky-but-under-threshold (**≤ 5 non-WP files AND ≤ 100 changed lines** — files under `__ExternalActors__`/`__ExternalObjects__` don't count, matching the submit-audit thresholds when the audit hook is installed), you MAY skip Step 4 (doc check) and Step 5 (reviewer agents):
 
-1. Do a careful self-review of the diff (`p4 diff -du` on the CL's files)
-2. Go straight to Step 8 (Record the Review) with a self-review block, then the Submission Step preflight
-3. Still present a one-paragraph summary and wait for the user's submit decision (Step 7 always applies)
+1. Run the `myst-dev-kit:review-changes` skill on the CL — the same rubrics, applied inline, ending in the `Verdict:` line Step 8 records. Lens selection is the skill's own (Step 3's table): one lens for single-type CLs, both for mixed.
+2. Present a one-paragraph summary and wait for the user's submit decision (Step 7 always applies)
+3. Then Step 8 (Record the Review) with its verdict, then the Submission Step preflight — in that order, because Step 8 records a review the user has approved
 
 The user can always force a full agent review ("full review CL {N}"). When in doubt — mixed content, unfamiliar system, anything player-facing — take the full path.
 
@@ -323,28 +325,17 @@ After receiving reviewer feedback, present a structured summary:
 **DO NOT** proceed with any action until the user explicitly chooses an option.
 
 - If user says "submit" or "1" → Proceed with Perforce submission (only if no BLOCKING issues)
-- If user says "fix" or "2" → Address issues, then re-review per the scoping rule below
+- If user says "fix" or "2" → Address issues — the fix answers the finding and nothing else ([RE-REVIEW.md](RE-REVIEW.md) rule 3) — then re-review per the scoping rule below
 - If user specifies issues → Fix only those, then re-review per the scoping rule below
 - If user says "defer" → Acknowledge and await further instructions
 
 > [!CAUTION]
 > **HARD RULE — No direct submit after fixing a BLOCKER.**
-> After applying a fix in response to a **BLOCKING** finding, you MUST re-run the reviewer that raised it (Step 5) and present a new summary (Step 6) before submitting. Fixes can introduce new issues, and a BLOCKING verdict is that reviewer's judgement that the CL is not safe to ship — only its own re-verdict clears that, never "the fixes look obviously correct."
+> After applying a fix in response to a **BLOCKING** finding, you MUST re-run the reviewer that raised it (Step 5) and present a new summary (Step 6) before submitting — except for the closed list in [RE-REVIEW.md](RE-REVIEW.md) rule 4, whose fixes cannot change behaviour. Fixes can introduce new issues, and a BLOCKING verdict is that reviewer's judgement that the CL is not safe to ship — only its own re-verdict clears that, never "the fixes look obviously correct."
 
-**Re-review scope — two rules that keep passes from multiplying.**
-
-1. **Re-run only the reviewer(s) whose BLOCKING findings you addressed**, not the whole panel.
-   Tell each one exactly what changed, what you declined, and why. A reviewer whose findings
-   you did not act on has nothing to re-verify, and re-running it invites new findings on
-   unchanged code.
-2. **WARNING-only fixes do NOT require a re-review.** Apply them, record the disposition in the
-   Review Record (`[FIXED]` / `[ACCEPTED]` / `[DEFERRED]`), and go to Step 7. A full pass for
-   prose, tooltip, clamp and comment edits costs a review cycle and buys nothing.
-
-   **Exception, and it is the whole safety property:** if a WARNING fix turns out to touch
-   behaviour, change a signature, or widen scope, it is no longer a warning fix — treat it as a
-   blocker fix and re-review. Judge by what the edit *did*, not by the severity label that
-   prompted it.
+**Re-review scope.** You fixed a finding and you are about to spend another reviewer pass. What
+re-runs, what must never cost a pass, and how to keep a fix from creating the next round's work:
+read [RE-REVIEW.md](RE-REVIEW.md) before launching it.
 
 > [!CAUTION]
 > **HARD RULE — HITL tickets are excluded from standing authorizations.**
@@ -414,7 +405,7 @@ Findings:
   figure you put in a description — byte counts, file counts, finding tallies: re-derive
   them from the live artifact at submit time, or leave them out. A number measured at
   review time and frozen into a description is wrong by submit time more often than not.
-- Fast-path self-review: `Reviewer: self - Verdict: GREEN (quick review: config-only, 3 files)` and `Findings: none`.
+- Fast path: `Reviewer: self (inline, review-changes skill) - Verdict: GREEN (fast path: config-only, 3 files)`. If the skill did not run, the honest line is `Reviewer: self - Verdict: ... (quick review)` — never assert a rubric-backed review that did not happen.
 - `Findings:` one-liners only, each prefixed with its disposition: `[FIXED]` (fixed before submit), `[ACCEPTED]` (submitting with it), `[DEFERRED]` (tracked for later).
 - Cap at ~6 finding lines; summarize overflow as `- ...and N more INFO items (see review transcript)`.
 - Write this block on **every** CL that goes through this protocol — it's cheap and keeps the audit quiet.

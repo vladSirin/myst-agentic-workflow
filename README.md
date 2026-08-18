@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
 
-[![tests](https://img.shields.io/badge/tests-18%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.37.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-18%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.38.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Provenance
 
@@ -170,7 +170,7 @@ The engineering/productivity set is adapted from [mattpocock/skills](https://git
 | Skill | Use it when |
 |---|---|
 | [`/design`](plugins/myst-dev-kit/skills/design/SKILL.md) | Create a design document with reviewer-agent feedback and iterate to approval; the team's doc-process rules (naming, lifecycle, BLOCKING/WARNING/INFO) live in the companion [PROCESS.md](plugins/myst-dev-kit/skills/design/PROCESS.md). |
-| [`/review-changes`](plugins/myst-dev-kit/skills/review-changes/SKILL.md) | Pre-submit review of a CL/diff INLINE when reviewer subagents are unavailable (e.g. under Codex); same rubrics, same parseable `Verdict:` line. |
+| [`/review-changes`](plugins/myst-dev-kit/skills/review-changes/SKILL.md) | Pre-submit review of a CL/diff INLINE: the `review-and-submit` fast path (small CLs), and any session without reviewer subagents (e.g. Codex); same rubrics, same parseable `Verdict:` line. |
 | [`/roundtable`](plugins/myst-dev-kit/skills/roundtable/SKILL.md) | Multi-perspective design discussion when one viewpoint isn't enough. |
 | [`/setup-agentic-workflow`](plugins/myst-dev-kit/skills/setup-agentic-workflow/SKILL.md) | Interactive wizard to install/upgrade the scaffold in a project -- detects the environment, proposes tools + overlays, asks one question at a time, dry-runs, then writes (front-end over `setup.ps1`/`upgrade.ps1`). |
 
