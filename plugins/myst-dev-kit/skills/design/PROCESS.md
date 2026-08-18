@@ -68,8 +68,18 @@ After receiving reviewer feedback:
    accept/defer decision for any WARNING you do not fix)
 2. Add entry to Change Log with version bump
 3. Present summary of changes to user
-4. (Optional) Re-run reviewers if major changes were made — mandatory after fixing
-   BLOCKING findings
+4. Re-run per the re-review rules — **the same loop, the same rules**: see
+   [RE-REVIEW.md](../review-and-submit/RE-REVIEW.md), which governs a CL review and a
+   document review alike. Rules 1, 2, 3, 5 and 6 apply as written. Rule 4 has no
+   analogue here — no validator checks a design document — so every finding is a real
+   finding. Read rule 6's "gets its own CL" as "gets its own document": a section that
+   arrives mid-review does not restart this review.
+
+   The two that change what most people do today: **rule 1** — re-run only the reviewer
+   whose BLOCKING findings you addressed, not both — and **rule 3** — the fix answers the
+   finding and nothing else, with your reasoning going in the re-review brief rather than
+   growing the document. On a design doc the second matters most: new rationale prose is
+   new reviewable surface, and prose is where the churn was measured to live.
 
 **Verdict rules**: each reviewer ends its response with a literal
 `Verdict: GREEN | WARNING | BLOCKING` line. Parse that token — never infer approval from

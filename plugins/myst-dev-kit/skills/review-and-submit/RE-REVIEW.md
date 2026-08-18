@@ -4,6 +4,10 @@ Reached from `review-and-submit` Step 7 when you have fixed a finding and are ab
 another reviewer pass. Rules 3 and 6 fire earlier than that and are triggered from where they
 apply.
 
+Also governs **document** reviews, from `design`'s iteration step. There, rule 4 has no analogue
+- no validator checks a design document, so every finding is a real finding - and rule 6's "gets
+its own CL" reads "gets its own document".
+
 1. **Re-run only the reviewer(s) whose BLOCKING findings you addressed**, not the whole panel.
    Tell each one exactly what changed, what you declined, and why. A reviewer whose findings
    you did not act on has nothing to re-verify, and re-running it invites new findings on

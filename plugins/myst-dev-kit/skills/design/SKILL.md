@@ -150,7 +150,9 @@ Apply the iteration and verdict rules in [PROCESS.md](PROCESS.md):
 2. Update the document to address BLOCKING and WARNING findings (or record an explicit accept/defer decision)
 3. Add a new entry to the Change Log
 4. Present the updated document to the user with a summary of changes
-5. Re-run the reviewer(s) after fixing BLOCKING findings
+5. Re-run **only the reviewer(s) whose BLOCKING findings you addressed** — the re-review
+   rules in [RE-REVIEW.md](../review-and-submit/RE-REVIEW.md) govern document reviews too
+   (all but rule 4, which has no validator analogue here)
 
 ### Step 5: Mark Document Ready
 
