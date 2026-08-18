@@ -64,7 +64,8 @@ reviewed before it lands. The unit of review is the unit of installation.
 ## Review capability without agents (Codex)
 
 Reviewer subagents (`architecture-reviewer`, `radical-design-critic`) are
-Claude-only. Codex sessions perform reviews inline via the **`review-changes`
+Claude-only. Codex sessions -- and the `review-and-submit` fast path, in any
+session -- perform reviews inline via the **`review-changes`
 skill**, which loads the same two rubric files from the plugin's `agents/` dir
 and ends with the same parseable `Verdict:` line. Inline self-review is the
 floor, not the ceiling — risky CLs over the Submit-Audit thresholds deserve an

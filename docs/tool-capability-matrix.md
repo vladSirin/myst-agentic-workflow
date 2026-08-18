@@ -43,7 +43,7 @@ A capability with no fallback is a silent hole. These are the ones that exist:
 
 | Gap | Fallback | Where it is stated |
 |---|---|---|
-| Reviewer agents (Codex) | the **`review-changes`** skill — runs the same architecture + design rubrics inline and ends with the literal `Verdict:` line `review-and-submit` parses | `review-and-submit` SKILL.md, and the Codex plugin description |
+| Reviewer agents (Codex) | the **`review-changes`** skill — runs the same architecture + design rubrics inline and ends with the literal `Verdict:` line `review-and-submit` parses. Not only a Codex fallback: the `review-and-submit` fast path invokes it in agent-capable sessions too, so do not retire it if the agents are ever ported to TOML | `review-and-submit` SKILL.md, and the Codex plugin description |
 | Project hooks (Codex) | ship the hook through the plugin's own `hooks/hooks.json` instead — `${CLAUDE_PLUGIN_ROOT}` resolves under Codex (it ships that name as a compat alias). Gate a one-tool hook on the tool to **exclude**: `[ -n "${CLAUDECODE:-}" ] && exit 0` | this file; `submit-audit-bridge.sh` is the worked example |
 | `.claude/rules/*.md` (Codex) | a counterpart section in `AGENTS.md` | `check-rule-parity.sh`, `check-rules-alignment.sh` |
 
