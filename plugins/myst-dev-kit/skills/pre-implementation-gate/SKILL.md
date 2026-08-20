@@ -101,6 +101,39 @@ Work on a `ready-for-human` ticket proceeds normally — the agent implements an
 >
 > Ticket status flow stays per triage-labels: HITL tickets end at `resolved` (agent-runnable checks passed); only a human moves them to `closed`.
 
+## The ticket travels WITH the CL
+
+The `Ticket:` line points the CL at the ticket. **Nothing points the ticket back**, and that
+one-directional gap is what rots a board: ticket state drifts from reality, and someone later
+pays to reconstruct it. Three rules close it.
+
+1. **Any ticket whose state a CL changes must be IN that CL** — checked out, updated and
+   submitted together. Explicitly including a ticket you touch *incidentally* while working on
+   another: if work for ticket 06 discharges a criterion of ticket 03, then **03 is in that CL
+   too**. Spelled out rather than assumed, because the failure is not laziness — you are working
+   inside 06, you discharge 03's criterion in passing, and you write the evidence where you
+   happen to be standing. Later, 03 still reads as open.
+
+2. **`resolved` carries an `Outstanding:` line** — what check, who performs it, where the result
+   gets recorded. `resolved` *means* a human check remains; a ticket that does not say WHICH one
+   cannot be closed without re-deriving it from scratch.
+
+3. **Deferring a criterion names its receiving owner** — a ticket number or a named slice, in the
+   same edit that defers it. "Rides ticket 06" and "remains for the debug pass" are how a
+   criterion goes ownerless for weeks.
+
+**The exception, which is what keeps this followable.** A check that can only run AFTER the code
+ships — a human play-test, PIE against the shipped binary — cannot be recorded in the CL that
+ships it. That is exactly what `resolved` plus rule 2 are for: the ticket moves to `resolved` in
+the code CL and to `closed` in a later one. Never hold a code CL hostage to a human, and never
+pre-record a check that has not happened.
+
+Why this is worth always-loaded text: a board audited after the fact needed a dedicated pass to
+work out what was still outstanding across seven `resolved` tickets — evidence written into the
+wrong ticket, a criterion whose prose said "met" while its checkbox said otherwise, and a
+deferred criterion that had gone ownerless. The tickets that had travelled with their CL closed
+with zero reconstruction.
+
 ---
 
 ## Enforcement
