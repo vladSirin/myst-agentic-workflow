@@ -111,13 +111,14 @@ when implementation is done and all agent-runnable checks pass. A human moves it
 
 ## 7. Review and submit
 
-For code or documentation changes that should enter Perforce, say:
+For code or documentation changes that should enter Perforce, name the changelist and ask for submission — any explicit form works:
 
 ```text
 review and submit {changelist name or ID}
+submit {CL}
 ```
 
-The agent then follows the project review protocol: organize the changelist, check related docs, route reviewers, summarize blocking/warning/info items, and wait for a human decision before submitting.
+The agent then follows the project review protocol, scaled to the changelist: docs-only changelists take a lightweight self-check (tags, file list, EOLs, a one-line review record), while code and asset changelists get the full routing — organize the changelist, check related docs, route reviewers, summarize blocking/warning/info items. Either way the agent waits for a human decision before submitting: the review scales, the human gate does not.
 
 ## Supporting docs
 

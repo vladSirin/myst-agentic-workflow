@@ -27,6 +27,31 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.40.0] - 2026-08-20 - Submit review scales to the changelist; the phrase was never the gate
+
+> Second heading dated today, deliberately: 4.39.0 below is a separate change set already
+> merged to `main` (PR #83), so sharing its number would break one-bump-per-merge. Note
+> v4.39.0 is still untagged — it needs its tag independently of this entry.
+
+MINOR: consumers get it automatically. Two changes to `review-and-submit`, one template touch.
+
+- **Trigger**: any explicit submit instruction naming a CL ("submit 2470") runs the protocol.
+  The long "review and submit" phrase stays sufficient but is documented as never required —
+  Step 7 already treated both as the same approval; the trigger section now says so instead of
+  implying the incantation is load-bearing.
+- **Trivial path (tier 0)**: docs/ledger-only CLs — every file `.md`/`.txt` under the doc
+  trees, nothing under `_Raw/` or `.claude/`/`.codex/`, ≤ 10 files — skip reviewer routing,
+  the doc check, and the inline rubric. What remains: description/tag check, `p4 opened`
+  verify, EOL normalize, a one-line self review record, preflight, and the unchanged human
+  gate. Evidence basis (one consumer, CLs 2386-2469): every docs-only rubric pass returned
+  GREEN with zero findings, while code CLs in the same window drew real BLOCKING/WARNING
+  verdicts — the rubric was ceremony exactly and only in this class. Drift had already begun
+  (two docs-only CLs shipped with no record at all); tier 0 legalizes the skip and keeps the
+  record line, so a principled skip stays distinguishable from a forgotten review.
+- **`templates/common/docs/MustRead/MustRead_agentic_workflow.md` §7**: documents both trigger
+  forms and the scaled review, ending on the invariant: the review scales, the human gate
+  does not.
+
 ## [4.39.0] - 2026-08-20 - The ticket travels with the CL
 
 MINOR: consumers get it automatically. One new section in `pre-implementation-gate`, closing a

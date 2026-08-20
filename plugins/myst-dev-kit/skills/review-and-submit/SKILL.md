@@ -20,7 +20,7 @@ When unsure which CL a file belongs in: put it in the **default change** and reo
 
 ## Trigger
 
-When the user says **"review and submit {changelist name or ID}"**, execute this workflow.
+When the user gives **any explicit submit instruction naming a CL** — "review and submit {changelist name or ID}", "submit {CL}" — execute this workflow. The long phrase is sufficient, never required: Step 7 already treats any per-CL submit instruction as the approval, and the review it buys runs either way. (A bare "submit" naming no CL: ask which one, then proceed.)
 
 ---
 
@@ -128,8 +128,44 @@ Determine which reviewer(s) to launch based on changelist contents:
 │  Config / Asset only         →  Fast path: review-changes inline       │
 │  (*.ini, *.uasset tweaks)                                              │
 │                                                                        │
+│  Docs/ledger only            →  Trivial path (tier 0, below)           │
+│  (*.md/*.txt in the doc trees)                                         │
+│                                                                        │
 └────────────────────────────────────────────────────────────────────────┘
 ```
+
+### Trivial path (tier 0 — docs/ledger only)
+
+Check this BEFORE the fast path. The CL qualifies when ALL of:
+
+- **Every** file is `.md` or `.txt` under a doc tree — the team docs dir (`Docs/` here), the
+  game project's Docs dir (`Myst_Proto/Docs/` here; see the CLAUDE.md Project section), or
+  `.scratch/` — including pure `p4 move`/rename CLs whose source and target both stay inside
+  those trees with zero content-line changes;
+- **Nothing** under a leads-only subtree (`_Raw/`), and nothing under `.claude/` / `.codex/`
+  (rules, hooks, scripts, and manifests steer agent behavior — they review as code, whatever
+  their extension);
+- **≤ 10 files.**
+
+One file outside the allowlist makes the CL not-trivial — route it normally. When in doubt,
+it does not qualify: take the fast path.
+
+For a qualifying CL, skip Step 3 routing, Step 4 (doc check), and Step 5 (reviewers). The
+protocol collapses to:
+
+1. Description check: `[JobFamily][Name]` tags, English/ASCII only, `Ticket:` / `Workflow:`
+   line when the pre-implementation gate applies.
+2. `p4 opened -c {CL}` lists exactly the intended files, nothing else.
+3. EOL-normalize any flagged text file (Edit/Write tools silently flip CRLF→LF).
+4. Record line in the description (Step 8 format):
+   `Reviewer: self - Verdict: GREEN (trivial path: docs-only, {N} files)`
+5. Submission Step preflight, then Step 7 as always — **the gate does not change**: a
+   submit instruction from the user naming this CL is still required.
+
+Why this tier exists: measured across CLs 2386–2469, every docs-only CL that ran the
+fast-path rubric self-reviewed GREEN with zero findings — the review pass was pure ceremony
+there, while code CLs in the same window drew real BLOCKING and WARNING verdicts. The tier
+removes the ceremony and keeps the record, the audit trail, and the human gate.
 
 ### Fast path (small, non-risky CLs)
 
@@ -405,7 +441,7 @@ Findings:
   figure you put in a description — byte counts, file counts, finding tallies: re-derive
   them from the live artifact at submit time, or leave them out. A number measured at
   review time and frozen into a description is wrong by submit time more often than not.
-- Fast path: `Reviewer: self (inline, review-changes skill) - Verdict: GREEN (fast path: config-only, 3 files)`. If the skill did not run, the honest line is `Reviewer: self - Verdict: ... (quick review)` — never assert a rubric-backed review that did not happen.
+- Fast path: `Reviewer: self (inline, review-changes skill) - Verdict: GREEN (fast path: config-only, 3 files)`. Trivial path: `Reviewer: self - Verdict: GREEN (trivial path: docs-only, 7 files)` — no rubric ran, and the line says so. If the skill did not run and the CL was not tier 0, the honest line is `Reviewer: self - Verdict: ... (quick review)` — never assert a rubric-backed review that did not happen.
 - `Findings:` one-liners only, each prefixed with its disposition: `[FIXED]` (fixed before submit), `[ACCEPTED]` (submitting with it), `[DEFERRED]` (tracked for later).
 - Cap at ~6 finding lines; summarize overflow as `- ...and N more INFO items (see review transcript)`.
 - Write this block on **every** CL that goes through this protocol — it's cheap and keeps the audit quiet.
