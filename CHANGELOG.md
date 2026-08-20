@@ -27,6 +27,37 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.39.0] - 2026-08-20 - The ticket travels with the CL
+
+MINOR: consumers get it automatically. One new section in `pre-implementation-gate`, closing a
+one-directional gap in the existing rule.
+
+The gate already requires a `Ticket:` line in every CL description. That points the CL **at** the
+ticket. Nothing pointed the ticket back at the CL — so ticket state was free to drift from what
+had actually shipped, and nothing noticed until someone tried to close a board.
+
+Driven by an audit of one consumer's board where seven `resolved` tickets needed a dedicated
+reconstruction pass. Three distinct failures, none of them carelessness:
+
+- **Evidence written into the wrong ticket.** Work on ticket 06 discharged a criterion of ticket
+  03; the evidence was recorded in 06, where the author was standing. 03 still read as open, and
+  its own file was never touched. Rule 1's "including a ticket you touch *incidentally*" exists
+  for exactly this — a rule that only says "your ticket goes in your CL" does not catch it.
+- **A criterion deferred into the void.** "Rides ticket 06" and "remains for the debug pass"
+  moved a criterion out of its ticket without naming a receiver. It went ownerless for weeks and
+  was eventually discharged by accident, by an unrelated CL that happened to produce the evidence.
+- **`resolved` with no stated remainder.** The label means "a human check remains" but nothing
+  required saying WHICH. Reconstructing that for seven tickets is the audit that motivated this.
+
+**The exception is load-bearing, not a hedge.** A check that can only run after the code ships
+cannot be recorded in the CL that ships it. Making "same CL" absolute would force either a
+premature `resolved` or holding code CLs hostage to a human — so the rule states the exception
+and hands that half to `resolved` + the `Outstanding:` line instead. A rule with an unstatable
+exception gets broken once and then ignored.
+
+Not a new enforcement mechanism: this rides the review protocol, like the `Ticket:` line it
+extends.
+
 ## [4.38.0] - 2026-08-18 - Review rounds converge by removing causes, not by capping rounds
 
 MINOR: consumers get it automatically. Four new re-review rules, the fast path wired to a skill
