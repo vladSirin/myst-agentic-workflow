@@ -56,6 +56,27 @@ reviewed before it lands. The unit of review is the unit of installation.
 - [ ] **Provenance**: upstream-derived content (mattpocock/skills) stays
       byte-faithful and keeps the MIT attribution; local-origin content must
       not collide with an upstream skill name (re-vendor safety).
+- [ ] **Verbatim by default** ([ADR-0006](docs/adr-0006-verbatim-by-default-and-the-divergence-ledger.md)):
+      any change to vendored content needs a written necessity rationale, a
+      reviewer pass, and owner confirmation, recorded in the release's
+      divergence ledger. Preference is not necessity — if the honest reason is
+      preference, take upstream's version.
+
+## Upstream sync checklist (every release, and monthly)
+
+- [ ] `pwsh scripts/check-mattpocock-updates.ps1` — run it **at every release
+      and at least monthly**. The v4.43.0 re-vendor found the pin 141 commits
+      behind because nothing ran the detector between syncs.
+- [ ] `pwsh scripts/vendored-hashes.ps1 -Verify` — every vendored file still
+      matches its recorded hash. After a re-vendor, `-Update` regenerates it
+      and refuses undeclared divergences.
+- [ ] Dangling-ref guard — every hit must be a ledgered divergence, and the
+      pattern grows when a new skill is rejected:
+
+      git grep -nE "setup-matt-pocock-skills|code-review|ask-matt" plugins/myst-dev-kit/skills/
+
+- [ ] Enumerate divergences **by grep, never by hand** — three review passes
+      over the v4.43.0 plan each mis-enumerated the set by reading.
 - [ ] **No hidden authority**: skills that touch version control state the
       submission-authority rule (reviewers never submit; agents never push
       shared state without the protocol).
