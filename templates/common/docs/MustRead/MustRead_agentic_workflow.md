@@ -51,33 +51,41 @@ Output:
 
 Each ticket should be independently understandable and verifiable. Prefer slices that can fit in one Perforce changelist.
 
-Ticket creation includes initial triage. Do not default all generated tickets to `needs-triage`. Assign:
+Ticket creation includes initial triage. Do not default all generated tickets to `needs-triage` — triage is for issues that arrive raw from elsewhere, and tickets you generated from a spec are already specified. Assign:
 
-- `ready-for-agent` when all required checks are agent-verifiable
-- `ready-for-human` when any HITL work or verification is required
+- `ready-for-agent` when an agent can implement it
+- `ready-for-human` when a **human** must write the implementation
 - `needs-info` when the ticket is still too vague to classify safely
 
 Avoid specific file paths or code snippets in ticket bodies because they go stale quickly. Exception: include a compact prototype-derived snippet only when it captures a decision more precisely than prose can.
 
 ## 4. Triage
 
-Use `/triage` to choose the correct lane.
+Use `/triage` to choose the correct lane — for issues that arrived raw. Tickets `/to-tickets` produced are already agent-ready and skip this step.
 
-Agent-verifiable lane:
+The `Status:` field carries either a **triage role** (who picks it up) or a **lifecycle state** (how far it got). Full definitions: `Docs/agents/triage-labels.md`.
 
-```text
-needs-triage -> ready-for-agent -> work-in-progress -> closed
-```
-
-Use this lane only when the agent can implement the work and verify every required test case without human judgment.
-
-Human-required lane:
+Agent-implementable, fully agent-verifiable:
 
 ```text
-needs-triage -> ready-for-human -> work-in-progress -> resolved -> closed
+needs-triage -> ready-for-agent -> claimed -> closed
 ```
 
-Use this lane when any required check depends on human judgment, Unreal Editor validation, gameplay feel, art or design approval, level-designer usability, or Perforce reviewer confirmation.
+Agent-implementable, but a human check remains after it ships:
+
+```text
+needs-triage -> ready-for-agent -> claimed -> resolved -> closed
+```
+
+Use the `resolved` step when any required check depends on human judgment — Unreal Editor validation, gameplay feel, art or design approval, level-designer usability, or Perforce reviewer confirmation. It carries an `Outstanding:` line naming that check.
+
+Human-implemented:
+
+```text
+needs-triage -> ready-for-human -> (a human takes it from here)
+```
+
+`ready-for-human` means a human writes the implementation — an agent does not pick the ticket up, and **only the user** may relabel it `ready-for-agent`.
 
 ## 5. Implementation
 
@@ -88,26 +96,27 @@ Use `/diagnosing-bugs` for bugs, regressions, broken behavior, or performance pr
 Implementation should move the ticket to:
 
 ```text
-Status: work-in-progress
+Status: claimed
 ```
 
 ## 6. Verification
 
-For agent-verifiable work, the agent may mark the ticket:
+When the agent can run every required check itself, it may mark the ticket:
 
 ```text
 Status: closed
 ```
 
-only after all required checks pass.
+only after all of them pass.
 
-For HITL work, mark the ticket:
+When a required check needs a human, mark the ticket:
 
 ```text
 Status: resolved
+Outstanding: <which check, who performs it, where the result is recorded>
 ```
 
-when implementation is done and all agent-runnable checks pass. A human moves it to `closed` after verification.
+once the implementation is done and every agent-runnable check has passed. A human moves it to `closed` after verification — in a later changelist, never pre-recorded in the one that ships the code.
 
 ## 7. Review and submit
 
