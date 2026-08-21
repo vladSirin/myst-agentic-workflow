@@ -27,6 +27,27 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.42.0] - 2026-08-21 - setup-devkit: Codex install-if-missing actually installs
+
+MINOR: consumers get it automatically. One defect in the day-old script, found by running the
+release end-to-end on a machine where the Codex plugin was genuinely not installed.
+
+- **`setup-devkit.ps1` Codex leg**: the install-if-missing check grepped the plugin NAME out
+  of `codex plugin list` - but the name appears in the table even when its row says
+  `not installed` (and the command can exit non-zero while printing a valid table), so the
+  leg concluded "installed" and silently skipped `codex plugin add`. Now it always attempts
+  the add (harmless when already installed) and judges the row TEXT afterwards - the leg
+  FAILs loudly only if the row still says `not installed`. Verified live: the same machine
+  went `not installed` -> `installed, enabled 4.41.0` on the fixed leg.
+- Docs consistency pass (README vs SETUP): the per-tool notes block is no longer stranded
+  inside Provenance; README now carries the same writable-twin story SETUP documents
+  (OpenCode's Claude-plugin compat path surfaces `myst-dev-kit:<name>` writable - the script
+  disables them; spawn `myst/<name>`); SETUP's Codex row matches the always-attempt-add
+  implementation; the FAQ covers three tools and states OpenCode is deliberately not a
+  scaffold render target.
+- Second heading dated today, deliberately: 4.41.0 below is a separate change set already
+  merged to `main` (PR #85) and tagged.
+
 ## [4.41.0] - 2026-08-21 - OpenCode joins as a pointer consumer; one setup command for every tool
 
 MINOR: consumers get it automatically; nothing existing breaks. OpenCode support returns in

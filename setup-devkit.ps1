@@ -284,13 +284,16 @@ function Invoke-CodexLeg([string]$srcRoot) {
             $up.Out | Select-Object -Last 3 | ForEach-Object { Write-Host "    $_" }
             Leg 'codex' 'FAIL' 'marketplace upgrade failed'; return
         }
-        $list = Invoke-Native 'codex' @('plugin', 'list')
-        if (($list.Code -eq 0) -and (($list.Out -join "`n") -notmatch 'myst-dev-kit')) {
-            $add = Invoke-Native 'codex' @('plugin', 'add', $PluginId)
-            if ($add.Code -ne 0) {
-                $add.Out | Select-Object -Last 3 | ForEach-Object { Write-Host "    $_" }
-                Leg 'codex' 'FAIL' 'plugin add failed'; return
-            }
+        # Always attempt the add -- codex errors harmlessly when already installed.
+        # Never gate on grepping the plugin NAME out of `codex plugin list`: the name
+        # appears in the table even when its row says "not installed" (measured), and
+        # the command can exit non-zero while printing a valid table. The row TEXT
+        # after the add is the only reliable signal.
+        $null = Invoke-Native 'codex' @('plugin', 'add', $PluginId)
+        $listNow = Invoke-Native 'codex' @('plugin', 'list')
+        if (($listNow.Out -join "`n") -match ([regex]::Escape($PluginId) + '\s+not\s+installed')) {
+            $listNow.Out | Select-Object -Last 4 | ForEach-Object { Write-Host "    $_" }
+            Leg 'codex' 'FAIL' 'plugin still not installed after add'; return
         }
     }
     $n = Write-CodexAgents (Join-Path $srcRoot 'plugins/myst-dev-kit/agents') $agentsDir
