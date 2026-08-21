@@ -39,6 +39,9 @@ reviewed before it lands. The unit of review is the unit of installation.
    (the marketplace entry version **pins updates**: forget it and consumers never
    receive the release; `run-marketplace-tests.ps1` fails the lockstep check for you),
    and the README version badge (CI asserts the badge against the tree).
+   Then **push the tag and the release publishes itself** —
+   `.github/workflows/release.yml` turns every `v*` tag into a GitHub Release with
+   that version's CHANGELOG section as the body.
 7. Teammates receive it on their next plugin update — no Perforce interaction.
 
 ## Per-skill review checklist
@@ -61,22 +64,27 @@ reviewed before it lands. The unit of review is the unit of installation.
 - [ ] **Size**: a skill the model loads on demand should earn its tokens —
       prefer one tight SKILL.md + reference files over a monolith.
 
-## Review capability without agents (Codex)
+## Review capability without agents
 
-Reviewer subagents (`architecture-reviewer`, `radical-design-critic`) are
-Claude-only. Codex sessions -- and the `review-and-submit` fast path, in any
-session -- perform reviews inline via the **`review-changes`
-skill**, which loads the same two rubric files from the plugin's `agents/` dir
-and ends with the same parseable `Verdict:` line. Inline self-review is the
-floor, not the ceiling — risky CLs over the Submit-Audit thresholds deserve an
-independent reviewer.
+Reviewer subagents (`architecture-reviewer`, `radical-design-critic`) run natively
+under Claude, and as `setup-devkit.ps1`-generated read-only variants under Codex
+(TOML) and OpenCode. Sessions without them installed -- and the
+`review-and-submit` fast path, in any session -- perform reviews inline via the
+**`review-changes` skill**, which loads the same two rubric files from the
+plugin's `agents/` dir and ends with the same parseable `Verdict:` line. Inline
+self-review is the floor, not the ceiling — risky CLs over the Submit-Audit
+thresholds deserve an independent reviewer.
 
 ## Versioning
 
 Rules live at the top of [CHANGELOG.md](CHANGELOG.md). The short version:
 
 - **MAJOR** only when an existing install breaks or needs manual migration. Retiring a
-  skill or rule is **MINOR** — `upgrade.ps1` handles it.
+  skill or rule is **MINOR** — `upgrade.ps1` handles it. The same install-break test
+  decides renames: gate-step 6's "renamed skill → MAJOR" is about consumer-facing
+  trigger contracts; renaming a **maintainer-only command** with no committed consumer
+  references breaks no install and ships as MINOR (precedent:
+  `/update-myst-skills` → `/update-project-scaffold`, v4.41.0).
 - **One bump per merge to `main`**, not per commit and not per PR in a stack.
 - **Tag it or don't bump it.** An untagged bump is a string in a JSON file.
 - The number lives in **five** places (four manifests + the README badge) — change them

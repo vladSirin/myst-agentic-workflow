@@ -1,0 +1,50 @@
+name: release
+
+# Tag push -> GitHub Release, body = that version's CHANGELOG section.
+# The Releases page is the team-visible "what is latest" surface (README links it;
+# setup-devkit.ps1's printed version delta is the CLI surface). CONTRIBUTING step 6:
+# push the tag and the release publishes itself.
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract this version's CHANGELOG section
+        shell: pwsh
+        run: |
+          $tag = '${{ github.ref_name }}'
+          $ver = $tag.TrimStart('v')
+          $lines = Get-Content CHANGELOG.md
+          $start = -1
+          for ($i = 0; $i -lt $lines.Count; $i++) {
+              if ($lines[$i] -match ('^## \[' + [regex]::Escape($ver) + '\]')) { $start = $i; break }
+          }
+          if ($start -lt 0) {
+              "::warning title=changelog::no '## [$ver]' section found; release body will point at CHANGELOG.md"
+              "See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details." |
+                  Out-File body.md -Encoding utf8
+              exit 0
+          }
+          $end = $lines.Count
+          for ($i = $start + 1; $i -lt $lines.Count; $i++) {
+              if ($lines[$i] -match '^## \[') { $end = $i; break }
+          }
+          $lines[$start..($end - 1)] -join "`n" | Out-File body.md -Encoding utf8
+          "Section: lines $start..$($end - 1)"
+
+      - name: Create the release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create '${{ github.ref_name }}' --title '${{ github.ref_name }}' --notes-file body.md --verify-tag
