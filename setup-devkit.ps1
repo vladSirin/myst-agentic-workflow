@@ -40,12 +40,13 @@ $DedicatedPath = Join-Path $HOME '.myst-agentic-workflow'
 $MarketplaceId = 'myst'
 $PluginId      = 'myst-dev-kit@myst'
 
-# The nine skills that are user-invoked by design (disable-model-invocation in the
+# The thirteen skills that are user-invoked by design (disable-model-invocation in the
 # skill frontmatter). OpenCode ignores that key, so the same gate is restored as a
 # permission.skill ask-map: the model must ask before auto-firing a workflow gate.
 $ManualSkills = @('to-spec','to-tickets','triage','implement','handoff',
                   'grill-with-docs','improve-codebase-architecture',
-                  'writing-great-skills','setup-agentic-workflow')
+                  'setup-agentic-workflow','wayfinder','to-questionnaire',
+                  'grill-me','teach','wait-what')
 
 # Reviewer-agent generation: fixed literal headers (never parsed from the source
 # frontmatter -- the shared Claude files carry keys that break other loaders, e.g.

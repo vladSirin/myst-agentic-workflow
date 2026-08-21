@@ -159,5 +159,128 @@
     "againstUpstreamCommit": "e9fcdf95b402d360f90f1db8d776d5dd450f9234",
     "date": "2026-07-16",
     "reason": "Skill itself rejected (git-native, duplicate review entry point vs review-and-submit); its Spec-conformance axis adopted INTO review-and-submit + review-changes instead (follow-up PR)."
+  },
+  {
+    "type": "skill-decision",
+    "decision": "skip",
+    "target": "ask-matt",
+    "againstUpstreamCommit": "0ab1b63a410a03d3627979a109c8695de27af954",
+    "date": "2026-08-21",
+    "reason": "Hand-authored branded router (aihero.dev) over UPSTREAM's catalog: it names skills we reject and is blind to our 10 local-origin skills, so verbatim it would misroute our team. Concept is useful; a local-origin ask-myst is queued as follow-up. (Re-confirmed by user 2026-08-21.)"
+  },
+  {
+    "type": "skill-decision",
+    "decision": "skip",
+    "target": "setup-matt-pocock-skills",
+    "againstUpstreamCommit": "0ab1b63a410a03d3627979a109c8695de27af954",
+    "date": "2026-08-21",
+    "reason": "Our setup-agentic-workflow covers the role (tracker + labels + domain docs). The 5 refs to it in vendored skills are remapped, not vendored. (Re-confirmed 2026-08-21.)"
+  },
+  {
+    "type": "skill-decision",
+    "decision": "skip",
+    "target": "code-review",
+    "againstUpstreamCommit": "0ab1b63a410a03d3627979a109c8695de27af954",
+    "date": "2026-08-21",
+    "reason": "Git-native throughout (git diff <fixed-point>...HEAD, git rev-parse); our review unit is the P4 changelist, and the name collides with the built-in /code-review plugin. Its one structural idea (Standards+Spec dual axis) was already mined into review-and-submit/review-changes at v4.4.0. 9 commits since the previous pin were all phrasing, no architecture. (Re-confirmed 2026-08-21.)"
+  },
+  {
+    "type": "skill-decision",
+    "decision": "skip",
+    "target": "agents/openai.yaml per-skill metadata (all skills)",
+    "againstUpstreamCommit": "0ab1b63a410a03d3627979a109c8695de27af954",
+    "date": "2026-08-21",
+    "reason": "Upstream's own packaging channel. Our Codex delivery is the dual-manifest myst-dev-kit plugin: setup-devkit.ps1 drives the native plugin manager against .codex-plugin/plugin.json, which registers skills by DIRECTORY POINTER. Verified 2026-08-21: zero readers of openai.yaml / allow_implicit_invocation anywhere in this repo, so vendoring them would not shorten Codex deploy by one step."
+  },
+  {
+    "type": "skill-decision",
+    "decision": "adopt",
+    "target": "wayfinder",
+    "againstUpstreamCommit": "0ab1b63a410a03d3627979a109c8695de27af954",
+    "date": "2026-08-21",
+    "reason": "SUPERSEDES the 2026-07-16 defer (which waited on a Jira/OpenProject tracker). User-directed 2026-08-21. Vendored verbatim except the ledgered setup-ref remap; its required 'Wayfinding operations' tracker section was ported into templates/common/docs/agents/issue-tracker.md, without which the skill is stranded."
+  },
+  {
+    "type": "skill-decision",
+    "decision": "adopt",
+    "target": "prototype",
+    "againstUpstreamCommit": "0ab1b63a410a03d3627979a109c8695de27af954",
+    "date": "2026-08-21",
+    "reason": "REVERSES the 2026-06-22 skip ('web-bound; no UE/Perforce relevance'). Two reasons: it is in upstream's user-facing roster, and wayfinder FUNCTIONALLY DEPENDS on it (wayfinder/SKILL.md:78 resolves a prototype-type ticket by calling it) -- keeping the skip would have shipped a broken adopted skill. Its LOGIC branch (self-contained state-machine demo) is the usable half here; the UI branch is inapplicable and simply goes unused.",
+    "supersedes": "skip 2026-06-22"
+  },
+  {
+    "type": "skill-decision",
+    "decision": "adopt",
+    "target": "wizard",
+    "againstUpstreamCommit": "0ab1b63a410a03d3627979a109c8695de27af954",
+    "date": "2026-08-21",
+    "reason": "Deferred 2026-07-16 only because upstream marked it in-progress; it has since graduated to the stable roster, so the defer basis is spent. Model-invoked. Note its template.sh is GitHub-Actions-shaped (gh secret/variable, .env) -- usable via Git Bash but low-utility on a P4 game project; adopted verbatim rather than adapted.",
+    "supersedes": "defer 2026-07-16"
+  },
+  {
+    "type": "skill-decision",
+    "decision": "adopt",
+    "target": "to-questionnaire",
+    "againstUpstreamCommit": "0ab1b63a410a03d3627979a109c8695de27af954",
+    "date": "2026-08-21",
+    "reason": "Same as wizard: the in-progress defer basis is spent. Fits the lead/human decision handoff lane.",
+    "supersedes": "defer 2026-07-16"
+  },
+  {
+    "type": "skill-decision",
+    "decision": "adopt",
+    "target": "grill-me",
+    "againstUpstreamCommit": "0ab1b63a410a03d3627979a109c8695de27af954",
+    "date": "2026-08-21",
+    "reason": "Upstream ships grill-me (user-invoked) + grilling (model-invoked) as a deliberate pair, and we already vendor grilling. Its body is one line routing to grilling, so cost is ~nil and we get upstream's future changes for free rather than maintaining the asymmetry. (User call 2026-08-21.)"
+  },
+  {
+    "type": "skill-decision",
+    "decision": "adopt",
+    "target": "teach",
+    "againstUpstreamCommit": "0ab1b63a410a03d3627979a109c8695de27af954",
+    "date": "2026-08-21",
+    "reason": "In upstream's user-facing roster; no prior recorded decision either way. Default-adopt under the verbatim principle. NOTE: it writes lessons/reference/assets/learning-records RELATIVE TO CWD -- consumers pin it (UE_Blank_Proto pins .scratch/teach/) so it never creates top-level dirs in a P4 workspace."
+  },
+  {
+    "type": "skill-decision",
+    "decision": "adopt",
+    "target": "wait-what",
+    "againstUpstreamCommit": "0ab1b63a410a03d3627979a109c8695de27af954",
+    "date": "2026-08-21",
+    "reason": "In upstream's user-facing roster; no prior recorded decision. Default-adopt, self-contained, no conflicts."
+  },
+  {
+    "type": "skill-decision",
+    "decision": "adopt",
+    "target": "writing-for-agents",
+    "againstUpstreamCommit": "0ab1b63a410a03d3627979a109c8695de27af954",
+    "date": "2026-08-21",
+    "reason": "Rename re-sync, not a new skill: upstream renamed writing-great-skills -> writing-for-agents (their #766) and we never followed. Our local delta on the old file is DROPPED per the verbatim principle rather than carried. Consequence recorded: his version ships WITHOUT disable-model-invocation, so it auto-fires on CLAUDE.md/AGENTS.md edits -- routine work here. Accepted as the price of verbatim; reversible as a ledgered gate divergence."
+  },
+  {
+    "type": "divergence",
+    "decision": "remap",
+    "target": "7 lines across 6 skills (tdd:38, implement:13, to-spec:9, to-tickets:11+60, triage:43, wayfinder:25)",
+    "againstUpstreamCommit": "0ab1b63a410a03d3627979a109c8695de27af954",
+    "date": "2026-08-21",
+    "reason": "Upstream references to skills we do not vendor. Necessity: a dangling skill name misroutes; implement:13's /code-review is worse than dangling because it RESOLVES on machines with the official review plugin enabled, silently answering from a git-diff reviewer on a P4 changelist. Enumerated by grep, not by hand -- three review rounds of hand-enumeration each missed lines. Guarded by the CONTRIBUTING release-checklist grep and by vendored-hashes.json's declared-divergence list."
+  },
+  {
+    "type": "divergence",
+    "decision": "extend",
+    "target": "triage-labels: `claimed` lifecycle state",
+    "againstUpstreamCommit": "0ab1b63a410a03d3627979a109c8695de27af954",
+    "date": "2026-08-21",
+    "reason": "Upstream uses `claimed` only as wayfinder CONCURRENCY vocabulary (issue-tracker-local.md 'Wayfinding operations'), not as a general lifecycle state. We extend it to the implementation lane, replacing our old work-in-progress. Divergence-by-extension, deliberate: it keeps one vocabulary across both kinds of effort. Disambiguation is by effort, not ticket -- a wayfinder effort has map.md, an implementation effort has spec.md."
+  },
+  {
+    "type": "divergence",
+    "decision": "keep-local",
+    "target": "triage lifecycle states `resolved` + `closed`",
+    "againstUpstreamCommit": "0ab1b63a410a03d3627979a109c8695de27af954",
+    "date": "2026-08-21",
+    "reason": "NOT a divergence on inspection, recorded so it is not re-litigated: upstream's triage-labels.md is explicitly a per-repo MAPPING TABLE ('Edit the right-hand column to match whatever vocabulary you actually use') and its five names are triage ROLES, not a repo's whole Status vocabulary. Upstream's own local-tracker spec USES `resolved` (wayfinder writes it). Dropping it would have been a divergence FROM upstream, and would have stranded 47 live tickets, 44 of which carry no Outstanding: line to fall back on."
   }
 ]
