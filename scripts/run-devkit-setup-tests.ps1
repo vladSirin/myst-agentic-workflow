@@ -85,7 +85,10 @@ $declaredManual = ([regex]::Match(
     (Get-Content "$PSScriptRoot\..\setup-devkit.ps1" -Raw),
     '(?s)\$ManualSkills\s*=\s*@\((.*?)\)').Groups[1].Value -split ',' |
     Where-Object { $_.Trim() -match "^'" }).Count
-if ($askCount -eq $declaredManual) { Ok "permission.skill ask-map matches ManualSkills roster ($declaredManual skills)" }
+# A failed regex yields 0, and $askCount is also 0 in exactly the regression this test
+# exists to catch -- so 0 -eq 0 would pass vacuously. Guard the parse itself.
+if ($declaredManual -lt 1) { Bad 'ManualSkills roster parsed from setup-devkit.ps1' 'regex matched nothing' }
+elseif ($askCount -eq $declaredManual) { Ok "permission.skill ask-map matches ManualSkills roster ($declaredManual skills)" }
 else { Bad "permission.skill ask-map matches ManualSkills roster ($declaredManual skills)" "found $askCount" }
 
 # OpenCode consumes installed Claude plugins; the plugin's reviewer twins resolve

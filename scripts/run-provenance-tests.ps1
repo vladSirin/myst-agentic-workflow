@@ -17,6 +17,7 @@
 #      skills must live in the plugin, which a re-vendor never targets wholesale.
 #   3. Every local-origin skill is present in the plugin after a re-vendor.
 $ErrorActionPreference = 'Stop'
+. "$PSScriptRoot\lib\SkillRoster.ps1"
 $pkg = (Resolve-Path "$PSScriptRoot\..").Path
 $m = Get-Content "$pkg\manifest-template.json" -Raw | ConvertFrom-Json
 $pass = 0; $fail = 0
@@ -39,9 +40,7 @@ else { Bad 'local skill in templates/.../skills (re-vendor would clobber it)' ((
 
 # 3. Local-origin skills live in the PLUGIN (v4.0.0; core-local overlay retired) and
 #    keep the re-vendor-safety property: a mattpocock re-vendor can never clobber them.
-$localOrigin = @('roundtable', 'setup-agentic-workflow', 'design', 'review-changes',
-                 'review-and-submit', 'changelist-verification', 'pre-implementation-gate',
-                 'agentic-workflow', 'auto-plan-mode')
+$localOrigin = Get-LocalOriginSkills
 $missing = @($localOrigin | Where-Object { -not (Test-Path "$PSScriptRoot\..\plugins\myst-dev-kit\skills\$_\SKILL.md") })
 if ($missing.Count -eq 0) { Ok "local-origin skills present in the plugin ($($localOrigin -join ', '))" }
 else { Bad 'local-origin skills in plugin' ($missing -join ', ') }

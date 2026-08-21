@@ -76,7 +76,23 @@ re-litigated: upstream's `triage-labels.md` is explicitly a per-repo mapping tab
 right-hand column to match whatever vocabulary you actually use") and its five names are triage
 *roles*, not a repo's whole `Status` vocabulary. Upstream's own file-tracker spec **uses**
 `resolved` — `/wayfinder` writes it. Dropping it would have been a divergence *from* upstream, and
-would have stranded 47 live tickets, 44 of which carry no `Outstanding:` line to fall back on.
+would have stranded **48** live tickets (count derived from the tree, not typed), most of which
+carry no `Outstanding:` line to fall back on.
+
+**The alternative that was not taken** (recorded so the next sync does not re-derive it):
+instead of converging *our* meaning to upstream's, we could have remapped **upstream's**
+`triage/SKILL.md:36` to our old meaning as a 7th ≤1-line ref-style divergence. That was strictly
+cheaper — one line, versus 4 local-origin skills + 2 template docs + a consumer reconciliation.
+Rejected on two grounds: upstream's meaning is the better one (it separates *who implements* from
+*what remains to verify*, which our old conflated label could not), and remapping **semantics**
+rather than **names** is a far worse precedent — a future reader diffing against upstream would
+see identical-looking prose that means the opposite thing. Ref remaps are safe because they are
+visibly local; semantic remaps are not.
+
+**When an effort has both `map.md` and `spec.md`** the discriminator in §5 is ambiguous. Not
+observed today. If it happens, the wayfinder map governs the tickets that carry a `Type:` line
+(wayfinder writes one; implementation tickets do not) — but the honest answer is that this is an
+unresolved edge, recorded rather than papered over.
 
 ## 5. Additions to vendored-adjacent content
 
@@ -89,9 +105,10 @@ upstream's `issue-tracker-local.md` with one addition: the effort-level discrimi
 ## 6. Project-side relocations (land in a different repo — Phase B, `UE_Blank_Proto`)
 
 Included here deliberately: these previously escaped review entirely by living outside the package
-PR.
+PR. **Status: not yet landed** — the kit-side removal is in this branch; the consumer-side arrival
+is Phase B, and neither target file exists yet (see §8 item 4).
 
-| Removed from kit | Lands as | Content |
+| Removed from kit | Will land as | Content |
 |---|---|---|
 | `resolving-merge-conflicts/P4-NOTES.md` | `Docs/agents/perforce-notes.md` (new file) | P4 resolve verbs, binary-asset caveat |
 | `diagnosing-bugs/UE-NOTES.md` | `Docs/agents/unreal-notes.md` (new file) | UE feedback loops, `-ExecCmds`, P4 bisect, binary assets |
@@ -110,8 +127,63 @@ spoke the old meaning would put two contradictory definitions of `ready-for-huma
 window — and the dangerous direction is inversion (an agent reads the kit, concludes it may
 implement, and takes a ticket the project reserved for a human).
 
+## 8. Phase B reconciliation — REQUIRED before the vocabulary flip is live
+
+Both reviewer passes landed BLOCKING on the same gap, from different directions, and they were
+right: §1–7 declared the *decision* to redefine `ready-for-human` and none of its *consequences*
+outside this repository. The ledger counted live-ticket blast radius when the answer was "keep
+upstream's word" (§4, 48 tickets) and did not count it when the answer was "flip the meaning".
+That asymmetry is precisely the rationalization ADR-0006 exists to catch.
+
+Numbers below are derived from the consumer tree (`UE_Blank_Proto`, 244 ticket files), not typed.
+
+| # | Item | Why it blocks |
+|---|---|---|
+| 1 | `.claude/rules/PreImplementationGate.md:12` + `:51-58`, `CLAUDE.md:57-58`, `AGENTS.md:63`, `AutoPlanMode.md:28` still teach the OLD meaning | These are **always-on** rules, resident in every session, while skills load on demand. The highest-priority context slot currently asserts the exact inversion §7 was written to prevent: an agent reads the rule, concludes it may implement a `ready-for-human` ticket, and never reaches the skill that would stop it. |
+| 2 | 28 `ready-for-human` tickets were labeled under the old meaning; **~3 are pure verification-HITL** (work already buildable/built, a human must only check it) and belong at `resolved` + `Outstanding:` | They keep the string as a *safe* default, so nothing escalates. But the board is inaccurate until reclassified — and by the rule written in this very release, `ready-for-human` → `ready-for-agent` is **user-only**, so this sweep is the owner's by construction. Recorded here so that is a stated constraint, not a surprise. |
+| 3 | 5 tickets carry `Status: work-in-progress`, a string the kit no longer defines anywhere | Orphaned vocabulary; rename to `claimed`. |
+| 4 | §6's relocations have not landed: `Docs/agents/perforce-notes.md` and `unreal-notes.md` do not exist yet | This branch removed `P4-NOTES.md`/`UE-NOTES.md` **and** the pointer to them. Until Phase B lands, a Perforce shop's merge-conflict skill has no P4 guidance at all. |
+
+**Two mechanics corrections** the Phase B recon turned up, which the plan had wrong:
+
+- `Docs/agents/issue-tracker.md` and `Docs/MustRead/MustRead_agentic_workflow.md` are
+  `manual-only` / **human-owned** in this consumer's installed manifest — a scaffold render will
+  **not** deliver them. Only `triage-labels.md` (`installer-owned`/`copy`) renders. The Wayfinding
+  section and the MustRead convergence must be hand-applied consumer-side.
+- A **third** definitional site exists that the plan never named:
+  `Myst_Proto/Docs/plan_agentic_scaffolding_packaging_WIP.md` re-enumerates the full 8-status
+  model in two places.
+
+**Ordering.** Phase A may merge and tag before Phase B lands — the kit only reaches a machine on
+`/plugin update`, which the rollout defers until after B. What must **not** happen is a
+`/plugin update` on any machine before Phase B is submitted. If Phase A ships and Phase B stalls,
+that gap is the release's live risk, and it is the owner's call to accept or to gate on.
+
 ## Reviewer sign-off
 
-- `radical-design-critic` — is the reasoning sound? → **pending**
-- `architecture-reviewer` — does the diff match the claim? → **pending**
-- Owner confirmation → **pending**
+- **`radical-design-critic`** → **BLOCKING**, resolved. Verified the ledger mechanically (34
+  identical / 6 divergent / 0 undeclared; all four spot-checked claims true) and found no
+  divergence that should have been taken verbatim instead. Its blocker was the undeclared
+  consumer-side blast radius above → §8 added; the considered-and-rejected alternative recorded
+  in §4; `47` regenerated to `48`.
+- **`architecture-reviewer`** → **BLOCKING**, resolved. Empirically measured five holes, all now
+  fixed and regression-tested:
+  1. **The gate never ran** — CI discovers `run-*-tests.ps1`; `vendored-hashes.ps1` does not match
+     that glob, and the provenance header named a wrapper that did not exist. The release that
+     diagnosed "a detector nobody runs" had added a second one. → `scripts/run-vendor-hash-tests.ps1`,
+     suite badge 19 → 20.
+  2. **Deleting a vendored file passed green** (measured: dropping all of `teach/` scored `[PASS]`
+     with a smaller count). The loop walked the disk, never the ledger. → reverse existence check;
+     dropping one file now yields exactly one failure.
+  3. **Rename-laundering** — `mv teach teach-v2` + edit + `-Update` wrote and exited 0. → refused.
+  4. **Ledger not byte-stable across shells.** → LF/no-BOM writer, and `-Update` pinned to pwsh 7
+     because 5.1's `ConvertTo-Json` formats differently (`-Verify` stays 5.1-compatible for CI).
+     Verified byte-idempotent across three runs; a 5.1 `-Update` aborts without touching the file.
+  5. Bookkeeping: `attributionRequirement` still cited the superseded pin; README/CHANGELOG
+     asserted a completed relocation that had not happened; `overlays/README.md` claimed P4-NOTES
+     still rides the skill; the guard's documented pass condition was unreachable as worded.
+  Also fixed from its INFO set: deterministic key order, one shared `$localOrigin` roster
+  (`scripts/lib/SkillRoster.ps1`), quoted `cmd` interpolation, and a zero-guard on the derived
+  count test so it cannot pass vacuously at `0 == 0`.
+- **Owner confirmation** → **pending**. This is the ADR-0006 gate; nothing merges, tags, or
+  publishes without it.

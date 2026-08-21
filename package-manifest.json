@@ -80,7 +80,7 @@
       "license": "MIT",
       "licenseAuditedAt": "2026-08-21T00:00:00+08:00",
       "redistributionAllowed": true,
-      "attributionRequirement": "SPDX MIT. Audited at pinned commit e9fcdf95b402d360f90f1db8d776d5dd450f9234. Must preserve the verbatim notice 'Copyright (c) 2026 Matt Pocock' and the full MIT permission notice in all copies or substantial portions of redistributed files."
+      "attributionRequirement": "SPDX MIT. Audited at the commit recorded in pinnedCommit (see licenseAuditedAt for when). Must preserve the verbatim notice 'Copyright (c) 2026 Matt Pocock' and the full MIT permission notice in all copies or substantial portions of redistributed files."
     }
   }
 }

@@ -69,10 +69,12 @@ by reading. A single `git grep` produced the complete list in one shot. Therefor
 checklist carries the grep, not a list:
 
 ```sh
-git grep -nE "setup-matt-pocock-skills|code-review|ask-matt" plugins/myst-dev-kit/skills/
+git grep -nE "setup-matt-pocock-skills|code-review|ask-matt" plugins/ templates/
 ```
 
-Every hit must be a ledgered divergence. Extend the pattern when a new skill is rejected.
+A correct tree returns **no hits** — the ledgered divergences are the remaps, so the old
+strings no longer appear. Any hit is an unremapped reference. Extend the pattern when a new
+skill is rejected.
 
 ### Enforcement, not promise
 

@@ -18,10 +18,25 @@
 [CmdletBinding()]
 param(
     [switch] $Update,
-    [switch] $Verify
+    [switch] $Verify,
+    [switch] $AllowLocalAddition
 )
 $ErrorActionPreference = 'Stop'
 . "$PSScriptRoot\lib\Markers.ps1"
+. "$PSScriptRoot\lib\SkillRoster.ps1"
+
+# -Update is pinned to PowerShell 7+. Not a portability oversight: 5.1 and 7 ship different
+# ConvertTo-Json formatters (5.1 indents deeper, double-spaces after the colon, and escapes
+# `>` as >), so regenerating on the other engine rewrites all ~279 lines with no semantic
+# change and two maintainers would ping-pong the whole file. Encoding is not the issue -- the
+# writer below is already LF/no-BOM on both. -Verify stays 5.1-compatible, which is what
+# matters: CI and the release checklist only ever verify.
+if ($Update -and $PSVersionTable.PSVersion.Major -lt 7) {
+    Write-Host "[ABORT] -Update requires PowerShell 7+ (this is $($PSVersionTable.PSVersion))." -ForegroundColor Red
+    Write-Host "        5.1's ConvertTo-Json formats differently and would rewrite the whole ledger." -ForegroundColor Red
+    Write-Host "        Run: pwsh scripts/vendored-hashes.ps1 -Update    (-Verify works on 5.1)" -ForegroundColor Red
+    exit 2
+}
 
 $pkg       = (Resolve-Path "$PSScriptRoot\..").Path
 $hashFile  = Join-Path $pkg 'vendored-hashes.json'
@@ -36,7 +51,7 @@ function Get-UpstreamHash {
     # cmd redirect is byte-exact; PowerShell's pipeline would mangle the trailing newline.
     $tmp = [System.IO.Path]::GetTempFileName()
     try {
-        cmd /c "git show $Rev`:$UpstreamPath > `"$tmp`" 2>nul" | Out-Null
+        cmd /c "git show `"$Rev`:$UpstreamPath`" > `"$tmp`" 2>nul" | Out-Null
         if ($LASTEXITCODE -ne 0 -or (Get-Item $tmp).Length -eq 0) { return $null }
         return Get-NormalizedContentHash -Path $tmp
     } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
@@ -46,7 +61,7 @@ function Find-UpstreamPath {
     param([string] $Rev, [string] $Relative)   # e.g. "grilling/SKILL.md"
     foreach ($c in $categories) {
         $candidate = "skills/$c/$Relative"
-        cmd /c "git cat-file -e $Rev`:$candidate 2>nul" | Out-Null
+        cmd /c "git cat-file -e `"$Rev`:$candidate`" 2>nul" | Out-Null
         if ($LASTEXITCODE -eq 0) { return $candidate }
     }
     return $null
@@ -61,20 +76,21 @@ $declaredDivergences = if ($existing -and $existing.divergences) {
     $existing.divergences
 } else {
     @(
-        @{ path = 'tdd/SKILL.md';        line = 38;      reason = 'ref remap: `code-review` -> `review-changes` (we do not vendor code-review)' }
-        @{ path = 'implement/SKILL.md';  line = 13;      reason = 'ref remap: /code-review -> /review-changes (unremapped it RESOLVES to the git-diff review plugin)' }
-        @{ path = 'to-spec/SKILL.md';    line = 9;       reason = 'ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow' }
-        @{ path = 'to-tickets/SKILL.md'; line = '11,60'; reason = 'ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow' }
-        @{ path = 'triage/SKILL.md';     line = 43;      reason = 'ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow' }
-        @{ path = 'wayfinder/SKILL.md';  line = 25;      reason = 'ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow' }
+        [ordered]@{ path = 'tdd/SKILL.md';        line = 38;      reason = 'ref remap: `code-review` -> `review-changes` (we do not vendor code-review)' }
+        [ordered]@{ path = 'implement/SKILL.md';  line = 13;      reason = 'ref remap: /code-review -> /review-changes (unremapped it RESOLVES to the git-diff review plugin)' }
+        [ordered]@{ path = 'to-spec/SKILL.md';    line = 9;       reason = 'ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow' }
+        [ordered]@{ path = 'to-tickets/SKILL.md'; line = '11,60'; reason = 'ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow' }
+        [ordered]@{ path = 'triage/SKILL.md';     line = 43;      reason = 'ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow' }
+        [ordered]@{ path = 'wayfinder/SKILL.md';  line = 25;      reason = 'ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow' }
     )
 }
 $divergentPaths = @($declaredDivergences | ForEach-Object { $_.path })
 
 # Local-origin skills are ours; they are not vendored and carry no upstream hash.
-$localOrigin = @('roundtable', 'setup-agentic-workflow', 'design', 'review-changes',
-                 'review-and-submit', 'changelist-verification', 'pre-implementation-gate',
-                 'agentic-workflow', 'auto-plan-mode')
+# ONE source of truth, shared with run-provenance-tests.ps1: a skill listed in one script
+# and not the other silently mis-scopes this sweep (it would fall through to the
+# local-addition branch below instead of being hashed).
+$localOrigin = Get-LocalOriginSkills
 
 $pass = 0; $fail = 0; $records = @()
 $skillDirs = Get-ChildItem $skillsDir -Directory | Where-Object { $localOrigin -notcontains $_.Name }
@@ -89,7 +105,14 @@ foreach ($dir in $skillDirs) {
         if ($Update) {
             $up = Find-UpstreamPath -Rev $pin -Relative $rel
             if (-not $up) {
-                Write-Host "[WARN] no upstream file for $rel (recording as local addition)" -ForegroundColor Yellow
+                if (-not $AllowLocalAddition) {
+                    Write-Host "[REFUSE] $rel has no counterpart at the pinned upstream." -ForegroundColor Red
+                    Write-Host "         A renamed skill dir launders content past this gate, so this is refused, not warned." -ForegroundColor Red
+                    Write-Host "         If it is genuinely local, re-run with -AllowLocalAddition (and say so in the ledger)." -ForegroundColor Red
+                    $fail++
+                    continue
+                }
+                Write-Host "[WARN] no upstream file for $rel (recorded as a local addition)" -ForegroundColor Yellow
                 $records += [ordered]@{ path = $rel; hash = $ourHash; upstream = $null }
                 continue
             }
@@ -119,12 +142,28 @@ if ($Update) {
         divergences   = $declaredDivergences
         files         = $records
     }
-    $out | ConvertTo-Json -Depth 6 | Set-Content $hashFile -Encoding utf8
+    # Byte-stable across shells: PowerShell 5.1's -Encoding utf8 emits a BOM and 7's does not,
+    # and both write CRLF -- so Set-Content here would make every regeneration a whole-file diff
+    # on the other shell. A script whose whole point is EOL/BOM invariance must not write a
+    # variant artifact. Same idiom as scripts/lib/P4Spec.ps1.
+    $json = ($out | ConvertTo-Json -Depth 6) -replace "`r`n", "`n"
+    [System.IO.File]::WriteAllText($hashFile, $json + "`n", [System.Text.UTF8Encoding]::new($false))
     Write-Host "Wrote $hashFile -- $($records.Count) file(s), $($declaredDivergences.Count) declared divergence(s)." -ForegroundColor Green
     exit 0
 }
 
-# Verify mode: also confirm every declared divergence still corresponds to a real file.
+# Verify mode. The loop above walks the DISK ("is each file recorded?"); this walks the
+# LEDGER ("is each recorded file still there?"). Without it, deleting a vendored file just
+# lowers the check count and still prints [PASS] -- measured, and a dropped file is a
+# divergence class ADR-0006 names outright.
+foreach ($rec in $existing.files) {
+    if (-not (Test-Path (Join-Path $skillsDir ($rec.path -replace '/', '\')))) {
+        Write-Host "[FAIL] $($rec.path) is recorded but missing from the tree (dropped without declaration)" -ForegroundColor Red
+        $fail++
+    } else { $pass++ }
+}
+
+# Also confirm every declared divergence still corresponds to a real file.
 foreach ($d in $declaredDivergences) {
     if (-not (Test-Path (Join-Path $skillsDir ($d.path -replace '/', '\')))) {
         Write-Host "[FAIL] declared divergence $($d.path) no longer exists (stale ledger entry)" -ForegroundColor Red; $fail++

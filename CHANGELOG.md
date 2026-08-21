@@ -43,8 +43,9 @@ existed and worked; it just was not on any checklist. It is now, at every releas
   `wait-what`, and `writing-for-agents` (which **replaces `writing-great-skills`** - upstream
   renamed that skill and we had never followed).
 - **The kit is now stack-agnostic where it is upstream-derived.** `UE-NOTES.md`, `P4-NOTES.md`
-  and the P4 hot-spot aside are gone from vendored skills; that content moves to the consumer
-  project's own `Docs/agents/`. 0 stack-specific hits remain in upstream-derived skills.
+  and the P4 hot-spot aside are gone from vendored skills; that content is preserved in git history and
+  relocates to the consumer project's own `Docs/agents/` in the paired project changelist
+  (not in this release -- see the divergence ledger, section 6). 0 stack-specific hits remain in upstream-derived skills.
   Local-origin skills (`review-and-submit`, `pre-implementation-gate`, ...) are still P4-shaped -
   that is a separate workstream, not a claim this release makes.
 - **Triage vocabulary converged with upstream, with the two jobs separated.** Upstream's five

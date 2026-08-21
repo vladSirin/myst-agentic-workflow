@@ -4,34 +4,34 @@
   "generatedFrom": "upstream/main",
   "divergences": [
     {
+      "path": "tdd/SKILL.md",
       "line": 38,
-      "reason": "ref remap: `code-review` -> `review-changes` (we do not vendor code-review)",
-      "path": "tdd/SKILL.md"
+      "reason": "ref remap: `code-review` -> `review-changes` (we do not vendor code-review)"
     },
     {
+      "path": "implement/SKILL.md",
       "line": 13,
-      "reason": "ref remap: /code-review -> /review-changes (unremapped it RESOLVES to the git-diff review plugin)",
-      "path": "implement/SKILL.md"
+      "reason": "ref remap: /code-review -> /review-changes (unremapped it RESOLVES to the git-diff review plugin)"
     },
     {
+      "path": "to-spec/SKILL.md",
       "line": 9,
-      "reason": "ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow",
-      "path": "to-spec/SKILL.md"
+      "reason": "ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow"
     },
     {
+      "path": "to-tickets/SKILL.md",
       "line": "11,60",
-      "reason": "ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow",
-      "path": "to-tickets/SKILL.md"
+      "reason": "ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow"
     },
     {
+      "path": "triage/SKILL.md",
       "line": 43,
-      "reason": "ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow",
-      "path": "triage/SKILL.md"
+      "reason": "ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow"
     },
     {
+      "path": "wayfinder/SKILL.md",
       "line": 25,
-      "reason": "ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow",
-      "path": "wayfinder/SKILL.md"
+      "reason": "ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow"
     }
   ],
   "files": [

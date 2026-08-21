@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. Every skill and agent lives ONCE; each tool consumes the same files through its native mechanism.
 
-[![tests](https://img.shields.io/badge/tests-19%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.43.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-20%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.43.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Install (30-second setup)
 
@@ -205,7 +205,7 @@ Plus the plugin **commands** (not skills), all maintainer/build-machine-facing: 
 
 We track upstream **faithfully** — name + body + architecture + verbatim frontmatter — and deviate only with a documented reason (see [ADR-0002](docs/adr-0002-vendor-and-overlay-not-fork.md), [ADR-0003](docs/adr-0003-verbatim-skill-format.md), and `.scratch/agentic-scaffold-rejected-upstream.json`):
 
-- **Project specifics live project-side, never in a vendored skill.** As of v4.43.0 the kit carries no stack-specific text in upstream-derived skills: the UE and Perforce notes that used to ride `diagnosing-bugs` and `resolving-merge-conflicts` now live in the consumer's own `Docs/agents/` (`unreal-notes.md`, `perforce-notes.md`), where a re-vendor can never touch them and a non-UE consumer never sees them.
+- **Project specifics live project-side, never in a vendored skill.** As of v4.43.0 the kit carries no stack-specific text in upstream-derived skills: the UE and Perforce notes that used to ride `diagnosing-bugs` and `resolving-merge-conflicts` are removed from the kit. Their content is preserved in git history and is being relocated into the consumer's own `Docs/agents/` (see the v4.43.0 divergence ledger, section 6) -- a re-vendor can never touch it there, and a non-UE consumer never sees it.
 - **Renamed (followed upstream):** `diagnose` → `diagnosing-bugs`; `writing-great-skills` → `writing-for-agents`. **Removed (followed upstream):** `zoom-out`, `caveman`, `write-a-skill`.
 - **Skipped:** `ask-matt` (personal/branded router over upstream's own catalog — it would misroute here), `setup-matt-pocock-skills` (our `setup-agentic-workflow` covers the role), `code-review` (git-diff-shaped; our review unit is the P4 changelist, and the name collides with the built-in `/code-review`), `agents/openai.yaml` per-skill metadata (upstream's own packaging channel; our Codex delivery reads `.codex-plugin/plugin.json`).
 - **The only content divergences** are 7 lines across 6 skills, all of the same kind: an upstream reference to a skill we do not vendor, remapped to our equivalent. They are listed in the v4.43.0 divergence ledger and guarded by a grep in the release checklist.
@@ -375,7 +375,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the version history.
 
 ## License
 
-MIT. Bundles content adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, pinned at commit `e9fcdf9`) — attribution preserved in [LICENSE](LICENSE).
+MIT. Bundles content adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, pinned at commit `0ab1b63`) — attribution preserved in [LICENSE](LICENSE).
 
 ## Contributing
 
