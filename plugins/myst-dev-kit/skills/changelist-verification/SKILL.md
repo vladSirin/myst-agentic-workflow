@@ -41,7 +41,7 @@ The **ONLY** exception is when the user **explicitly** states one of:
 - Or similar explicit override
 
 > [!CAUTION]
-> **The exception itself has one carve-out: HITL tickets.** A CL implementing a `ready-for-human` ticket is NEVER covered by the batch override above. In an unattended run, `p4 shelve -c <CL>` it (files stay open locally — exclude from later reconcile/submit-all), append `HITL-SHELVED: awaiting human review` to its description, and continue; the human unshelves, reviews, and submits. See the `pre-implementation-gate` skill's HITL section.
+> **The exception itself has one carve-out: `ready-for-human` tickets.** That label means a human implements the ticket, so a CL against one should not exist — and if you are holding one, it is NEVER covered by the batch override above, in any mode. `p4 shelve -c <CL>` it (files stay open locally — exclude from later reconcile/submit-all), append `HITL-SHELVED: awaiting human review` to its description, report it, and continue; the human unshelves, reviews, and submits. Relabeling it `ready-for-agent` to clear the block is a user-only transition — never yours. See the `pre-implementation-gate` skill's handoff section.
 
 ---
 

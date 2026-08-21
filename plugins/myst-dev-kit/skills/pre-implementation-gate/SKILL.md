@@ -24,8 +24,8 @@ Before proposing any multi-CL implementation plan (`CL1`, `CL2`, `CL3`, ...), yo
 
 1. **Does a spec exist?** Look under `.scratch/<feature-slug>/spec.md` for this work.
 2. **Do tickets exist?** Look under `.scratch/<feature-slug>/issues/` for vertical-slice tickets.
-3. **Is at least one ticket triaged ready — `Status: ready-for-agent` or `ready-for-human`?**
-   (`ready-for-human` = HITL: the agent still implements; a human gates verification and every submit — see "HITL tickets" below.)
+3. **Is at least one ticket triaged `Status: ready-for-agent`?**
+   (`ready-for-human` means a human implements it — it is not a ticket you may pick up. See "`ready-for-human` is a handoff" below.)
 
 If ALL three are yes → proceed with the multi-CL plan, **link the plan to the ticket(s)** in the plan body, and put the canonical line in each CL description:
 
@@ -57,7 +57,7 @@ Does **not** fire on:
 
 - Single-file edits or trivial fixes (one CL).
 - Diagnostic, read-only, or research tasks.
-- Work explicitly tied to an existing triaged-ready ticket (`ready-for-agent` or `ready-for-human`, linked in the plan).
+- Work explicitly tied to an existing `ready-for-agent` ticket, linked in the plan.
 
 ---
 
@@ -85,21 +85,38 @@ The **ONLY** exceptions are:
 This gate fires INSIDE plan mode. If you've already called `ExitPlanMode` and your plan body is "CL1 do X, CL2 do Y, CL3 do Z" with no ticket link, you skipped this gate. The correct plan body shapes are:
 
 - A **workflow plan**: "Create spec → discuss → break into tickets → triage → implement against triaged-ready ticket(s)."
-- A **CL plan against an existing ticket**: "Per ticket `.scratch/<slug>/issues/01-foo.md` (status: ready-for-agent or ready-for-human), implement CL1, CL2, CL3 ..."
+- A **CL plan against an existing ticket**: "Per ticket `.scratch/<slug>/issues/01-foo.md` (status: ready-for-agent), implement CL1, CL2, CL3 ..."
 
 ---
 
-## HITL tickets (`ready-for-human`): the batch-authorization carve-out
+## `ready-for-human` is a handoff, not a workflow
 
-Work on a `ready-for-human` ticket proceeds normally — the agent implements and runs every agent-runnable check. What changes is the **submit endgame**:
+`ready-for-human` means **a human implements this ticket**. It is not a ticket you pick up and
+finish carefully — it is one you do not pick up at all. Report that it is waiting for a human
+and move to other work.
 
 > [!CAUTION]
-> Every submit is human-gated outside a `/goal` run (see the submit-authority rule in `review-and-submit`) — do not read this section as implying non-HITL CLs ride standing authorizations. What is HITL-specific: a CL implementing a `ready-for-human` ticket is **NEVER covered by a standing batch/goal authorization** ("do all CLs at once", a `/goal` run, or any similar pre-approval) — it stays gated even *inside* goal mode.
+> **The relabel is user-only.** `ready-for-human` → `ready-for-agent` is a transition only the
+> user makes. An agent that believes a ticket is mislabeled **says so and stops** — it does not
+> relabel and proceed. Without this rule the label is worthless: an agent that can grant itself
+> `ready-for-agent` can then submit under a goal-mode authorization in the same run, which is
+> exactly the gate the label exists to hold.
 >
-> - **Attended session**: stop and ask for explicit per-CL approval, every time.
-> - **Unattended session**: run the normal review pass, then `p4 shelve -c <CL>` — the depot is untouched, but the files STAY OPEN locally: exclude that CL from any later reconcile/submit-all, and re-shelve with `p4 shelve -f -c <CL>` if its files change again. Append `HITL-SHELVED: awaiting human review` to the CL description (alongside its `Ticket:` line), mark the ticket `resolved` once agent-runnable checks pass, log it in your final report, and continue with other work. The human's unshelve-review-submit IS the approval. Never `p4 submit` it yourself.
->
-> Ticket status flow stays per triage-labels: HITL tickets end at `resolved` (agent-runnable checks passed); only a human moves them to `closed`.
+> **If you find yourself holding a CL that implements a `ready-for-human` ticket, that is a
+> process error, not a workflow.** Do not submit it, in any mode, attended or not. Run the review
+> pass, `p4 shelve -c <CL>` — the depot is untouched, but the files STAY OPEN locally: exclude
+> that CL from any later reconcile/submit-all, and re-shelve with `p4 shelve -f -c <CL>` if its
+> files change again. Append `HITL-SHELVED: awaiting human review` to the CL description
+> (alongside its `Ticket:` line), report it, and continue with other work. Never `p4 submit` it
+> yourself; the human's unshelve-review-submit IS the approval.
+
+Separately, and not HITL-specific: **every** submit is human-gated outside a `/goal` run — see the
+submit-authority rule in `review-and-submit`. Nothing in this section implies that other CLs ride
+standing authorizations.
+
+**Work that ships but still needs a human check is not `ready-for-human`** — it is `resolved` plus
+an `Outstanding:` line (next section). Keep the two apart: `ready-for-human` is about who
+*implements*, `resolved` is about what remains to be *verified*.
 
 ## The ticket travels WITH the CL
 
