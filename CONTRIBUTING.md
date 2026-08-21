@@ -56,6 +56,12 @@ reviewed before it lands. The unit of review is the unit of installation.
 - [ ] **Provenance**: upstream-derived content (mattpocock/skills) stays
       byte-faithful and keeps the MIT attribution; local-origin content must
       not collide with an upstream skill name (re-vendor safety).
+- [ ] **Verbatim by default** ([ADR-0006](docs/adr-0006-verbatim-by-default-and-the-divergence-ledger.md)):
+      any change to vendored content needs a written necessity rationale, a
+      reviewer pass, and owner confirmation, recorded in the release's
+      divergence ledger. Preference is not necessity — if the honest reason is
+      preference, take upstream's version.
+
 - [ ] **No hidden authority**: skills that touch version control state the
       submission-authority rule (reviewers never submit; agents never push
       shared state without the protocol).
@@ -63,6 +69,29 @@ reviewed before it lands. The unit of review is the unit of installation.
       server-side Submit-Audit is the accountability backstop.
 - [ ] **Size**: a skill the model loads on demand should earn its tokens —
       prefer one tight SKILL.md + reference files over a monolith.
+
+## Upstream sync checklist (every release, and monthly)
+
+- [ ] `pwsh scripts/check-mattpocock-updates.ps1` — run it **at every release
+      and at least monthly**. The v4.43.0 re-vendor found the pin 141 commits
+      behind because nothing ran the detector between syncs.
+- [ ] `pwsh scripts/run-vendor-hash-tests.ps1` — the vendored-hash gate (CI runs
+      it too, via suite discovery). After a re-vendor, `vendored-hashes.ps1
+      -Update` regenerates the ledger and refuses undeclared divergences.
+- [ ] Dangling-ref guard — **a correct tree returns NO hits** (the ledgered
+      divergences are the remaps themselves, so the old strings are gone). Any
+      hit is an unremapped reference. Scope covers ported upstream prose in
+      `templates/` too, not just the skills. Grow the pattern when a new skill
+      is rejected:
+
+      git grep -nE "setup-matt-pocock-skills|code-review|ask-matt" plugins/ templates/
+
+- [ ] Enumerate divergences **by grep, never by hand** — three review passes
+      over the v4.43.0 plan each mis-enumerated the set by reading.
+- [ ] Consumer reconciliation — if the sync changes shared vocabulary, the
+      consumer's always-on rules and live tickets still teach the old meaning
+      until a paired project changelist lands. Always-on rules outrank
+      on-demand skills for context priority, so a stale rule file silently wins.
 
 ## Review capability without agents
 

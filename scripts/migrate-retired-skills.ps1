@@ -21,9 +21,13 @@ param(
 $ErrorActionPreference = 'Stop'
 
 $toolDirs = @('.claude', '.Codex')
+# NOTE: 'teach' and 'grill-me' were retired in v4.28.0 and RE-ADOPTED in v4.43.0
+# (upstream promoted them to its user-facing roster). They must NOT be listed here
+# -- listing a shipped skill deletes it from every install on the next migration.
 $retiredSkills   = @('zoom-out', 'caveman', 'write-a-skill', 'diagnose',   # diagnose -> diagnosing-bugs
-                     'obsidian-vault', 'teach', 'edit-article', 'grill-me',
-                     'setup-matt-pocock-skills', 'design-workflow')        # design-workflow -> merged into design (v4.28.0)
+                     'obsidian-vault', 'edit-article',
+                     'setup-matt-pocock-skills', 'design-workflow',        # design-workflow -> merged into design (v4.28.0)
+                     'writing-great-skills')                               # -> writing-for-agents (v4.43.0, upstream rename)
 $retiredCommands = @('caveman.md', 'write-a-skill.md')                      # old command wrappers, if present
 
 $found = New-Object System.Collections.Generic.List[object]

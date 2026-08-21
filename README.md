@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. Every skill and agent lives ONCE; each tool consumes the same files through its native mechanism.
 
-[![tests](https://img.shields.io/badge/tests-19%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.42.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-20%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.43.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Install (30-second setup)
 
@@ -77,7 +77,7 @@ Four lifecycle commands cover the entire flow — all four dry-run first, prompt
 
 ## What you get
 
-**`myst-dev-kit`** — 24 skills (engineering + productivity + the team process rules as on-demand skills), the two reviewer agents (native Markdown under Claude; **generated** read-only variants for Codex TOML and OpenCode — the shared source is never forked), `sync-build-submit` and package commands, and the Codex-side Submit-Audit warning bridge. Full catalog with when-to-use guidance: [Reference](#reference).
+**`myst-dev-kit`** — 31 skills (engineering + productivity + the team process rules as on-demand skills), the two reviewer agents (native Markdown under Claude; **generated** read-only variants for Codex TOML and OpenCode — the shared source is never forked), `sync-build-submit` and package commands, and the Codex-side Submit-Audit warning bridge. Full catalog with when-to-use guidance: [Reference](#reference).
 
 The repo is a **plugin marketplace** for Claude Code and Codex (`.claude-plugin/marketplace.json` / `.agents/plugins/marketplace.json`, consistency enforced by `scripts/run-marketplace-tests.ps1` + `claude plugin validate`) and a **`skills.paths` source** for OpenCode. Public repo — installs need no auth (if it goes private later: collaborator access + `gh auth login`).
 
@@ -156,7 +156,7 @@ The four commands you'll actually run.
 
 ### Skills (shipped in the `myst-dev-kit` plugin)
 
-The engineering/productivity set is adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, attribution preserved in [LICENSE](LICENSE); the pinned commit is recorded in `package-manifest.json`), vendored **verbatim**. The bundle also carries the local-origin skills (design, review-changes, roundtable, setup wizard) and the **team process rules converted to on-demand skills**. **24 skills total**; every skill name below links to its real `SKILL.md` under `plugins/myst-dev-kit/skills/`.
+The engineering/productivity set is adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, attribution preserved in [LICENSE](LICENSE); the pinned commit is recorded in `package-manifest.json`), vendored **verbatim**. The bundle also carries the local-origin skills (design, review-changes, roundtable, setup wizard) and the **team process rules converted to on-demand skills**. **31 skills total**; every skill name below links to its real `SKILL.md` under `plugins/myst-dev-kit/skills/`.
 
 **Engineering**
 
@@ -173,15 +173,22 @@ The engineering/productivity set is adapted from [mattpocock/skills](https://git
 | [`/to-tickets`](plugins/myst-dev-kit/skills/to-tickets/SKILL.md) | Break a spec/plan into independently-grabbable vertical-slice tickets. |
 | [`/triage`](plugins/myst-dev-kit/skills/triage/SKILL.md) | Move tickets through the lifecycle state machine. |
 | [`/implement`](plugins/myst-dev-kit/skills/implement/SKILL.md) | Implement a planned slice from a spec/ticket. |
-| [`/resolving-merge-conflicts`](plugins/myst-dev-kit/skills/resolving-merge-conflicts/SKILL.md) | Resolve merge conflicts (Perforce text-merge notes ship in the skill's `P4-NOTES.md`). |
+| [`/resolving-merge-conflicts`](plugins/myst-dev-kit/skills/resolving-merge-conflicts/SKILL.md) | Resolve merge conflicts (Perforce specifics live project-side in `Docs/agents/perforce-notes.md`). |
+| [`/wayfinder`](plugins/myst-dev-kit/skills/wayfinder/SKILL.md) | Plan an effort too big for one agent session as a shared map of decision tickets, resolved one at a time. |
+| [`/prototype`](plugins/myst-dev-kit/skills/prototype/SKILL.md) | Build a throwaway prototype to answer a design or state-model question before committing to it. |
+| [`/wizard`](plugins/myst-dev-kit/skills/wizard/SKILL.md) | Generate an interactive wizard for steps only a human can perform (credentials, dashboards, cutovers). |
 
 **Productivity**
 
 | Skill | Use it when |
 |---|---|
 | [`/grilling`](plugins/myst-dev-kit/skills/grilling/SKILL.md) | Relentless plan/design interview until shared understanding (`grill-with-docs` delegates here). |
+| [`/grill-me`](plugins/myst-dev-kit/skills/grill-me/SKILL.md) | The user-invoked half of the grilling pair -- ask to be grilled on your own plan. |
 | [`/handoff`](plugins/myst-dev-kit/skills/handoff/SKILL.md) | Compact the session into a handoff doc for another agent. |
-| [`/writing-great-skills`](plugins/myst-dev-kit/skills/writing-great-skills/SKILL.md) | Author high-quality skills (reference + glossary). |
+| [`/to-questionnaire`](plugins/myst-dev-kit/skills/to-questionnaire/SKILL.md) | Turn a decision you can't answer into a questionnaire for whoever can. |
+| [`/teach`](plugins/myst-dev-kit/skills/teach/SKILL.md) | Learn a new concept or skill in-workspace, with lessons and a learning record. |
+| [`/wait-what`](plugins/myst-dev-kit/skills/wait-what/SKILL.md) | Re-pitch a message that didn't land. |
+| [`/writing-for-agents`](plugins/myst-dev-kit/skills/writing-for-agents/SKILL.md) | Write docs agents actually follow -- skills, `AGENTS.md`, `CLAUDE.md`. |
 
 **Local (not from upstream)**
 
@@ -198,10 +205,11 @@ Plus the plugin **commands** (not skills), all maintainer/build-machine-facing: 
 
 We track upstream **faithfully** — name + body + architecture + verbatim frontmatter — and deviate only with a documented reason (see [ADR-0002](docs/adr-0002-vendor-and-overlay-not-fork.md), [ADR-0003](docs/adr-0003-verbatim-skill-format.md), and `.scratch/agentic-scaffold-rejected-upstream.json`):
 
-- **Project specifics live only in overlays**, never in the base. `diagnosing-bugs` → `ue` overlay `UE-NOTES.md` (automation / `-ExecCmds` loops, `p4` bisection, editor HITL). `resolving-merge-conflicts` → `perforce` overlay `P4-NOTES.md` (P4 text merges). `to-tickets` follows upstream's removal of HITL/AFK slice-typing — AFK-readiness rides the triage label instead.
-- **Renamed (followed upstream):** `diagnose` → `diagnosing-bugs`. **Removed (followed upstream):** `zoom-out`, `caveman`, `write-a-skill` (replaced by `writing-great-skills`).
-- **Skipped (out of scope):** `ask-matt` (personal/branded), `prototype` (web-bound). **Deferred:** `decision-mapping` (upstream marks it in-progress).
-- Everything else is byte-faithful to upstream HEAD `e9fcdf9`.
+- **Project specifics live project-side, never in a vendored skill.** As of v4.43.0 the kit carries no stack-specific text in upstream-derived skills: the UE and Perforce notes that used to ride `diagnosing-bugs` and `resolving-merge-conflicts` are removed from the kit. Their content is preserved in git history and is being relocated into the consumer's own `Docs/agents/` (see the v4.43.0 divergence ledger, section 6) -- a re-vendor can never touch it there, and a non-UE consumer never sees it.
+- **Renamed (followed upstream):** `diagnose` → `diagnosing-bugs`; `writing-great-skills` → `writing-for-agents`. **Removed (followed upstream):** `zoom-out`, `caveman`, `write-a-skill`.
+- **Skipped:** `ask-matt` (personal/branded router over upstream's own catalog — it would misroute here), `setup-matt-pocock-skills` (our `setup-agentic-workflow` covers the role), `code-review` (git-diff-shaped; our review unit is the P4 changelist, and the name collides with the built-in `/code-review`), `agents/openai.yaml` per-skill metadata (upstream's own packaging channel; our Codex delivery reads `.codex-plugin/plugin.json`).
+- **The only content divergences** are 7 lines across 6 skills, all of the same kind: an upstream reference to a skill we do not vendor, remapped to our equivalent. They are listed in the v4.43.0 divergence ledger and guarded by a grep in the release checklist.
+- Everything else is byte-faithful to upstream `0ab1b63`.
 
 ### Process-rule skills (formerly always-on workflows)
 
@@ -322,7 +330,7 @@ myst-agentic-workflow/
 │   ├── commands/                  # promote-myst-skills, sync-build-submit, update-project-scaffold
 │   ├── hooks/hooks.json           # Codex Submit-Audit warn bridge (no-ops under Claude Code)
 │   ├── scripts/                   # consumer hook scripts (doc-audit, rule parity, ...)
-│   └── skills/                    # the 24 skills (ONE shared source for every tool)
+│   └── skills/                    # the 31 skills (ONE shared source for every tool)
 ├── templates/
 │   ├── claude/CLAUDE.md           # per-tool bible templates (generated-block sources)
 │   ├── codex/AGENTS.md
@@ -367,7 +375,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the version history.
 
 ## License
 
-MIT. Bundles content adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, pinned at commit `e9fcdf9`) — attribution preserved in [LICENSE](LICENSE).
+MIT. Bundles content adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, pinned at commit `0ab1b63`) — attribution preserved in [LICENSE](LICENSE).
 
 ## Contributing
 

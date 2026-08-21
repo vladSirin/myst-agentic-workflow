@@ -1,14 +1,23 @@
 # run-provenance-tests.ps1 -- enforce the local-origin vs upstream provenance convention.
 #
-# Two invariants protect against upstream-sync DRIFT clobbering package-invented content
-# (ADR: vendor-and-overlay + core-local). A re-vendor from mattpocock/skills only ever writes
-# under templates/{tool}/.{tool}/skills/<upstream-name>/, so:
+# SCOPE (corrected v4.43.0). This script checks MANIFEST-tracked files. Since v4.0.0 the skills
+# live in the plugin (plugins/myst-dev-kit/skills/), which the manifest does not track, so
+# checks 1 and 2 below no longer see any skill -- they now guard only the legacy templates/
+# surface and pass vacuously for skills. That is deliberate, not an oversight:
+#
+#   ==> Vendored skill files are covered by vendored-hashes.json + run-vendor-hash-tests.ps1,
+#       which is what actually proves "verbatim except the recorded remaps". Do not read a
+#       green run of THIS script as evidence about vendored skill content.
+#
+# Checks 1-2 remain because the templates/ surface still exists and a regression there would
+# still be real; check 3 is the one that covers the plugin, by asserting every local-origin
+# skill is still present after a re-vendor (the clobber this suite exists to catch).
 #   1. Every upstreamDerived=true entry must carry an upstreamLicense (provenance is complete).
 #   2. No LOCAL-origin (upstreamDerived=false) SKILL may live under templates/.../skills/ - local
-#      skills must live in an overlay (e.g. overlays/core-local/), which re-vendor never touches.
-#      (Local non-skill content - commands/workflows/agents/scripts - may stay in templates/,
-#      because the upstream skill sync does not target those directories.)
+#      skills must live in the plugin, which a re-vendor never targets wholesale.
+#   3. Every local-origin skill is present in the plugin after a re-vendor.
 $ErrorActionPreference = 'Stop'
+. "$PSScriptRoot\lib\SkillRoster.ps1"
 $pkg = (Resolve-Path "$PSScriptRoot\..").Path
 $m = Get-Content "$pkg\manifest-template.json" -Raw | ConvertFrom-Json
 $pass = 0; $fail = 0
@@ -31,7 +40,7 @@ else { Bad 'local skill in templates/.../skills (re-vendor would clobber it)' ((
 
 # 3. Local-origin skills live in the PLUGIN (v4.0.0; core-local overlay retired) and
 #    keep the re-vendor-safety property: a mattpocock re-vendor can never clobber them.
-$localOrigin = @('roundtable', 'setup-agentic-workflow')
+$localOrigin = Get-LocalOriginSkills
 $missing = @($localOrigin | Where-Object { -not (Test-Path "$PSScriptRoot\..\plugins\myst-dev-kit\skills\$_\SKILL.md") })
 if ($missing.Count -eq 0) { Ok "local-origin skills present in the plugin ($($localOrigin -join ', '))" }
 else { Bad 'local-origin skills in plugin' ($missing -join ', ') }

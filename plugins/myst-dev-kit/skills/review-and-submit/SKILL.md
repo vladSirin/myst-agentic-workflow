@@ -374,8 +374,12 @@ re-runs, what must never cost a pass, and how to keep a fix from creating the ne
 read [RE-REVIEW.md](RE-REVIEW.md) before launching it.
 
 > [!CAUTION]
-> **HARD RULE — HITL tickets are excluded from standing authorizations.**
-> A CL implementing a `ready-for-human` (HITL) ticket is NEVER covered by a batch/goal pre-authorization ("do all CLs at once", a `/goal` run, or similar). Attended: stop at this step and ask, every time. Unattended: after the review pass, `p4 shelve -c <CL>` instead of submitting — the depot stays untouched, but the files STAY OPEN locally (exclude that CL from any later reconcile/submit-all; re-shelve with `-f` if its files change again). Append `HITL-SHELVED: awaiting human review` to the description (alongside its `Ticket:` line), mark the ticket `resolved` once agent-runnable checks pass, and log it in your final report. The human's unshelve-review-submit IS the approval.
+> **HARD RULE — a CL implementing a `ready-for-human` ticket is a process error. Never submit it.**
+> `ready-for-human` means a human implements that ticket, so a CL against one should not exist. If you are holding one anyway, do not submit it in any mode — attended, unattended, or goal. After the review pass, `p4 shelve -c <CL>` instead — the depot stays untouched, but the files STAY OPEN locally (exclude that CL from any later reconcile/submit-all; re-shelve with `-f` if its files change again). Append `GATED-SHELVED: process error - agent implemented a ready-for-human ticket` to the description (alongside its `Ticket:` line) and log it in your final report. The human's unshelve-review-submit IS the approval.
+>
+> **The label is user-owned.** Only the user changes a `ready-for-human` ticket's `Status:`, and that means to ANY value, not just `ready-for-agent` — every gate matches the current string and nothing records the previous one, so setting `claimed` silences them all just as effectively and leaves no trace. An agent that believes a ticket is mislabeled says so and stops; it never rewrites the field and proceeds. An agent that could grant itself a workable state could then submit under a goal-mode authorization in the same run — this gate is the reason that path is closed.
+>
+> **Shipped-but-unverified is not this case.** Work that lands and still needs a human check is `resolved` plus an `Outstanding:` line, and its CL submits normally.
 
 > [!CAUTION]
 > **HARD RULE — every submit is human-gated unless the run is verifiably in goal mode.**
@@ -391,7 +395,7 @@ read [RE-REVIEW.md](RE-REVIEW.md) before launching it.
 > - any preflight validator failed or warned;
 > - the user never named that CL number (a batch, "the rest of them", a CL you picked yourself);
 > - the CL's contents grew after they asked (files added, scope widened);
-> - the ticket is `ready-for-human`, or a fix was applied during the run — both rules above outrank this one and force the ask.
+> - the ticket is `ready-for-human` (that CL should not exist — shelve it, per the rule above), or a fix was applied during the run — both rules above outrank this one and force the ask.
 >
 
 > - **Goal mode is identified by the harness's own signal, never by inference.** A `/goal` run injects a session-scoped Stop-hook notice into context — *"A session-scoped Stop hook is now active with condition: `<condition>` ... do not pause to ask the user what to do"* — and carries a `goal_status` attachment naming that condition. **If that notice is not in your context, you are not in goal mode.** Not "this looks like an unattended batch", not "the user is clearly AFK", not "the task list implies it". If you find yourself reasoning toward the exemption, that is the tell that you do not have it.
@@ -399,7 +403,7 @@ read [RE-REVIEW.md](RE-REVIEW.md) before launching it.
 > - **What the signal does and does not authorize**: it establishes only that *the human is not there to answer*. The goal condition is arbitrary user text, so treat the submit authorization as covering work plainly within that condition's scope. A goal about fixing bugs does not authorize submitting an unrelated refactor you happened to finish along the way; shelve that one.
 > - **Attended, not goal mode** → stop here and ask, per CL — unless the user's own instruction already named this CL for submission and the review came back GREEN with a clean preflight, per "What counts as that one approval" above. This is Step 7 as written above.
 > - **Unattended, not goal mode** → after the review pass, `p4 shelve -c <CL>` instead of submitting (same mechanics and same reconcile caveats as the HITL rule above), append `GATED-SHELVED: awaiting human review` to the description, report it in your final summary, and move on to other work. Never `p4 submit`.
-> - **Goal mode** → a `ready-for-agent` CL may submit under the goal authorization once the review passes. A `ready-for-human` CL still does NOT — the HITL rule above is unconditional and outranks this one.
+> - **Goal mode** → a `ready-for-agent` CL may submit under the goal authorization once the review passes. A `ready-for-human` CL still does NOT — that rule is unconditional and outranks this one, and the label that would lift the bar is one only the user can apply.
 >
 > Precedent for why the signal must be external: the retired AFK overlay's session-start hook printed `mode=live` from a state directory that had already been deleted. A mode the agent reads from its own reasoning is not a mode.
 

@@ -79,8 +79,17 @@ else { Bad 'mcp.unreal-engine written' $raw }
 
 $askCount = 0
 foreach ($p in $cfg.permission.skill.PSObject.Properties) { if ($p.Value -eq 'ask') { $askCount++ } }
-if ($askCount -eq 9) { Ok 'permission.skill ask-map has the 9 designed-manual skills' }
-else { Bad 'permission.skill ask-map has the 9 designed-manual skills' "found $askCount" }
+# Derived, never hardcoded: the roster grows every time a gated skill is adopted, and a
+# hardcoded count turns that into a spurious test failure (it did, at v4.43.0).
+$declaredManual = ([regex]::Match(
+    (Get-Content "$PSScriptRoot\..\setup-devkit.ps1" -Raw),
+    '(?s)\$ManualSkills\s*=\s*@\((.*?)\)').Groups[1].Value -split ',' |
+    Where-Object { $_.Trim() -match "^'" }).Count
+# A failed regex yields 0, and $askCount is also 0 in exactly the regression this test
+# exists to catch -- so 0 -eq 0 would pass vacuously. Guard the parse itself.
+if ($declaredManual -lt 1) { Bad 'ManualSkills roster parsed from setup-devkit.ps1' 'regex matched nothing' }
+elseif ($askCount -eq $declaredManual) { Ok "permission.skill ask-map matches ManualSkills roster ($declaredManual skills)" }
+else { Bad "permission.skill ask-map matches ManualSkills roster ($declaredManual skills)" "found $askCount" }
 
 # OpenCode consumes installed Claude plugins; the plugin's reviewer twins resolve
 # writable there. The script must ship them disabled.

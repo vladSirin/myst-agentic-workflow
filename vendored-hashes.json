@@ -1,0 +1,279 @@
+{
+  "_comment": "EOL/BOM-invariant hashes of every vendored skill file. Regenerate with scripts/vendored-hashes.ps1 -Update; the generator refuses to record a file that differs from the pinned upstream unless it is declared below.",
+  "pinnedCommit": "0ab1b63a410a03d3627979a109c8695de27af954",
+  "generatedFrom": "upstream/main",
+  "divergences": [
+    {
+      "path": "tdd/SKILL.md",
+      "line": 38,
+      "reason": "ref remap: `code-review` -> `review-changes` (we do not vendor code-review)"
+    },
+    {
+      "path": "implement/SKILL.md",
+      "line": 13,
+      "reason": "ref remap: /code-review -> /review-changes (unremapped it RESOLVES to the git-diff review plugin)"
+    },
+    {
+      "path": "to-spec/SKILL.md",
+      "line": 9,
+      "reason": "ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow"
+    },
+    {
+      "path": "to-tickets/SKILL.md",
+      "line": "11,60",
+      "reason": "ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow"
+    },
+    {
+      "path": "triage/SKILL.md",
+      "line": 43,
+      "reason": "ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow"
+    },
+    {
+      "path": "wayfinder/SKILL.md",
+      "line": 25,
+      "reason": "ref remap: /setup-matt-pocock-skills -> /setup-agentic-workflow"
+    }
+  ],
+  "files": [
+    {
+      "path": "codebase-design/DEEPENING.md",
+      "hash": "sha256:f3dd099ce99289bd213914d8ee3e2429b78309c3957ca4583f7659551b1d53c1",
+      "upstream": "skills/engineering/codebase-design/DEEPENING.md",
+      "divergent": false
+    },
+    {
+      "path": "codebase-design/DESIGN-IT-TWICE.md",
+      "hash": "sha256:8e740bf98446dbd4dfdc132ac4346d9a7eedaf93de6a495889171cf7f99f16bd",
+      "upstream": "skills/engineering/codebase-design/DESIGN-IT-TWICE.md",
+      "divergent": false
+    },
+    {
+      "path": "codebase-design/SKILL.md",
+      "hash": "sha256:2c20617f87ec8af6a434859f381b2f061a69b530444e74eb39e78bb016a6d1e2",
+      "upstream": "skills/engineering/codebase-design/SKILL.md",
+      "divergent": false
+    },
+    {
+      "path": "diagnosing-bugs/SKILL.md",
+      "hash": "sha256:77f3cf31bc99b2f49af943222526531fcc9fc41d047626d3640e875e85af3e84",
+      "upstream": "skills/engineering/diagnosing-bugs/SKILL.md",
+      "divergent": false
+    },
+    {
+      "path": "diagnosing-bugs/scripts/hitl-loop.template.sh",
+      "hash": "sha256:35103539fc36873eea36074769ad454f9379d6fc8b2dc0e26ce987fd3bfe5503",
+      "upstream": "skills/engineering/diagnosing-bugs/scripts/hitl-loop.template.sh",
+      "divergent": false
+    },
+    {
+      "path": "domain-modeling/ADR-FORMAT.md",
+      "hash": "sha256:944c92aa790e8fbdc9199640b170979abb8a34ba8d0fe18c2a01a63bce140ca0",
+      "upstream": "skills/engineering/domain-modeling/ADR-FORMAT.md",
+      "divergent": false
+    },
+    {
+      "path": "domain-modeling/CONTEXT-FORMAT.md",
+      "hash": "sha256:17ab16ce783e4d2801ee52fd9acdf550cbf44de65ae76797a93943bbedf22a13",
+      "upstream": "skills/engineering/domain-modeling/CONTEXT-FORMAT.md",
+      "divergent": false
+    },
+    {
+      "path": "domain-modeling/SKILL.md",
+      "hash": "sha256:327a2b50620e2fd70abc6893cd6965e76b20f8d0adb0dc2c8d5eb3845efb643e",
+      "upstream": "skills/engineering/domain-modeling/SKILL.md",
+      "divergent": false
+    },
+    {
+      "path": "grill-me/SKILL.md",
+      "hash": "sha256:caaf8b8de1684f96e26b28f3c29189db5c89cce4b73e1c93d86164f66ef88637",
+      "upstream": "skills/productivity/grill-me/SKILL.md",
+      "divergent": false
+    },
+    {
+      "path": "grill-with-docs/SKILL.md",
+      "hash": "sha256:7de372c13488f1ee96cc11cd8907b56b6809cc93eef776eeddd37de6b6cbe3fe",
+      "upstream": "skills/engineering/grill-with-docs/SKILL.md",
+      "divergent": false
+    },
+    {
+      "path": "grilling/SKILL.md",
+      "hash": "sha256:10ff989e7498b23b5acb49d5048f11dcd906757d2f79c5cdf8a00001381296f2",
+      "upstream": "skills/productivity/grilling/SKILL.md",
+      "divergent": false
+    },
+    {
+      "path": "handoff/SKILL.md",
+      "hash": "sha256:7c62de979fdc7ac32fb5ddb2146156c917f80ee070d30fadc9d40343c4b6ed25",
+      "upstream": "skills/productivity/handoff/SKILL.md",
+      "divergent": false
+    },
+    {
+      "path": "implement/SKILL.md",
+      "hash": "sha256:5717c26e9e482467c2be01ac81e7d30688a2d660e9c65c71c38ab230afdec25f",
+      "upstream": "skills/engineering/implement/SKILL.md",
+      "divergent": true
+    },
+    {
+      "path": "improve-codebase-architecture/HTML-REPORT.md",
+      "hash": "sha256:581e8bb5a521e46bbda8ca7e19b15948bed882187108092ebb90c62513b77528",
+      "upstream": "skills/engineering/improve-codebase-architecture/HTML-REPORT.md",
+      "divergent": false
+    },
+    {
+      "path": "improve-codebase-architecture/SKILL.md",
+      "hash": "sha256:d1ac25511a936ff4250a48dbcefda363837d6bb9321b3cba73df99fa37270a75",
+      "upstream": "skills/engineering/improve-codebase-architecture/SKILL.md",
+      "divergent": false
+    },
+    {
+      "path": "prototype/LOGIC.md",
+      "hash": "sha256:f61c7d249e786a79ef289018901c348271e1798dd0b0bc5607b5c6f4d4a01ab9",
+      "upstream": "skills/engineering/prototype/LOGIC.md",
+      "divergent": false
+    },
+    {
+      "path": "prototype/SKILL.md",
+      "hash": "sha256:714de632d116bb73f65cdb5a882db15b9369a6713b9a47c0fad827848f0bfbe3",
+      "upstream": "skills/engineering/prototype/SKILL.md",
+      "divergent": false
+    },
+    {
+      "path": "prototype/UI.md",
+      "hash": "sha256:723211e878acbc7b6ff09755263f3295cde724ba902ff0064da41eed51d45ad3",
+      "upstream": "skills/engineering/prototype/UI.md",
+      "divergent": false
+    },
+    {
+      "path": "research/SKILL.md",
+      "hash": "sha256:985569f15739c713d6784887c3d186d4ef9ac85bec5ad9c068d25bf0739928e4",
+      "upstream": "skills/engineering/research/SKILL.md",
+      "divergent": false
+    },
+    {
+      "path": "resolving-merge-conflicts/SKILL.md",
+      "hash": "sha256:9d8114f8ef0b31f535a265fc05c364bd8cf2e2895a830040e06c22acb11f54b0",
+      "upstream": "skills/engineering/resolving-merge-conflicts/SKILL.md",
+      "divergent": false
+    },
+    {
+      "path": "tdd/mocking.md",
+      "hash": "sha256:3ceb807fdf4a47d6a93d4d9a891e5ba6d362a6247bd08adc451feebfc17361ef",
+      "upstream": "skills/engineering/tdd/mocking.md",
+      "divergent": false
+    },
+    {
+      "path": "tdd/SKILL.md",
+      "hash": "sha256:ac51d756ebe750b8bbc5f506b2276316da52add87ba0056ff4eb80d40fc1b1d1",
+      "upstream": "skills/engineering/tdd/SKILL.md",
+      "divergent": true
+    },
+    {
+      "path": "tdd/tests.md",
+      "hash": "sha256:859f9e592c188fda4fc7277dd180e4ce9c7a2e13f6efe1f6f29eccc9d28c106a",
+      "upstream": "skills/engineering/tdd/tests.md",
+      "divergent": false
+    },
+    {
+      "path": "teach/GLOSSARY-FORMAT.md",
+      "hash": "sha256:9b99859ec28437668130d8f2ce5a342938970f8a1ed4fd38c3eab4f4b5fff210",
+      "upstream": "skills/productivity/teach/GLOSSARY-FORMAT.md",
+      "divergent": false
+    },
+    {
+      "path": "teach/LEARNING-RECORD-FORMAT.md",
+      "hash": "sha256:701fa34b6748aa89e6c960ffb815257f481a7d77fb2900f9028f7edf3fdd6052",
+      "upstream": "skills/productivity/teach/LEARNING-RECORD-FORMAT.md",
+      "divergent": false
+    },
+    {
+      "path": "teach/MISSION-FORMAT.md",
+      "hash": "sha256:8cacbb3c0644d3ae0ea4965564797099401a6930a23f7cf462918576587f2418",
+      "upstream": "skills/productivity/teach/MISSION-FORMAT.md",
+      "divergent": false
+    },
+    {
+      "path": "teach/RESOURCES-FORMAT.md",
+      "hash": "sha256:e9cacf34026e11a8d1c8f9de88abe5bcbf654f4ebdb25cae8c0de0d5f48f44ec",
+      "upstream": "skills/productivity/teach/RESOURCES-FORMAT.md",
+      "divergent": false
+    },
+    {
+      "path": "teach/SKILL.md",
+      "hash": "sha256:a32df9dcdfc0c4fdc1c98e1ed3940c5f56b84c1aa90ff60346f32b8b53915b43",
+      "upstream": "skills/productivity/teach/SKILL.md",
+      "divergent": false
+    },
+    {
+      "path": "to-questionnaire/SKILL.md",
+      "hash": "sha256:b5eb929842ee0e93d867c5e906d183d350f2f2d149eaeaa86967d94d8eda1d3b",
+      "upstream": "skills/productivity/to-questionnaire/SKILL.md",
+      "divergent": false
+    },
+    {
+      "path": "to-spec/SKILL.md",
+      "hash": "sha256:c85c91066caa801919b77ac75e64107361fc0e7f2e50ceaeee5929b4e24958b7",
+      "upstream": "skills/engineering/to-spec/SKILL.md",
+      "divergent": true
+    },
+    {
+      "path": "to-tickets/SKILL.md",
+      "hash": "sha256:7b4faeb7772ed12960523a6530f51605242aee5acab3b19b72ea543b19f4e1ca",
+      "upstream": "skills/engineering/to-tickets/SKILL.md",
+      "divergent": true
+    },
+    {
+      "path": "triage/AGENT-BRIEF.md",
+      "hash": "sha256:7f5f87fed3033df1b06e083c480f3e847b1fbb0647746b8a4c6a50f9f26ef44f",
+      "upstream": "skills/engineering/triage/AGENT-BRIEF.md",
+      "divergent": false
+    },
+    {
+      "path": "triage/OUT-OF-SCOPE.md",
+      "hash": "sha256:1fbf9b432130c6380aa65813b55553cfda150309b27c595e183f8e335b8a190d",
+      "upstream": "skills/engineering/triage/OUT-OF-SCOPE.md",
+      "divergent": false
+    },
+    {
+      "path": "triage/SKILL.md",
+      "hash": "sha256:6f1209ececeeaad1df8d9e45f9930648590e7baceb9d9d211dbc5e682856a4ec",
+      "upstream": "skills/engineering/triage/SKILL.md",
+      "divergent": true
+    },
+    {
+      "path": "wait-what/SKILL.md",
+      "hash": "sha256:e3f44e3ccbc0e7b62f20ba70b295fc9c9f4aa3f96c77168faee1c71bacbf4215",
+      "upstream": "skills/productivity/wait-what/SKILL.md",
+      "divergent": false
+    },
+    {
+      "path": "wayfinder/SKILL.md",
+      "hash": "sha256:a5c01d551c83daa9774a69c80fea744c2c99b6a2a64d634e99928d355a948598",
+      "upstream": "skills/engineering/wayfinder/SKILL.md",
+      "divergent": true
+    },
+    {
+      "path": "wizard/SKILL.md",
+      "hash": "sha256:bdf31d48211ea559878f95a4f344aeabf8d85897488ba564382bab0b000daac1",
+      "upstream": "skills/engineering/wizard/SKILL.md",
+      "divergent": false
+    },
+    {
+      "path": "wizard/template.sh",
+      "hash": "sha256:33cbe9dfb1d0e9185b60248a52aabed14bc64785a00cac695e302e739dd6c153",
+      "upstream": "skills/engineering/wizard/template.sh",
+      "divergent": false
+    },
+    {
+      "path": "writing-for-agents/SKILL-MECHANICS.md",
+      "hash": "sha256:c768e6307c7c10728c401c213f2c4ba71c542127eeb7ad2956aabd15a0fa0059",
+      "upstream": "skills/productivity/writing-for-agents/SKILL-MECHANICS.md",
+      "divergent": false
+    },
+    {
+      "path": "writing-for-agents/SKILL.md",
+      "hash": "sha256:551adca942227b44192edba88acd4e8db911f0121ce58ad16944ccf6a896a74a",
+      "upstream": "skills/productivity/writing-for-agents/SKILL.md",
+      "divergent": false
+    }
+  ]
+}

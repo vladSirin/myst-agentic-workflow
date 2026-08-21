@@ -63,7 +63,7 @@ Use `/to-spec` or write a spec directly under `.scratch/<feature-slug>/spec.md` 
 
 Use `/to-tickets` or write ticket files under `.scratch/<feature-slug>/issues/`. Tickets must be vertical slices, independently understandable, and small enough to verify.
 
-Assign initial ticket status during creation: `ready-for-agent`, `ready-for-human`, or `needs-info`. Do not default generated tickets back to `needs-triage` unless the whole breakdown truly needs human classification.
+Assign initial ticket status during creation: `ready-for-agent`, `ready-for-human`, or `needs-info`. Do not default generated tickets back to `needs-triage` — tickets you generated from a spec are already specified, so they skip triage, which is for issues that arrive raw from elsewhere.
 
 Avoid specific file paths or code snippets in ticket bodies because they go stale quickly. Exception: include a compact prototype-derived snippet only when it captures a decision more precisely than prose can.
 
@@ -71,20 +71,24 @@ Avoid specific file paths or code snippets in ticket bodies because they go stal
 
 Use the status model in `Docs/agents/triage-labels.md` (team docs root — see the CLAUDE.md Project section).
 
-- `ready-for-agent`: agent can implement and verify every required check without human judgment.
-- `ready-for-human`: human-in-the-loop work or verification is required.
+Triage **roles** say who should pick the ticket up:
+
+- `needs-triage`: not yet evaluated.
 - `needs-info`: missing information blocks safe classification or implementation.
+- `ready-for-agent`: fully specified; an agent can implement it.
+- `ready-for-human`: a human implements this one. An agent does not pick it up, and **only the user** changes its `Status:` — to any value, not just `ready-for-agent`.
 - `wontfix`: intentionally not pursued.
 
 ### 5. Implementation
 
-Use `/tdd` for planned feature work and `/diagnosing-bugs` for bugs or regressions. Set the ticket to `Status: work-in-progress` while working.
+Use `/tdd` for planned feature work and `/diagnosing-bugs` for bugs or regressions. Set a **`ready-for-agent`** ticket to `Status: claimed` while working — never a `ready-for-human` one.
 
 ### 6. Verification
 
-- Agent-verifiable tickets may move directly from `work-in-progress` to `closed` after all checks pass.
-- HITL tickets move from `work-in-progress` to `resolved` after implementation and agent-runnable checks pass.
-- Only a human verification step moves a HITL ticket from `resolved` to `closed`.
+Lifecycle states say how far the work has got:
+
+- Fully agent-verifiable tickets move from `claimed` to `closed` once all checks pass.
+- Work that ships but still needs a human check moves to `resolved`, carrying an `Outstanding:` line naming that check, who performs it, and where the result is recorded. Only that human check moves it to `closed` — in a later CL, never pre-recorded in the one that ships the code.
 
 ### 7. Review and submit
 

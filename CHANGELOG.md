@@ -27,6 +27,65 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.43.0] - 2026-08-21 - Re-vendor mattpocock/skills e9fcdf9 -> 0ab1b63, +8 skills, verbatim-by-default
+
+MINOR: consumers get it automatically. The largest re-vendor to date (141 upstream commits) plus
+the process change that keeps the next one cheap.
+
+**Why it was 141 commits.** Nothing ran `check-mattpocock-updates.ps1` between syncs. The detector
+existed and worked; it just was not on any checklist. It is now, at every release and monthly.
+
+- **Re-vendored all upstream-derived skills at `0ab1b63`.** Notable gains we had been missing:
+  `diagnosing-bugs` "Redact secrets" phase, `grilling` round/frontier question-batching with
+  sub-agent fact-finding, harness-neutral subagent-dispatch phrasing across several skills.
+- **+8 skills** from upstream's user-facing roster: `wayfinder` (map an effort too big for one
+  session as decision tickets), `prototype`, `wizard`, `to-questionnaire`, `grill-me`, `teach`,
+  `wait-what`, and `writing-for-agents` (which **replaces `writing-great-skills`** - upstream
+  renamed that skill and we had never followed).
+- **The kit is now stack-agnostic where it is upstream-derived.** `UE-NOTES.md`, `P4-NOTES.md`
+  and the P4 hot-spot aside are gone from vendored skills; that content is preserved in git history and
+  relocates to the consumer project's own `Docs/agents/` in the paired project changelist
+  (not in this release -- see the divergence ledger, section 6). 0 stack-specific hits remain in upstream-derived skills.
+  Local-origin skills (`review-and-submit`, `pre-implementation-gate`, ...) are still P4-shaped -
+  that is a separate workstream, not a claim this release makes.
+- **Triage vocabulary converged with upstream, with the two jobs separated.** Upstream's five
+  triage ROLES are adopted verbatim - including `ready-for-human` now meaning *a human implements
+  this*, not the old "agent implements, human gates the submit". Our lifecycle STATES stay
+  (`claimed` - renamed from `work-in-progress` - plus `resolved` and `closed`), because upstream's
+  `triage-labels.md` is explicitly a per-repo mapping table and upstream's own file-tracker spec
+  uses `resolved`. One `Status:` field, two jobs, now said out loud.
+  - **A `ready-for-human` ticket's `Status:` is user-owned — only the user changes it, to ANY
+    value.** An agent that thinks a ticket is mislabeled reports and stops. Not just the obvious
+    relabel to `ready-for-agent`: every gate matches the *current* string and nothing records the
+    previous one, so setting `claimed` silences them all just as effectively and leaves no trace.
+    Without this the label is self-granting — an agent that can award itself a workable state can
+    submit under a goal-mode authorization in the same run.
+  - Consumers: the converged `triage-labels.md` / `issue-tracker.md` / `MustRead_agentic_workflow.md`
+    arrive by scaffold render. **Re-triage your open tickets** - the same string now means
+    something different.
+- **`issue-tracker.md` gains upstream's "Wayfinding operations" section**, which `/wayfinder`
+  requires by name. Without it the adopted skill is stranded. Efforts are told apart by structure:
+  a wayfinder effort has `map.md`, an implementation effort has `spec.md`.
+- **[ADR-0006](docs/adr-0006-verbatim-by-default-and-the-divergence-ledger.md) - verbatim by
+  default.** Every divergence from upstream now needs a written necessity rationale, a reviewer
+  pass, and owner confirmation. The whole release ships **7 divergent lines across 6 skills**, all
+  the same kind: a reference to a skill we do not vendor, remapped to ours.
+- **`vendored-hashes.json` + `scripts/vendored-hashes.ps1`** make "verbatim" a test instead of a
+  promise. `-Verify` fails on drift; `-Update` **refuses** to record a file that differs from the
+  pinned upstream unless it is a declared divergence - so a divergence cannot be silently
+  regenerated away. Hashing reuses the EOL/BOM-invariant `Get-NormalizedContentHash`; a naive
+  scheme re-introduces the autocrlf false-positive this repo already fixed twice.
+- **Dangling-ref grep in the release checklist.** Three review passes over the migration plan each
+  mis-enumerated the divergence set by hand; one `git grep` got it right first time. Enumerate by
+  grep, never by hand.
+- **Fixed: `migrate-retired-skills.ps1` would have deleted two shipped skills.** `teach` and
+  `grill-me` were retired in v4.28.0 and are re-adopted here, but remained on the retired list -
+  the next migration would have removed them from every install.
+- Bookkeeping: attribution pin in both `LICENSE` files was **two re-vendors stale**; provenance
+  tests' `$localOrigin` guarded 2 of 9 local-origin skills; skill counts recomputed to 31;
+  `run-provenance-tests.ps1` header corrected to say plainly that it does not cover vendored skill
+  content.
+
 ## [4.42.0] - 2026-08-21 - setup-devkit: Codex install-if-missing actually installs
 
 MINOR: consumers get it automatically. One defect in the day-old script, found by running the

@@ -10,6 +10,6 @@ Use /tdd where possible, at pre-agreed seams.
 
 Run typechecking regularly, single test files regularly, and the full test suite once at the end.
 
-Keep the changelist current as you go: `p4 edit`/`p4 add` every file immediately after modifying it, in a named CL.
+Once done, use /review-changes to review the work.
 
-Once done, follow the team review protocol in the `review-and-submit` skill — reviewer routing, Review Record block, preflight validators. Never submit without explicit user approval.
+Commit your work to the current branch.
