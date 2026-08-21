@@ -54,9 +54,12 @@ existed and worked; it just was not on any checklist. It is now, at every releas
   (`claimed` - renamed from `work-in-progress` - plus `resolved` and `closed`), because upstream's
   `triage-labels.md` is explicitly a per-repo mapping table and upstream's own file-tracker spec
   uses `resolved`. One `Status:` field, two jobs, now said out loud.
-  - **`ready-for-human` -> `ready-for-agent` is a user-only transition.** An agent that thinks a
-    ticket is mislabeled reports and stops. Without this the label is self-granting: an agent that
-    can award itself `ready-for-agent` can submit under a goal-mode authorization in the same run.
+  - **A `ready-for-human` ticket's `Status:` is user-owned — only the user changes it, to ANY
+    value.** An agent that thinks a ticket is mislabeled reports and stops. Not just the obvious
+    relabel to `ready-for-agent`: every gate matches the *current* string and nothing records the
+    previous one, so setting `claimed` silences them all just as effectively and leaves no trace.
+    Without this the label is self-granting — an agent that can award itself a workable state can
+    submit under a goal-mode authorization in the same run.
   - Consumers: the converged `triage-labels.md` / `issue-tracker.md` / `MustRead_agentic_workflow.md`
     arrive by scaffold render. **Re-triage your open tickets** - the same string now means
     something different.
