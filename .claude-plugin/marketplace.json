@@ -4,14 +4,14 @@
         "name": "Sirin",
         "email": "sirinwintersong@gmail.com"
     },
-    "description": "Myst team plugin marketplace - agentic dev kit for Claude Code and Codex",
+    "description": "Myst team plugin marketplace - agentic dev kit for Claude Code, Codex, and OpenCode (OpenCode installs via setup-devkit.ps1)",
     "plugins": [
         {
             "name": "myst-dev-kit",
             "source": "./plugins/myst-dev-kit",
             "displayName": "Myst Dev Kit",
             "description": "Team dev kit: 24 skills - engineering/productivity (spec, TDD, triage, debugging, grilling...) plus the team process rules as on-demand skills (review-and-submit, changelist-verification, pre-implementation-gate...), both review agents (architecture-reviewer, radical-design-critic), sync-build-submit + package commands, and the Codex-side Submit-Audit warning bridge.",
-            "version": "4.40.0",
+            "version": "4.41.0",
             "license": "MIT",
             "repository": "https://github.com/vladSirin/myst-agentic-workflow",
             "category": "productivity",

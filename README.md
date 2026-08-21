@@ -1,32 +1,70 @@
 # myst-agentic-workflow
 
-**Reusable agentic-workflow scaffolding for [Claude Code](https://github.com/anthropics/claude-code) and [Codex](https://github.com/openai/codex) — installed in seconds, kept in sync over time.**
+**One dev kit for [Claude Code](https://github.com/anthropics/claude-code), [Codex](https://github.com/openai/codex), and [OpenCode](https://opencode.ai) — installed in 30 seconds, updated with one command.**
 
-The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. So your team's hard-won agentic improvements don't get stranded in one repo.
+The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. Every skill and agent lives ONCE; each tool consumes the same files through its native mechanism.
 
-[![tests](https://img.shields.io/badge/tests-18%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.40.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-19%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.41.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-## Provenance
+## Install (30-second setup)
 
-Extracted from `Myst_Proto`, a UE5/Perforce game project, and offered as a starting point for anyone else. MIT-licensed, generic core, honest about origin. The `myst-` prefix says where it came from, not who it's for.
-
-The `overlays/myst-project/` directory ships the original project-specific content **as a reference example, not generic content** — see [`overlays/myst-project/README.md`](overlays/myst-project/README.md). `setup.ps1` never auto-installs it.
-
-## Quickstart (60-second setup)
-
-> **Myst team member?** Follow [SETUP.md](SETUP.md) — it covers both archetypes (standard sync-and-go and poweruser) for Claude Code and Codex.
+One command covers every tool on your machine — it detects which CLIs you have and drives each tool's native plugin manager (it never replaces them):
 
 ```powershell
-git clone https://github.com/vladSirin/myst-agentic-workflow
-$Pkg = "$PWD/myst-agentic-workflow"
-
-# One command. Auto-detects Perforce/git/filesystem and UE-vs-not.
-& "$Pkg/setup.ps1" -TargetRoot c:/path/to/your-project [-Yes]
+git clone https://github.com/vladSirin/myst-agentic-workflow "$env:USERPROFILE\.myst-agentic-workflow"
+& "$env:USERPROFILE\.myst-agentic-workflow\setup-devkit.ps1"
 ```
 
-That's it for the **committed core** (bible generated-blocks, team docs, rules, hook scripts, `.p4ignore` fragment). The skills/agents/commands kit installs separately as a **plugin** (see next section) — `setup.ps1` no longer file-copies it.
+**Updating is the same command** — re-run it any time. It prints the version delta and self-verifies delivery. New versions are announced on the [Releases page](https://github.com/vladSirin/myst-agentic-workflow/releases).
 
-Four lifecycle commands cover the entire flow:
+> **Myst team member?** [SETUP.md](SETUP.md) is your page — committed core via `p4 sync`, this one command for the kit, per-tool notes and known gaps.
+
+<details>
+<summary><strong>What the script does per tool</strong></summary>
+
+| Tool | Install / update actions |
+|---|---|
+| Claude Code | `claude plugin marketplace update myst`, then install-if-missing / `claude plugin update myst-dev-kit@myst` (restart to load) |
+| Codex | `codex plugin marketplace add` + `upgrade` + `plugin add`, then generates the two reviewer agents as `~/.codex/agents/*.toml` (`sandbox_mode = "read-only"`) |
+| OpenCode | checks the clone out at the latest release tag, registers skills via `skills.paths` in `~/.config/opencode/opencode.json`, writes the unreal-engine MCP entry + the manual-skill ask-map, generates the two reviewer agents, self-verifies |
+
+`-Tool claude|codex|opencode` scopes it; `-Version vX.Y.Z` pins or rolls back; `-Uninstall` removes what it added. One failing tool never aborts the others.
+
+</details>
+
+<details>
+<summary><strong>Native per-tool paths (no script needed)</strong></summary>
+
+```bash
+# Claude Code — install, then the two-step update (restart after):
+/plugin install myst-dev-kit@myst            # marketplace pre-registered in Myst projects; else: /plugin marketplace add vladSirin/myst-agentic-workflow
+claude plugin marketplace update myst
+claude plugin update myst-dev-kit@myst
+
+# Codex — install once; refreshing the marketplace IS the update (no second command):
+codex plugin marketplace add vladSirin/myst-agentic-workflow
+codex plugin add myst-dev-kit@myst
+codex plugin marketplace upgrade
+```
+
+- **Claude**: a marketplace refresh alone does **not** move an installed plugin; it stays pinned until the explicit `plugin update`, and the new version loads on the next session.
+- **Codex**: `marketplace upgrade` replaces the installed plugin in place, cache directory and all. There is no `codex plugin update` subcommand.
+- **OpenCode** has no native path — `setup-devkit.ps1` IS its path (schema-validated `skills.paths` pointing at the clone; the tag checkout is the update).
+- Verify with `claude plugin list` / `codex plugin list` / `opencode debug skill`. Note Codex's VERSION column reports the *marketplace snapshot*; to confirm what is actually installed, look under `~/.codex/plugins/cache/<marketplace>/<plugin>/<version>/`.
+- Inside a Claude Code session without the `/plugin` command (e.g. some IDE extensions), the same commands work from a terminal — `claude plugin …` is a plain CLI subcommand.
+
+</details>
+
+<details>
+<summary><strong>Adopting the scaffold in a new project (consumer install)</strong></summary>
+
+The committed core (bible generated-blocks, team docs, rules, hook scripts, `.p4ignore` fragment) installs into a project with one command — auto-detects Perforce/git/filesystem and UE-vs-not:
+
+```powershell
+& "$env:USERPROFILE\.myst-agentic-workflow\setup.ps1" -TargetRoot c:/path/to/your-project [-Yes]
+```
+
+Four lifecycle commands cover the entire flow — all four dry-run first, prompt before writing, and auto-derive their configuration from your installed manifest:
 
 ```powershell
 & "$Pkg/setup.ps1"   -TargetRoot $Target  [-Yes]                        # first-time install
@@ -35,41 +73,19 @@ Four lifecycle commands cover the entire flow:
 & "$Pkg/promote.ps1" -TargetRoot $Target -Paths '<file>'                # push local improvements out
 ```
 
-All four dry-run first, prompt before writing, and auto-derive their configuration from your installed manifest.
+</details>
 
-## Install as a plugin (marketplace)
+## What you get
 
-The repo is a **plugin marketplace** for both tools — since v4.0.0 the plugin IS the delivery path for the kit (the installer only bootstraps the committed core). One plugin is published: **`myst-dev-kit`** — 24 skills (engineering + productivity + the team process rules as on-demand skills), both review agents (Claude only — they are Markdown, and Codex agents are TOML), `sync-build-submit` and package commands, and the Codex-side Submit-Audit warning bridge.
+**`myst-dev-kit`** — 24 skills (engineering + productivity + the team process rules as on-demand skills), the two reviewer agents (native Markdown under Claude; **generated** read-only variants for Codex TOML and OpenCode — the shared source is never forked), `sync-build-submit` and package commands, and the Codex-side Submit-Audit warning bridge. Full catalog with when-to-use guidance: [Reference](#reference).
 
-```bash
-# Claude Code
-/plugin marketplace add vladSirin/myst-agentic-workflow
-/plugin install myst-dev-kit@myst
+The repo is a **plugin marketplace** for Claude Code and Codex (`.claude-plugin/marketplace.json` / `.agents/plugins/marketplace.json`, consistency enforced by `scripts/run-marketplace-tests.ps1` + `claude plugin validate`) and a **`skills.paths` source** for OpenCode. Public repo — installs need no auth (if it goes private later: collaborator access + `gh auth login`).
 
-# Codex
-codex plugin marketplace add vladSirin/myst-agentic-workflow
-# then /plugins -> Myst Team Plugins -> install myst-dev-kit
-```
+## Provenance
 
-Both tools read their native manifest from the same repo (`.claude-plugin/marketplace.json` for Claude Code, `.agents/plugins/marketplace.json` for Codex; consistency is enforced by `scripts/run-marketplace-tests.ps1` + `claude plugin validate`). The repo is public today, so installs need no auth (if it goes private later: collaborator access + `gh auth login`).
+Extracted from `Myst_Proto`, a UE5/Perforce game project, and offered as a starting point for anyone else. MIT-licensed, generic core, honest about origin. The `myst-` prefix says where it came from, not who it's for.
 
-### Keeping the plugin up to date
-
-**The two tools do not work the same way. Do not infer one from the other** — both sequences below were verified by running them across a real version bump.
-
-```bash
-# Claude Code — refresh the marketplace, THEN update the plugin, then restart.
-claude plugin marketplace update myst
-claude plugin update myst-dev-kit@myst      # "Restart to apply changes"
-
-# Codex — refreshing the marketplace IS the update. No second command.
-codex plugin marketplace upgrade
-```
-
-- **Claude**: a marketplace refresh alone does **not** move an installed plugin; it stays pinned until the explicit `plugin update`, and the new version loads on the next session.
-- **Codex**: `marketplace upgrade` replaces the installed plugin in place, cache directory and all. There is no `codex plugin update` subcommand.
-- Verify with `claude plugin list` / `codex plugin list`. Note Codex's VERSION column reports the *marketplace snapshot*; to confirm what is actually installed, look under `~/.codex/plugins/cache/<marketplace>/<plugin>/<version>/`.
-- Inside a Claude Code session without the `/plugin` command (e.g. some IDE extensions), the same commands work from a terminal — `claude plugin …` is a plain CLI subcommand.
+The `overlays/myst-project/` directory ships the original project-specific content **as a reference example, not generic content** — see [`overlays/myst-project/README.md`](overlays/myst-project/README.md). `setup.ps1` never auto-installs it.
 
 **Two Codex limits worth knowing before you design around them** (measured, not inferred):
 
@@ -78,7 +94,7 @@ codex plugin marketplace upgrade
 
 Notes:
 - The plugin's `hooks/hooks.json` delivers the client Submit-Audit warning **to Codex only** — under Claude Code the bridge no-ops because the consumer project's committed `.claude/settings.json` already registers the same audit (no double warnings). On consumers without the Myst governance core, the hook exits silently. **Verified firing under Codex 2026-08-06** (`docs/tool-capability-matrix.md`); it had never run on any host before v4.26.0.
-- `agents/` (radical-design-critic) is Claude-only — Codex ignores the directory.
+- `agents/` is loaded natively by Claude only. Codex and OpenCode get the same two reviewers as **generated** read-only variants written by `setup-devkit.ps1` (Codex: `~/.codex/agents/*.toml` with `sandbox_mode = "read-only"`; OpenCode: `~/.config/opencode/agents/myst/*.md` with `permission: edit deny`) — fixed known-good headers, body verbatim from the shared source, regenerated on every script run. The shared `.md` files are never hand-forked and never loaded directly by the other tools (their Claude frontmatter breaks those parsers).
 - Former always-on workflows are now **on-demand skills** with trigger-strength descriptions (`review-and-submit`, `changelist-verification`, `pre-implementation-gate`, ...) — advisory by design; the server-side Submit-Audit is the enforcement backstop.
 
 **Upgrading an older install?** Run [`upgrade.ps1`](upgrade.ps1) (preview, then `-Apply`) — it adds new skills, refreshes untouched files, **preserves your customizations**, removes retired skills, and (for Perforce) wraps it all in one reviewable changelist. `setup.ps1`/`update.ps1` can't do this jump (they drive install from the stale manifest). See [`docs/upgrade.md`](docs/upgrade.md).
@@ -89,9 +105,9 @@ Pain points solved, with the skills / scripts that solve them.
 
 ### #1: Agentic CLIs that drift apart
 
-Claude Code and Codex each have their own config dirs (`.claude/`, `.Codex/`). When you tweak a workflow file in one, the other falls behind. Multiply by every project you work on and the drift becomes structural.
+Claude Code, Codex, and OpenCode each have their own config dirs (`.claude/`, `.Codex/`, `.opencode/`). When you tweak a workflow file in one, the others fall behind. Multiply by every project you work on and the drift becomes structural.
 
-**The fix:** every skill, workflow, and agent lives **once**, in `plugins/myst-dev-kit/`, and the manifest maps that single source into both tool directories. Edit the shared source; `update.ps1` propagates the change to every consumer's per-tool directories. Edit a per-tool file in a consumer; `promote.ps1` round-trips it back to the shared source (reverse-substituting `{{var}}` placeholders) so both tools stay in lockstep by construction.
+**The fix:** every skill, workflow, and agent lives **once**, in `plugins/myst-dev-kit/`. Claude and Codex load it as a plugin; OpenCode reads it in place via `skills.paths`; the per-tool reviewer-agent variants are generated from it, never forked. Edit the shared source; `update.ps1` propagates the change to every consumer's per-tool directories. Edit a per-tool file in a consumer; `promote.ps1` round-trips it back to the shared source (reverse-substituting `{{var}}` placeholders) so every tool stays in lockstep by construction.
 
 ### #2: The Bible-file corruption risk
 
@@ -174,7 +190,7 @@ The engineering/productivity set is adapted from [mattpocock/skills](https://git
 | [`/roundtable`](plugins/myst-dev-kit/skills/roundtable/SKILL.md) | Multi-perspective design discussion when one viewpoint isn't enough. |
 | [`/setup-agentic-workflow`](plugins/myst-dev-kit/skills/setup-agentic-workflow/SKILL.md) | Interactive wizard to install/upgrade the scaffold in a project -- detects the environment, proposes tools + overlays, asks one question at a time, dry-runs, then writes (front-end over `setup.ps1`/`upgrade.ps1`). |
 
-Plus the plugin **commands** (not skills): `/update-myst-skills` (sync upstream in), `/promote-myst-skills` (push a local improvement out), and `/sync-build-submit` (UE build-machine pipeline).
+Plus the plugin **commands** (not skills), all maintainer/build-machine-facing: `/update-project-scaffold` (re-render the committed project scaffold from upstream; formerly `/update-myst-skills`), `/promote-myst-skills` (push a local improvement out), and `/sync-build-submit` (UE build-machine pipeline).
 
 ### Divergence from upstream (and why)
 
@@ -201,7 +217,7 @@ Converted to on-demand skills in v4.0.0 — each carries a trigger-strength desc
 
 ### Agents
 
-Specialized subagents available via the agent tool.
+Specialized subagents. Native Markdown under Claude Code; under Codex and OpenCode, `setup-devkit.ps1` generates read-only variants from the same source (see the Notes above), so all three tools can spawn them.
 
 | Agent | Triggers on |
 |---|---|
@@ -274,15 +290,17 @@ myst-agentic-workflow/
 ├── README.md
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
-├── SETUP.md                       # Myst team onboarding (both archetypes)
+├── SETUP.md                       # Myst team onboarding (all three tools)
 ├── LICENSE
 ├── package-manifest.json          # schema v3 + package metadata
 ├── manifest-template.json         # canonical entry list for new consumers
-├── setup.ps1                      # first-time install
+├── setup-devkit.ps1               # per-user kit install/update for claude+codex+opencode
+├── setup.ps1                      # first-time consumer-project install
 ├── update.ps1                     # sync upstream changes in
 ├── upgrade.ps1                    # major-version jump (preserves customizations)
 ├── promote.ps1                    # push local improvements out
 ├── .github/workflows/tests.yml    # CI: every scripts/run-*-tests.ps1 suite, each PR/push
+├── .github/workflows/release.yml  # tag push v* -> GitHub Release from the CHANGELOG section
 ├── .claude-plugin/marketplace.json  # plugin marketplace (Claude Code native)
 ├── .agents/plugins/marketplace.json # plugin marketplace (Codex native; same content, enforced by test)
 ├── docs/
@@ -293,15 +311,16 @@ myst-agentic-workflow/
 │   ├── adr-0001-extract-reusable-core-decisions.md
 │   ├── adr-0002-vendor-and-overlay-not-fork.md
 │   ├── adr-0003-verbatim-skill-format.md
-│   └── adr-0004-local-origin-provenance-and-core-local.md
+│   ├── adr-0004-local-origin-provenance-and-core-local.md
+│   └── adr-0005-opencode-pointer-consumer.md
 ├── plugins/myst-dev-kit/
 │   ├── .claude-plugin/plugin.json # dual plugin manifests (one per tool)
 │   ├── .codex-plugin/plugin.json
-│   ├── agents/                    # architecture-reviewer + radical-design-critic (Claude only)
-│   ├── commands/                  # promote-myst-skills, sync-build-submit, update-myst-skills
+│   ├── agents/                    # architecture-reviewer + radical-design-critic (shared source; generated variants for codex/opencode)
+│   ├── commands/                  # promote-myst-skills, sync-build-submit, update-project-scaffold
 │   ├── hooks/hooks.json           # Codex Submit-Audit warn bridge (no-ops under Claude Code)
 │   ├── scripts/                   # consumer hook scripts (doc-audit, rule parity, ...)
-│   └── skills/                    # the 24 skills (ONE shared source for both tools)
+│   └── skills/                    # the 24 skills (ONE shared source for every tool)
 ├── templates/
 │   ├── claude/CLAUDE.md           # per-tool bible templates (generated-block sources)
 │   ├── codex/AGENTS.md
@@ -327,7 +346,7 @@ myst-agentic-workflow/
 
 ## Status
 
-**v4.28.0** — Audit hardening: catalog trimmed to 24 skills (5 personal skills removed; `design-workflow` merged into `design` + `PROCESS.md`); PS 5.1 crash class fixed across the lifecycle scripts (EAP/stderr, measured); provenance stamping; installer EOL policy; doc-audit ~20x faster with a version-staleness nudge; linkcheck now guards `plugins/`; 18 test suites incl. PS 5.1 gates. One breaking edge: `promote.ps1` requires an explicit `-Force` for divergent promotions (the refusal prints the remedy). Previously — **v4.0.0** — Role shift: the plugin owns the kit (29 skills incl. the process rules as on-demand skills, both review agents, commands, Codex audit bridge); the installer only bootstraps the committed core (bibles, docs, rules, scripts). Existing consumers converge via `upgrade.ps1 -Apply`. Previously — **v3.0.0** — Marketplace restructure: OpenCode support retired (tool scope is Claude Code + Codex); the per-tool template mirror collapsed into ONE shared source at `plugins/myst-dev-kit/` (skills/agents/commands/workflows live once; the manifest maps each file to both `.claude/` and `.Codex/` targets); overlays flattened the same way. Skills remain vendored **verbatim** from upstream `mattpocock/skills` HEAD (`6eeb81b`) — project specifics live in overlays, never in the base (see [ADR-0002](docs/adr-0002-vendor-and-overlay-not-fork.md), [ADR-0003](docs/adr-0003-verbatim-skill-format.md)). Full history in [CHANGELOG.md](CHANGELOG.md).
+**v4.41.0** — OpenCode joins Claude Code + Codex as a supported tool, as a **pointer consumer**: `setup-devkit.ps1` (one command, all tools, install = update) registers the 24 skills via OpenCode's schema-validated `skills.paths` against a dedicated clone — nothing rendered, nothing copied, the tag checkout is the update. The two reviewer agents now reach Codex and OpenCode as script-generated read-only variants (TOML / opencode-native `.md`) from the unchanged shared source. Releases auto-publish from tags. The maintainer command `/update-myst-skills` is now `/update-project-scaffold` (what it always did). This deliberately revives NOTHING of the v3.0.0-retired render-target model — see [ADR-0005](docs/adr-0005-opencode-pointer-consumer.md). Previously — **v4.28.0** — Audit hardening: catalog trimmed to 24 skills (5 personal skills removed; `design-workflow` merged into `design` + `PROCESS.md`); PS 5.1 crash class fixed across the lifecycle scripts (EAP/stderr, measured); provenance stamping; installer EOL policy; doc-audit ~20x faster with a version-staleness nudge; linkcheck now guards `plugins/`; 18 test suites incl. PS 5.1 gates. One breaking edge: `promote.ps1` requires an explicit `-Force` for divergent promotions (the refusal prints the remedy). Previously — **v4.0.0** — Role shift: the plugin owns the kit (29 skills incl. the process rules as on-demand skills, both review agents, commands, Codex audit bridge); the installer only bootstraps the committed core (bibles, docs, rules, scripts). Existing consumers converge via `upgrade.ps1 -Apply`. Previously — **v3.0.0** — Marketplace restructure: OpenCode support retired (tool scope is Claude Code + Codex); the per-tool template mirror collapsed into ONE shared source at `plugins/myst-dev-kit/` (skills/agents/commands/workflows live once; the manifest maps each file to both `.claude/` and `.Codex/` targets); overlays flattened the same way. Skills remain vendored **verbatim** from upstream `mattpocock/skills` HEAD (`6eeb81b`) — project specifics live in overlays, never in the base (see [ADR-0002](docs/adr-0002-vendor-and-overlay-not-fork.md), [ADR-0003](docs/adr-0003-verbatim-skill-format.md)). Full history in [CHANGELOG.md](CHANGELOG.md).
 
 ## What `runtime-mutable` means
 
@@ -340,7 +359,7 @@ The `hashPolicy: "runtime-mutable"` policy says:
 - **Compare reports the entry with outcome `runtime-mutable`** (its own bucket, not `downstream-edit` or `clean`); does not count toward conflicts.
 - **Promote refuses** to push runtime-mutated content upstream (the disk content is user-state, not package content).
 
-Mark any tool-managed-at-runtime file with this policy in `manifest-template.json`. No entry currently uses it (the canonical case was OpenCode's `opencode.json`, retired with OpenCode support); the mechanism remains for any future file with the same property.
+Mark any tool-managed-at-runtime file with this policy in `manifest-template.json`. No entry currently uses it (the canonical case was OpenCode's `opencode.json`, retired with the v3.0.0 render-target model; today's OpenCode support is a config pointer written by `setup-devkit.ps1` into the USER's global config — nothing manifest-tracked, so the policy stays unused); the mechanism remains for any future file with the same property.
 
 See [CHANGELOG.md](CHANGELOG.md) for the version history.
 

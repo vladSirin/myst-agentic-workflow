@@ -1,11 +1,13 @@
 ---
-description: Sync the latest myst-agentic-workflow package changes into this project (update.ps1)
+description: "Maintainer: re-render the committed project scaffold from the latest package (update.ps1 -> P4 CL). Formerly /update-myst-skills"
 ---
 
-# /update-myst-skills — Sync upstream package changes into this project
+# /update-project-scaffold — Re-render the committed project scaffold from upstream
 
 Pull the latest [`myst-agentic-workflow`](https://github.com/vladSirin/myst-agentic-workflow)
-package changes and apply them to this project.
+package changes and apply them to this project's COMMITTED scaffold (a maintainer
+action — teammates receive the result via ordinary sync, and their own per-user
+devkit updates use `setup-devkit.ps1` / their tool's plugin manager instead).
 
 ## What you do
 
@@ -13,7 +15,9 @@ package changes and apply them to this project.
    package as the marketplace directory:
    `~/.claude/plugins/marketplaces/myst` — prefer it (creating a second clone
    elsewhere invites divergence). If it is absent (e.g. Codex-only machine),
-   read `Docs/agents/scaffold-manifest.json`; the `package.source` field has the
+   the standard fallback clone is `~/.myst-agentic-workflow` (the one
+   `setup-devkit.ps1` maintains); failing both, read
+   `Docs/agents/scaffold-manifest.json` — the `package.source` field has the
    GitHub URL — then ask the user where their clone is rather than guessing
    paths.
 

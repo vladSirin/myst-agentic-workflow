@@ -99,5 +99,5 @@ Common cases:
 
 ## Related
 
-- `/update-myst-skills` — pull upstream changes into this project.
+- `/update-project-scaffold` — re-render the committed project scaffold from upstream (formerly `/update-myst-skills`).
 - `docs/install.md` §4 in the package — full promote workflow documentation.

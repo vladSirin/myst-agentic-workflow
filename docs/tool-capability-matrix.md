@@ -1,8 +1,10 @@
-# Tool capability matrix — what the plugin delivers to Claude vs Codex
+# Tool capability matrix — what the kit delivers to Claude vs Codex vs OpenCode
 
-`myst-dev-kit` ships one tree and two manifests. The loaders differ, so **the two tools do
-not receive the same capabilities**, and the differences are deliberate. This file is the
-record of which, and on what evidence.
+`myst-dev-kit` ships one tree, two plugin manifests (Claude, Codex), and one script-driven
+delivery path (`setup-devkit.ps1` — which also carries the generated reviewer agents for
+Codex and OpenCode, and everything OpenCode receives). The loaders differ, so **the tools
+do not receive the same capabilities**, and the differences are deliberate. This file is
+the record of which, and on what evidence.
 
 `scripts/check-plugin-parity.ps1` asserts this matrix against the package tree. It verifies
 *declarations and files* — what is shipped and what is claimed. It cannot verify runtime
@@ -29,13 +31,13 @@ specific, source-derived claim that turns out to be wrong.
 
 ## The matrix
 
-| Capability | Count | Claude | Codex | Evidence |
-|---|---|---|---|---|
-| `skills/` | 24 | convention (no `skills` key in `.claude-plugin/plugin.json`) | **declared** — `"skills": "./skills/"` | declared (Codex) / convention (Claude) |
-| `hooks/` | 1 entry | plugin hooks load; project `.claude/settings.json` hooks **also** load | **declared** — `"hooks": "./hooks/hooks.json"`. Project-level hooks **never** load | **measured (2026-08-06)** — plugin hook observed firing under Codex end-to-end (see below). Project-level hooks separately measured NOT to load: `.codex/hooks.json` and `.agents/hooks.json` were each placed in a repo and a live `codex exec` run for both; neither fired |
-| `commands/` | 3 | convention | convention | **unverified** — neither manifest declares `commands`, and no one has confirmed Codex discovers them |
-| `agents/` | 2 | convention — `architecture-reviewer`, `radical-design-critic` | **ship inert — but not for the reason stated until 4.26.0.** Codex *does* have a subagent mechanism; these two files are Markdown and Codex agents are TOML, so nothing consumes them | measured — `~/.codex/agents/` holds 22 `.toml` agents incl. `code-reviewer`; `codex.exe` names `subagents` 19 times as a plugin resource kind. Whether Codex's loader accepts *plugin-delivered* agents is **unverified** |
-| `scripts/` | 5 | 4 are copied into the consumer's `.claude/scripts/` by `install.ps1`; `submit-audit-bridge.sh` is **not** — it stays in the plugin and is loaded by the plugin hook loader | same split | declared — the 4 are `sourceTemplate` entries in `manifest-template.json`; the bridge is referenced by `hooks/hooks.json` as `${CLAUDE_PLUGIN_ROOT}/scripts/…` and appears in no manifest |
+| Capability | Count | Claude | Codex | OpenCode | Evidence |
+|---|---|---|---|---|---|
+| `skills/` | 24 | convention (no `skills` key in `.claude-plugin/plugin.json`) | **declared** — `"skills": "./skills/"` | **declared** — `skills.paths` in the user's global `opencode.json` (written by `setup-devkit.ps1`) points at the dedicated clone's `skills/`; scanned `**/SKILL.md`, unknown frontmatter keys ignored, malformed skills log-and-skip | declared (Codex, OpenCode) / convention (Claude). OpenCode `disable-model-invocation` is NOT honoured — restored as a `permission.skill` ask-map the script writes |
+| `hooks/` | 1 entry | plugin hooks load; project `.claude/settings.json` hooks **also** load | **declared** — `"hooks": "./hooks/hooks.json"`. Project-level hooks **never** load | **not delivered** — OpenCode has no shell-hook mechanism at all (its `experimental` config schema has no hook key; plugins are JS). Fallback below | **measured (2026-08-06)** — plugin hook observed firing under Codex end-to-end (see below). Project-level hooks separately measured NOT to load: `.codex/hooks.json` and `.agents/hooks.json` were each placed in a repo and a live `codex exec` run for both; neither fired. OpenCode absence: source-derived from its config schema + plugin docs (2026-08-20) |
+| `commands/` | 3 | convention | convention | **not delivered, deliberate** — all 3 commands are maintainer/build-machine-facing; nothing user-facing is lost. Revisit if a user-facing command ever ships | **unverified** (Claude/Codex) — neither manifest declares `commands`, and no one has confirmed Codex discovers them. OpenCode: decision, not a discovery gap |
+| `agents/` | 2 | convention — `architecture-reviewer`, `radical-design-critic` (native, `tools:` restriction intact) | **generated** — `setup-devkit.ps1` writes `~/.codex/agents/*.toml` (`name`/`description`/`developer_instructions` + `sandbox_mode = "read-only"`), body verbatim from shared source. The shared `.md` files themselves remain inert under Codex | **generated** — `setup-devkit.ps1` writes `~/.config/opencode/agents/myst/*.md` (`mode: subagent`, `permission: edit deny`, schema-valid `color`), body verbatim. The shared `.md` files are NEVER loaded directly — their `color: green|purple` violates OpenCode's color schema and a declared-key type error in the global agents dir hard-fails OpenCode machine-wide (source-traced) | Codex TOML agent schema: **declared** per official subagent docs (probed 2026-08-21; earlier local probe of codex-cli 0.147.0 found no CLI verb/config section — the CONTROL: the same probe method did find the plugin/marketplace machinery). Whether Codex accepts *plugin-delivered* agents remains **unverified** and is now moot — generation writes user config, the documented path. OpenCode generation: declared; live spawn pending the v4.41.0 verification pass |
+| `scripts/` | 5 | 4 are copied into the consumer's `.claude/scripts/` by `install.ps1`; `submit-audit-bridge.sh` is **not** — it stays in the plugin and is loaded by the plugin hook loader | same split | **not delivered** — the consumer scripts are hook payloads, and OpenCode has no hook loader to run them | declared — the 4 are `sourceTemplate` entries in `manifest-template.json`; the bridge is referenced by `hooks/hooks.json` as `${CLAUDE_PLUGIN_ROOT}/scripts/…` and appears in no manifest |
 
 ## Where a capability does not reach a tool, name the fallback
 
@@ -43,9 +45,10 @@ A capability with no fallback is a silent hole. These are the ones that exist:
 
 | Gap | Fallback | Where it is stated |
 |---|---|---|
-| Reviewer agents (Codex) | the **`review-changes`** skill — runs the same architecture + design rubrics inline and ends with the literal `Verdict:` line `review-and-submit` parses. Not only a Codex fallback: the `review-and-submit` fast path invokes it in agent-capable sessions too, so do not retire it if the agents are ever ported to TOML | `review-and-submit` SKILL.md, and the Codex plugin description |
+| Reviewer agents not installed (any tool) | the **`review-changes`** skill — runs the same architecture + design rubrics inline and ends with the literal `Verdict:` line `review-and-submit` parses. Not only a fallback: the `review-and-submit` fast path invokes it in agent-capable sessions too, so do not retire it now that the agents ARE ported (generated) for Codex/OpenCode | `review-and-submit` SKILL.md, and the Codex plugin description |
 | Project hooks (Codex) | ship the hook through the plugin's own `hooks/hooks.json` instead — `${CLAUDE_PLUGIN_ROOT}` resolves under Codex (it ships that name as a compat alias). Gate a one-tool hook on the tool to **exclude**: `[ -n "${CLAUDECODE:-}" ] && exit 0` | this file; `submit-audit-bridge.sh` is the worked example |
-| `.claude/rules/*.md` (Codex) | a counterpart section in `AGENTS.md` | `check-rule-parity.sh`, `check-rules-alignment.sh` |
+| ALL hooks (OpenCode) | none today — server-side Submit-Audit is the backstop, same as any non-hook host. Designed follow-up: `myst-guards.mjs`, a JS plugin spawning the SAME `.claude/scripts/*.sh` (`tool.execute.before` throw / `permission.ask` deny / `tool.execute.after`). Build triggers: a user trips a guard, or OpenCode's edit tool proves to flip CRLF on a Perforce consumer (then the `normalize-eol` port is rollout-blocking) | `SETUP.md` OpenCode gaps table; `docs/adr-0005-opencode-pointer-consumer.md` |
+| `.claude/rules/*.md` (Codex, OpenCode) | a counterpart section in `AGENTS.md` — OpenCode reads `AGENTS.md` natively, so the Codex parity invariant covers both | `check-rule-parity.sh`, `check-rules-alignment.sh` |
 
 **Not yet closed:** `check-script-standard.sh` (AngelScript naming) is wired only through a
 consumer's `.claude/settings.json`, so it is Claude-only. It *could* ship through
@@ -58,6 +61,16 @@ Markdown and Codex's are TOML. Porting `agents/*.md` to TOML and declaring them 
 `.codex-plugin/plugin.json` is the real remedy, and until someone tries it we do not know
 whether Codex's loader accepts plugin-delivered agents at all. The `review-changes` skill stays
 the fallback meanwhile — it is a genuine one, which is why this went unnoticed.
+
+**Closed in 4.41.0 — by generation, not by plugin delivery.** `setup-devkit.ps1` writes the
+two reviewers as user-scope agents for both Codex (`~/.codex/agents/*.toml`, per the official
+subagent docs schema: `name`/`description`/`developer_instructions`, `sandbox_mode =
+"read-only"`) and OpenCode (`~/.config/opencode/agents/myst/*.md`, `mode: subagent`,
+`permission: edit deny`). Fixed literal headers, body verbatim, regenerated on every script
+run, removed by `-Uninstall`. The plugin-delivered-agents question above is thereby moot —
+user config is the documented path for both hosts. The shared `.md` files stay untouched and
+Claude-native; their `tools:` restriction (the read-only enforcement under Claude) is never
+weakened, and the generated variants carry each host's NATIVE read-only mechanism instead.
 
 **Closed 2026-08-06 by an observed run — this was the table's longest-standing hole.** v4.26.0
 downgraded the `hooks/` row to `unverified` because the existing "measured" only ever covered

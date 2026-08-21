@@ -27,6 +27,49 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.41.0] - 2026-08-21 - OpenCode joins as a pointer consumer; one setup command for every tool
+
+MINOR: consumers get it automatically; nothing existing breaks. OpenCode support returns in
+the opposite shape to the v3.0.0-retired render-target model - a pointer, not copies
+(ADR-0005 records why, and what is deliberately NOT revived: no `templates/opencode/`, no
+`tool: opencode` manifest axis, no parity suites, no junctions, no runtime adapter).
+
+- **`setup-devkit.ps1`** (new, repo root): ONE command that installs AND updates the kit for
+  every AI CLI on the machine - drives Claude/Codex native plugin managers, and for OpenCode
+  maintains a dedicated clone at `~/.myst-agentic-workflow` (latest release tag,
+  version-aware sort), registers the 24 skills via `skills.paths` in the user's global
+  `opencode.json`, writes the unreal-engine MCP entry and a `permission.skill` ask-map
+  restoring `disable-model-invocation` semantics OpenCode ignores, then SELF-VERIFIES
+  delivery. Per-leg isolation (one broken CLI never aborts the others), `-Version` pin/
+  rollback, `-Uninstall`, JSONC configs never rewritten (strict-parse guard - pwsh 7's
+  ConvertFrom-Json silently accepts comments), deep foreign config preserved (explicit
+  -Depth; PS 5.1's default silently flattens). Suite: `run-devkit-setup-tests.ps1` (22
+  cases; 19 suites total).
+- **Reviewer agents reach Codex and OpenCode - generated, never forked.** The script writes
+  read-only variants from the unchanged shared source: Codex `~/.codex/agents/*.toml`
+  (official subagent schema, `sandbox_mode = "read-only"`), OpenCode
+  `~/.config/opencode/agents/myst/*.md` (`mode: subagent`, `permission: edit deny`). The
+  shared Claude files are never loaded directly by other tools - their frontmatter
+  (`color: green|purple`, `tools:` string) breaks OpenCode's parser machine-wide.
+  Measured during verification: OpenCode 1.18.19 ALSO consumes installed Claude plugins,
+  surfacing the plugin's reviewer copies as `myst-dev-kit:<name>` subagents that resolve
+  with `edit: true` - a writable reviewer on every dual-tool machine, predating this
+  release. The script now ships those twins DISABLED in the user's config; spawn the
+  generated `myst/<name>` variants. `review-changes` remains the inline fast path
+  everywhere.
+- **Renamed: `/update-myst-skills` -> `/update-project-scaffold`** (maintainer command; the
+  old name read as a per-user "update my skills" action, colliding with the real per-user
+  update story above; the command re-renders the COMMITTED project scaffold into a P4 CL).
+  MINOR per the install-break test: maintainer-only, zero committed consumer references
+  (swept). Update any personal notes that name it. `promote-myst-skills` keeps its name.
+- **Releases**: `.github/workflows/release.yml` turns every `v*` tag push into a GitHub
+  Release with that version's CHANGELOG section as the body; README/SETUP point at the
+  Releases page as the "what is latest" surface.
+- Docs: README head restructured (30-second setup, per-tool details, staying current);
+  SETUP.md restructured around the one-command story + OpenCode known-gaps table;
+  tool-capability-matrix gains the OpenCode column and the 2026-08-21 Codex subagent-socket
+  probe evidence; CONTRIBUTING documents tag->release and the rename semver ruling.
+
 ## [4.40.0] - 2026-08-20 - Submit review scales to the changelist; the phrase was never the gate
 
 > Second heading dated today, deliberately: 4.39.0 below is a separate change set already
