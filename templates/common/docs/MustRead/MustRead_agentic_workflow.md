@@ -85,7 +85,7 @@ Human-implemented:
 needs-triage -> ready-for-human -> (a human takes it from here)
 ```
 
-`ready-for-human` means a human writes the implementation — an agent does not pick the ticket up, and **only the user** may relabel it `ready-for-agent`.
+`ready-for-human` means a human writes the implementation — an agent does not pick the ticket up, and **only the user** changes its `Status:`, to any value (see `Docs/agents/triage-labels.md`).
 
 ## 5. Implementation
 
@@ -93,11 +93,13 @@ Use `/tdd` for new behavior or planned feature work.
 
 Use `/diagnosing-bugs` for bugs, regressions, broken behavior, or performance problems.
 
-Implementation should move the ticket to:
+Implementation moves a **`ready-for-agent`** ticket to:
 
 ```text
 Status: claimed
 ```
+
+Never a `ready-for-human` one — that ticket is not yours to start, and its `Status:` is user-owned.
 
 ## 6. Verification
 

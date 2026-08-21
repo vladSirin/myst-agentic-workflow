@@ -76,12 +76,12 @@ Triage **roles** say who should pick the ticket up:
 - `needs-triage`: not yet evaluated.
 - `needs-info`: missing information blocks safe classification or implementation.
 - `ready-for-agent`: fully specified; an agent can implement it.
-- `ready-for-human`: a human implements this one. An agent does not pick it up, and **only the user** may relabel it `ready-for-agent`.
+- `ready-for-human`: a human implements this one. An agent does not pick it up, and **only the user** changes its `Status:` — to any value, not just `ready-for-agent`.
 - `wontfix`: intentionally not pursued.
 
 ### 5. Implementation
 
-Use `/tdd` for planned feature work and `/diagnosing-bugs` for bugs or regressions. Set the ticket to `Status: claimed` while working.
+Use `/tdd` for planned feature work and `/diagnosing-bugs` for bugs or regressions. Set a **`ready-for-agent`** ticket to `Status: claimed` while working — never a `ready-for-human` one.
 
 ### 6. Verification
 

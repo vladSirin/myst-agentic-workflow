@@ -47,10 +47,12 @@ implementation. An agent does not take the ticket and work slowly; it reports th
 waiting for a human and moves on.
 
 > [!CAUTION]
-> **`ready-for-human` → `ready-for-agent` is a user-only transition.** An agent that believes a
-> ticket is mislabeled says so and stops — it never relabels and proceeds. Otherwise the label is
-> self-granting: an agent that can award itself `ready-for-agent` can then submit under a
-> goal-mode authorization in the same run, which is the exact gate this label exists to hold.
+> **A `ready-for-human` ticket's `Status:` is user-owned — only the user changes it, to ANY
+> value.** An agent that believes a ticket is mislabeled says so and stops; it never rewrites the
+> field and proceeds. Not just `ready-for-agent`: every gate matches the *current* string and
+> nothing records the previous one, so setting `claimed` silences them all and leaves no trace.
+> Otherwise the label is self-granting — an agent that can award itself a workable state can then
+> submit under a goal-mode authorization in the same run.
 
 **`ready-for-agent` is a verification label, not a submit authorization.** It answers "can the
 agent verify every required test case", nothing more. Publishing the resulting change is still

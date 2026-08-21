@@ -41,7 +41,7 @@ The **ONLY** exception is when the user **explicitly** states one of:
 - Or similar explicit override
 
 > [!CAUTION]
-> **The exception itself has one carve-out: `ready-for-human` tickets.** That label means a human implements the ticket, so a CL against one should not exist — and if you are holding one, it is NEVER covered by the batch override above, in any mode. `p4 shelve -c <CL>` it (files stay open locally — exclude from later reconcile/submit-all), append `HITL-SHELVED: awaiting human review` to its description, report it, and continue; the human unshelves, reviews, and submits. Relabeling it `ready-for-agent` to clear the block is a user-only transition — never yours. See the `pre-implementation-gate` skill's handoff section.
+> **The exception itself has one carve-out: `ready-for-human` tickets.** That label means a human implements the ticket, so a CL against one should not exist — and if you are holding one, it is NEVER covered by the batch override above, in any mode. `p4 shelve -c <CL>` it (files stay open locally — exclude from later reconcile/submit-all), append `GATED-SHELVED: process error - agent implemented a ready-for-human ticket` to its description, report it, and continue; the human unshelves, reviews, and submits. Changing its `Status:` to clear the block — to `ready-for-agent`, to `claimed`, to anything — is user-only, never yours. See the `pre-implementation-gate` skill's handoff section.
 
 ---
 

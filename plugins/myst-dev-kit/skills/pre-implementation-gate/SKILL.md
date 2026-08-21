@@ -96,17 +96,20 @@ finish carefully — it is one you do not pick up at all. Report that it is wait
 and move to other work.
 
 > [!CAUTION]
-> **The relabel is user-only.** `ready-for-human` → `ready-for-agent` is a transition only the
-> user makes. An agent that believes a ticket is mislabeled **says so and stops** — it does not
-> relabel and proceed. Without this rule the label is worthless: an agent that can grant itself
-> `ready-for-agent` can then submit under a goal-mode authorization in the same run, which is
-> exactly the gate the label exists to hold.
+> **The label is user-owned.** Only the user changes a `ready-for-human` ticket's `Status:`, and
+> that means **to any value, not just `ready-for-agent`**. An agent that believes a ticket is
+> mislabeled **says so and stops** — it does not rewrite the field and proceed.
+>
+> Why "any value": every gate matches the *current* string `ready-for-human`, and nothing records
+> what the Status used to be. Setting `claimed` — the value the workflow tells you to set when you
+> start work — silences all of them exactly as well as `ready-for-agent` would, and leaves no
+> trace that a gate was bypassed. Guarding one edge of the state machine guards nothing.
 >
 > **If you find yourself holding a CL that implements a `ready-for-human` ticket, that is a
 > process error, not a workflow.** Do not submit it, in any mode, attended or not. Run the review
 > pass, `p4 shelve -c <CL>` — the depot is untouched, but the files STAY OPEN locally: exclude
 > that CL from any later reconcile/submit-all, and re-shelve with `p4 shelve -f -c <CL>` if its
-> files change again. Append `HITL-SHELVED: awaiting human review` to the CL description
+> files change again. Append `GATED-SHELVED: process error - agent implemented a ready-for-human ticket` to the CL description
 > (alongside its `Ticket:` line), report it, and continue with other work. Never `p4 submit` it
 > yourself; the human's unshelve-review-submit IS the approval.
 
