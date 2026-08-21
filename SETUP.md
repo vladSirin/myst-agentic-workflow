@@ -34,7 +34,7 @@ remembering three different command sets:
 | Detected tool | What the script does |
 |---|---|
 | Claude Code | `claude plugin marketplace update myst`, then install-if-missing / `claude plugin update myst-dev-kit@myst`. Reminds you to restart the session. |
-| Codex | `codex plugin marketplace add` (if unregistered) + `codex plugin marketplace upgrade` + `codex plugin add` (if missing), then generates the two reviewer agents as `~/.codex/agents/*.toml` (`sandbox_mode = "read-only"`). |
+| Codex | `codex plugin marketplace add` (tolerated if registered) + `codex plugin marketplace upgrade` + always attempts `codex plugin add` (harmless when installed; fails loudly only if the list still says `not installed`), then generates the two reviewer agents as `~/.codex/agents/*.toml` (`sandbox_mode = "read-only"`). |
 | OpenCode | Checks the clone out at the latest release tag, registers the 24 skills via `skills.paths` in `~/.config/opencode/opencode.json`, writes the unreal-engine MCP entry and the manual-skill ask-map, generates the two reviewer agents, then self-verifies delivery. |
 
 One tool failing does not abort the others; the summary names any failed leg.

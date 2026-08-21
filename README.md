@@ -81,23 +81,25 @@ Four lifecycle commands cover the entire flow — all four dry-run first, prompt
 
 The repo is a **plugin marketplace** for Claude Code and Codex (`.claude-plugin/marketplace.json` / `.agents/plugins/marketplace.json`, consistency enforced by `scripts/run-marketplace-tests.ps1` + `claude plugin validate`) and a **`skills.paths` source** for OpenCode. Public repo — installs need no auth (if it goes private later: collaborator access + `gh auth login`).
 
-## Provenance
+## Per-tool notes (measured, not inferred)
 
-Extracted from `Myst_Proto`, a UE5/Perforce game project, and offered as a starting point for anyone else. MIT-licensed, generic core, honest about origin. The `myst-` prefix says where it came from, not who it's for.
-
-The `overlays/myst-project/` directory ships the original project-specific content **as a reference example, not generic content** — see [`overlays/myst-project/README.md`](overlays/myst-project/README.md). `setup.ps1` never auto-installs it.
-
-**Two Codex limits worth knowing before you design around them** (measured, not inferred):
+**Two Codex limits worth knowing before you design around them:**
 
 - **No auto-loaded rules directory.** Codex reads `AGENTS.md` and nothing else, so an always-on `.claude/rules/*.md` reaches Claude and never reaches Codex. `check-rule-parity.sh` guards that gap.
 - **No project-level hooks.** Codex loads hooks from `~/.codex/hooks.json` and from installed plugins only; a hooks file committed in the repo is ignored. A repo-local hook is Claude-only unless it ships through the plugin.
 
 Notes:
 - The plugin's `hooks/hooks.json` delivers the client Submit-Audit warning **to Codex only** — under Claude Code the bridge no-ops because the consumer project's committed `.claude/settings.json` already registers the same audit (no double warnings). On consumers without the Myst governance core, the hook exits silently. **Verified firing under Codex 2026-08-06** (`docs/tool-capability-matrix.md`); it had never run on any host before v4.26.0.
-- `agents/` is loaded natively by Claude only. Codex and OpenCode get the same two reviewers as **generated** read-only variants written by `setup-devkit.ps1` (Codex: `~/.codex/agents/*.toml` with `sandbox_mode = "read-only"`; OpenCode: `~/.config/opencode/agents/myst/*.md` with `permission: edit deny`) — fixed known-good headers, body verbatim from the shared source, regenerated on every script run. The shared `.md` files are never hand-forked and never loaded directly by the other tools (their Claude frontmatter breaks those parsers).
+- `agents/` is loaded natively by Claude only. Codex and OpenCode get the same two reviewers as **generated** read-only variants written by `setup-devkit.ps1` (Codex: `~/.codex/agents/*.toml` with `sandbox_mode = "read-only"`; OpenCode: `~/.config/opencode/agents/myst/*.md` with `permission: edit deny`) — fixed known-good headers, body verbatim from the shared source, regenerated on every script run. The shared `.md` files are never hand-forked, and OpenCode's agents directory never loads them directly (their Claude frontmatter fails its parser). One measured exception to keep straight: OpenCode's Claude-plugin compat path DOES surface the installed plugin's copies as `myst-dev-kit:<name>` subagents, resolving **writable** (`edit: true`) — so `setup-devkit.ps1` ships those twins disabled in your config; spawn the generated `myst/<name>` variants instead (same note in [SETUP.md](SETUP.md)).
 - Former always-on workflows are now **on-demand skills** with trigger-strength descriptions (`review-and-submit`, `changelist-verification`, `pre-implementation-gate`, ...) — advisory by design; the server-side Submit-Audit is the enforcement backstop.
 
-**Upgrading an older install?** Run [`upgrade.ps1`](upgrade.ps1) (preview, then `-Apply`) — it adds new skills, refreshes untouched files, **preserves your customizations**, removes retired skills, and (for Perforce) wraps it all in one reviewable changelist. `setup.ps1`/`update.ps1` can't do this jump (they drive install from the stale manifest). See [`docs/upgrade.md`](docs/upgrade.md).
+**Upgrading an older scaffold install?** Run [`upgrade.ps1`](upgrade.ps1) (preview, then `-Apply`) — it adds new skills, refreshes untouched files, **preserves your customizations**, removes retired skills, and (for Perforce) wraps it all in one reviewable changelist. `setup.ps1`/`update.ps1` can't do this jump (they drive install from the stale manifest). See [`docs/upgrade.md`](docs/upgrade.md).
+
+## Provenance
+
+Extracted from `Myst_Proto`, a UE5/Perforce game project, and offered as a starting point for anyone else. MIT-licensed, generic core, honest about origin. The `myst-` prefix says where it came from, not who it's for.
+
+The `overlays/myst-project/` directory ships the original project-specific content **as a reference example, not generic content** — see [`overlays/myst-project/README.md`](overlays/myst-project/README.md). `setup.ps1` never auto-installs it.
 
 ## Why this package exists
 
@@ -240,8 +242,8 @@ Retired names old manifests may still carry (`afk-autonomy`, legacy alias `ue-pe
 
 ## FAQ
 
-**Do I need both tools (Claude Code / Codex)?**
-No. Pass `-Tools` to select a subset, e.g. `setup.ps1 -TargetRoot ... -Tools claude`. The other tool directory simply isn't written. You can add tools later by re-running `setup.ps1` with a broader `-Tools` flag and `-Force`.
+**Do I need every tool (Claude Code / Codex / OpenCode)?**
+No. For the per-user kit, `setup-devkit.ps1` only touches the tools it finds on PATH (or scope it with `-Tool`). For the project scaffold, pass `-Tools` to select a subset, e.g. `setup.ps1 -TargetRoot ... -Tools claude` — the other tool directory simply isn't written; add tools later by re-running with a broader `-Tools` flag and `-Force`. OpenCode is deliberately NOT a scaffold render target (no `-Tools opencode` exists) — it reaches the kit through `setup-devkit.ps1`'s config pointer instead.
 
 **Do I need Perforce?**
 No. `setup.ps1` defaults to `filesystem` mode when it sees no `.p4ignore`. The core skills + workflows are version-control-agnostic. The Perforce-specific workflows only install if you opt in (auto-detected or explicit `-Overlays perforce`).

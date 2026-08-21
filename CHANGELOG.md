@@ -39,6 +39,12 @@ release end-to-end on a machine where the Codex plugin was genuinely not install
   the add (harmless when already installed) and judges the row TEXT afterwards - the leg
   FAILs loudly only if the row still says `not installed`. Verified live: the same machine
   went `not installed` -> `installed, enabled 4.41.0` on the fixed leg.
+- Docs consistency pass (README vs SETUP): the per-tool notes block is no longer stranded
+  inside Provenance; README now carries the same writable-twin story SETUP documents
+  (OpenCode's Claude-plugin compat path surfaces `myst-dev-kit:<name>` writable - the script
+  disables them; spawn `myst/<name>`); SETUP's Codex row matches the always-attempt-add
+  implementation; the FAQ covers three tools and states OpenCode is deliberately not a
+  scaffold render target.
 - Second heading dated today, deliberately: 4.41.0 below is a separate change set already
   merged to `main` (PR #85) and tagged.
 
