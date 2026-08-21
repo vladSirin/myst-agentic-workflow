@@ -185,5 +185,5 @@ that gap is the release's live risk, and it is the owner's call to accept or to 
   Also fixed from its INFO set: deterministic key order, one shared `$localOrigin` roster
   (`scripts/lib/SkillRoster.ps1`), quoted `cmd` interpolation, and a zero-guard on the derived
   count test so it cannot pass vacuously at `0 == 0`.
-- **Owner confirmation** → **pending**. This is the ADR-0006 gate; nothing merges, tags, or
-  publishes without it.
+- **Owner confirmation** → **GRANTED**. PR #87 merged to `main` 2026-08-21 (merge `c30201c`),
+  release tagged `v4.43.0`. The ADR-0006 gate is discharged for this sync.
