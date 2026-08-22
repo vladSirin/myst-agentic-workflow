@@ -3,7 +3,7 @@ name: architecture-reviewer
 description: "Use this agent to review written code for architectural quality — on request, or before a change is submitted. Returns prioritized BLOCKING/WARNING/INFO findings ending with a parseable Verdict line."
 tools: Glob, Grep, Read, WebFetch, TodoWrite, WebSearch, mcp__ide__getDiagnostics, Skill, Bash
 model: opus
-# effort: inherits session — judgment reviewer; never set low (weakens verification)
+effort: max # judgment reviewer — pinned: cheaper session defaults must never weaken verification
 color: green
 ---
 
