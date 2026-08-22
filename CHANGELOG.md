@@ -27,7 +27,7 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
-## [4.44.0] - 2026-08-22 - The re-derive rule covers prose, and the preflight stops naming a deleted script
+## [4.45.0] - 2026-08-22 - The re-derive rule covers prose, and the preflight stops naming a deleted script
 
 MINOR: consumers get it automatically. Three corrections to `review-and-submit`, two of them to
 text that had been describing machinery deleted in CL 2454.
@@ -68,6 +68,17 @@ cost lives in a tail of 8-13-round subjects that nothing here addresses.
 
 **Consumers:** no action. The removed preflight item was already un-runnable, so nothing that worked
 stops working.
+## [4.44.0] - 2026-08-22 - Reviewer agents: pin effort at max
+
+MINOR: behaviour change consumers get automatically.
+
+`radical-design-critic` and `architecture-reviewer` now carry `effort: max` in
+frontmatter instead of inheriting the session's effort. Rationale: sessions are
+moving to cheaper effort defaults for token cost, and reviewer inheritance meant
+a cost setting silently downgraded the verification gate — the D0–D5 ground-truth
+harness measured a weakened critic falling from 6/6 defects found to 0/2 on one
+class. Review runs are ~0.01% of weekly tokens, so the pin costs nothing
+measurable while making review quality independent of session economics.
 
 ## [4.43.1] - 2026-08-22 - README: say which skills you type and which the agent reaches for
 

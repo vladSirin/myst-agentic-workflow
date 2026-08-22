@@ -3,7 +3,7 @@ name: radical-design-critic
 description: "Use this agent to stress-test a plan before it is built — a design doc, spec, or proposal. Invoke proactively when the user shares one or asks for feedback on an approach. Returns categorized findings ending with a parseable Verdict line."
 tools: Glob, Grep, Read, WebFetch, WebSearch, TodoWrite, Skill, Bash
 model: opus
-# effort: inherits session — judgment reviewer; never set low (weakens verification)
+effort: max # judgment reviewer — pinned: cheaper session defaults must never weaken verification
 color: purple
 ---
 
