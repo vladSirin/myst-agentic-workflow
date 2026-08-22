@@ -4,7 +4,23 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. Every skill and agent lives ONCE; each tool consumes the same files through its native mechanism.
 
-[![tests](https://img.shields.io/badge/tests-20%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.43.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-21%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.43.1-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+## TL;DR
+
+- **What it is** — one dev kit (31 skills, 2 reviewer agents, 3 commands) shared by Claude Code, Codex and OpenCode. Every skill lives once; each tool reads the same files through its own mechanism.
+- **Install** — `git clone` + run `setup-devkit.ps1`. Re-run the same command to update. [Jump to Install](#install-30-second-setup).
+- **The 13 skills you actually type** — `/to-spec`, `/to-tickets`, `/triage`, `/wayfinder`, `/implement`, `/grill-me`, `/handoff`, and friends. [Jump to the catalog](#skills-you-invoke).
+- **The other 18 fire on their own** when the task fits, so it is worth [skimming what they are](#skills-the-agent-reaches-for) before you install.
+- **Adopting it in your own project?** The consumer scaffold (bibles, rules, hook scripts) installs separately — see [Adopting the scaffold](#install-30-second-setup) and [SETUP.md](SETUP.md).
+
+## Contents
+
+- [Install](#install-30-second-setup) · [What you get](#what-you-get) · [Per-tool notes](#per-tool-notes-measured-not-inferred)
+- [Why this package exists](#why-this-package-exists) — the six problems it solves
+- **Reference** — [lifecycle commands](#lifecycle-commands-top-level) · [**skills you invoke**](#skills-you-invoke) · [skills the agent reaches for](#skills-the-agent-reaches-for) · [divergence from upstream](#divergence-from-upstream-and-why) · [agents](#agents) · [overlays](#overlays)
+- [FAQ](#faq) · [Gotchas](#gotchas-known-limitations) · [Layout](#layout) · [Status](#status) · [License](#license) · [Contributing](#contributing)
+
 
 ## Install (30-second setup)
 
@@ -156,7 +172,71 @@ The four commands you'll actually run.
 
 ### Skills (shipped in the `myst-dev-kit` plugin)
 
-The engineering/productivity set is adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, attribution preserved in [LICENSE](LICENSE); the pinned commit is recorded in `package-manifest.json`), vendored **verbatim**. The bundle also carries the local-origin skills (design, review-changes, roundtable, setup wizard) and the **team process rules converted to on-demand skills**. **31 skills total**; every skill name below links to its real `SKILL.md` under `plugins/myst-dev-kit/skills/`.
+**31 skills**, split by the thing that matters most when you are picking one: **who starts it.**
+
+A **user-invoked** skill runs only when you type it (`/to-spec`). These orchestrate, and they are
+the entry points worth remembering — there are 13 of them. A **model-invoked** skill can be typed
+*or* reached for by the agent on its own when the task fits; these hold reusable discipline that
+should apply without being asked. A user-invoked skill may call model-invoked ones, never another
+user-invoked one.
+
+Worth knowing before you install: a model-invoked skill can fire on work you did not explicitly
+ask about — `writing-for-agents` triggers on edits to `CLAUDE.md` or `AGENTS.md`. Claude and Codex
+gate this with the `disable-model-invocation` frontmatter key; **OpenCode ignores that key**, so
+`setup-devkit.ps1` restores the same gate as a `permission.skill` ask-map (its `$ManualSkills`
+list is exactly the user-invoked set below, asserted by `scripts/run-catalog-tests.ps1`).
+
+Provenance: the engineering/productivity set is vendored **verbatim** from
+[mattpocock/skills](https://github.com/mattpocock/skills) (MIT, attribution in [LICENSE](LICENSE);
+pinned commit in `package-manifest.json`); the rest is local-origin.
+
+#### Skills you invoke
+
+The 13 entry points worth remembering.
+
+**Plan the work**
+
+| Skill | Use it when |
+|---|---|
+| [`/to-spec`](plugins/myst-dev-kit/skills/to-spec/SKILL.md) | Turn the current conversation into a spec on the issue tracker (specs start `needs-triage`). |
+| [`/to-tickets`](plugins/myst-dev-kit/skills/to-tickets/SKILL.md) | Break a spec/plan into independently-grabbable vertical-slice tickets. |
+| [`/triage`](plugins/myst-dev-kit/skills/triage/SKILL.md) | Move tickets through the lifecycle state machine. |
+| [`/wayfinder`](plugins/myst-dev-kit/skills/wayfinder/SKILL.md) | Plan an effort too big for one agent session as a shared map of decision tickets, resolved one at a time. |
+
+**Do the work**
+
+| Skill | Use it when |
+|---|---|
+| [`/implement`](plugins/myst-dev-kit/skills/implement/SKILL.md) | Implement a planned slice from a spec/ticket. |
+| [`/improve-codebase-architecture`](plugins/myst-dev-kit/skills/improve-codebase-architecture/SKILL.md) | Scan a codebase for deepening opportunities, presented as a visual HTML report, then grill through the one you pick. |
+
+**Pressure-test your thinking**
+
+| Skill | Use it when |
+|---|---|
+| [`/grill-with-docs`](plugins/myst-dev-kit/skills/grill-with-docs/SKILL.md) | Stress-test a plan against the project's domain language before a non-trivial change; writes ADRs + glossary as it goes. |
+| [`/grill-me`](plugins/myst-dev-kit/skills/grill-me/SKILL.md) | The user-invoked half of the grilling pair -- ask to be grilled on your own plan. |
+| [`/to-questionnaire`](plugins/myst-dev-kit/skills/to-questionnaire/SKILL.md) | Turn a decision you can't answer into a questionnaire for whoever can. |
+
+**Hand off and explain**
+
+| Skill | Use it when |
+|---|---|
+| [`/handoff`](plugins/myst-dev-kit/skills/handoff/SKILL.md) | Compact the session into a handoff doc for another agent. |
+| [`/wait-what`](plugins/myst-dev-kit/skills/wait-what/SKILL.md) | Re-pitch a message that didn't land. |
+| [`/teach`](plugins/myst-dev-kit/skills/teach/SKILL.md) | Learn a new concept or skill in-workspace, with lessons and a learning record. |
+
+**Set up the kit**
+
+| Skill | Use it when |
+|---|---|
+| [`/setup-agentic-workflow`](plugins/myst-dev-kit/skills/setup-agentic-workflow/SKILL.md) | Interactive wizard to install/upgrade the scaffold in a project -- detects the environment, proposes tools + overlays, asks one question at a time, dry-runs, then writes (front-end over `setup.ps1`/`upgrade.ps1`). |
+
+#### Skills the agent reaches for
+
+The other 18.
+
+Typeable too, but you should not have to. Listed so you know what can fire on its own.
 
 **Engineering**
 
@@ -164,17 +244,10 @@ The engineering/productivity set is adapted from [mattpocock/skills](https://git
 |---|---|
 | [`/diagnosing-bugs`](plugins/myst-dev-kit/skills/diagnosing-bugs/SKILL.md) | A hard bug / perf regression: build a feedback loop, reproduce + minimise, hypothesise, instrument, fix + regression-test. |
 | [`/tdd`](plugins/myst-dev-kit/skills/tdd/SKILL.md) | Build a feature / fix a bug with red-green-refactor, one vertical slice at a time. |
-| [`/improve-codebase-architecture`](plugins/myst-dev-kit/skills/improve-codebase-architecture/SKILL.md) | Scan a codebase for deepening opportunities, presented as a visual HTML report, then grill through the one you pick. |
 | [`/codebase-design`](plugins/myst-dev-kit/skills/codebase-design/SKILL.md) | Shared vocabulary for designing deep modules and seams. |
 | [`/domain-modeling`](plugins/myst-dev-kit/skills/domain-modeling/SKILL.md) | Actively build/sharpen the domain model -- challenge terms, write the glossary + ADRs inline. |
-| [`/grill-with-docs`](plugins/myst-dev-kit/skills/grill-with-docs/SKILL.md) | Stress-test a plan against the project's domain language before a non-trivial change; writes ADRs + glossary as it goes. |
 | [`/research`](plugins/myst-dev-kit/skills/research/SKILL.md) | Investigate a question against high-trust primary sources and capture the findings as a Markdown file in the repo -- reading legwork you can delegate. |
-| [`/to-spec`](plugins/myst-dev-kit/skills/to-spec/SKILL.md) | Turn the current conversation into a spec on the issue tracker (specs start `needs-triage`). |
-| [`/to-tickets`](plugins/myst-dev-kit/skills/to-tickets/SKILL.md) | Break a spec/plan into independently-grabbable vertical-slice tickets. |
-| [`/triage`](plugins/myst-dev-kit/skills/triage/SKILL.md) | Move tickets through the lifecycle state machine. |
-| [`/implement`](plugins/myst-dev-kit/skills/implement/SKILL.md) | Implement a planned slice from a spec/ticket. |
 | [`/resolving-merge-conflicts`](plugins/myst-dev-kit/skills/resolving-merge-conflicts/SKILL.md) | Resolve merge conflicts (Perforce specifics live project-side in `Docs/agents/perforce-notes.md`). |
-| [`/wayfinder`](plugins/myst-dev-kit/skills/wayfinder/SKILL.md) | Plan an effort too big for one agent session as a shared map of decision tickets, resolved one at a time. |
 | [`/prototype`](plugins/myst-dev-kit/skills/prototype/SKILL.md) | Build a throwaway prototype to answer a design or state-model question before committing to it. |
 | [`/wizard`](plugins/myst-dev-kit/skills/wizard/SKILL.md) | Generate an interactive wizard for steps only a human can perform (credentials, dashboards, cutovers). |
 
@@ -183,21 +256,25 @@ The engineering/productivity set is adapted from [mattpocock/skills](https://git
 | Skill | Use it when |
 |---|---|
 | [`/grilling`](plugins/myst-dev-kit/skills/grilling/SKILL.md) | Relentless plan/design interview until shared understanding (`grill-with-docs` delegates here). |
-| [`/grill-me`](plugins/myst-dev-kit/skills/grill-me/SKILL.md) | The user-invoked half of the grilling pair -- ask to be grilled on your own plan. |
-| [`/handoff`](plugins/myst-dev-kit/skills/handoff/SKILL.md) | Compact the session into a handoff doc for another agent. |
-| [`/to-questionnaire`](plugins/myst-dev-kit/skills/to-questionnaire/SKILL.md) | Turn a decision you can't answer into a questionnaire for whoever can. |
-| [`/teach`](plugins/myst-dev-kit/skills/teach/SKILL.md) | Learn a new concept or skill in-workspace, with lessons and a learning record. |
-| [`/wait-what`](plugins/myst-dev-kit/skills/wait-what/SKILL.md) | Re-pitch a message that didn't land. |
 | [`/writing-for-agents`](plugins/myst-dev-kit/skills/writing-for-agents/SKILL.md) | Write docs agents actually follow -- skills, `AGENTS.md`, `CLAUDE.md`. |
 
-**Local (not from upstream)**
+**Team process (the governance rules, on demand)**
+
+| Skill | Use it when |
+|---|---|
+| [`/agentic-workflow`](plugins/myst-dev-kit/skills/agentic-workflow/SKILL.md) | Which stage of the delivery process applies -- discussion, spec, tickets, triage, build, verify, submit. |
+| [`/pre-implementation-gate`](plugins/myst-dev-kit/skills/pre-implementation-gate/SKILL.md) | About to propose a multi-CL plan: checks a spec, tickets and triage exist first. |
+| [`/changelist-verification`](plugins/myst-dev-kit/skills/changelist-verification/SKILL.md) | More than one changelist is in play: execute them one at a time with a verify gate between. |
+| [`/review-and-submit`](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md) | The full pre-submit protocol -- organize the CL, route reviewers, record the verdict, gate the submit. |
+| [`/auto-plan-mode`](plugins/myst-dev-kit/skills/auto-plan-mode/SKILL.md) | Deciding whether the request in front of you needs a plan before the first edit. |
+
+**Local-origin (no upstream counterpart)**
 
 | Skill | Use it when |
 |---|---|
 | [`/design`](plugins/myst-dev-kit/skills/design/SKILL.md) | Create a design document with reviewer-agent feedback and iterate to approval; the team's doc-process rules (naming, lifecycle, BLOCKING/WARNING/INFO) live in the companion [PROCESS.md](plugins/myst-dev-kit/skills/design/PROCESS.md). |
 | [`/review-changes`](plugins/myst-dev-kit/skills/review-changes/SKILL.md) | Pre-submit review of a CL/diff INLINE: the `review-and-submit` fast path (small CLs), and any session without reviewer subagents (e.g. Codex); same rubrics, same parseable `Verdict:` line. |
 | [`/roundtable`](plugins/myst-dev-kit/skills/roundtable/SKILL.md) | Multi-perspective design discussion when one viewpoint isn't enough. |
-| [`/setup-agentic-workflow`](plugins/myst-dev-kit/skills/setup-agentic-workflow/SKILL.md) | Interactive wizard to install/upgrade the scaffold in a project -- detects the environment, proposes tools + overlays, asks one question at a time, dry-runs, then writes (front-end over `setup.ps1`/`upgrade.ps1`). |
 
 Plus the plugin **commands** (not skills), all maintainer/build-machine-facing: `/update-project-scaffold` (re-render the committed project scaffold from upstream; formerly `/update-myst-skills`), `/promote-myst-skills` (push a local improvement out), and `/sync-build-submit` (UE build-machine pipeline).
 
@@ -211,9 +288,9 @@ We track upstream **faithfully** — name + body + architecture + verbatim front
 - **The only content divergences** are 7 lines across 6 skills, all of the same kind: an upstream reference to a skill we do not vendor, remapped to our equivalent. They are listed in the v4.43.0 divergence ledger and guarded by a grep in the release checklist.
 - Everything else is byte-faithful to upstream `0ab1b63`.
 
-### Process-rule skills (formerly always-on workflows)
+### Process-rule skills — what each one enforces
 
-Converted to on-demand skills in v4.0.0 — each carries a trigger-strength description so the agent loads it at the right moment; all are advisory (the server Submit-Audit is the backstop).
+The five team-process skills are listed in the catalog above; this is the other lens on them: what fires them and what they hold you to. Converted from always-on workflows to on-demand skills in v4.0.0 — each carries a trigger-strength description so the agent loads it at the right moment; all are advisory (the server Submit-Audit is the backstop).
 
 | Skill | Fires when | What it enforces |
 |---|---|---|
