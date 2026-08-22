@@ -36,10 +36,15 @@ That distinction matters more here since v4.43.0, which adopted three model-invo
 `writing-for-agents` fires on edits to `CLAUDE.md` or `AGENTS.md`, work nobody explicitly asks
 for. A reader deciding whether to install had no way to see that.
 
-- Every catalog row now carries a `user` / `model` marker, **derived from each skill's
-  `disable-model-invocation` frontmatter**, plus a short explanation of what the axis means and
-  the rule that a user-invoked skill may call model-invoked ones but never another user-invoked
-  one.
+- **The catalog is now organised by who invokes a skill**, not by category-with-a-column. The 13
+  you type come FIRST, grouped by what you reach for them for (plan the work, do the work,
+  pressure-test your thinking, hand off and explain, set up the kit); the 18 the agent reaches for
+  follow. Section membership is derived from each skill's `disable-model-invocation` frontmatter.
+  Also states the rule that a user-invoked skill may call model-invoked ones but never another
+  user-invoked one.
+- **A TL;DR and a Contents block** at the top: what this is, how to install, and direct links into
+  the two skill sections, so a first-time reader is not hunting through six problem statements to
+  find out what they can type.
 - Documents the per-tool caveat: Claude and Codex honour the frontmatter key, **OpenCode ignores
   it**, so `setup-devkit.ps1` restores the same gate as a `permission.skill` ask-map -- and its
   `$ManualSkills` list is exactly the user-invoked set.
@@ -48,9 +53,11 @@ for. A reader deciding whether to install had no way to see that.
   `changelist-verification`, `review-and-submit`, `auto-plan-mode`) were described in prose and
   never catalogued. They now have their own table.
 - **`scripts/run-catalog-tests.ps1`** (new, CI-discovered) asserts all three facts against the
-  tree: every skill catalogued both ways, every marker matching its frontmatter, and the
-  user-invoked set equal to `$ManualSkills`. Suite badge 20 -> 21. The catalog was drifting
+  tree: every skill catalogued both ways, every skill in the section its frontmatter dictates, and
+  the user-invoked set equal to `$ManualSkills`. Suite badge 20 -> 21. The catalog was drifting
   silently because nothing checked it -- the same reason the suite-count badge exists.
+- Section headings deliberately carry **no counts**: a count in a heading is part of the anchor, so
+  every link to it breaks the day a skill is added. The numbers live in the prose beneath.
 
 ## [4.43.0] - 2026-08-21 - Re-vendor mattpocock/skills e9fcdf9 -> 0ab1b63, +8 skills, verbatim-by-default
 
