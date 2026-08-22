@@ -441,10 +441,13 @@ Findings:
   assert "__" not in DESC, "unfilled template token"
   ```
 
-  Then regenerate immediately before `p4 submit`. The same applies to any other derived
-  figure you put in a description — byte counts, file counts, finding tallies: re-derive
-  them from the live artifact at submit time, or leave them out. A number measured at
-  review time and frozen into a description is wrong by submit time more often than not.
+  Then regenerate immediately before `p4 submit`. The same applies to **any assertion about
+  the CL's own content**, not only the numeric ones — byte counts, file counts and finding
+  tallies, but equally "verified by diff", "zero non-comment lines changed", or a quoted
+  snippet of what one of its files now says. Re-derive from the live artifact at submit time,
+  or leave it out. Anything measured at review time and frozen into a description is wrong by
+  submit time more often than not, and **the review's own fixes are what make it wrong** —
+  which is why the prose ones rot hardest in exactly the CLs that took the most rounds.
 - Fast path: `Reviewer: self (inline, review-changes skill) - Verdict: GREEN (fast path: config-only, 3 files)`. Trivial path: `Reviewer: self - Verdict: GREEN (trivial path: docs-only, 7 files)` — no rubric ran, and the line says so. If the skill did not run and the CL was not tier 0, the honest line is `Reviewer: self - Verdict: ... (quick review)` — never assert a rubric-backed review that did not happen.
 - `Findings:` one-liners only, each prefixed with its disposition: `[FIXED]` (fixed before submit), `[ACCEPTED]` (submitting with it), `[DEFERRED]` (tracked for later).
 - Cap at ~6 finding lines; summarize overflow as `- ...and N more INFO items (see review transcript)`.
@@ -468,15 +471,16 @@ After the Review Record block is in place:
 
 1. **Run repo preflight validators** — on any warning or non-zero exit: report it, fix, and re-run before submitting:
    1. Project preflight checks (e.g. `check-uproject-assoc.sh` under your tool's scripts dir — `.claude/scripts/` or `.Codex/scripts/` — when the `ue` overlay is installed).
-   2. `submit-audit-warn.sh --check-cl {CL_ID}` when the Submit-Audit hook is installed — client mirror of the server audit: `[JobFamily][Name]` tags, review-block presence, and EOL flips (Edit/Write tools silently convert CRLF→LF on text source). Normalize any flagged file LF→CRLF as the **last** content change before submit.
+   2. **There is no client-side audit to run.** `submit-audit-warn.sh` was deleted in CL 2454.
+      Its checks split two ways, and neither is a step you perform:
+      - **EOL flips** — `normalize-eol.sh` is a PostToolUse hook on Edit that repairs the
+        mixed-ending fingerprint the moment a partial rewrite creates it. Nothing to normalize
+        at submit time; its header notes it is now the only thing preventing that class.
+      - **Everything else** — the server trigger, post-commit, warning to the team channel.
 
-      > **Exit 0 means "no check produced a warning" — NOT "this CL was audited and is clean."**
-      > A nonexistent CL number, an already-submitted CL, a garbage CL id, and an unreachable
-      > `p4` all fetch zero files, so no check fires, so the run exits 0 and prints nothing —
-      > *identical* to a genuinely clean CL. **Confirm the CL is pending** (`p4 opened -c {CL_ID}`
-      > lists its files) before citing a silent run as evidence; otherwise the silence is
-      > telling you nothing. A mistyped CL number is a likelier operator error than a mistyped
-      > flag, and it reports green.
+      > **A quiet submit is not evidence the audit passed**, only that nothing blocked you —
+      > the server audit always exits 0 by design and reports after the fact. Do not cite
+      > silence at submit time as a clean audit.
    3. **BP-Pins disclosure line** — required whenever the CL is Blueprint-facing (adds, renames,
       or changes the signature of anything BP-exposed, or documents a wiring recipe / pin-level
       instruction): the CL description must carry at least one disclosure line, and BOTH when
@@ -484,8 +488,9 @@ After the Review Record block is in place:
       - `BP-Pins: verified <node, node, ...>`
       - `BP-Pins: unverified <node> (<reason>)`
       Never let "I read the C++" stand in for it, and never omit the line to avoid writing
-      "unverified" (where the Submit-Audit hook is installed, it warns when a BP-facing CL
-      lacks the line).
+      "unverified". **Nothing checks for this line.** The client audit that warned on its
+      absence went with CL 2454 and the server audit never carried the check, so it stands on
+      you and on review — which is the whole reason to write it honestly.
 2. Run `p4 submit -c {CL_ID}` or create new CL with the files
 3. Report submission result — confirm with `p4 changes -m 1 -s submitted` and report the final submitted CL number
 4. Note any post-submit verification needed

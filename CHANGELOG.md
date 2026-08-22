@@ -27,6 +27,47 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.45.0] - 2026-08-22 - The re-derive rule covers prose, and the preflight stops naming a deleted script
+
+MINOR: consumers get it automatically. Three corrections to `review-and-submit`, two of them to
+text that had been describing machinery deleted in CL 2454.
+
+Measured first, because the obvious framing was wrong. `scripts/measure-review-rounds.ps1` over the
+consuming project since 2026-08-01 (131 reviewed subjects, 49 multi-round, 840 transcripts):
+**median 3 rounds, n=49.** The pre-4.38.0 baseline was also median 3, n=39 -- **4.38.0's four
+re-review rules did not move the median.** The CL that prompted this release (a prose-only repair CL,
+82 diff lines under a 118-line description) cost exactly 3 rounds: the median, not an outlier. The
+cost lives in a tail of 8-13-round subjects that nothing here addresses.
+
+- **The re-derive rule now covers any assertion about the CL's own content**, not only numeric ones.
+  It already required byte counts, file counts and finding tallies to be re-derived at submit time
+  or left out; it now says the same of "verified by diff", "zero non-comment lines changed", and
+  quoted snippets of what one of the CL's files now says. Origin: the CL that motivated this release
+  violated the *existing* rule (`[FIXED] WARNING x6 rotted 710-line count`) and separately shipped
+  four blocking findings of the form "the description described its own pre-fix text". The review's
+  own fixes are what rot these, which is why they rot hardest in the CLs that take the most rounds.
+  A widened clause on the rule that exists, not a fifth rule beside it.
+
+- **Fixed: the preflight told you to run a script that no longer exists.**
+  `submit-audit-warn.sh --check-cl` went in CL 2454 (`p4 files` shows `#14 - delete`). Its absence
+  is indistinguishable from a clean run -- precisely the failure the warning directly below it
+  described. That item now states what is true: EOL flips are repaired by the `normalize-eol.sh`
+  PostToolUse hook the moment a partial rewrite creates them, everything else runs server-side
+  post-commit, and a quiet submit is not evidence the audit passed.
+
+- **Fixed: a false claim that something warns when a BP-facing CL omits its `BP-Pins:` line.**
+  Nothing does. The client audit that warned went with CL 2454, and the server trigger never carried
+  the check -- verified against its six. The consuming project's own always-on rule had already
+  recorded this; the skill had not. It now says the line stands on you and on review.
+
+- **Not in this release, and that is a finding.** A fourth prose rule ("cite, don't restate") was
+  drafted and cut: it would have collided with the reviewers' existing **"Cite, don't name-drop"**,
+  and its remedy -- point at the linked ticket -- is inert on `Workflow: skipped` CLs, which is the
+  exact class of fallout-repair CL it was aimed at. A rule that the file already carries, and that
+  was violated anyway, is not improved by adding a fifth beside it.
+
+**Consumers:** no action. The removed preflight item was already un-runnable, so nothing that worked
+stops working.
 ## [4.44.0] - 2026-08-22 - Reviewer agents: pin effort at max
 
 MINOR: behaviour change consumers get automatically.
