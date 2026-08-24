@@ -92,9 +92,28 @@ the list is closed, every item cannot change behaviour, and skipping the pass ne
 items are recorded with their disposition and the CL ships. Upstream has no explicit analogue --
 its caps bound rounds implicitly -- so this is marked as an addition, not as adopted. It is the
 one item aimed at the measured tail rather than at its inputs: on prose, a pass spent driving a
-WARNING-only report to silence reliably produces a fresh WARNING-only report. The same rule is
-added to `design`'s iteration step, where it matters most, since nothing there has a validator
-behind it.
+WARNING-only report to silence reliably produces a fresh WARNING-only report. It lands in
+`review-and-submit` only -- `design` no longer runs reviews at all (below).
+
+### `design` narrows to document authoring only
+
+`design` had grown a review workflow: it launched reviewer agents, parsed their verdicts, ran
+an iteration loop, and carried a `> [!CAUTION] Never skip the review step` banner. It now writes
+documents and nothing else -- find whether one already exists, name and place it correctly, fill
+the standard template, carry it `WIP` -> `APPROVED`. Five steps become three.
+
+Reviewing what a document *proposes* is `review-and-submit`'s job, on the Standards axis, where
+a design-documents-only CL routes to `radical-design-critic`. One reviewer, reached one way.
+
+Why it moved rather than being trimmed: `design` was the second home for review rules, which is
+how they drifted apart in the first place. Its iteration step restated rules 1, 3, 4 and 6 of the
+deleted `RE-REVIEW.md` in its own words, and the restatement had already diverged from the
+original. A rule with two homes has no home.
+
+**Consequence, stated plainly:** `/design` no longer routes a finished document to a reviewer.
+Nothing in the skill tells you to get one reviewed, and no pointer was added -- ask for a review
+explicitly, or let the CL that ships the document carry it. If that turns out to be a gap in
+practice, the fix is a pointer, not a workflow.
 
 ### Not changed, and not a divergence
 
@@ -115,8 +134,9 @@ supported tool entirely.
 | `skills/review-and-submit/RE-REVIEW.md` | 50 | 0 |
 | `skills/review-changes/SKILL.md` | 70 | 54 |
 | `agents/architecture-reviewer.md` | 64 | 101 |
+| `skills/design/SKILL.md` | 265 | 176 |
 
-Net -73 lines. Smaller than the shape suggests, because roughly 200 lines of
+Net -162 lines. Smaller than the shape suggests, because roughly 200 lines of
 `review-and-submit` are the Perforce shell -- CL organization, the Review Record, the preflight
 and the submit gate -- which upstream has no equivalent of and which none of this touches.
 The structural change is the deliverable; the line count is a side effect.

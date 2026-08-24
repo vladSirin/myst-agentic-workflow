@@ -271,7 +271,7 @@ Typeable too, but you should not have to. Listed so you know what can fire on it
 
 | Skill | Use it when |
 |---|---|
-| [`/design`](plugins/myst-dev-kit/skills/design/SKILL.md) | Create a design document with reviewer-agent feedback and iterate to approval; the team's doc-process rules (naming, lifecycle, BLOCKING/WARNING/INFO) live in the same file. |
+| [`/design`](plugins/myst-dev-kit/skills/design/SKILL.md) | Write a design or plan document -- correct name, correct location, standard template, WIP-to-final lifecycle. Writing only; reviewing what it proposes is `review-and-submit`'s job. |
 | [`/review-changes`](plugins/myst-dev-kit/skills/review-changes/SKILL.md) | Runs `review-and-submit`'s two-axis review INLINE, for sessions without reviewer subagents (e.g. Codex); same sources, same per-axis parseable `Verdict:` line. |
 | [`/roundtable`](plugins/myst-dev-kit/skills/roundtable/SKILL.md) | Multi-perspective design discussion when one viewpoint isn't enough. |
 
@@ -298,7 +298,7 @@ The five team-process skills are listed in the catalog above; this is the other 
 | [`changelist-verification`](plugins/myst-dev-kit/skills/changelist-verification/SKILL.md) | any multi-CL task | **HARD RULE**: CL-by-CL execution, never batched. Stop between CLs for verification. |
 | [`review-and-submit`](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md) | "review and submit" / any p4 submit | Pre-submit protocol: two-axis review, Review Record block, preflight validators. |
 
-(The former `design-workflow` skill merged into [`design`](plugins/myst-dev-kit/skills/design/SKILL.md) in v4.28.0; its companion `PROCESS.md` folded back into that skill's SKILL.md in v4.46.0, so the doc naming/location/reviewer-routing rules now live there.)
+(The former `design-workflow` skill merged into [`design`](plugins/myst-dev-kit/skills/design/SKILL.md) in v4.28.0; its companion `PROCESS.md` folded back into that skill's SKILL.md in v4.46.0. In v4.48.0 `design` narrowed to document authoring only -- naming, location, template and lifecycle -- with review moving out entirely.)
 
 ### Agents
 
