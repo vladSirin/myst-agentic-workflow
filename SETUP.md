@@ -23,9 +23,34 @@ Once per machine (and again any time you want to update — install and update a
 the same run):
 
 ```powershell
+irm https://raw.githubusercontent.com/vladSirin/myst-agentic-workflow/main/setup-devkit.ps1 -OutFile "$env:TEMP\setup-devkit.ps1"
+& "$env:TEMP\setup-devkit.ps1"
+```
+
+**There is no clone step, for any tool.** Codex and OpenCode need the package on
+disk, so the script clones it for you at `~/.myst-agentic-workflow` and checks out
+the latest release tag. Claude Code needs nothing on disk at all — that leg drives
+`claude`'s own plugin manager, and falls back to `marketplace add` if the
+marketplace is not registered yet (so it works outside the team project too).
+
+Run it with `-DryRun` first if you want to see the plan before anything is written.
+
+<details>
+<summary>Prefer to clone and read the source first? Same result.</summary>
+
+```powershell
 git clone https://github.com/vladSirin/myst-agentic-workflow "$env:USERPROFILE\.myst-agentic-workflow"
 & "$env:USERPROFILE\.myst-agentic-workflow\setup-devkit.ps1"
 ```
+
+Clone to **exactly** that path: the script only moves the git state of the
+dedicated clone at `~/.myst-agentic-workflow`, and any other checkout is used
+**as-is** — point it at a clone sitting on `main` and you install unreleased
+commits with no tag involved (`-ForceGitUpdate` overrides). The checkout also
+leaves you on a **detached HEAD** at the release tag, which is correct for a
+consumer clone: update by re-running the script, not by `git pull`.
+
+</details>
 
 The script detects which AI CLIs are on PATH and drives each tool's NATIVE
 mechanism — it never replaces the tools' own plugin managers, it saves you from
@@ -50,9 +75,9 @@ multi-tool users, Codex/OpenCode agent generation, and OpenCode setup.
 
 After `p4 sync`, you don't have to remember any of this. Paste into your tool:
 
-> **Install or update my myst dev kit (run setup-devkit.ps1 from the package
-> clone, or clone it first if missing), verify the result, and tell me what I
-> still have to do myself.**
+> **Install or update my myst dev kit (fetch setup-devkit.ps1 from the repo and
+> run it — it clones anything it needs itself), verify the result, and tell me
+> what I still have to do myself.**
 
 Two things it **cannot** do, so expect them:
 
@@ -66,7 +91,11 @@ Two things it **cannot** do, so expect them:
 ### Claude Code
 
 - Install: accept the trust-prompt plugin install, or `/plugin install myst-dev-kit@myst`
-  (no `marketplace add` needed — the committed settings pre-register it).
+  (no `marketplace add` needed — the committed settings pre-register it). **Outside
+  the team project** there are no committed settings, so the marketplace is not
+  pre-registered — either `claude plugin marketplace add vladSirin/myst-agentic-workflow`
+  first, or use `setup-devkit.ps1 -Tool claude`, which falls back to `marketplace add`
+  on its own.
 - Update — TWO steps, then a restart (the marketplace refresh alone updates
   nothing you have installed; the plugin update without the refresh only sees the
   old snapshot):
@@ -96,8 +125,10 @@ Two things it **cannot** do, so expect them:
   agents generated as `~/.codex/agents/*.toml` (`sandbox_mode = "read-only"`,
   body verbatim from the shared source; ask a session to "run
   architecture-reviewer on this change" to spawn one). The inline
-  `review-changes` skill remains the review fast path and the fallback whenever
-  the agents are not installed.
+  `review-changes` skill is the no-subagent path: it runs the same two axes
+  (Standards + Spec) inline, sequentially, and is why Codex keeps a review path at
+  all. It is no longer a "fast path" -- v4.48.0 retired the tiers, so agent-capable
+  sessions always spawn the axes.
 - **What Codex does NOT get**: the always-on rules (`.claude/rules/*.md` reaches
   Claude only; Codex reads `AGENTS.md`, which is why every always-on rule has an
   `AGENTS.md` counterpart, enforced by `check-rule-parity.sh`) and project-level

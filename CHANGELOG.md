@@ -27,6 +27,51 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.48.1] - 2026-08-24 - One install command, no clone step
+
+PATCH: documentation only, no behaviour change. `setup-devkit.ps1` is untouched -- what
+changed is that the docs now describe what it has always done.
+
+### The clone step was never necessary, for any tool
+
+README and SETUP.md led with `git clone` + run, as though the clone were a prerequisite.
+It is not. `Update-Clone` clones the dedicated path itself when it is missing, so the
+script bootstraps from anywhere. **Verified**, not inferred: with `~/.myst-agentic-workflow`
+absent and the script alone in a temp directory, `-Tool opencode -DryRun` reported
+`Package source: ~/.myst-agentic-workflow` followed by `Cloning <repo> -> ~/...`.
+
+Both docs now lead with one command for every tool -- fetch the script, run it -- with the
+clone form kept in a `<details>` block for anyone who would rather read the source first.
+Codex and OpenCode get their clone created for them at the right path and checked out to
+the latest tag; Claude Code needs nothing on disk at all, since that leg drives `claude`'s
+own plugin manager and falls back to `marketplace add` when the marketplace is not
+registered.
+
+The clone form keeps its two traps documented, because they are real when you use it:
+clone to **exactly** `~/.myst-agentic-workflow` (any other checkout is used AS-IS, so a
+clone on `main` installs unreleased commits with no tag involved), and the checkout leaves
+a **detached HEAD** at the release tag -- update by re-running the script, never `git pull`.
+
+Also corrected: SETUP.md said Claude needs no `marketplace add` because the committed
+settings pre-register it. True inside the team project only -- outside it there are no
+committed settings, and the claim would have sent someone in a circle.
+
+### Guides caught up with the v4.48.0 review model
+
+Three docs still described machinery 4.48.0 retired, which is worse than being silent --
+a reader would have gone looking for a fast path that no longer exists:
+
+- **SETUP.md** called `review-changes` "the review fast path and the fallback". It is now
+  purely the no-subagent path, running the same two axes inline and sequentially.
+- **docs/tool-capability-matrix.md** said the fast path invokes it in agent-capable
+  sessions "so do not retire it". The conclusion still holds, the reason changed: Codex
+  has no Agent tool, so deleting it removes that tool's only review path.
+- **README** described `architecture-reviewer` by its four-source canon alone. It is now
+  the Standards axis and carries the closed 12-smell baseline and the 400-word cap.
+
+Checked and deliberately unchanged: `MustRead_ai_tools_for_creatives.md` (EN + ZH) names
+`/design` and `/review-and-submit` without describing either model, so it did not go stale.
+
 ## [4.48.0] - 2026-08-24 - Two axes, a closed smell list, and a stopping rule
 
 MINOR: consumers get it automatically. `review-and-submit` is restructured around the shape of

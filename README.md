@@ -4,12 +4,12 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. Every skill and agent lives ONCE; each tool consumes the same files through its native mechanism.
 
-[![tests](https://img.shields.io/badge/tests-21%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.48.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-21%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.48.1-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## TL;DR
 
 - **What it is** — one dev kit (30 skills, 2 reviewer agents, 3 commands) shared by Claude Code, Codex and OpenCode. Every skill lives once; each tool reads the same files through its own mechanism.
-- **Install** — `git clone` + run `setup-devkit.ps1`. Re-run the same command to update. [Jump to Install](#install-30-second-setup).
+- **Install** — one command, no clone step: fetch `setup-devkit.ps1` and run it. Re-run the same command to update. [Jump to Install](#install-30-second-setup).
 - **The 13 skills you actually type** — `/to-spec`, `/to-tickets`, `/triage`, `/wayfinder`, `/implement`, `/grill-me`, `/handoff`, and friends. [Jump to the catalog](#skills-you-invoke).
 - **The other 18 fire on their own** when the task fits, so it is worth [skimming what they are](#skills-the-agent-reaches-for) before you install.
 - **Adopting it in your own project?** The consumer scaffold (bibles, rules, hook scripts) installs separately — see [Adopting the scaffold](#install-30-second-setup) and [SETUP.md](SETUP.md).
@@ -27,11 +27,29 @@ The skills, workflows, and conventions you'd hand-copy between projects, package
 One command covers every tool on your machine — it detects which CLIs you have and drives each tool's native plugin manager (it never replaces them):
 
 ```powershell
+irm https://raw.githubusercontent.com/vladSirin/myst-agentic-workflow/main/setup-devkit.ps1 -OutFile "$env:TEMP\setup-devkit.ps1"
+& "$env:TEMP\setup-devkit.ps1"
+```
+
+**No clone step.** Codex and OpenCode need the package on disk, so the script clones it for you at `~/.myst-agentic-workflow` and checks out the latest release tag. Claude Code needs nothing on disk at all — that leg drives `claude`'s own plugin manager, and registers the marketplace itself if it is not already.
+
+Add `-DryRun` to see the plan first, `-Tool claude|codex|opencode` to scope it, `-Version vX.Y.Z` to pin or roll back.
+
+<details>
+<summary>Prefer to read the source before running it?</summary>
+
+Clone and run from the clone — same result, and you get the repo to inspect:
+
+```powershell
 git clone https://github.com/vladSirin/myst-agentic-workflow "$env:USERPROFILE\.myst-agentic-workflow"
 & "$env:USERPROFILE\.myst-agentic-workflow\setup-devkit.ps1"
 ```
 
-**Updating is the same command** — re-run it any time. It prints the version delta and self-verifies delivery. New versions are announced on the [Releases page](https://github.com/vladSirin/myst-agentic-workflow/releases).
+Clone to **exactly** that path. The script only moves the git state of the dedicated clone at `~/.myst-agentic-workflow`; any other checkout is used **as-is**, so a clone sitting on `main` installs unreleased commits with no tag involved (`-ForceGitUpdate` overrides). The checkout also leaves a **detached HEAD** at the release tag — correct for a consumer clone, but update by re-running the script, never `git pull`.
+
+</details>
+
+**Updating is the same command** — re-run whichever form you used. It prints the version delta and self-verifies delivery. New versions are announced on the [Releases page](https://github.com/vladSirin/myst-agentic-workflow/releases).
 
 > **Myst team member?** [SETUP.md](SETUP.md) is your page — committed core via `p4 sync`, this one command for the kit, per-tool notes and known gaps.
 
@@ -306,7 +324,7 @@ Specialized subagents. Native Markdown under Claude Code; under Codex and OpenCo
 
 | Agent | Triggers on |
 |---|---|
-| `architecture-reviewer` | Post-implementation review. Judges against a four-source canon — Code Complete, The Art of Readable Code, and (for game/engine projects) Game Programming Patterns + Game Engine Architecture — plus the conventions it discovers in your repo. Stack-agnostic: it reads your `CLAUDE.md`/`AGENTS.md` and the code around the change instead of assuming an engine. |
+| `architecture-reviewer` | The **Standards axis** of `review-and-submit`. Judges against a four-source canon — Code Complete, The Art of Readable Code, and (for game/engine projects) Game Programming Patterns + Game Engine Architecture — plus a closed 12-smell Fowler baseline, a 400-word output cap, and the conventions it discovers in your repo. Stack-agnostic: it reads your `CLAUDE.md`/`AGENTS.md` and the code around the change instead of assuming an engine. |
 | `radical-design-critic` | Design docs / proposals. Stress-tests for edge cases, UX friction, hidden complexity. |
 
 ### Overlays
