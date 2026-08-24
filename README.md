@@ -9,7 +9,7 @@ The skills, workflows, and conventions you'd hand-copy between projects, package
 ## TL;DR
 
 - **What it is** — one dev kit (30 skills, 2 reviewer agents, 3 commands) shared by Claude Code, Codex and OpenCode. Every skill lives once; each tool reads the same files through its own mechanism.
-- **Install** — `git clone` + run `setup-devkit.ps1` (Claude-only users can skip the clone). Re-run the same command to update. [Jump to Install](#install-30-second-setup).
+- **Install** — one command, no clone step: fetch `setup-devkit.ps1` and run it. Re-run the same command to update. [Jump to Install](#install-30-second-setup).
 - **The 13 skills you actually type** — `/to-spec`, `/to-tickets`, `/triage`, `/wayfinder`, `/implement`, `/grill-me`, `/handoff`, and friends. [Jump to the catalog](#skills-you-invoke).
 - **The other 18 fire on their own** when the task fits, so it is worth [skimming what they are](#skills-the-agent-reaches-for) before you install.
 - **Adopting it in your own project?** The consumer scaffold (bibles, rules, hook scripts) installs separately — see [Adopting the scaffold](#install-30-second-setup) and [SETUP.md](SETUP.md).
@@ -27,18 +27,27 @@ The skills, workflows, and conventions you'd hand-copy between projects, package
 One command covers every tool on your machine — it detects which CLIs you have and drives each tool's native plugin manager (it never replaces them):
 
 ```powershell
+irm https://raw.githubusercontent.com/vladSirin/myst-agentic-workflow/main/setup-devkit.ps1 -OutFile "$env:TEMP\setup-devkit.ps1"
+& "$env:TEMP\setup-devkit.ps1"
+```
+
+**No clone step.** Codex and OpenCode need the package on disk, so the script clones it for you at `~/.myst-agentic-workflow` and checks out the latest release tag. Claude Code needs nothing on disk at all — that leg drives `claude`'s own plugin manager, and registers the marketplace itself if it is not already.
+
+Add `-DryRun` to see the plan first, `-Tool claude|codex|opencode` to scope it, `-Version vX.Y.Z` to pin or roll back.
+
+<details>
+<summary>Prefer to read the source before running it?</summary>
+
+Clone and run from the clone — same result, and you get the repo to inspect:
+
+```powershell
 git clone https://github.com/vladSirin/myst-agentic-workflow "$env:USERPROFILE\.myst-agentic-workflow"
 & "$env:USERPROFILE\.myst-agentic-workflow\setup-devkit.ps1"
 ```
 
-**Claude Code only?** Skip the clone — the Claude leg drives `claude`'s own plugin manager and needs no package source on disk:
+Clone to **exactly** that path. The script only moves the git state of the dedicated clone at `~/.myst-agentic-workflow`; any other checkout is used **as-is**, so a clone sitting on `main` installs unreleased commits with no tag involved (`-ForceGitUpdate` overrides). The checkout also leaves a **detached HEAD** at the release tag — correct for a consumer clone, but update by re-running the script, never `git pull`.
 
-```powershell
-irm https://raw.githubusercontent.com/vladSirin/myst-agentic-workflow/main/setup-devkit.ps1 -OutFile "$env:TEMP\setup-devkit.ps1"
-& "$env:TEMP\setup-devkit.ps1" -Tool claude
-```
-
-It registers the marketplace for you if it is not already (`marketplace add` fallback), so this works outside the team project too. **Codex and OpenCode do need the clone** — Codex generates its reviewer agents from it, and OpenCode's `skills.paths` points at it.
+</details>
 
 **Updating is the same command** — re-run whichever form you used. It prints the version delta and self-verifies delivery. New versions are announced on the [Releases page](https://github.com/vladSirin/myst-agentic-workflow/releases).
 

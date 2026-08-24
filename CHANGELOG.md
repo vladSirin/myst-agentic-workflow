@@ -27,24 +27,30 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
-## [4.48.1] - 2026-08-24 - Document the Claude-only install (no clone needed)
+## [4.48.1] - 2026-08-24 - One install command, no clone step
 
-PATCH: documentation only, no behaviour change. `setup-devkit.ps1` is untouched.
+PATCH: documentation only, no behaviour change. `setup-devkit.ps1` is untouched -- what
+changed is that the docs now describe what it has always done.
 
-The install docs presented `git clone` + run as the one path for every tool. It is not:
-the clone gate is `if ($wantCodex -or $wantOpencode)`, so the **Claude leg reads nothing
-from disk** -- it drives `claude plugin marketplace update` / `install` / `update`, and
-falls back to `marketplace add vladSirin/myst-agentic-workflow` when the marketplace is
-not registered. A Claude-only machine can fetch the script alone and run
-`-Tool claude`. README and SETUP.md now say so.
+### The clone step was never necessary, for any tool
 
-Two clone-form traps are now documented rather than left to be discovered:
+README and SETUP.md led with `git clone` + run, as though the clone were a prerequisite.
+It is not. `Update-Clone` clones the dedicated path itself when it is missing, so the
+script bootstraps from anywhere. **Verified**, not inferred: with `~/.myst-agentic-workflow`
+absent and the script alone in a temp directory, `-Tool opencode -DryRun` reported
+`Package source: ~/.myst-agentic-workflow` followed by `Cloning <repo> -> ~/...`.
 
-- **Clone to exactly `~/.myst-agentic-workflow`.** `Update-Clone` only moves git state for
-  the dedicated clone; any other checkout is used AS-IS, so a clone sitting on `main`
-  installs unreleased commits with no tag involved. `-ForceGitUpdate` overrides.
-- **The checkout leaves a detached HEAD** at the release tag. Correct for a consumer
-  clone; update by re-running the script, never by `git pull`.
+Both docs now lead with one command for every tool -- fetch the script, run it -- with the
+clone form kept in a `<details>` block for anyone who would rather read the source first.
+Codex and OpenCode get their clone created for them at the right path and checked out to
+the latest tag; Claude Code needs nothing on disk at all, since that leg drives `claude`'s
+own plugin manager and falls back to `marketplace add` when the marketplace is not
+registered.
+
+The clone form keeps its two traps documented, because they are real when you use it:
+clone to **exactly** `~/.myst-agentic-workflow` (any other checkout is used AS-IS, so a
+clone on `main` installs unreleased commits with no tag involved), and the checkout leaves
+a **detached HEAD** at the release tag -- update by re-running the script, never `git pull`.
 
 Also corrected: SETUP.md said Claude needs no `marketplace add` because the committed
 settings pre-register it. True inside the team project only -- outside it there are no
