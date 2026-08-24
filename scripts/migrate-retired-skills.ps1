@@ -27,7 +27,8 @@ $toolDirs = @('.claude', '.Codex')
 $retiredSkills   = @('zoom-out', 'caveman', 'write-a-skill', 'diagnose',   # diagnose -> diagnosing-bugs
                      'obsidian-vault', 'edit-article',
                      'setup-matt-pocock-skills', 'design-workflow',        # design-workflow -> merged into design (v4.28.0)
-                     'writing-great-skills')                               # -> writing-for-agents (v4.43.0, upstream rename)
+                     'writing-great-skills',                               # -> writing-for-agents (v4.43.0, upstream rename)
+                     'auto-plan-mode')                                     # retired v4.47.0 (its rule was removed project-side)
 $retiredCommands = @('caveman.md', 'write-a-skill.md')                      # old command wrappers, if present
 
 $found = New-Object System.Collections.Generic.List[object]

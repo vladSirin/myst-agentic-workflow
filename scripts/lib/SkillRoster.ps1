@@ -14,7 +14,6 @@
 function Get-LocalOriginSkills {
     @(
         'agentic-workflow'
-        'auto-plan-mode'
         'changelist-verification'
         'design'
         'pre-implementation-gate'

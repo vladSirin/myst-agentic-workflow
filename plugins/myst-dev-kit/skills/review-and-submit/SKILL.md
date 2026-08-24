@@ -437,16 +437,6 @@ After the Review Record block is in place:
       > **A quiet submit is not evidence the audit passed**, only that nothing blocked you —
       > the server audit always exits 0 by design and reports after the fact. Do not cite
       > silence at submit time as a clean audit.
-   3. **BP-Pins disclosure line** — required whenever the CL is Blueprint-facing (adds, renames,
-      or changes the signature of anything BP-exposed, or documents a wiring recipe / pin-level
-      instruction): the CL description must carry at least one disclosure line, and BOTH when
-      partially verified:
-      - `BP-Pins: verified <node, node, ...>`
-      - `BP-Pins: unverified <node> (<reason>)`
-      Never let "I read the C++" stand in for it, and never omit the line to avoid writing
-      "unverified". **Nothing checks for this line.** The client audit that warned on its
-      absence went with CL 2454 and the server audit never carried the check, so it stands on
-      you and on review — which is the whole reason to write it honestly.
 2. Run `p4 submit -c {CL_ID}` or create new CL with the files
 3. Report submission result — confirm with `p4 changes -m 1 -s submitted` and report the final submitted CL number
 4. Note any post-submit verification needed

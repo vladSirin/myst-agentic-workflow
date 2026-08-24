@@ -167,7 +167,6 @@ Where the consumer repo runs the Submit-Audit client hook, a risky over-threshol
 ## Related
 
 - The `agentic-workflow` skill — the seven-phase workflow this gate enforces.
-- The `auto-plan-mode` skill — plan-mode requirement (this gate fires inside plan mode).
 - The `changelist-verification` skill — CL-by-CL execution discipline (applies AFTER this gate passes).
 - `/to-spec` — skill to create a spec from current conversation context.
 - `/to-tickets` — skill to break a spec into vertical-slice tickets.

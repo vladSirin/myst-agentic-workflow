@@ -351,7 +351,7 @@ Some files are intentionally never promoted:
   `.claude/settings.local.json`. Never in Perforce, never in the package.
 - `project-owned` files (`mergeStrategy: manual-only` or
   `writablePolicy: human-owned`) — files the installer never writes, only
-  tracks. Examples: project bibles, AutoPlanMode profiles.
+  tracks. Examples: project bibles, project-invented rule files.
 
 Passing such a path to `promote-from-project` returns `REFUSED` with an
 explanation.

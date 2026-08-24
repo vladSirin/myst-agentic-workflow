@@ -4,11 +4,11 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. Every skill and agent lives ONCE; each tool consumes the same files through its native mechanism.
 
-[![tests](https://img.shields.io/badge/tests-21%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.46.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-21%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.47.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## TL;DR
 
-- **What it is** — one dev kit (31 skills, 2 reviewer agents, 3 commands) shared by Claude Code, Codex and OpenCode. Every skill lives once; each tool reads the same files through its own mechanism.
+- **What it is** — one dev kit (30 skills, 2 reviewer agents, 3 commands) shared by Claude Code, Codex and OpenCode. Every skill lives once; each tool reads the same files through its own mechanism.
 - **Install** — `git clone` + run `setup-devkit.ps1`. Re-run the same command to update. [Jump to Install](#install-30-second-setup).
 - **The 13 skills you actually type** — `/to-spec`, `/to-tickets`, `/triage`, `/wayfinder`, `/implement`, `/grill-me`, `/handoff`, and friends. [Jump to the catalog](#skills-you-invoke).
 - **The other 18 fire on their own** when the task fits, so it is worth [skimming what they are](#skills-the-agent-reaches-for) before you install.
@@ -93,7 +93,7 @@ Four lifecycle commands cover the entire flow — all four dry-run first, prompt
 
 ## What you get
 
-**`myst-dev-kit`** — 31 skills (engineering + productivity + the team process rules as on-demand skills), the two reviewer agents (native Markdown under Claude; **generated** read-only variants for Codex TOML and OpenCode — the shared source is never forked), `sync-build-submit` and package commands, and the Codex-side Submit-Audit warning bridge. Full catalog with when-to-use guidance: [Reference](#reference).
+**`myst-dev-kit`** — 30 skills (engineering + productivity + the team process rules as on-demand skills), the two reviewer agents (native Markdown under Claude; **generated** read-only variants for Codex TOML and OpenCode — the shared source is never forked), `sync-build-submit` and package commands, and the Codex-side Submit-Audit warning bridge. Full catalog with when-to-use guidance: [Reference](#reference).
 
 The repo is a **plugin marketplace** for Claude Code and Codex (`.claude-plugin/marketplace.json` / `.agents/plugins/marketplace.json`, consistency enforced by `scripts/run-marketplace-tests.ps1` + `claude plugin validate`) and a **`skills.paths` source** for OpenCode. Public repo — installs need no auth (if it goes private later: collaborator access + `gh auth login`).
 
@@ -172,7 +172,7 @@ The four commands you'll actually run.
 
 ### Skills (shipped in the `myst-dev-kit` plugin)
 
-**31 skills**, split by the thing that matters most when you are picking one: **who starts it.**
+**30 skills**, split by the thing that matters most when you are picking one: **who starts it.**
 
 A **user-invoked** skill runs only when you type it (`/to-spec`). These orchestrate, and they are
 the entry points worth remembering — there are 13 of them. A **model-invoked** skill can be typed
@@ -266,7 +266,6 @@ Typeable too, but you should not have to. Listed so you know what can fire on it
 | [`/pre-implementation-gate`](plugins/myst-dev-kit/skills/pre-implementation-gate/SKILL.md) | About to propose a multi-CL plan: checks a spec, tickets and triage exist first. |
 | [`/changelist-verification`](plugins/myst-dev-kit/skills/changelist-verification/SKILL.md) | More than one changelist is in play: execute them one at a time with a verify gate between. |
 | [`/review-and-submit`](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md) | The full pre-submit protocol -- organize the CL, route reviewers, record the verdict, gate the submit. |
-| [`/auto-plan-mode`](plugins/myst-dev-kit/skills/auto-plan-mode/SKILL.md) | Deciding whether the request in front of you needs a plan before the first edit. |
 
 **Local-origin (no upstream counterpart)**
 
@@ -298,7 +297,6 @@ The five team-process skills are listed in the catalog above; this is the other 
 | [`pre-implementation-gate`](plugins/myst-dev-kit/skills/pre-implementation-gate/SKILL.md) | before drafting a multi-CL plan | **HARD RULE**: spec/tickets/triage must exist first. |
 | [`changelist-verification`](plugins/myst-dev-kit/skills/changelist-verification/SKILL.md) | any multi-CL task | **HARD RULE**: CL-by-CL execution, never batched. Stop between CLs for verification. |
 | [`review-and-submit`](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md) | "review and submit" / any p4 submit | Pre-submit protocol: reviewer routing, Review Record block, preflight validators. |
-| [`auto-plan-mode`](plugins/myst-dev-kit/skills/auto-plan-mode/SKILL.md) | start of non-trivial implementation | Decide whether to enter plan mode before coding. |
 
 (The former `design-workflow` skill merged into [`design`](plugins/myst-dev-kit/skills/design/SKILL.md) in v4.28.0; its companion `PROCESS.md` folded back into that skill's SKILL.md in v4.46.0, so the doc naming/location/reviewer-routing rules now live there.)
 
@@ -407,7 +405,7 @@ myst-agentic-workflow/
 │   ├── commands/                  # promote-myst-skills, sync-build-submit, update-project-scaffold
 │   ├── hooks/hooks.json           # Codex Submit-Audit warn bridge (no-ops under Claude Code)
 │   ├── scripts/                   # consumer hook scripts (doc-audit, rule parity, ...)
-│   └── skills/                    # the 31 skills (ONE shared source for every tool)
+│   └── skills/                    # the 30 skills (ONE shared source for every tool)
 ├── templates/
 │   ├── claude/CLAUDE.md           # per-tool bible templates (generated-block sources)
 │   ├── codex/AGENTS.md

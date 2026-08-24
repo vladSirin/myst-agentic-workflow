@@ -7,7 +7,7 @@ How to get the Myst team's AI setup on your machine, whichever tool(s) you use.
 | Layer | Delivered by | Contains |
 |---|---|---|
 | **Committed core** | Perforce sync (automatic) | Team `CLAUDE.md`/`AGENTS.md`, `.claude/settings.json` (hooks + marketplace registration), rules, hook scripts, team docs (`Docs/MustRead`, `Docs/agents`) |
-| **Dev kit** | `myst-dev-kit` plugin / `setup-devkit.ps1` (this repo) | 31 skills, the two reviewer agents (Claude native; generated for Codex + OpenCode — see below), `sync-build-submit` + package commands, the Submit-Audit warning bridge (Codex; verified firing 2026-08-06) |
+| **Dev kit** | `myst-dev-kit` plugin / `setup-devkit.ps1` (this repo) | 30 skills, the two reviewer agents (Claude native; generated for Codex + OpenCode — see below), `sync-build-submit` + package commands, the Submit-Audit warning bridge (Codex; verified firing 2026-08-06) |
 | **Personal kit** | you, outside Perforce | `~/.claude/`, `CLAUDE.local.md`, `.claude/settings.local.json`, `~/.config/opencode/`, own skills/plugins |
 
 Governance is **advisory everywhere**: nothing blocks your work; non-compliant
@@ -35,7 +35,7 @@ remembering three different command sets:
 |---|---|
 | Claude Code | `claude plugin marketplace update myst`, then install-if-missing / `claude plugin update myst-dev-kit@myst`. Reminds you to restart the session. |
 | Codex | `codex plugin marketplace add` (tolerated if registered) + `codex plugin marketplace upgrade` + always attempts `codex plugin add` (harmless when installed; fails loudly only if the list still says `not installed`), then generates the two reviewer agents as `~/.codex/agents/*.toml` (`sandbox_mode = "read-only"`). |
-| OpenCode | Checks the clone out at the latest release tag, registers the 31 skills via `skills.paths` in `~/.config/opencode/opencode.json`, writes the unreal-engine MCP entry and the manual-skill ask-map, generates the two reviewer agents, then self-verifies delivery. |
+| OpenCode | Checks the clone out at the latest release tag, registers the 30 skills via `skills.paths` in `~/.config/opencode/opencode.json`, writes the unreal-engine MCP entry and the manual-skill ask-map, generates the two reviewer agents, then self-verifies delivery. |
 
 One tool failing does not abort the others; the summary names any failed leg.
 `-Tool claude|codex|opencode` scopes to one tool; `-Version vX.Y.Z` pins or rolls

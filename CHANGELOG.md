@@ -27,6 +27,42 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.47.0] - 2026-08-24 - Retire auto-plan-mode and the BP-Pins requirement
+
+MINOR: consumers get it automatically. One skill retired and one preflight item removed;
+`upgrade.ps1` handles both without anyone editing a file.
+
+### Removed
+
+- **`auto-plan-mode` skill deleted.** It existed to carry worked examples for the
+  project-owned `AutoPlanMode.md` rule, which the consuming project removed. With no rule
+  pointing at it, nothing auto-fires it and the skill is dead weight. Dropped from the
+  local-origin roster in `scripts/lib/SkillRoster.ps1`, from both README skill tables, and
+  from `pre-implementation-gate`'s Related list.
+
+  **What is lost:** the plan-vs-skip heuristic (2+ coordinated files, work that will be
+  reviewed or submitted, hard-to-reverse ops -> plan; single-file edits, read-only work,
+  lookups -> skip) is no longer stated anywhere in the package. Agents fall back to harness
+  defaults for when to plan. Recoverable from git history at v4.46.0 if it is wanted back.
+
+- **`BP-Pins:` disclosure dropped from the `review-and-submit` preflight** (item 3) and from
+  the closed rule-4 list in `RE-REVIEW.md`. The requirement came from the project-owned
+  `BlueprintPinVerification.md` rule, also removed. Nothing ever checked for the line - the
+  client audit went with CL 2454 and the server audit never carried it - so this removes a
+  written expectation, not a gate.
+
+### Changed
+
+- `docs/install.md` cited "AutoPlanMode profiles" as its example of a project-owned file.
+  Replaced with "project-invented rule files", which does not name a deleted rule.
+
+- **Stale counts corrected while the skill count moved 31 -> 30.** Two were already wrong
+  before this change and were caught by the diff, not by a check: `docs/tool-capability-matrix.md`
+  said `skills/` held 24 (it held 31), and the "31 skills" blurb was duplicated across both
+  `plugin.json` files, the marketplace entry, README (x4) and SETUP.md (x2). `check-plugin-parity.ps1`
+  asserts the matrix Count against the tree, so that one is now green; the prose blurbs have no
+  validator and will drift again.
+
 ## [4.46.0] - 2026-08-24 - Reviewer prompts stop restating the reviewer, and `design/PROCESS.md` folds home
 
 MINOR: consumers get it automatically. Content moved between files within two skills; no skill
