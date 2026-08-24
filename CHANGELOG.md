@@ -72,6 +72,22 @@ manufactures findings.
   overlay `DocumentStandard.md`, and `migrate-retired-skills.ps1`; historical release notes in the
   README and this file keep saying PROCESS.md, because that is what those releases did.
 
+- **`measure-review-rounds.ps1` counts agent resumptions as rounds** (#91). The parser matched
+  only `"subagent_type"`, i.e. Agent spawns. A re-review driven by `SendMessage` to a live
+  reviewer carries `to`/`message` and no `subagent_type`, so every resumed round was invisible:
+  a hand-verified 9-round review of CL 2601 reported as 2. Resumption is the cheaper way to
+  iterate -- it preserves the reviewer's context -- so the expensive tail concentrated exactly
+  where the instrument could not see it, inverting the script's own stated error model. It
+  claimed "counts are an upper bound"; for a resumed review they were a lower bound. Rounds now
+  count spawns AND resumptions, resolving a `SendMessage` to its reviewer by agent name or by the
+  agentId recovered from the spawn's own tool_result, and inheriting the subject from the spawn
+  rather than re-parsing it -- a resumption is by definition the same review, and its message
+  text need not name the CL.
+
+  Merged minutes after the two changes above and shares their version, per "one bump per merge"
+  and the rule against a second heading dated the same day. It also means every round count
+  quoted in 4.45.0 is a floor, not a ceiling: re-measure before trusting the medians there.
+
 ## [4.45.0] - 2026-08-22 - The re-derive rule covers prose, and the preflight stops naming a deleted script
 
 MINOR: consumers get it automatically. Three corrections to `review-and-submit`, two of them to
