@@ -27,6 +27,51 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.46.0] - 2026-08-24 - Reviewer prompts stop restating the reviewer, and `design/PROCESS.md` folds home
+
+MINOR: consumers get it automatically. Content moved between files within two skills; no skill
+name, trigger, or behaviour contract changes.
+
+Both changes come out of the same observation: the invocation prompts had become a second,
+weaker copy of the reviewer agent definitions, and the copy was drifting in the direction that
+manufactures findings.
+
+- **Reviewer prompts now carry only what the reviewer cannot already know.** `review-and-submit`
+  Step 5 and `design` Step 3 each embedded a bullet list of review dimensions -- *edge cases /
+  UX friction / hidden complexity / missing error states / assumptions that may not hold* -- which
+  is a flattened paraphrase of `agents/radical-design-critic.md` §Review Methodology and
+  `agents/architecture-reviewer.md` §Reference canon + §Review scope and method. Those are the
+  system prompt; they load at spawn. The inline copies therefore added nothing true, and
+  subtracted two things: §2's guard that UX stress-testing "applies only where the plan has a
+  user-facing surface -- a manufactured UX finding is noise", and the "cite, don't name-drop"
+  padding guard. Every spawn re-anchored the reviewer on producing findings and handed it none of
+  the brakes. Verified before cutting that the canon table and the Runtime-fitness axis subsume
+  every deleted bullet (separation of concerns, API clarity, integration points, performance,
+  testability), so no instruction is lost. What the prompt keeps: target, file list, observed
+  facts, linked spec/ticket, the Spec axis (conditional on a source actually being linked), and
+  the literal `Verdict:` contract the parent parses. The two `#### For <agent>` prompt blocks
+  collapse to one shared block, and both files now carry a "do not re-add a dimension list" note
+  with the reason -- the note is the part that has to survive.
+
+  This is a churn input, not just duplication: prose is the one artifact where fixing a finding
+  grows the surface being reviewed, and 4.45.0 already measured that the tail lives in 8-13-round
+  subjects. Removing a generator-without-brakes from every spawn is aimed at that tail.
+
+- **`skills/design/PROCESS.md` folded back into `skills/design/SKILL.md`.** The split was residue,
+  not design: PROCESS.md is the former `design-workflow` skill, demoted to a sidecar when the two
+  merged in v4.28.0 (rename recorded at 58% similarity). A skill split earns its keep through
+  progressive disclosure -- SKILL.md stays cheap, the rest loads at the step that needs it, which
+  is what `review-and-submit/RE-REVIEW.md` does. This one was read unconditionally (SKILL.md line
+  17: "Read it before creating the file"), so it cost two file reads and two places to update and
+  deferred nothing. 364 lines across two files -> 264 in one, with the duplicated reviewer-routing
+  block, document template, and example workflow deduped rather than concatenated. PROCESS.md's
+  §3 iteration rules win over SKILL.md's thinner Step 4, as the process authority always did.
+
+  Consumer-visible: the file is gone. `upgrade.ps1` removes it without anyone editing anything.
+  Live references updated in `agentic-workflow`, `auto-plan-mode`, the README skill table, the
+  overlay `DocumentStandard.md`, and `migrate-retired-skills.ps1`; historical release notes in the
+  README and this file keep saying PROCESS.md, because that is what those releases did.
+
 ## [4.45.0] - 2026-08-22 - The re-derive rule covers prose, and the preflight stops naming a deleted script
 
 MINOR: consumers get it automatically. Three corrections to `review-and-submit`, two of them to

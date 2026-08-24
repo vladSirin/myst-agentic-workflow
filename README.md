@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. Every skill and agent lives ONCE; each tool consumes the same files through its native mechanism.
 
-[![tests](https://img.shields.io/badge/tests-21%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.45.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-21%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.46.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## TL;DR
 
@@ -272,7 +272,7 @@ Typeable too, but you should not have to. Listed so you know what can fire on it
 
 | Skill | Use it when |
 |---|---|
-| [`/design`](plugins/myst-dev-kit/skills/design/SKILL.md) | Create a design document with reviewer-agent feedback and iterate to approval; the team's doc-process rules (naming, lifecycle, BLOCKING/WARNING/INFO) live in the companion [PROCESS.md](plugins/myst-dev-kit/skills/design/PROCESS.md). |
+| [`/design`](plugins/myst-dev-kit/skills/design/SKILL.md) | Create a design document with reviewer-agent feedback and iterate to approval; the team's doc-process rules (naming, lifecycle, BLOCKING/WARNING/INFO) live in the same file. |
 | [`/review-changes`](plugins/myst-dev-kit/skills/review-changes/SKILL.md) | Pre-submit review of a CL/diff INLINE: the `review-and-submit` fast path (small CLs), and any session without reviewer subagents (e.g. Codex); same rubrics, same parseable `Verdict:` line. |
 | [`/roundtable`](plugins/myst-dev-kit/skills/roundtable/SKILL.md) | Multi-perspective design discussion when one viewpoint isn't enough. |
 
@@ -300,7 +300,7 @@ The five team-process skills are listed in the catalog above; this is the other 
 | [`review-and-submit`](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md) | "review and submit" / any p4 submit | Pre-submit protocol: reviewer routing, Review Record block, preflight validators. |
 | [`auto-plan-mode`](plugins/myst-dev-kit/skills/auto-plan-mode/SKILL.md) | start of non-trivial implementation | Decide whether to enter plan mode before coding. |
 
-(The former `design-workflow` skill merged into [`design`](plugins/myst-dev-kit/skills/design/SKILL.md) in v4.28.0 -- the doc naming/location/reviewer-routing rules now live in that skill's [PROCESS.md](plugins/myst-dev-kit/skills/design/PROCESS.md).)
+(The former `design-workflow` skill merged into [`design`](plugins/myst-dev-kit/skills/design/SKILL.md) in v4.28.0; its companion `PROCESS.md` folded back into that skill's SKILL.md in v4.46.0, so the doc naming/location/reviewer-routing rules now live there.)
 
 ### Agents
 

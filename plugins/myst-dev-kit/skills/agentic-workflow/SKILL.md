@@ -9,7 +9,7 @@ description: "Team delivery process (discussion -> spec -> tickets -> triage -> 
 
 This workflow is the **end-to-end shape** for non-trivial work: discussion → captured intent (spec) → planned slices (tickets) → triaged → built → verified → submitted.
 
-For work involving **game design** (mechanics, UX, levels, player experience), the Discussion phase is **extended** via the [design](../design/SKILL.md) skill (process rules: [design/PROCESS.md](../design/PROCESS.md)) — that produces a finalized design doc in the game project's Docs dir (`Myst_Proto/Docs/` here; see the CLAUDE.md Project section), and the spec phase here references it. For pure code / system / bugfix work, Discussion can stay in chat and you jump straight to the spec (`/to-spec`).
+For work involving **game design** (mechanics, UX, levels, player experience), the Discussion phase is **extended** via the [design](../design/SKILL.md) skill — that produces a finalized design doc in the game project's Docs dir (`Myst_Proto/Docs/` here; see the CLAUDE.md Project section), and the spec phase here references it. For pure code / system / bugfix work, Discussion can stay in chat and you jump straight to the spec (`/to-spec`).
 
 Three flow shapes the project supports:
 

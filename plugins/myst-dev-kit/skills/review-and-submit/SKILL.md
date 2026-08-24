@@ -235,7 +235,15 @@ Use the Agent tool with the appropriate subagent_type — always the **namespace
 > mark which are observed and which you inferred, using the evidence ranking the reviewer is
 > being asked to apply.
 
-#### For myst-dev-kit:radical-design-critic
+**The prompt carries only what the reviewer cannot already know.** Its review dimensions are
+its own — `agents/radical-design-critic.md` §Review Methodology and
+`agents/architecture-reviewer.md` §Reference canon / §Review scope and method are the system
+prompt, loaded at spawn. Restating them here duplicates the *generator* half of the mandate
+while dropping the restraint clauses that live only in those files (§2's "a manufactured UX
+finding is noise"; "cite, don't name-drop"), which re-anchors the reviewer on producing
+findings and hands it none of the brakes. Do not re-add a dimension list.
+
+Both reviewers take the same prompt — routing (Step 3) decides which one(s) receive it:
 
 ```
 Review the following changelist for submission readiness: {changelist name}
@@ -246,30 +254,17 @@ Files to review:
 Observed facts you cannot reach yourself (values read, not inferred):
 {observed facts, or "none - nothing in this CL required observation"}
 
-Critically analyze for:
-- Edge cases that could break the design
-- UX friction points or confusing interactions
-- Hidden complexity or scope creep
-- Missing error states or failure modes
-- Assumptions that may not hold
-- Potential for player confusion
-- LD (Level Designer) usability concerns
+Linked source (spec / ticket / design doc), if any:
+{path or tracker ref, or "none linked"}
 
-Categorize issues as:
-- BLOCKING: Must fix before submit
-- WARNING: Should consider fixing
-- INFO: Suggestions for future improvement
+Apply your own review methodology. Cite file:line. Categorize findings
+BLOCKING / WARNING / INFO.
 
-Be specific with file:line references where applicable.
-
-SPEC AXIS (conditional): if the CL description links a spec, ticket, or design doc,
-read it and verify the change implements what it asked for. Report on this axis:
-- GAPS: requirements the source asked for that this CL does not implement
-  (and are not explicitly deferred in the CL description)
-- SCOPE CREEP: substantive changes the source never asked for
-Categorize Spec findings with the same BLOCKING/WARNING/INFO severities, marked
-[SPEC]. If no source is linked, skip this axis and note "Spec axis: no linked
-source" in your response.
+SPEC AXIS (only if a source is linked above): read it and verify the change
+implements what it asked for, marking findings [SPEC] at the same severities —
+GAPS (asked for, not implemented, not explicitly deferred in the CL
+description) and SCOPE CREEP (substantive changes never asked for). If nothing
+is linked, note "Spec axis: no linked source".
 
 End your response with a single line of the form:
   Verdict: GREEN | WARNING | BLOCKING
@@ -277,48 +272,9 @@ The parent session parses the literal `Verdict:` token — do not omit
 or paraphrase it.
 ```
 
-#### For myst-dev-kit:architecture-reviewer
-
-```
-Review the following changelist for submission readiness: {changelist name}
-
-Files to review:
-{file list}
-
-Observed facts you cannot reach yourself (values read, not inferred):
-{observed facts, or "none - nothing in this CL required observation"}
-
-Analyze for:
-- The reviewer's canon (Code Complete, Readable Code, and the game/engine
-  sources where they apply) and best practices
-- Alignment with the patterns and conventions this project already established
-- Proper separation of concerns
-- API clarity and discoverability
-- Integration points with existing systems
-- Potential bugs or edge cases
-- Performance considerations
-
-Categorize issues as:
-- BLOCKING: Must fix before submit
-- WARNING: Should consider fixing
-- INFO: Suggestions for future improvement
-
-Reference existing project patterns where applicable.
-
-SPEC AXIS (conditional): if the CL description links a spec, ticket, or design doc,
-read it and verify the change implements what it asked for. Report on this axis:
-- GAPS: requirements the source asked for that this CL does not implement
-  (and are not explicitly deferred in the CL description)
-- SCOPE CREEP: substantive changes the source never asked for
-Categorize Spec findings with the same BLOCKING/WARNING/INFO severities, marked
-[SPEC]. If no source is linked, skip this axis and note "Spec axis: no linked
-source" in your response.
-
-End your response with a single line of the form:
-  Verdict: GREEN | WARNING | BLOCKING
-The parent session parses the literal `Verdict:` token — do not omit
-or paraphrase it.
-```
+On a **re-review**, add only what changed: which findings you fixed, which you declined and
+why, and whether you adopted the reviewer's prescription ([RE-REVIEW.md](RE-REVIEW.md) rules
+1 and 3). Do not resend the whole CL as if the first pass had not happened.
 
 ---
 

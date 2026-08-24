@@ -54,4 +54,4 @@ Approval doesn't carry across user instructions — each new task starts fresh o
 
 - [pre-implementation-gate](../pre-implementation-gate/SKILL.md) — when in plan mode for multi-CL work, this gate fires before the plan body is drafted.
 - [changelist-verification](../changelist-verification/SKILL.md) — once a plan is approved and multiple CLs are executing, this rule kicks in.
-- [design/PROCESS.md](../design/PROCESS.md) and [agentic-workflow](../agentic-workflow/SKILL.md) — both require searching for an existing plan/spec before creating a new one.
+- [design](../design/SKILL.md) and [agentic-workflow](../agentic-workflow/SKILL.md) — both require searching for an existing plan/spec before creating a new one.

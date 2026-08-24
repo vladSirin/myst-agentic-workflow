@@ -7,7 +7,7 @@
 #
 # Retired: zoom-out, caveman, write-a-skill (removed) and diagnose (renamed -> diagnosing-bugs).
 # v4.28.0: obsidian-vault, teach, edit-article, grill-me, setup-matt-pocock-skills (removed)
-#         and design-workflow (merged into design; process content now in design/PROCESS.md).
+#         and design-workflow (merged into design; process content now in design/SKILL.md).
 #
 # DRY-RUN by default (lists what it would remove). Use -Apply to act.
 #   Filesystem consumers: -Apply removes the files.

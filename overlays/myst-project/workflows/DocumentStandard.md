@@ -55,7 +55,7 @@ Deleted:        p4 delete                    (remove from depot)
 
 ## Document Structure
 
-All design and plan documents SHOULD include these sections (see the `design` skill's `PROCESS.md` in the myst-dev-kit plugin for the full template):
+All design and plan documents SHOULD include these sections (see the `design` skill in the myst-dev-kit plugin for the full template):
 
 1. **Title** — `# {Document Title}`
 2. **Metadata line** — `**Version**: v{N} | **Updated**: {YYYY-MM-DD} | **Status**: {WIP|APPROVED|COMPLETE}`
