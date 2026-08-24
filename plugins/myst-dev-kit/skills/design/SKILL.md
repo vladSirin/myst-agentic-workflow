@@ -14,7 +14,14 @@ This skill automates the creation and review of design documents. When invoked f
 2. Launches reviewer agents to critique the design
 3. Iterates on the document based on feedback
 
-**Process authority lives in [PROCESS.md](PROCESS.md)** — file naming, location, reviewer routing, iteration/verdict rules, and the finalization lifecycle. Read it before creating the file; this file is only the automation flow.
+## Automatic Detection
+
+When the user requests design or planning work, you **MUST** follow this process. Triggers include:
+
+- Explicit: "design", "plan", "architect", "spec", "proposal"
+- Implicit: "how should we implement", "what's the best approach for", "let's think through"
+
+---
 
 ## Instructions
 
@@ -29,7 +36,24 @@ Ask the user clarifying questions if needed to understand:
 
 ### Step 2: Create the Document
 
-Search for an existing related document first (see [PROCESS.md](PROCESS.md) §"Search before you create"), then create the document in the game Docs dir, named per the [PROCESS.md](PROCESS.md) naming table.
+> **Naming rules**: See `.claude/rules/DocumentStandard.md` (installed by the myst-project
+> overlay) for the full naming convention and lifecycle.
+
+> **Search before you create.** Glob `plan_*.md`, `design_*.md`, `guide_*.md` under the
+> game Docs dir (`Myst_Proto/Docs/` here; see the CLAUDE.md Project section) and
+> `.scratch/*/spec.md` for the feature, system, or phase name first. If a related document
+> exists, extend it — update status, add sections, keep its history — rather than opening a
+> second one. Two documents for one feature don't error; they split the source of truth, and
+> someone later works from the stale half.
+
+**ALWAYS** create a design document in the game Docs dir before any implementation:
+
+| Request Type | File Naming | Example |
+|--------------|-------------|---------|
+| Feature design | `design_{feature}_WIP.md` | `design_checkpoint_system_WIP.md` |
+| Implementation plan | `plan_{feature}_WIP.md` | `plan_phase9_audio_WIP.md` |
+| System architecture | `design_{system}_architecture_WIP.md` | `design_save_system_architecture_WIP.md` |
+| Refactor proposal | `design_{area}_refactor_WIP.md` | `design_event_system_refactor_WIP.md` |
 
 Use this template structure:
 
@@ -124,53 +148,107 @@ Use this template structure:
 
 ### Step 3: Launch Reviewers
 
-After creating the initial document, launch reviewer agents using the Agent tool, routed per the [PROCESS.md](PROCESS.md) routing table:
+After creating the initial document, **ALWAYS** launch at least one reviewer agent — via the
+Agent tool with the **namespaced** subagent_type (bare names fail to resolve):
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                         Document Type Routing                          │
+│                                                                        │
+│  Game Design / UX / Features  →  myst-dev-kit:radical-design-critic   │
+│  (gameplay mechanics, player                                           │
+│   experience, UI flows)                                                │
+│                                                                        │
+│  Code Architecture / Systems  →  myst-dev-kit:architecture-reviewer   │
+│  (subsystems, plugins, APIs,                                           │
+│   implementation patterns)                                             │
+│                                                                        │
+│  Comprehensive Design         →  BOTH agents (parallel)                │
+│  (new features with code +                                             │
+│   player-facing elements)                                              │
+│                                                                        │
+└────────────────────────────────────────────────────────────────────────┘
+```
 
 > **Effort barbell:** design critique is judgment work — launch reviewers at their defined model/effort, never downgraded to save tokens. Only mechanical stages (file inventories, censuses, link sweeps) run cheap (`effort: low` agents or `model: haiku` spawns).
 
-- **Design documents** (game mechanics, UX, features) → launch `myst-dev-kit:radical-design-critic`
-- **Architecture/implementation plans** (code structure, systems) → launch `myst-dev-kit:architecture-reviewer`
-- **Comprehensive designs** (UX + code) → launch both agents in parallel
-
-Use this Agent tool invocation pattern — always the **namespaced** subagent_type (bare names fail to resolve); full reviewer prompts are in [PROCESS.md](PROCESS.md):
+**The prompt carries only what the reviewer cannot already know.** Its review dimensions are
+its own — `agents/radical-design-critic.md` §Review Methodology and
+`agents/architecture-reviewer.md` §Reference canon / §Review scope and method are the system
+prompt, loaded at spawn. Restating them here duplicates the *generator* half of the mandate
+while dropping the restraint clauses that live only in those files (§2's "a manufactured UX
+finding is noise"; "cite, don't name-drop"), which re-anchors the reviewer on producing
+findings and hands it none of the brakes. Do not re-add a dimension list.
 
 ```
 Agent tool with:
   subagent_type: "myst-dev-kit:radical-design-critic" OR "myst-dev-kit:architecture-reviewer"
-  prompt: "Review the design document at <game Docs dir>/{filename}.md. ..."
+  prompt: |
+    Review the design document at <game Docs dir>/{filename}.md.
+
+    Observed facts you cannot reach yourself (values read, not inferred):
+    {observed facts, or "none - nothing in this document required observation"}
+
+    Apply your own review methodology. Cite document sections. Categorize
+    findings BLOCKING / WARNING / INFO.
+
+    End your response with a single line of the form:
+      Verdict: GREEN | WARNING | BLOCKING
 ```
 
-Each reviewer ends its response with a literal `Verdict: GREEN | WARNING | BLOCKING` line — parse that token; never infer approval from prose.
+On a **re-review**, add only what changed: which findings you fixed, which you declined and
+why, and whether you adopted the reviewer's prescription (see
+[RE-REVIEW.md](../review-and-submit/RE-REVIEW.md) rule 3).
 
-### Step 4: Iterate on Feedback
+Each reviewer ends its response with a literal `Verdict: GREEN | WARNING | BLOCKING` line —
+parse that token; never infer approval from prose, and treat a response without it as
+ambiguous (ask the reviewer again or present the findings to the user).
 
-Apply the iteration and verdict rules in [PROCESS.md](PROCESS.md):
+### Step 4: Iterate at Least Once
 
-1. Read the reviewer feedback
-2. Update the document to address BLOCKING and WARNING findings (or record an explicit accept/defer decision)
-3. Add a new entry to the Change Log
-4. Present the updated document to the user with a summary of changes
-5. Re-run **only the reviewer(s) whose BLOCKING findings you addressed** — the re-review
-   rules in [RE-REVIEW.md](../review-and-submit/RE-REVIEW.md) govern document reviews too
-   (all but rule 4, which has no validator analogue here)
+After receiving reviewer feedback:
 
-### Step 5: Mark Document Ready
+1. Update the document to address BLOCKING and WARNING findings (record an explicit
+   accept/defer decision for any WARNING you do not fix)
+2. Add entry to Change Log with version bump
+3. Present summary of changes to user
+4. Re-run per the re-review rules — **the same loop, the same rules**: see
+   [RE-REVIEW.md](../review-and-submit/RE-REVIEW.md), which governs a CL review and a
+   document review alike. Rules 1, 2, 3, 5 and 6 apply as written. Rule 4 has no
+   analogue here — no validator checks a design document — so every finding is a real
+   finding. Read rule 6's "gets its own CL" as "gets its own document": a section that
+   arrives mid-review does not restart this review.
 
-When iteration is complete, finalize the filename and the **Status** header per the lifecycle in [PROCESS.md](PROCESS.md) §Finalize, then present the final document to the user.
+   The two that change what most people do today: **rule 1** — re-run only the reviewer
+   whose BLOCKING findings you addressed, not both — and **rule 3** — the fix answers the
+   finding and nothing else, with your reasoning going in the re-review brief rather than
+   growing the document. On a design doc the second matters most: new rationale prose is
+   new reviewable surface, and prose is where the churn was measured to live.
+
+Do not finalize a document whose latest verdict is BLOCKING.
+
+### Step 5: Finalize
+
+When design is approved:
+1. Remove the `_WIP` suffix from the filename (do NOT add `_Updated` or any other suffix)
+2. Update **Status** header in document: `WIP` → `APPROVED` or `COMPLETE`
+3. Present the final document to the user
 
 ---
 
-## Example Invocation
+## Example Workflow
 
-User: "Design a checkpoint save system for the game"
+**User**: "Let's design a dialogue system for NPCs"
 
-You would:
-1. Create `design_checkpoint_save_system_WIP.md` in the game Docs dir (`Myst_Proto/Docs/` here)
-2. Fill in the template with checkpoint system design
-3. Launch `myst-dev-kit:architecture-reviewer` (since it's a code system)
-4. Launch `myst-dev-kit:radical-design-critic` (since it affects player experience)
-5. Iterate based on feedback
-6. Finalize per [PROCESS.md](PROCESS.md) and present the final document
+**Claude**:
+1. Creates `design_npc_dialogue_system_WIP.md` in the game Docs dir
+2. Fills in template with dialogue system design
+3. Launches both reviewers (it's UX + code):
+   - `myst-dev-kit:radical-design-critic` → checks player experience, edge cases
+   - `myst-dev-kit:architecture-reviewer` → checks integration with the systems it already exists alongside
+4. Receives feedback, updates document (v1.1)
+5. Presents updated design with change summary
+6. User approves → renames to `design_npc_dialogue_system.md`
 
 ---
 
@@ -180,3 +258,7 @@ You would:
 - Reference `split_fiction_scripts/` for AngelScript patterns when applicable
 - Follow the project's established architecture patterns (FrogEvent, Subsystems, etc.)
 - Keep designs LD-friendly as per project philosophy
+
+> [!CAUTION]
+> **Never skip the review step.** Even "obvious" designs benefit from a second perspective.
+> The cost of iteration in design is far lower than the cost of iteration in code.
