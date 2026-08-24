@@ -102,8 +102,9 @@ an iteration loop, and carried a `> [!CAUTION] Never skip the review step` banne
 documents and nothing else -- find whether one already exists, name and place it correctly, fill
 the standard template, carry it `WIP` -> `APPROVED`. Five steps become three.
 
-Reviewing what a document *proposes* is `review-and-submit`'s job, on the Standards axis, where
-a design-documents-only CL routes to `radical-design-critic`. One reviewer, reached one way.
+Reviewing what a document *proposes* is now nobody's automatic job -- see the alignment check
+below. `radical-design-critic` stays directly invokable when someone wants a design critiqued;
+nothing fires it on a schedule.
 
 Why it moved rather than being trimmed: `design` was the second home for review rules, which is
 how they drifted apart in the first place. Its iteration step restated rules 1, 3, 4 and 6 of the
@@ -114,6 +115,28 @@ original. A rule with two homes has no home.
 Nothing in the skill tells you to get one reviewed, and no pointer was added -- ask for a review
 explicitly, or let the CL that ships the document carry it. If that turns out to be a gap in
 practice, the fix is a pointer, not a workflow.
+
+### `radical-design-critic` becomes a preflight check, not a reviewer
+
+Prose is not a review axis. The Standards axis is `architecture-reviewer` unconditionally,
+whatever the CL contains, and the design critic runs **once at submit time** as preflight
+item 2 -- on any CL containing `.md`/`.txt` -- answering one closed question: does the prose
+here contradict what is true? Behaviour the code in this CL does not have, a stale plan
+status, two documents disagreeing, an instruction the diff invalidates.
+
+It is explicitly told **not** to critique the design, the writing, or anything the document
+proposes, and it carries no severity and no verdict. It records one `Docs-alignment:` line in
+the Review Record and **never starts a review round**.
+
+Why this shape: a reviewer asked to critique prose always finds something -- that is how the
+worst subject in the round measurement reached 19 rounds and 30 invocations. A reviewer asked
+whether two things contradict either finds a contradiction or does not. The question is
+closed, so the loop terminates. It is the same reason the 12-smell baseline is a closed list.
+
+**What is lost, stated plainly:** nothing now critiques a design document automatically.
+`design` writes it, the alignment check confirms it does not contradict what shipped, and
+quality of the design itself is a human judgement or an explicit request. That is a
+deliberate trade: the automatic critique was the single largest round generator measured.
 
 ### Not changed, and not a divergence
 

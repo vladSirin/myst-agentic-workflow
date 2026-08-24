@@ -141,8 +141,10 @@ Two axes, two sub-agents, running concurrently so neither pollutes the other's c
 | **Standards** | `myst-dev-kit:architecture-reviewer` | Does the code follow how this project writes code? |
 | **Spec** | general-purpose sub-agent, brief below | Does the change do what the spec asked for? |
 
-A CL of **design documents only** routes Standards to `myst-dev-kit:radical-design-critic`
-instead; mixed CLs use the architecture reviewer.
+Two axes, always, whatever the CL contains. Prose is **not** reviewed as a third axis and
+`radical-design-critic` is **not** a reviewer here — it runs once at submit time as an alignment
+check (Submission Step, preflight 2). Reviewing what a document *proposes* is not this
+protocol's job; checking that it does not contradict what shipped is.
 
 > **Effort barbell:** reviewing is judgment work — launch reviewers at their defined
 > model/effort, never downgraded to save tokens.
@@ -324,6 +326,7 @@ of this CL, and unrelated work that arrives mid-review gets its own CL.
 ## Review
 Standards: architecture-reviewer - Verdict: WARNING (2 passes)
 Spec:      sub-agent vs .scratch/foo/issues/03-bar.md - Verdict: GREEN
+Docs-alignment: aligned
 Findings:
 - [FIXED] BLOCKING Standards SomeFile.as:88 — one-line description
 - [ACCEPTED] WARNING Standards — magic number in threshold
@@ -337,6 +340,9 @@ Findings:
   pass count if more than one. The axes are recorded separately for the same reason they
   are reviewed separately — a blended line lets the passing axis hide the failing one.
 - A skipped Spec axis is recorded, never omitted: `Spec: skipped (no linked source)`.
+- A CL containing prose also carries one `Docs-alignment:` line — `aligned`, or what was
+  contradicting and how it was fixed. It is a preflight result, not an axis: no severity,
+  no verdict, and it never counts as a review pass.
 - **Generate that line — do not type it, and write it last.** It is the one field in the
   description that cannot be true until the review ends, and a multi-pass review will
   invalidate a hand-written one every time a pass lands. Keep the verdicts in a list and
@@ -383,7 +389,37 @@ After the Review Record block is in place:
 
 1. **Run repo preflight validators** — on any warning or non-zero exit: report it, fix, and re-run before submitting:
    1. Project preflight checks (e.g. `check-uproject-assoc.sh` under your tool's scripts dir — `.claude/scripts/` or `.Codex/scripts/` — when the `ue` overlay is installed).
-   2. **There is no client-side audit to run.** `submit-audit-warn.sh` was deleted in CL 2454.
+   2. **Docs-alignment check** — when the CL contains any `.md`/`.txt`. Spawn
+      `myst-dev-kit:radical-design-critic` **once**, with this brief:
+
+      ```
+      Alignment check on changelist {CL_ID} - NOT a review.
+
+      Prose in this CL: {md/txt file list}
+      Code/assets in this CL: {everything else, or "none - docs-only CL"}
+      Diff: p4 diff -c {CL_ID} //...
+
+      Report ONLY contradictions between what the prose claims and what is
+      true: a doc describing behaviour the code in this CL does not have; a
+      plan whose phase status is stale against what shipped; two documents in
+      this CL disagreeing; a documented instruction that the diff invalidates.
+
+      Do NOT critique the design, the writing, the structure, or anything the
+      document proposes. Do NOT suggest improvements. If nothing contradicts,
+      say "aligned" and stop. Under 200 words. No verdict line.
+      ```
+
+      Report each contradiction, fix it, and re-run the check — the same loop as any other
+      preflight item. It produces **no severity and no verdict**: it is not a review pass, it
+      does not appear as an axis in the Review Record, and it never starts a review round.
+      A CL that reaches here with prose and no contradictions records
+      `Docs-alignment: aligned` in the Review Record.
+
+      Why a preflight and not an axis: a reviewer asked to critique prose always finds
+      something, which is how the worst subject in the round measurement reached 19 rounds.
+      A reviewer asked whether two things contradict either finds a contradiction or does not.
+      The question is closed, so the loop terminates.
+   3. **There is no client-side audit to run.** `submit-audit-warn.sh` was deleted in CL 2454.
       Its checks split two ways, and neither is a step you perform:
       - **EOL flips** — `normalize-eol.sh` is a PostToolUse hook on Edit that repairs the
         mixed-ending fingerprint the moment a partial rewrite creates it. Nothing to normalize

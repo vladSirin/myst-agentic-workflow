@@ -20,8 +20,8 @@ both axes in one context is exactly the cross-contamination the axis split preve
 
 2. **Standards axis.** Read `../../agents/architecture-reviewer.md` whole — its four-source
    canon, the closed 12-smell baseline, and the 400-word cap are all there, and the cap binds
-   you as it binds a sub-agent. Apply it to code and config. A design-documents-only CL uses
-   `../../agents/radical-design-critic.md` instead.
+   you as it binds a sub-agent. Apply it to code and config. Prose is not reviewed here — see
+   the alignment check in step 5.
 
    One narrow exclusion: under `## Submission Authority (HARD RULE)`, the two paragraphs
    beginning "You are a **reviewer**, not a submitter" and "If the workflow that invoked you"
@@ -46,6 +46,17 @@ both axes in one context is exactly the cross-contamination the axis split preve
    **Never merge or re-rank across the axes** — a blended verdict lets the passing axis hide
    the failing one. `review-and-submit` records them as
    `Standards: self (inline, review-changes skill) - Verdict: ...` and the same for `Spec:`.
+
+5. **Docs-alignment check** (preflight, not a review). If the CL contains any `.md`/`.txt`, read
+   `../../agents/radical-design-critic.md` for its lens, then answer one closed question: does
+   the prose in this CL contradict what is true — behaviour the code here does not have, a stale
+   plan status, two documents disagreeing, an instruction the diff invalidates? Report
+   contradictions and fix them; otherwise record `Docs-alignment: aligned`.
+
+   **Do not critique the design, the writing, or anything the document proposes.** It carries no
+   severity and no verdict, and it never starts a review round. A reviewer asked to critique
+   prose always finds something; a reviewer asked whether two things contradict either finds a
+   contradiction or does not.
 
 ## Hard rule: submission authority
 
