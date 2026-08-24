@@ -4,12 +4,12 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. Every skill and agent lives ONCE; each tool consumes the same files through its native mechanism.
 
-[![tests](https://img.shields.io/badge/tests-21%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.48.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-21%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.48.1-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## TL;DR
 
 - **What it is** — one dev kit (30 skills, 2 reviewer agents, 3 commands) shared by Claude Code, Codex and OpenCode. Every skill lives once; each tool reads the same files through its own mechanism.
-- **Install** — `git clone` + run `setup-devkit.ps1`. Re-run the same command to update. [Jump to Install](#install-30-second-setup).
+- **Install** — `git clone` + run `setup-devkit.ps1` (Claude-only users can skip the clone). Re-run the same command to update. [Jump to Install](#install-30-second-setup).
 - **The 13 skills you actually type** — `/to-spec`, `/to-tickets`, `/triage`, `/wayfinder`, `/implement`, `/grill-me`, `/handoff`, and friends. [Jump to the catalog](#skills-you-invoke).
 - **The other 18 fire on their own** when the task fits, so it is worth [skimming what they are](#skills-the-agent-reaches-for) before you install.
 - **Adopting it in your own project?** The consumer scaffold (bibles, rules, hook scripts) installs separately — see [Adopting the scaffold](#install-30-second-setup) and [SETUP.md](SETUP.md).
@@ -31,7 +31,16 @@ git clone https://github.com/vladSirin/myst-agentic-workflow "$env:USERPROFILE\.
 & "$env:USERPROFILE\.myst-agentic-workflow\setup-devkit.ps1"
 ```
 
-**Updating is the same command** — re-run it any time. It prints the version delta and self-verifies delivery. New versions are announced on the [Releases page](https://github.com/vladSirin/myst-agentic-workflow/releases).
+**Claude Code only?** Skip the clone — the Claude leg drives `claude`'s own plugin manager and needs no package source on disk:
+
+```powershell
+irm https://raw.githubusercontent.com/vladSirin/myst-agentic-workflow/main/setup-devkit.ps1 -OutFile "$env:TEMP\setup-devkit.ps1"
+& "$env:TEMP\setup-devkit.ps1" -Tool claude
+```
+
+It registers the marketplace for you if it is not already (`marketplace add` fallback), so this works outside the team project too. **Codex and OpenCode do need the clone** — Codex generates its reviewer agents from it, and OpenCode's `skills.paths` points at it.
+
+**Updating is the same command** — re-run whichever form you used. It prints the version delta and self-verifies delivery. New versions are announced on the [Releases page](https://github.com/vladSirin/myst-agentic-workflow/releases).
 
 > **Myst team member?** [SETUP.md](SETUP.md) is your page — committed core via `p4 sync`, this one command for the kit, per-tool notes and known gaps.
 
@@ -306,7 +315,7 @@ Specialized subagents. Native Markdown under Claude Code; under Codex and OpenCo
 
 | Agent | Triggers on |
 |---|---|
-| `architecture-reviewer` | Post-implementation review. Judges against a four-source canon — Code Complete, The Art of Readable Code, and (for game/engine projects) Game Programming Patterns + Game Engine Architecture — plus the conventions it discovers in your repo. Stack-agnostic: it reads your `CLAUDE.md`/`AGENTS.md` and the code around the change instead of assuming an engine. |
+| `architecture-reviewer` | The **Standards axis** of `review-and-submit`. Judges against a four-source canon — Code Complete, The Art of Readable Code, and (for game/engine projects) Game Programming Patterns + Game Engine Architecture — plus a closed 12-smell Fowler baseline, a 400-word output cap, and the conventions it discovers in your repo. Stack-agnostic: it reads your `CLAUDE.md`/`AGENTS.md` and the code around the change instead of assuming an engine. |
 | `radical-design-critic` | Design docs / proposals. Stress-tests for edge cases, UX friction, hidden complexity. |
 
 ### Overlays
