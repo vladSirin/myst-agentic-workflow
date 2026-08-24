@@ -27,6 +27,100 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.48.0] - 2026-08-24 - Two axes, a closed smell list, and a stopping rule
+
+MINOR: consumers get it automatically. `review-and-submit` is restructured around the shape of
+upstream `mattpocock/skills`' `code-review`, one companion file is deleted, and no skill is
+added or retired.
+
+Motivated by measurement, not by taste. `measure-review-rounds.ps1` since 2026-08-01 with the
+resumption-aware parser: **median 3 rounds, n=107**, with a tail reaching **19 rounds / 30
+invocations** -- and its worst subject is a design document, three of the top five being `.md`.
+4.46.0 removed one *input* to that tail (dimension lists restated at every spawn). This
+release changes the *structure*, adopting the three properties upstream has and we did not:
+a closed finding baseline, a hard output cap, and axis separation with no re-ranking.
+
+### Two axes replace three tiers
+
+`review-and-submit` reviewed along two lenses that were merged into one verdict, routed through
+a trivial/fast/full tier table. It now runs **Standards** and **Spec** as parallel sub-agents
+that never see each other's reasoning, reported under their own headings and **never merged or
+re-ranked** -- upstream's rule, and its reason: a blended verdict lets the passing axis hide the
+failing one. A change can follow every convention while implementing the wrong thing, or do
+exactly what the ticket asked while breaking every convention.
+
+Standards runs `architecture-reviewer` (design-documents-only CLs run `radical-design-critic`);
+Spec runs a general-purpose sub-agent against the linked `Ticket:` / spec / design doc, and is
+recorded as `Spec: skipped (no linked source)` rather than silently dropped. The Review Record
+now carries one line per axis, and each finding names the axis that raised it. The gate reads
+the **worst of the two** -- a threshold, not a ranking.
+
+Gone: the tier table, the trivial and fast paths, and the Step 4 documentation check. The
+tiers existed to avoid spending a costly reviewer on a small CL; with a closed baseline and a
+400-word cap per axis, the review is cheap enough that routing around it bought nothing.
+
+### The smell baseline lives in the agent, not the prompt
+
+`agents/architecture-reviewer.md` gains upstream's twelve Fowler smells (_Refactoring_ ch.3)
+with its two binding rules verbatim -- **the repo overrides**, and **always a judgement call**
+("possible Feature Envy", never a hard violation) -- plus "skip anything tooling already
+enforces" and the 400-word output budget.
+
+**Deliberate divergence from upstream**: upstream pastes the baseline into the prompt because
+its sub-agents are anonymous and have no other access to it. Ours is a named agent whose system
+prompt loads at spawn, so pasting it inline would rebuild exactly the duplication 4.46.0 just
+removed. Same content, different home, for a reason that only applies here.
+
+The closed list is the point. An open-ended generator ("edge case bombardment") can always
+produce one more finding against any finite text; twelve named smells terminate.
+
+### `RE-REVIEW.md` deleted
+
+Upstream `code-review` is a single `SKILL.md`. The companion file was the same split removed
+from `design/PROCESS.md` in 4.46.0, and it was read unconditionally, so it deferred nothing.
+Rules 1, 3, 5 and 6 collapse into axis separation, the output caps, and the no-re-ranking rule.
+
+**Rule 4 survives as text inside `SKILL.md`**, and deliberately so: it is the exemption letting
+a missing `[JobFamily][Name]` tag, an EOL flip, non-ASCII, or a missing `Ticket:` line be fixed
+*without* costing a reviewer pass. Deleting it would have made every formatting fix buy a full
+round -- a churn increase, the opposite of this release. Its closing principle is kept verbatim:
+the list is closed, every item cannot change behaviour, and skipping the pass never skips the gate.
+
+### New, and not from upstream: the stopping rule
+
+**A round that produces no BLOCKING finding is the last round.** Remaining WARNING and INFO
+items are recorded with their disposition and the CL ships. Upstream has no explicit analogue --
+its caps bound rounds implicitly -- so this is marked as an addition, not as adopted. It is the
+one item aimed at the measured tail rather than at its inputs: on prose, a pass spent driving a
+WARNING-only report to silence reliably produces a fresh WARNING-only report. The same rule is
+added to `design`'s iteration step, where it matters most, since nothing there has a validator
+behind it.
+
+### Not changed, and not a divergence
+
+The submit gate, the `ready-for-human` shelve rule, the Review Record block and the EOL/ASCII
+preflight all stand. Upstream omits them because it **has no submit step at all** -- that is
+silence, not a verdict. The Review Record has no upstream counterpart because GitHub holds
+review output; in Perforce the CL description is the only surface a reviewer can read.
+
+`review-changes` is kept, not deleted, and rewritten to run the same two axes inline. It exists
+because **Codex has no Agent tool**; deleting it would have removed the review path for a
+supported tool entirely.
+
+### Sizes
+
+| File | Before | After |
+|---|---:|---:|
+| `skills/review-and-submit/SKILL.md` | 458 | 414 |
+| `skills/review-and-submit/RE-REVIEW.md` | 50 | 0 |
+| `skills/review-changes/SKILL.md` | 70 | 54 |
+| `agents/architecture-reviewer.md` | 64 | 101 |
+
+Net -73 lines. Smaller than the shape suggests, because roughly 200 lines of
+`review-and-submit` are the Perforce shell -- CL organization, the Review Record, the preflight
+and the submit gate -- which upstream has no equivalent of and which none of this touches.
+The structural change is the deliverable; the line count is a side effect.
+
 ## [4.47.0] - 2026-08-24 - Retire auto-plan-mode and the BP-Pins requirement
 
 MINOR: consumers get it automatically. One skill retired and one preflight item removed;

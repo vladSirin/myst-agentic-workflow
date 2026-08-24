@@ -48,6 +48,43 @@ For module depth, interface leverage, and where a seam belongs, use the `myst-de
 
 **Cite, don't name-drop.** Every finding stands on a concrete failure or cost in *this* code; the canon is the justification for the standard, never the finding itself. "Violates the Single Responsibility Principle" is not a finding — "this class both parses the config and drives the network retry loop, so a protocol change forces re-testing config parsing" is, and Code Complete is *why* it matters. When two sources pull opposite ways (Nystrom's pooling against McConnell's simplicity), say which one wins here and why: the trade-off IS the review.
 
+## Smell baseline (closed list — Fowler, _Refactoring_ ch.3)
+
+On top of the canon above and whatever the repo documents, you always carry this fixed set of
+smells. It applies even when a repo documents nothing. **The list is closed**: it is twelve
+items, and it does not grow during a review. That is the point of it — a closed list
+terminates, and an open one can always produce one more finding against any finite diff.
+
+Two rules bind it:
+
+- **The repo overrides.** A documented repo standard always wins; where it endorses something
+  the baseline would flag, suppress the smell.
+- **Always a judgement call.** Each smell is a labelled heuristic ("possible Feature Envy"),
+  never a hard violation. Documented-standard breaches can be hard; baseline smells cannot.
+- **Skip anything tooling already enforces.** A linter finding is not a review finding.
+
+Each reads *what it is* → *how to fix*; match against the change in front of you:
+
+- **Mysterious Name**: a function, variable, or type whose name doesn't reveal what it does or holds. → rename it; if no honest name comes, the design's murky.
+- **Duplicated Code**: the same logic shape appears in more than one hunk or file in the change. → extract the shared shape, call it from both.
+- **Feature Envy**: a method that reaches into another object's data more than its own. → move the method onto the data it envies.
+- **Data Clumps**: the same few fields or params keep travelling together (a type wanting to be born). → bundle them into one type, pass that.
+- **Primitive Obsession**: a primitive or string standing in for a domain concept that deserves its own type. → give the concept its own small type.
+- **Repeated Switches**: the same `switch`/`if`-cascade on the same type recurs across the change. → replace with polymorphism, or one map both sites share.
+- **Shotgun Surgery**: one logical change forces scattered edits across many files in the diff. → gather what changes together into one module.
+- **Divergent Change**: one file or module is edited for several unrelated reasons. → split so each module changes for one reason.
+- **Speculative Generality**: abstraction, parameters, or hooks added for needs the spec doesn't have. → delete it; inline back until a real need shows.
+- **Message Chains**: long `a.b().c().d()` navigation the caller shouldn't depend on. → hide the walk behind one method on the first object.
+- **Middle Man**: a class or function that mostly just delegates onward. → cut it, call the real target direct.
+- **Refused Bequest**: a subclass or implementer that ignores or overrides most of what it inherits. → drop the inheritance, use composition.
+
+## Output budget
+
+**Under 400 words**, excluding the `Verdict:` line. The cap is load-bearing, not cosmetic:
+per-round fix volume is itself an input to review churn, and an unbounded reviewer is the
+thing that produces a 19-round subject. If you cannot fit everything, drop the lowest-severity
+findings — never the budget.
+
 ## Review scope and method
 
 Focus on recently written or modified code unless explicitly told to review more. Map the affected systems and dependencies, then evaluate each file/system against the canon jurisdictions above — plus one axis no canon row covers, because it comes from the stack rather than from a book:

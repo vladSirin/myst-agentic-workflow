@@ -197,8 +197,9 @@ Agent tool with:
 ```
 
 On a **re-review**, add only what changed: which findings you fixed, which you declined and
-why, and whether you adopted the reviewer's prescription (see
-[RE-REVIEW.md](../review-and-submit/RE-REVIEW.md) rule 3).
+why, and whether you adopted the reviewer's prescription. The fix answers the finding and
+nothing else — your reasoning goes in the re-review brief, never into the document. New
+rationale prose is new reviewable surface, and prose is where the churn was measured to live.
 
 Each reviewer ends its response with a literal `Verdict: GREEN | WARNING | BLOCKING` line —
 parse that token; never infer approval from prose, and treat a response without it as
@@ -212,18 +213,18 @@ After receiving reviewer feedback:
    accept/defer decision for any WARNING you do not fix)
 2. Add entry to Change Log with version bump
 3. Present summary of changes to user
-4. Re-run per the re-review rules — **the same loop, the same rules**: see
-   [RE-REVIEW.md](../review-and-submit/RE-REVIEW.md), which governs a CL review and a
-   document review alike. Rules 1, 2, 3, 5 and 6 apply as written. Rule 4 has no
-   analogue here — no validator checks a design document — so every finding is a real
-   finding. Read rule 6's "gets its own CL" as "gets its own document": a section that
-   arrives mid-review does not restart this review.
+4. Re-run **only the reviewer whose BLOCKING findings you addressed**, not both. One whose
+   findings you did not act on has nothing to re-verify, and re-running it invites new
+   findings on unchanged text.
 
-   The two that change what most people do today: **rule 1** — re-run only the reviewer
-   whose BLOCKING findings you addressed, not both — and **rule 3** — the fix answers the
-   finding and nothing else, with your reasoning going in the re-review brief rather than
-   growing the document. On a design doc the second matters most: new rationale prose is
-   new reviewable surface, and prose is where the churn was measured to live.
+   **Stopping rule — this matters more on a document than on a CL.** A round that produces no
+   BLOCKING finding is the last round: record the remaining WARNING and INFO items with an
+   explicit accept/defer decision and finalize. Do not spend another pass driving a
+   WARNING-only report to silence; on prose that pass reliably produces a fresh WARNING-only
+   report, and the loop has no natural end. Nothing here has a validator behind it — no tool
+   checks a design document — so every finding is a real finding and the stopping rule is the
+   only thing that ends the loop. A section that arrives mid-review gets its own document; it
+   does not restart this review.
 
 Do not finalize a document whose latest verdict is BLOCKING.
 
