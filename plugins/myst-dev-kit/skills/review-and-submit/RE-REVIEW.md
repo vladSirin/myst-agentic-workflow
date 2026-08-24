@@ -30,9 +30,8 @@ its own CL" reads "gets its own document".
 4. **These findings never cost a re-review** - at any severity, BLOCKING included:
    missing Review Record block, missing or wrong `[JobFamily][Name]` tag, EOL flip, non-ASCII in
    the description, a missing `Ticket:` or `Workflow: skipped (<reason>)` line **whose ticket or
-   user decision already exists**, a missing `BP-Pins:` line **whose verification was already
-   performed**. Creating the ticket, making the skip decision, and performing the pin
-   verification are never rule-4 fixes.
+   user decision already exists**. Creating the ticket and making the skip decision are
+   never rule-4 fixes.
 
    **The list is closed, and closed on a principle**: every item is a description-or-formatting
    fix that *cannot change behaviour*, and every item has a validator behind it. Naming, `_Raw`
