@@ -1,6 +1,6 @@
 ---
 name: review-and-submit
-description: "MANDATORY protocol when the user says 'review and submit' (any variant) or before submitting ANY Perforce changelist. CL organization, reviewer routing, Review Record block, preflight validators, submit."
+description: "MANDATORY protocol when the user says 'review and submit' (any variant) or before submitting ANY Perforce changelist. CL organization, two-axis review (Standards + Spec) in parallel sub-agents, Review Record block, preflight validators, submit."
 ---
 
 # Review and Submit Protocol
@@ -14,13 +14,13 @@ This rule applies to **every file modification** in a Perforce client, not just 
 > [!CAUTION]
 > `Modify file -> p4 edit/add -> Present status` — never `Modify -> Present -> (forget) -> try to submit later -> find dirty files outside any CL`.
 
-During an active review, a file the CL did not already contain goes in a NEW CL unless the fix itself requires it — [RE-REVIEW.md](RE-REVIEW.md) rule 6.
+During an active review, a file the CL did not already contain goes in a NEW CL unless the fix itself requires it (Step 5, stopping rule).
 
 When unsure which CL a file belongs in: put it in the **default change** and reorganize later via `p4 reopen -c <CL>`. Default-change files stay out of named-CL submits (`p4 submit -c` submits only that CL) and they WILL be tracked in `p4 opened`.
 
 ## Trigger
 
-When the user gives **any explicit submit instruction naming a CL** — "review and submit {changelist name or ID}", "submit {CL}" — execute this workflow. The long phrase is sufficient, never required: Step 7 already treats any per-CL submit instruction as the approval, and the review it buys runs either way. (A bare "submit" naming no CL: ask which one, then proceed.)
+When the user gives **any explicit submit instruction naming a CL** — "review and submit {changelist name or ID}", "submit {CL}" — execute this workflow. The long phrase is sufficient, never required: Step 6 already treats any per-CL submit instruction as the approval, and the review it buys runs either way. (A bare "submit" naming no CL: ask which one, then proceed.)
 
 ---
 
@@ -70,7 +70,7 @@ When the user gives **any explicit submit instruction naming a CL** — "review 
    - Link to relevant design doc or plan if one exists (e.g., "See Docs/plan_flow_system.md Phase 8")
    - **If the CL implements a spec or ticket, LINK IT here** as a
      `Ticket: .scratch/<slug>/issues/<NN>-<slug>.md` line (path or tracker ref) —
-     this is what enables the reviewers' Spec axis (see Step 5) and what the
+     this is what the Spec axis reviews against (see Step 3) and what the
      Submit-Audit agent check greps. If the user explicitly skipped the workflow,
      carry `Workflow: skipped (<reason>)` instead (see the pre-implementation-gate
      skill; agent CLs only — humans are exempt from this convention)
@@ -88,7 +88,7 @@ When the user gives **any explicit submit instruction naming a CL** — "review 
    - **Keep it scannable**: prefer bullets over paragraphs
    - **Be specific**: name the classes, systems, and files that changed — don't just say "updated code"
    - **Include context**: teammates who didn't write the code should understand the CL without reading every file
-   - To update the description of an **existing** CL safely: `p4 change -o {CL_ID} > {scratch}/cl.spec` → edit the spec (keep the `Files:` section untouched — the existing-CL form lists only that CL's files, so no sweep) → `p4 change -i < {scratch}/cl.spec` from **Bash** (never a PowerShell pipe — BOM). Don't use bare `p4 change {CL_ID}`: it opens an interactive editor. See Step 8 for the `{scratch}` path note.
+   - To update the description of an **existing** CL safely: `p4 change -o {CL_ID} > {scratch}/cl.spec` → edit the spec (keep the `Files:` section untouched — the existing-CL form lists only that CL's files, so no sweep) → `p4 change -i < {scratch}/cl.spec` from **Bash** (never a PowerShell pipe — BOM). Don't use bare `p4 change {CL_ID}`: it opens an interactive editor. See Step 7 for the `{scratch}` path note.
 
 4. **Verify the changelist**:
    - Run `p4 describe {CL_ID}` to confirm all intended files are included
@@ -96,238 +96,189 @@ When the user gives **any explicit submit instruction naming a CL** — "review 
 
 ---
 
-### 2. Identify Changelist Scope
+### 2. Pin the change
 
-Determine what's in the changelist:
+Resolve the CL **before** spawning anything. A bad CL number, an already-submitted CL, or an
+empty diff must fail here, in front of the user — not inside two parallel sub-agents.
 
-- **If name provided**: Search for related files in `Myst_Proto/` based on the feature/system name
-- **If CL ID provided**: Query Perforce with `p4 describe {CL_ID}` to get the file list
-- **If unclear**: Ask the user to clarify which files or systems to review
-
----
-
-### 3. Analyze Content Type
-
-Determine which reviewer(s) to launch based on changelist contents:
-
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                          Content Type Routing                          │
-│                                                                        │
-│  Design docs / UX changes    →  myst-dev-kit:radical-design-critic    │
-│  (*.md in Docs/, UI blueprints,                                        │
-│   player-facing features)                                              │
-│                                                                        │
-│  Code / Architecture changes →  myst-dev-kit:architecture-reviewer    │
-│  (*.cpp, *.h, *.as, plugin code,                                       │
-│   subsystems, API changes)                                             │
-│                                                                        │
-│  Mixed changes               →  BOTH agents (parallel)                 │
-│  (feature with code + docs/UX)                                         │
-│                                                                        │
-│  Config / Asset only         →  Fast path: review-changes inline       │
-│  (*.ini, *.uasset tweaks)                                              │
-│                                                                        │
-│  Docs/ledger only            →  Trivial path (tier 0, below)           │
-│  (*.md/*.txt in the doc trees)                                         │
-│                                                                        │
-└────────────────────────────────────────────────────────────────────────┘
+```bash
+p4 opened -c {CL_ID}        # must list files; empty means not pending -> stop and ask
+p4 describe -s {CL_ID}      # description + file list (no diff body for a pending CL)
+p4 diff -c {CL_ID} //...    # the actual diff the reviewers read
 ```
 
-### Trivial path (tier 0 — docs/ledger only)
+> [!CAUTION]
+> `p4 describe` alone prints **no diff body** for a pending changelist. It would hand a
+> reviewer filenames and nothing to review, and the pass would come back clean because there
+> was nothing in it.
 
-Check this BEFORE the fast path. The CL qualifies when ALL of:
-
-- **Every** file is `.md` or `.txt` under a doc tree — the team docs dir (`Docs/` here), the
-  game project's Docs dir (`Myst_Proto/Docs/` here; see the CLAUDE.md Project section), or
-  `.scratch/` — including pure `p4 move`/rename CLs whose source and target both stay inside
-  those trees with zero content-line changes;
-- **Nothing** under a leads-only subtree (`_Raw/`), and nothing under `.claude/` / `.codex/`
-  (rules, hooks, scripts, and manifests steer agent behavior — they review as code, whatever
-  their extension);
-- **≤ 10 files.**
-
-One file outside the allowlist makes the CL not-trivial — route it normally. When in doubt,
-it does not qualify: take the fast path.
-
-For a qualifying CL, skip Step 3 routing, Step 4 (doc check), and Step 5 (reviewers). The
-protocol collapses to:
-
-1. Description check: `[JobFamily][Name]` tags, English/ASCII only, `Ticket:` / `Workflow:`
-   line when the pre-implementation gate applies.
-2. `p4 opened -c {CL}` lists exactly the intended files, nothing else.
-3. EOL-normalize any flagged text file (Edit/Write tools silently flip CRLF→LF).
-4. Record line in the description (Step 8 format):
-   `Reviewer: self - Verdict: GREEN (trivial path: docs-only, {N} files)`
-5. Submission Step preflight, then Step 7 as always — **the gate does not change**: a
-   submit instruction from the user naming this CL is still required.
-
-Why this tier exists: measured across CLs 2386–2469, every docs-only CL that ran the
-fast-path rubric self-reviewed GREEN with zero findings — the review pass was pure ceremony
-there, while code CLs in the same window drew real BLOCKING and WARNING verdicts. The tier
-removes the ceremony and keeps the record, the audit trail, and the human gate.
-
-### Fast path (small, non-risky CLs)
-
-If the CL is **non-risky** (contains no `.as`, `.cpp`, `.h`, `.hpp`, `.inl`, `.build.cs`, `.target.cs`, `.ini`, `.uproject`, `.uplugin`) **or** risky-but-under-threshold (**≤ 5 non-WP files AND ≤ 100 changed lines** — files under `__ExternalActors__`/`__ExternalObjects__` don't count, matching the submit-audit thresholds when the audit hook is installed), you MAY skip Step 4 (doc check) and Step 5 (reviewer agents):
-
-1. Run the `myst-dev-kit:review-changes` skill on the CL — the same rubrics, applied inline, ending in the `Verdict:` line Step 8 records. Lens selection is the skill's own (Step 3's table): one lens for single-type CLs, both for mixed.
-2. Present a one-paragraph summary and wait for the user's submit decision (Step 7 always applies)
-3. Then Step 8 (Record the Review) with its verdict, then the Submission Step preflight — in that order, because Step 8 records a review the user has approved
-
-The user can always force a full agent review ("full review CL {N}"). When in doubt — mixed content, unfamiliar system, anything player-facing — take the full path.
+If a name was given instead of a number, find the CL first (`p4 changes -s pending -u <user>`)
+and confirm it with the user before proceeding.
 
 ---
 
-### 4. Check Related Documentation
+### 3. Identify the spec source
 
-**Before launching reviewers**, check whether related design/plan documents exist and are up to date:
+Look for the originating spec, in this order:
 
-1. **Search for related docs**:
-   - Glob `*{feature_keyword}*.md` in the game project's Docs dir (`Myst_Proto/Docs/` here; see the CLAUDE.md Project section)
-   - Look for `plan_*.md`, `design_*.md` matching the changelist's feature or system
+1. The `Ticket:` line in the CL description (`.scratch/<slug>/issues/<NN>-<slug>.md` or a
+   tracker ref) — see `Docs/agents/issue-tracker.md`.
+2. A path the user passed as an argument.
+3. A design or plan doc under the game Docs dir matching the feature or system name.
 
-2. **For each related doc found**, verify:
-   - Does it reflect the changes in this CL?
-   - Is the implementation plan's phase/CL status marked complete?
-   - Are any new decisions or deviations from the original design captured?
-
-3. **If docs are missing or stale**:
-   - **Do NOT silently proceed** — present a doc update plan to the user:
-     ```markdown
-     ## Documentation Gap Found
-
-     The following docs need attention before or alongside this submission:
-
-     | Status | Document | Issue |
-     |--------|----------|-------|
-     | MISSING | <game Docs dir>/plan_{feature}.md | No plan doc exists for this feature |
-     | STALE | <game Docs dir>/design_{system}.md | CL work not reflected; phase status not updated |
-
-     (<game Docs dir> = the game project's Docs dir -- `Myst_Proto/Docs/` here; see the CLAUDE.md Project section.)
-
-     **Proposed actions:**
-     1. Create/update the above docs to reflect current state
-     2. Then proceed with code review
-
-     Proceed with doc updates first, or skip and go straight to code review?
-     ```
-
-4. **If docs are current**: Proceed to step 5.
-
-> [!NOTE]
-> Docs don't need to be perfect to submit code — but they must exist and not actively contradict what was built.
+If nothing is found, ask the user where the spec is. If they say there isn't one — or the
+description carries `Workflow: skipped (<reason>)` — the **Spec** axis is skipped and the
+report says so. A missing spec is a reported fact, never a silently-dropped axis.
 
 ---
 
-### 5. Launch Reviewer Agent(s)
+### 4. Spawn both axes in parallel
 
-Use the Agent tool with the appropriate subagent_type — always the **namespaced** names `myst-dev-kit:radical-design-critic` / `myst-dev-kit:architecture-reviewer` (bare names fail to resolve):
+Two axes, two sub-agents, running concurrently so neither pollutes the other's context.
 
-> **Effort barbell:** reviewing is judgment work — launch reviewers at their defined model/effort, never downgraded to save tokens. Only mechanical stages (file inventories, node censuses, link sweeps) run cheap (`effort: low` agents or `model: haiku` spawns).
+| Axis | Sub-agent | Asks |
+|---|---|---|
+| **Standards** | `myst-dev-kit:architecture-reviewer` | Does the code follow how this project writes code? |
+| **Spec** | general-purpose sub-agent, brief below | Does the change do what the spec asked for? |
+
+Two axes, always, whatever the CL contains. Prose is **not** reviewed as a third axis and
+`radical-design-critic` is **not** a reviewer here — it runs once at submit time as an alignment
+check (Submission Step, preflight 2). Reviewing what a document *proposes* is not this
+protocol's job; checking that it does not contradict what shipped is.
+
+> **Effort barbell:** reviewing is judgment work — launch reviewers at their defined
+> model/effort, never downgraded to save tokens.
+
+**The prompt carries only what the reviewer cannot already know.** Its dimensions, canon,
+12-smell baseline and 400-word cap live in `agents/architecture-reviewer.md` and load at
+spawn. Restating them here duplicates the *generator* half of the mandate while dropping the
+restraint clauses that live only in that file. **Do not re-add a dimension list.**
 
 > [!IMPORTANT]
-> **Supply the facts the reviewer cannot observe.** Reviewers read files, but may not be able
-> to open binary or serialized assets, query a live editor or service, or run the project's
-> tooling. When the CL touches any of that, read those facts yourself and put them in the
-> prompt: the property values, compile/validation status, node or schema shapes, the
-> before/after of a binary you diffed. Observed values, not your conclusions from them — and
-> mark which are observed and which you inferred, using the evidence ranking the reviewer is
-> being asked to apply.
+> **Supply the facts the reviewer cannot observe** — binary/serialized assets, a live editor
+> or service, project tooling it cannot run. Read those yourself and put them in the prompt:
+> property values, compile status, node or schema shapes, the before/after of a binary you
+> diffed. Observed values, not your conclusions from them; mark which you inferred.
 
-**The prompt carries only what the reviewer cannot already know.** Its review dimensions are
-its own — `agents/radical-design-critic.md` §Review Methodology and
-`agents/architecture-reviewer.md` §Reference canon / §Review scope and method are the system
-prompt, loaded at spawn. Restating them here duplicates the *generator* half of the mandate
-while dropping the restraint clauses that live only in those files (§2's "a manufactured UX
-finding is noise"; "cite, don't name-drop"), which re-anchors the reviewer on producing
-findings and hands it none of the brakes. Do not re-add a dimension list.
-
-Both reviewers take the same prompt — routing (Step 3) decides which one(s) receive it:
+**Standards prompt:**
 
 ```
-Review the following changelist for submission readiness: {changelist name}
+Review changelist {CL_ID} for submission readiness.
 
-Files to review:
-{file list}
+Diff:  p4 diff -c {CL_ID} //...
+Files: {file list}
 
 Observed facts you cannot reach yourself (values read, not inferred):
 {observed facts, or "none - nothing in this CL required observation"}
 
-Linked source (spec / ticket / design doc), if any:
-{path or tracker ref, or "none linked"}
-
-Apply your own review methodology. Cite file:line. Categorize findings
-BLOCKING / WARNING / INFO.
-
-SPEC AXIS (only if a source is linked above): read it and verify the change
-implements what it asked for, marking findings [SPEC] at the same severities —
-GAPS (asked for, not implemented, not explicitly deferred in the CL
-description) and SCOPE CREEP (substantive changes never asked for). If nothing
-is linked, note "Spec axis: no linked source".
+Apply your own review methodology and smell baseline. Cite file:line.
+Categorize findings BLOCKING / WARNING / INFO. Under 400 words.
 
 End your response with a single line of the form:
   Verdict: GREEN | WARNING | BLOCKING
-The parent session parses the literal `Verdict:` token — do not omit
-or paraphrase it.
+```
+
+**Spec prompt:**
+
+```
+Review changelist {CL_ID} against the spec it claims to implement.
+
+Diff:  p4 diff -c {CL_ID} //...
+Spec:  {path, or pasted contents}
+
+Report only:
+(a) requirements the spec asked for that are missing or partial;
+(b) behaviour in the diff the spec never asked for (scope creep);
+(c) requirements that look implemented but where the implementation looks wrong.
+
+Quote the spec line for each finding. Do not review code quality, naming, or
+architecture - that is the other axis's job and duplicating it re-ranks findings.
+Categorize BLOCKING / WARNING / INFO. Under 400 words.
+
+End your response with a single line of the form:
+  Verdict: GREEN | WARNING | BLOCKING
 ```
 
 On a **re-review**, add only what changed: which findings you fixed, which you declined and
-why, and whether you adopted the reviewer's prescription ([RE-REVIEW.md](RE-REVIEW.md) rules
-1 and 3). Do not resend the whole CL as if the first pass had not happened.
+why, and whether you adopted the reviewer's prescription. Re-run **only the axis whose
+BLOCKING findings you addressed** — an axis you did not act on has nothing to re-verify, and
+re-running it invites new findings on unchanged code. Do not resend the whole CL as if the
+first pass had not happened.
 
 ---
 
-### 6. Present Summary
+### 5. Aggregate — do not merge
 
-After receiving reviewer feedback, present a structured summary:
+Present both reports under `## Standards` and `## Spec`, verbatim or lightly cleaned.
+
+> [!CAUTION]
+> **Never merge or re-rank findings across the two axes.** A change can pass one and fail the
+> other: code that follows every convention while implementing the wrong thing passes
+> Standards and fails Spec; code that does exactly what the ticket asked while breaking the
+> project's conventions does the reverse. A blended verdict lets the passing axis hide the
+> failing one — which is the whole reason the axes are separate.
+
+End with a one-line summary: findings per axis, and the worst issue **within each axis**.
+Do not name a single winner across axes.
+
+The CL's overall verdict for Step 6 and Step 7 is the **worst of the two** — that is a gate
+threshold, not a ranking, and both axis verdicts are still recorded separately.
+
+Then present the options:
 
 ```markdown
-## Review Summary: {Changelist Name}
-
-### Files Reviewed
-- {file list with brief descriptions}
-
-### Blocking Issues (Must Fix)
-- [ ] Issue 1 - [file:line](path#L##)
-- [ ] Issue 2 - [file:line](path#L##)
-
-### Warnings (Recommended)
-- [ ] Warning 1 - [file:line](path#L##)
-- [ ] Warning 2 - [file:line](path#L##)
-
-### Info (Optional Improvements)
-- Info 1
-- Info 2
-
----
-
-## Your Options
-
-1. **Submit Now** - Proceed with submission (only if no BLOCKING issues)
-2. **Fix & Re-review** - I'll address the issues and run review again
-3. **Fix Specific** - Tell me which issues to fix
-4. **Defer** - Save this review, come back later
+1. **Submit Now** - proceed (only if no BLOCKING on either axis)
+2. **Fix & Re-review** - address findings, re-run only the affected axis
+3. **Fix Specific** - name the findings to fix
+4. **Defer** - keep the review, come back later
 ```
 
+#### Fixes that never cost a re-review
+
+At any severity, BLOCKING included: a missing Review Record block, a missing or wrong
+`[JobFamily][Name]` tag, an EOL flip, non-ASCII in the description, or a missing `Ticket:` /
+`Workflow: skipped (<reason>)` line **whose ticket or user decision already exists**. Creating
+the ticket and making the skip decision are never on this list.
+
+**The list is closed, and closed on a principle**: every item is a description-or-formatting
+fix that *cannot change behaviour*, and every item has a validator behind it. Naming and
+`_Raw`-policy findings are script-caught but stay OFF — those fixes can break things. Anything
+not on this list, including a wrong claim in the description body, is a real finding.
+
+**You skip the reviewer pass, never the gate.** Fix it and return to Step 6: the user's submit
+decision and the Step 7 Review Record both still apply.
+
+#### The fix answers the finding and nothing else
+
+Implement the finding, not the reviewer's prescription — it was written without running
+anything. If you adopt theirs, say so in the re-review brief so the next pass knows where to
+look. **Explanation goes in the brief, not the artifact**: a fix does not re-argue the design
+in rationale, comments, or doc prose. New prose is new reviewable surface, and prose is where
+the review churn was measured to live.
+
+#### Stopping rule
+
+**A round that produces no BLOCKING finding is the last round.** Record the remaining WARNING
+and INFO items in the Review Record with their disposition (`[ACCEPTED]` / `[DEFERRED]`) and
+go to Step 6. Do not spend another pass to drive a WARNING-only report to silence — on prose
+especially, that pass reliably produces a fresh WARNING-only report, and the loop has no
+natural end. Scope also freezes when the review starts: a file the fix genuinely needs is part
+of this CL, and unrelated work that arrives mid-review gets its own CL.
+
 ---
 
-### 7. Wait for User Decision
+### 6. Wait for User Decision
 
 **DO NOT** proceed with any action until the user explicitly chooses an option.
 
 - If user says "submit" or "1" → Proceed with Perforce submission (only if no BLOCKING issues)
-- If user says "fix" or "2" → Address issues — the fix answers the finding and nothing else ([RE-REVIEW.md](RE-REVIEW.md) rule 3) — then re-review per the scoping rule below
-- If user specifies issues → Fix only those, then re-review per the scoping rule below
+- If user says "fix" or "2" → Address issues — the fix answers the finding and nothing else (Step 5) — then re-review only the affected axis
+- If user specifies issues → Fix only those, then re-review only the affected axis
 - If user says "defer" → Acknowledge and await further instructions
 
 > [!CAUTION]
 > **HARD RULE — No direct submit after fixing a BLOCKER.**
-> After applying a fix in response to a **BLOCKING** finding, you MUST re-run the reviewer that raised it (Step 5) and present a new summary (Step 6) before submitting — except for the closed list in [RE-REVIEW.md](RE-REVIEW.md) rule 4, whose fixes cannot change behaviour. Fixes can introduce new issues, and a BLOCKING verdict is that reviewer's judgement that the CL is not safe to ship — only its own re-verdict clears that, never "the fixes look obviously correct."
-
-**Re-review scope.** You fixed a finding and you are about to spend another reviewer pass. What
-re-runs, what must never cost a pass, and how to keep a fix from creating the next round's work:
-read [RE-REVIEW.md](RE-REVIEW.md) before launching it.
+> After applying a fix in response to a **BLOCKING** finding, you MUST re-run the axis that raised it (Step 4) and present a new aggregate (Step 5) before submitting — except for the closed list in Step 5, whose fixes cannot change behaviour. Fixes can introduce new issues, and a BLOCKING verdict is that reviewer's judgement that the CL is not safe to ship — only its own re-verdict clears that, never "the fixes look obviously correct."
 
 > [!CAUTION]
 > **HARD RULE — a CL implementing a `ready-for-human` ticket is a process error. Never submit it.**
@@ -343,7 +294,7 @@ read [RE-REVIEW.md](RE-REVIEW.md) before launching it.
 >
 > Outside goal mode, NO standing or batch authorization covers a submit — not "do all these CLs and submit them", not a `ready-for-agent` ticket, not a GREEN review, not "you already approved the last four". One approval covers one CL.
 >
-> **What counts as that one approval.** An explicit instruction from the user that names submission for **that CL, by number** — "review and submit 1970", "submit 1970" — IS the Step 7 approval for it. Do not re-ask when the review returns **GREEN** and **no preflight validator warned**: that is precisely the outcome they authorized, and asking again trains everyone to read the gate as a formality. This defines the approval the rule already requires; it grants nothing the user did not say, about no CL they did not name.
+> **What counts as that one approval.** An explicit instruction from the user that names submission for **that CL, by number** — "review and submit 1970", "submit 1970" — IS the Step 6 approval for it. Do not re-ask when the review returns **GREEN** and **no preflight validator warned**: that is precisely the outcome they authorized, and asking again trains everyone to read the gate as a formality. This defines the approval the rule already requires; it grants nothing the user did not say, about no CL they did not name.
 >
 > Re-ask anyway on any of the following — the instruction authorized the CL *as reviewed clean*, and each of these is something the user did not know when they asked:
 >
@@ -357,7 +308,7 @@ read [RE-REVIEW.md](RE-REVIEW.md) before launching it.
 > - **Goal mode is identified by the harness's own signal, never by inference.** A `/goal` run injects a session-scoped Stop-hook notice into context — *"A session-scoped Stop hook is now active with condition: `<condition>` ... do not pause to ask the user what to do"* — and carries a `goal_status` attachment naming that condition. **If that notice is not in your context, you are not in goal mode.** Not "this looks like an unattended batch", not "the user is clearly AFK", not "the task list implies it". If you find yourself reasoning toward the exemption, that is the tell that you do not have it.
 > - **Why the exemption exists**: goal mode instructs you not to pause for the user while a Stop hook blocks stopping. Without the carve-out, a submit inside a `/goal` run pits the policy (stop and ask) against the run (don't pause, can't stop) — the run stalls with nobody there to answer, or the gate degrades into a rubber stamp.
 > - **What the signal does and does not authorize**: it establishes only that *the human is not there to answer*. The goal condition is arbitrary user text, so treat the submit authorization as covering work plainly within that condition's scope. A goal about fixing bugs does not authorize submitting an unrelated refactor you happened to finish along the way; shelve that one.
-> - **Attended, not goal mode** → stop here and ask, per CL — unless the user's own instruction already named this CL for submission and the review came back GREEN with a clean preflight, per "What counts as that one approval" above. This is Step 7 as written above.
+> - **Attended, not goal mode** → stop here and ask, per CL — unless the user's own instruction already named this CL for submission and the review came back GREEN with a clean preflight, per "What counts as that one approval" above. This is Step 6 as written above.
 > - **Unattended, not goal mode** → after the review pass, `p4 shelve -c <CL>` instead of submitting (same mechanics and same reconcile caveats as the HITL rule above), append `GATED-SHELVED: awaiting human review` to the description, report it in your final summary, and move on to other work. Never `p4 submit`.
 > - **Goal mode** → a `ready-for-agent` CL may submit under the goal authorization once the review passes. A `ready-for-human` CL still does NOT — that rule is unconditional and outranks this one, and the label that would lift the bar is one only the user can apply.
 >
@@ -365,7 +316,7 @@ read [RE-REVIEW.md](RE-REVIEW.md) before launching it.
 
 ---
 
-### 8. Record the Review in the CL Description
+### 7. Record the Review in the CL Description
 
 **After the user approves submission and before any preflight/submit**, append a **Review Record block** to the CL description. If a Submit-Audit hook is installed, this is what it looks for — a reviewed CL without this block still warns "NO review block", and teammates reading `p4 describe` can't see the review outcome.
 
@@ -373,17 +324,25 @@ read [RE-REVIEW.md](RE-REVIEW.md) before launching it.
 
 ```
 ## Review
-Reviewer: architecture-reviewer - Verdict: WARNING (2 passes)
-Reviewer: radical-design-critic - Verdict: GREEN
+Standards: architecture-reviewer - Verdict: WARNING (2 passes)
+Spec:      sub-agent vs .scratch/foo/issues/03-bar.md - Verdict: GREEN
+Docs-alignment: aligned
 Findings:
-- [FIXED] BLOCKING SomeFile.as:88 — one-line description
-- [ACCEPTED] WARNING — magic number in threshold
-- [DEFERRED] INFO — naming suggestion
+- [FIXED] BLOCKING Standards SomeFile.as:88 — one-line description
+- [ACCEPTED] WARNING Standards — magic number in threshold
+- [DEFERRED] INFO Spec — criterion 4 deferred to ticket 06
 ```
 
 **Rules:**
 
-- One `Reviewer: {name} - Verdict: {GREEN|WARNING|BLOCKING}` line per reviewer that ran. The verdict shown is the **final pass** verdict; note the pass count if more than one.
+- One line per **axis**, always both: `Standards:` and `Spec:`, each with the sub-agent that
+  ran it and its own `Verdict:`. The verdict shown is the **final pass** verdict; note the
+  pass count if more than one. The axes are recorded separately for the same reason they
+  are reviewed separately — a blended line lets the passing axis hide the failing one.
+- A skipped Spec axis is recorded, never omitted: `Spec: skipped (no linked source)`.
+- A CL containing prose also carries one `Docs-alignment:` line — `aligned`, or what was
+  contradicting and how it was fixed. It is a preflight result, not an axis: no severity,
+  no verdict, and it never counts as a review pass.
 - **Generate that line — do not type it, and write it last.** It is the one field in the
   description that cannot be true until the review ends, and a multi-pass review will
   invalidate a hand-written one every time a pass lands. Keep the verdicts in a list and
@@ -404,8 +363,11 @@ Findings:
   or leave it out. Anything measured at review time and frozen into a description is wrong by
   submit time more often than not, and **the review's own fixes are what make it wrong** —
   which is why the prose ones rot hardest in exactly the CLs that took the most rounds.
-- Fast path: `Reviewer: self (inline, review-changes skill) - Verdict: GREEN (fast path: config-only, 3 files)`. Trivial path: `Reviewer: self - Verdict: GREEN (trivial path: docs-only, 7 files)` — no rubric ran, and the line says so. If the skill did not run and the CL was not tier 0, the honest line is `Reviewer: self - Verdict: ... (quick review)` — never assert a rubric-backed review that did not happen.
-- `Findings:` one-liners only, each prefixed with its disposition: `[FIXED]` (fixed before submit), `[ACCEPTED]` (submitting with it), `[DEFERRED]` (tracked for later).
+- **Inline run** (no Agent tool — Codex, or any session without sub-agents): say so, per axis:
+  `Standards: self (inline, review-changes skill) - Verdict: GREEN`. If neither the axes nor
+  that skill actually ran, the honest line is `Standards: self - Verdict: ... (quick review)`
+  — never assert a rubric-backed review that did not happen.
+- `Findings:` one-liners only, each prefixed with its disposition — `[FIXED]` (fixed before submit), `[ACCEPTED]` (submitting with it), `[DEFERRED]` (tracked for later) — then its severity and **which axis raised it**.
 - Cap at ~6 finding lines; summarize overflow as `- ...and N more INFO items (see review transcript)`.
 - Write this block on **every** CL that goes through this protocol — it's cheap and keeps the audit quiet.
 
@@ -427,7 +389,37 @@ After the Review Record block is in place:
 
 1. **Run repo preflight validators** — on any warning or non-zero exit: report it, fix, and re-run before submitting:
    1. Project preflight checks (e.g. `check-uproject-assoc.sh` under your tool's scripts dir — `.claude/scripts/` or `.Codex/scripts/` — when the `ue` overlay is installed).
-   2. **There is no client-side audit to run.** `submit-audit-warn.sh` was deleted in CL 2454.
+   2. **Docs-alignment check** — when the CL contains any `.md`/`.txt`. Spawn
+      `myst-dev-kit:radical-design-critic` **once**, with this brief:
+
+      ```
+      Alignment check on changelist {CL_ID} - NOT a review.
+
+      Prose in this CL: {md/txt file list}
+      Code/assets in this CL: {everything else, or "none - docs-only CL"}
+      Diff: p4 diff -c {CL_ID} //...
+
+      Report ONLY contradictions between what the prose claims and what is
+      true: a doc describing behaviour the code in this CL does not have; a
+      plan whose phase status is stale against what shipped; two documents in
+      this CL disagreeing; a documented instruction that the diff invalidates.
+
+      Do NOT critique the design, the writing, the structure, or anything the
+      document proposes. Do NOT suggest improvements. If nothing contradicts,
+      say "aligned" and stop. Under 200 words. No verdict line.
+      ```
+
+      Report each contradiction, fix it, and re-run the check — the same loop as any other
+      preflight item. It produces **no severity and no verdict**: it is not a review pass, it
+      does not appear as an axis in the Review Record, and it never starts a review round.
+      A CL that reaches here with prose and no contradictions records
+      `Docs-alignment: aligned` in the Review Record.
+
+      Why a preflight and not an axis: a reviewer asked to critique prose always finds
+      something, which is how the worst subject in the round measurement reached 19 rounds.
+      A reviewer asked whether two things contradict either finds a contradiction or does not.
+      The question is closed, so the loop terminates.
+   3. **There is no client-side audit to run.** `submit-audit-warn.sh` was deleted in CL 2454.
       Its checks split two ways, and neither is a step you perform:
       - **EOL flips** — `normalize-eol.sh` is a PostToolUse hook on Edit that repairs the
         mixed-ending fingerprint the moment a partial rewrite creates it. Nothing to normalize

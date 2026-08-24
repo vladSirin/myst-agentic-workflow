@@ -1,18 +1,18 @@
 ---
 name: design
-description: "Create a design document with reviewer-agent feedback and iterate to approval. Use when the user asks to design a feature or system (/design), or when writing or updating any design doc."
+description: "Write a design or plan document: correct name, correct location, standard template, WIP-to-final lifecycle. Use when the user asks to design a feature or system (/design), or when writing or updating any design doc."
 ---
 
-# Design Document Workflow
+# Design Document
 
 <command-name>design</command-name>
 
 ## Purpose
 
-This skill automates the creation and review of design documents. When invoked for design or planning work, it:
-1. Creates a properly formatted design document in the game project's Docs dir (`Myst_Proto/Docs/` here; see the CLAUDE.md Project section)
-2. Launches reviewer agents to critique the design
-3. Iterates on the document based on feedback
+This skill writes design and plan documents: it finds whether one already exists, names and
+places the new one correctly, fills the standard template, and carries it through the
+WIP-to-final lifecycle. Its scope is **the document** — reviewing what the document proposes is
+a separate job and is not done here.
 
 ## Automatic Detection
 
@@ -146,90 +146,9 @@ Use this template structure:
 | {Feature} | {How it could be added} |
 ```
 
-### Step 3: Launch Reviewers
+### Step 3: Finalize
 
-After creating the initial document, **ALWAYS** launch at least one reviewer agent — via the
-Agent tool with the **namespaced** subagent_type (bare names fail to resolve):
-
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                         Document Type Routing                          │
-│                                                                        │
-│  Game Design / UX / Features  →  myst-dev-kit:radical-design-critic   │
-│  (gameplay mechanics, player                                           │
-│   experience, UI flows)                                                │
-│                                                                        │
-│  Code Architecture / Systems  →  myst-dev-kit:architecture-reviewer   │
-│  (subsystems, plugins, APIs,                                           │
-│   implementation patterns)                                             │
-│                                                                        │
-│  Comprehensive Design         →  BOTH agents (parallel)                │
-│  (new features with code +                                             │
-│   player-facing elements)                                              │
-│                                                                        │
-└────────────────────────────────────────────────────────────────────────┘
-```
-
-> **Effort barbell:** design critique is judgment work — launch reviewers at their defined model/effort, never downgraded to save tokens. Only mechanical stages (file inventories, censuses, link sweeps) run cheap (`effort: low` agents or `model: haiku` spawns).
-
-**The prompt carries only what the reviewer cannot already know.** Its review dimensions are
-its own — `agents/radical-design-critic.md` §Review Methodology and
-`agents/architecture-reviewer.md` §Reference canon / §Review scope and method are the system
-prompt, loaded at spawn. Restating them here duplicates the *generator* half of the mandate
-while dropping the restraint clauses that live only in those files (§2's "a manufactured UX
-finding is noise"; "cite, don't name-drop"), which re-anchors the reviewer on producing
-findings and hands it none of the brakes. Do not re-add a dimension list.
-
-```
-Agent tool with:
-  subagent_type: "myst-dev-kit:radical-design-critic" OR "myst-dev-kit:architecture-reviewer"
-  prompt: |
-    Review the design document at <game Docs dir>/{filename}.md.
-
-    Observed facts you cannot reach yourself (values read, not inferred):
-    {observed facts, or "none - nothing in this document required observation"}
-
-    Apply your own review methodology. Cite document sections. Categorize
-    findings BLOCKING / WARNING / INFO.
-
-    End your response with a single line of the form:
-      Verdict: GREEN | WARNING | BLOCKING
-```
-
-On a **re-review**, add only what changed: which findings you fixed, which you declined and
-why, and whether you adopted the reviewer's prescription (see
-[RE-REVIEW.md](../review-and-submit/RE-REVIEW.md) rule 3).
-
-Each reviewer ends its response with a literal `Verdict: GREEN | WARNING | BLOCKING` line —
-parse that token; never infer approval from prose, and treat a response without it as
-ambiguous (ask the reviewer again or present the findings to the user).
-
-### Step 4: Iterate at Least Once
-
-After receiving reviewer feedback:
-
-1. Update the document to address BLOCKING and WARNING findings (record an explicit
-   accept/defer decision for any WARNING you do not fix)
-2. Add entry to Change Log with version bump
-3. Present summary of changes to user
-4. Re-run per the re-review rules — **the same loop, the same rules**: see
-   [RE-REVIEW.md](../review-and-submit/RE-REVIEW.md), which governs a CL review and a
-   document review alike. Rules 1, 2, 3, 5 and 6 apply as written. Rule 4 has no
-   analogue here — no validator checks a design document — so every finding is a real
-   finding. Read rule 6's "gets its own CL" as "gets its own document": a section that
-   arrives mid-review does not restart this review.
-
-   The two that change what most people do today: **rule 1** — re-run only the reviewer
-   whose BLOCKING findings you addressed, not both — and **rule 3** — the fix answers the
-   finding and nothing else, with your reasoning going in the re-review brief rather than
-   growing the document. On a design doc the second matters most: new rationale prose is
-   new reviewable surface, and prose is where the churn was measured to live.
-
-Do not finalize a document whose latest verdict is BLOCKING.
-
-### Step 5: Finalize
-
-When design is approved:
+When the user approves the design:
 1. Remove the `_WIP` suffix from the filename (do NOT add `_Updated` or any other suffix)
 2. Update **Status** header in document: `WIP` → `APPROVED` or `COMPLETE`
 3. Present the final document to the user
@@ -243,12 +162,9 @@ When design is approved:
 **Claude**:
 1. Creates `design_npc_dialogue_system_WIP.md` in the game Docs dir
 2. Fills in template with dialogue system design
-3. Launches both reviewers (it's UX + code):
-   - `myst-dev-kit:radical-design-critic` → checks player experience, edge cases
-   - `myst-dev-kit:architecture-reviewer` → checks integration with the systems it already exists alongside
-4. Receives feedback, updates document (v1.1)
-5. Presents updated design with change summary
-6. User approves → renames to `design_npc_dialogue_system.md`
+3. Presents it to the user
+4. Revises on the user's notes, bumping the Change Log to v1.1
+5. User approves → renames to `design_npc_dialogue_system.md`, Status `WIP` → `APPROVED`
 
 ---
 
@@ -258,7 +174,3 @@ When design is approved:
 - Reference `split_fiction_scripts/` for AngelScript patterns when applicable
 - Follow the project's established architecture patterns (FrogEvent, Subsystems, etc.)
 - Keep designs LD-friendly as per project philosophy
-
-> [!CAUTION]
-> **Never skip the review step.** Even "obvious" designs benefit from a second perspective.
-> The cost of iteration in design is far lower than the cost of iteration in code.

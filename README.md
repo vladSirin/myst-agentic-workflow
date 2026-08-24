@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. Every skill and agent lives ONCE; each tool consumes the same files through its native mechanism.
 
-[![tests](https://img.shields.io/badge/tests-21%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.47.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-21%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.48.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## TL;DR
 
@@ -265,14 +265,14 @@ Typeable too, but you should not have to. Listed so you know what can fire on it
 | [`/agentic-workflow`](plugins/myst-dev-kit/skills/agentic-workflow/SKILL.md) | Which stage of the delivery process applies -- discussion, spec, tickets, triage, build, verify, submit. |
 | [`/pre-implementation-gate`](plugins/myst-dev-kit/skills/pre-implementation-gate/SKILL.md) | About to propose a multi-CL plan: checks a spec, tickets and triage exist first. |
 | [`/changelist-verification`](plugins/myst-dev-kit/skills/changelist-verification/SKILL.md) | More than one changelist is in play: execute them one at a time with a verify gate between. |
-| [`/review-and-submit`](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md) | The full pre-submit protocol -- organize the CL, route reviewers, record the verdict, gate the submit. |
+| [`/review-and-submit`](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md) | The full pre-submit protocol -- organize the CL, review it on two independent axes (Standards + Spec), record both verdicts, gate the submit. |
 
 **Local-origin (no upstream counterpart)**
 
 | Skill | Use it when |
 |---|---|
-| [`/design`](plugins/myst-dev-kit/skills/design/SKILL.md) | Create a design document with reviewer-agent feedback and iterate to approval; the team's doc-process rules (naming, lifecycle, BLOCKING/WARNING/INFO) live in the same file. |
-| [`/review-changes`](plugins/myst-dev-kit/skills/review-changes/SKILL.md) | Pre-submit review of a CL/diff INLINE: the `review-and-submit` fast path (small CLs), and any session without reviewer subagents (e.g. Codex); same rubrics, same parseable `Verdict:` line. |
+| [`/design`](plugins/myst-dev-kit/skills/design/SKILL.md) | Write a design or plan document -- correct name, correct location, standard template, WIP-to-final lifecycle. Writing only; reviewing what it proposes is `review-and-submit`'s job. |
+| [`/review-changes`](plugins/myst-dev-kit/skills/review-changes/SKILL.md) | Runs `review-and-submit`'s two-axis review INLINE, for sessions without reviewer subagents (e.g. Codex); same sources, same per-axis parseable `Verdict:` line. |
 | [`/roundtable`](plugins/myst-dev-kit/skills/roundtable/SKILL.md) | Multi-perspective design discussion when one viewpoint isn't enough. |
 
 Plus the plugin **commands** (not skills), all maintainer/build-machine-facing: `/update-project-scaffold` (re-render the committed project scaffold from upstream; formerly `/update-myst-skills`), `/promote-myst-skills` (push a local improvement out), and `/sync-build-submit` (UE build-machine pipeline).
@@ -296,9 +296,9 @@ The five team-process skills are listed in the catalog above; this is the other 
 | [`agentic-workflow`](plugins/myst-dev-kit/skills/agentic-workflow/SKILL.md) | non-trivial feature work starts | Discussion → spec → tickets → triage → impl → verify → review/submit. |
 | [`pre-implementation-gate`](plugins/myst-dev-kit/skills/pre-implementation-gate/SKILL.md) | before drafting a multi-CL plan | **HARD RULE**: spec/tickets/triage must exist first. |
 | [`changelist-verification`](plugins/myst-dev-kit/skills/changelist-verification/SKILL.md) | any multi-CL task | **HARD RULE**: CL-by-CL execution, never batched. Stop between CLs for verification. |
-| [`review-and-submit`](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md) | "review and submit" / any p4 submit | Pre-submit protocol: reviewer routing, Review Record block, preflight validators. |
+| [`review-and-submit`](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md) | "review and submit" / any p4 submit | Pre-submit protocol: two-axis review, Review Record block, preflight validators. |
 
-(The former `design-workflow` skill merged into [`design`](plugins/myst-dev-kit/skills/design/SKILL.md) in v4.28.0; its companion `PROCESS.md` folded back into that skill's SKILL.md in v4.46.0, so the doc naming/location/reviewer-routing rules now live there.)
+(The former `design-workflow` skill merged into [`design`](plugins/myst-dev-kit/skills/design/SKILL.md) in v4.28.0; its companion `PROCESS.md` folded back into that skill's SKILL.md in v4.46.0. In v4.48.0 `design` narrowed to document authoring only -- naming, location, template and lifecycle -- with review moving out entirely.)
 
 ### Agents
 

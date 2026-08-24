@@ -3,7 +3,7 @@
   Measure how many reviewer rounds real reviews actually took.
 
 .DESCRIPTION
-  The re-review rules in skills/review-and-submit/RE-REVIEW.md exist to shorten review
+  The re-review rules in skills/review-and-submit/SKILL.md exist to shorten review
   loops by removing causes of rounds. This reports whether that happened, from Claude
   Code transcripts rather than from anyone's recollection.
 
