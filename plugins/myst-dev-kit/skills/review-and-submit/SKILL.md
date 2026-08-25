@@ -421,9 +421,11 @@ After the Review Record block is in place:
       The question is closed, so the loop terminates.
    3. **There is no client-side audit to run.** `submit-audit-warn.sh` was deleted in CL 2454.
       Its checks split two ways, and neither is a step you perform:
-      - **EOL flips** — `normalize-eol.sh` is a PostToolUse hook on Edit that repairs the
-        mixed-ending fingerprint the moment a partial rewrite creates it. Nothing to normalize
-        at submit time; its header notes it is now the only thing preventing that class.
+      - **EOL flips** — `normalize-eol.sh` (PostToolUse on Edit) repairs the mixed-ending
+        fingerprint, so there is normally nothing to normalize here. It misses a file already
+        flipped wholesale to LF: when a diff looks absurdly large, `p4 diff -dw` collapses it
+        to the real change. Restore the depot form with `p4 sync -f` (`p4 revert` alone leaves
+        it LF), then re-diff and review that.
       - **Everything else** — the server trigger, post-commit, warning to the team channel.
 
       > **A quiet submit is not evidence the audit passed**, only that nothing blocked you —
