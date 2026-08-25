@@ -169,13 +169,34 @@ history is unaffected** -- the depot stores normalized content and `p4 diff2` ac
 revisions shows only the real change -- so this is a pre-submit reviewability problem, which
 is precisely where it does damage.
 
+### Why not `p4 sync -f` or `p4 revert`
+
+Measured against P4 2026.1, `LineEnd: local` Windows client, on a 105-line CRLF depot file
+opened for edit in a pending CL -- the only situation this bullet applies to:
+
+| Command | Result |
+|---|---|
+| `p4 diff`, real 1-line edit, CRLF kept | 5 lines |
+| `p4 diff`, same edit + wholesale LF flip | 213 lines -- the whole file |
+| `p4 diff -dl` (or `-dw`) on that state | 5 lines |
+| `p4 sync -f` on the open file | no-op: byte-identical, `up-to-date`, exit 0 |
+| `p4 revert` | restored CRLF **and discarded the edit** |
+| restore CRLF in place | edit intact, file still open, diff back to 5 |
+
+`p4 sync -f` does not affect open files (P4 cmdref), so it fails silently on exactly the file
+you are trying to fix -- and because it reports success, the next reach is `p4 revert`, which
+fixes the line endings by throwing away the change under review. Restoring CRLF in the working
+file is the only one of the three that leaves you something to review. `-dl` is preferred over
+`-dw` because it ignores line-ending convention specifically, not all whitespace. `p4 sync -f`
+stays correct for UNOPENED drift (see `docs/perforce-consumer.md`); the open-file case breaks it.
+
 ### Changed
 
 - `review-and-submit` SKILL.md: the "EOL flips" bullet drops the overstatement and carries
-  the diagnostic in five lines - `p4 diff -dw` when a diff looks absurdly large, then
-  `p4 sync -f` to restore the depot form and re-diff. Net +2 lines on the skill. The
-  measurements above are deliberately NOT in it: a skill is always-loaded context, so the
-  rationale lives here and only the actionable rule ships in the skill.
+  the diagnostic - `p4 diff -dl` when a diff looks absurdly large, then restore CRLF in the
+  working file itself, which clears the noise without costing the edit. Net +4 lines on the
+  skill. The measurements above are deliberately NOT in it: a skill is always-loaded
+  context, so the rationale lives here and only the actionable rule ships in the skill.
 
 ### Corrigendum
 
