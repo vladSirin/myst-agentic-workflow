@@ -81,7 +81,7 @@ to be wrong and corrected.
 
 ### Verification
 
-`scripts/run-converge-tests.ps1` -- 18 tests, run against **PowerShell 5.1** deliberately, since
+`scripts/run-converge-tests.ps1` -- 20 tests, run against **PowerShell 5.1** deliberately, since
 5.1 is the version whose array unrolling causes the corruption above.
 
 ## [4.49.0] - 2026-08-25 - Say what an EOL flip actually costs, and how to spot one
