@@ -5,7 +5,8 @@
 # project-scope is skipped rather than uninstalled; the registry keeps its list shape on
 # PS 5.1 (where an unguarded one-element filter serializes as an object and corrupts it);
 # missing / empty / unparsable registries are stated no-ops, not crashes; and
-# CLAUDE_CONFIG_DIR is honoured when -RegistryPath is omitted.
+# CLAUDE_CONFIG_DIR is honoured when -RegistryPath is omitted; and the written file carries
+# no UTF-8 BOM (5.1's -Encoding UTF8 adds one, which Node's JSON.parse rejects).
 $ErrorActionPreference = 'Stop'
 $pkg = (Resolve-Path "$PSScriptRoot\..").Path
 $helper = Join-Path $pkg 'scripts/migrate-project-scope-installs.ps1'
@@ -116,6 +117,23 @@ try {
 } finally { $env:CLAUDE_CONFIG_DIR = $prev }
 if ($out -match [regex]::Escape($regEnv)) { Ok 'CLAUDE_CONFIG_DIR is used when -RegistryPath is omitted' } else { Bad 'CLAUDE_CONFIG_DIR ignored' $out }
 if ($out -match 'Project-scope records \(1\)') { Ok 'and it actually reads that registry' } else { Bad 'env registry not read' $out }
+
+# 19. the written registry carries no UTF-8 BOM. 5.1's `-Encoding UTF8` adds one; Node's
+#     JSON.parse() throws on a leading BOM, so a 'successful' converge would break the very
+#     file it repaired. The helper's own round-trip check cannot see this -- PowerShell strips
+#     a BOM on read -- and neither can a Get-Content -Raw assertion, so this test reads bytes.
+$regBom = New-Registry $null
+[System.IO.File]::WriteAllText($regBom, $MIXED, (New-Object System.Text.UTF8Encoding($false)))
+$null = Run @('-RegistryPath', $regBom, '-Apply')
+$b = [System.IO.File]::ReadAllBytes($regBom)
+if ($b.Length -ge 3 -and $b[0] -eq 0xEF -and $b[1] -eq 0xBB -and $b[2] -eq 0xBF) {
+    Bad 'apply added a UTF-8 BOM' ('first bytes {0:X2} {1:X2} {2:X2}' -f $b[0], $b[1], $b[2])
+} else { Ok 'apply writes no UTF-8 BOM' }
+
+# 20. and the result is still parseable as JSON with the expected shape
+$reparsed = [System.IO.File]::ReadAllText($regBom) | ConvertFrom-Json
+if ($reparsed.plugins.'alpha@mkt'.Count -eq 1) { Ok 'BOM-free write still round-trips to the right shape' }
+else { Bad 'post-BOM-test shape wrong' (($reparsed.plugins.'alpha@mkt' | ConvertTo-Json -Compress)) }
 
 Write-Host ''
 Write-Host '=============================================='
