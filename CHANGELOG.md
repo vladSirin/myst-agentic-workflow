@@ -27,11 +27,62 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
-## [4.50.0] - 2026-08-25 - Converge duplicate install records, and truth up the install path
+## [4.50.1] - 2026-08-25 - Truth up the documented install path
 
-MINOR: a new maintenance script consumers get automatically, plus the doc corrections that
-make it findable. One documented onboarding archetype is retired -- called out below.
-`upgrade.ps1` handles all of it without anyone editing a file.
+PATCH: documentation only, no behaviour change. No script, skill, or template logic is
+touched -- what changed is that the docs describe the install path that actually exists, and
+that teammates are told the 4.50.0 converge script is there at all.
+
+### Telling teammates the script exists
+
+A standalone script nobody knows about converges nobody's machine. That cost was accepted
+deliberately when the automatic delivery path was dropped -- a converge step inside
+`setup-devkit.ps1` would have dirtied a version-controlled file on every teammate's machine
+(see above) -- on the condition that the docs close the gap. They now do, on the three surfaces
+a teammate actually meets, rather than only `docs/upgrade.md`, which only a maintainer reads:
+`SETUP.md`, the `templates/claude/CLAUDE.md` generated block, and
+`templates/common/docs/MustRead/MustRead_agentic_workflow.md`.
+
+All three carry the **ordering constraint**, because getting it wrong fails silently: converge
+only AFTER the project's `enabledPlugins` removal has synced to your workspace. Converging first
+lets the next session recreate the very records you just removed -- observed in the controlled
+experiment, not inferred.
+
+### The install path the docs promised no longer exists
+
+Dropping the committed `enabledPlugins` entries also dropped the trust-prompt plugin install,
+and four documents still promised it. A doc describing an install path that does not exist is
+worse than no doc: the reader follows it, nothing happens, and they have no reason to suspect
+the instructions rather than their own machine.
+
+- `SETUP.md` -- **the "Claude-only and allergic to scripts?" archetype is retired**, and now says
+  so in those words. It was sold here explicitly ("that zero-touch path still works"), so
+  dropping it silently would have been worse than removing it. The section states what was lost,
+  why, and the nearest remaining script-free path (`/plugin install myst-dev-kit@myst`, then
+  restart).
+- `templates/claude/CLAUDE.md`, `templates/common/docs/MustRead/MustRead_agentic_workflow.md`, and
+  `overlays/myst-project/docs/MustRead/MustRead_ai_tools_for_creatives.md` -- `setup-devkit.ps1` is
+  now the documented path and `/plugin install myst-dev-kit@myst` the manual fallback, each saying
+  plainly that nothing installs itself when you trust the repo. The workflow manual previously
+  named no install path at all, so a teammate reading the project's own process guide learned none.
+- `templates/codex/AGENTS.md` -- the Codex install path is untouched, being a separate plugin
+  system that never reads `.claude/settings.json`. Only its now-dangling "(both archetypes)"
+  pointer to the retired section is dropped.
+
+**Corrected while here:** "no `marketplace add` needed -- the committed settings pre-register it"
+credited the committed file for more than it does. `extraKnownMarketplaces` pre-registers `myst`
+and nothing else; `context7` and `claude-md-management` come from the built-in
+`claude-plugins-official` marketplace and owe it nothing. `SETUP.md` now says which is which, and
+gives `context7` its own install line -- the project's CLAUDE.md mandates that plugin, and since
+the `enabledPlugins` removal nothing hands it to a new teammate.
+
+### Verification
+
+`scripts/run-linkcheck-tests.ps1` covers the doc changes -- no dangling references introduced.
+
+## [4.50.0] - 2026-08-25 - One-shot converge for duplicate plugin install records
+
+MINOR: a new maintenance script consumers get automatically. Nothing existing changes.
 
 ### The problem
 
@@ -81,55 +132,10 @@ removing BOTH fails the suite *and* trips the abort with the original left untou
 two mutation attempts passed, which is how the "load bearing" comment on one wrapper was found
 to be wrong and corrected.
 
-### Telling teammates the script exists
-
-A standalone script nobody knows about converges nobody's machine. That cost was accepted
-deliberately when the automatic delivery path was dropped -- a converge step inside
-`setup-devkit.ps1` would have dirtied a version-controlled file on every teammate's machine
-(see above) -- on the condition that the docs close the gap. They now do, on the three surfaces
-a teammate actually meets, rather than only `docs/upgrade.md`, which only a maintainer reads:
-`SETUP.md`, the `templates/claude/CLAUDE.md` generated block, and
-`templates/common/docs/MustRead/MustRead_agentic_workflow.md`.
-
-All three carry the **ordering constraint**, because getting it wrong fails silently: converge
-only AFTER the project's `enabledPlugins` removal has synced to your workspace. Converging first
-lets the next session recreate the very records you just removed -- observed in the controlled
-experiment, not inferred.
-
-### The install path the docs promised no longer exists
-
-Dropping the committed `enabledPlugins` entries also dropped the trust-prompt plugin install,
-and four documents still promised it. A doc describing an install path that does not exist is
-worse than no doc: the reader follows it, nothing happens, and they have no reason to suspect
-the instructions rather than their own machine.
-
-- `SETUP.md` -- **the "Claude-only and allergic to scripts?" archetype is retired**, and now says
-  so in those words. It was sold here explicitly ("that zero-touch path still works"), so
-  dropping it silently would have been worse than removing it. The section states what was lost,
-  why, and the nearest remaining script-free path (`/plugin install myst-dev-kit@myst`, then
-  restart).
-- `templates/claude/CLAUDE.md`, `templates/common/docs/MustRead/MustRead_agentic_workflow.md`, and
-  `overlays/myst-project/docs/MustRead/MustRead_ai_tools_for_creatives.md` -- `setup-devkit.ps1` is
-  now the documented path and `/plugin install myst-dev-kit@myst` the manual fallback, each saying
-  plainly that nothing installs itself when you trust the repo. The workflow manual previously
-  named no install path at all, so a teammate reading the project's own process guide learned none.
-- `templates/codex/AGENTS.md` -- the Codex install path is untouched, being a separate plugin
-  system that never reads `.claude/settings.json`. Only its now-dangling "(both archetypes)"
-  pointer to the retired section is dropped.
-
-**Corrected while here:** "no `marketplace add` needed -- the committed settings pre-register it"
-credited the committed file for more than it does. `extraKnownMarketplaces` pre-registers `myst`
-and nothing else; `context7` and `claude-md-management` come from the built-in
-`claude-plugins-official` marketplace and owe it nothing. `SETUP.md` now says which is which, and
-gives `context7` its own install line -- the project's CLAUDE.md mandates that plugin, and since
-the `enabledPlugins` removal nothing hands it to a new teammate.
-
 ### Verification
 
 `scripts/run-converge-tests.ps1` -- 20 tests, run against **PowerShell 5.1** deliberately, since
 5.1 is the version whose array unrolling causes the corruption above.
-
-`scripts/run-linkcheck-tests.ps1` covers the doc changes -- no dangling references introduced.
 
 ## [4.49.0] - 2026-08-25 - Say what an EOL flip actually costs, and how to spot one
 
