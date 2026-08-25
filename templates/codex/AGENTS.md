@@ -17,8 +17,7 @@ codex plugin marketplace add vladSirin/myst-agentic-workflow
 ```
 
 then `/plugins` → Myst Team Plugins → install `myst-dev-kit` → new session.
-Full onboarding (both archetypes): **SETUP.md in the myst-agentic-workflow
-repo**.
+Full onboarding: **SETUP.md in the myst-agentic-workflow repo**.
 
 ### Personal layer (never version-controlled)
 

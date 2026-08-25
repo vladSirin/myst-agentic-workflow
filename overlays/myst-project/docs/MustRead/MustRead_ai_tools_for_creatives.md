@@ -43,8 +43,8 @@ Claude Code, from nothing:
 2. **Open this project in VS Code** and click **Trust** when Claude Code asks
    whether to trust the repo. The team's plugin marketplace is already set up
    by a file in the project, so you do not add it yourself.
-3. **Say yes to the "myst-dev-kit" plugin prompt.** If you missed it, type this
-   *into the Claude Code chat box*, the same place you type questions:
+3. **Install the team's kit.** Type this *into the Claude Code chat box*, the
+   same place you type questions:
 
    ```
    /plugin install myst-dev-kit@myst

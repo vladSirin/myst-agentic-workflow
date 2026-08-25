@@ -66,10 +66,52 @@ One tool failing does not abort the others; the summary names any failed leg.
 `-Tool claude|codex|opencode` scopes to one tool; `-Version vX.Y.Z` pins or rolls
 back; `-Uninstall` removes everything the script added (the clone stays).
 
-**Claude-only and allergic to scripts?** You never need this one: `p4 sync`, open
-the project, accept the plugin prompt — that zero-touch path still works and stays
-current via `claude plugin update`. The script is the unifier for updates,
-multi-tool users, Codex/OpenCode agent generation, and OpenCode setup.
+**Claude-only and allergic to scripts? That archetype is retired as of v4.50.0.**
+It used to read: `p4 sync`, open the project, accept the plugin prompt — zero
+touch. **That prompt no longer offers the kit.** The team project's committed
+`enabledPlugins` key was removed deliberately: it was minting a second,
+project-scope install record for every plugin, and which record won was decided
+by the order you happened to install things in, with nothing reporting the
+winner. The auto-install went with it. This is called out rather than quietly
+dropped because the path was sold here explicitly.
+
+What is left is still short, and still script-free: `/plugin install myst-dev-kit@myst`
+in the chat box, then restart. No `marketplace add` — the committed
+`extraKnownMarketplaces` still pre-registers `myst`. Updating is then two
+commands (`claude plugin marketplace update myst`, `claude plugin update
+myst-dev-kit@myst`) instead of the one this script runs for you. The script
+remains the unifier for updates, multi-tool users, Codex/OpenCode agent
+generation, and OpenCode setup.
+
+## Upgrading from before v4.50.0 — converge your install records
+
+Do this **once**, and only if you installed the kit before v4.50.0:
+
+```powershell
+$s = "$HOME\.claude\plugins\marketplaces\myst\scripts\migrate-project-scope-installs.ps1"
+& $s              # dry run - shows what it would remove
+& $s -Apply       # act, after backing the registry up
+```
+
+That path is your **marketplace clone**, which every Claude Code user has; run
+`claude plugin marketplace update myst` first if it looks out of date. If you use
+`setup-devkit.ps1`, the same script is also in the package clone it maintains at
+`~/.myst-agentic-workflow/scripts/`.
+
+It removes duplicate **project-scope** records from
+`~/.claude/plugins/installed_plugins.json`, leaving one install record per plugin
+id. Until you run it, a plugin can have both a user record and a project record;
+selection takes the first applicable one in stored order — there is no scope
+precedence — so install order silently decides which payload loads, and nothing
+reports the winner. Dry-run is the default, `-Apply` backs the registry up before
+writing, and re-running it is safe.
+
+**Order matters.** Run it only **after** the project's `enabledPlugins` removal
+has synced to your workspace (`p4 sync`). Converge while those entries are still
+committed and the next session recreates the very records you just removed —
+measured, not theoretical. `setup-devkit.ps1` deliberately does **not** do this
+for you: it is a one-shot migration, not something that should run behind your
+back on every update.
 
 ## Just ask the agent (fastest path)
 
@@ -90,8 +132,14 @@ Two things it **cannot** do, so expect them:
 
 ### Claude Code
 
-- Install: accept the trust-prompt plugin install, or `/plugin install myst-dev-kit@myst`
-  (no `marketplace add` needed — the committed settings pre-register it). **Outside
+- Install: `setup-devkit.ps1` (the documented path), or `/plugin install myst-dev-kit@myst`
+  as a manual fallback. There is **no trust-prompt install** — see the retirement
+  note above. No `marketplace add` is needed inside the team project because the
+  committed `.claude/settings.json` carries `extraKnownMarketplaces`, which
+  pre-registers the `myst` marketplace — and that is the only thing it
+  pre-registers. `context7` and `claude-md-management` come from the built-in
+  `claude-plugins-official` marketplace and owe the committed file nothing;
+  install those with `/plugin install context7@claude-plugins-official`. **Outside
   the team project** there are no committed settings, so the marketplace is not
   pre-registered — either `claude plugin marketplace add vladSirin/myst-agentic-workflow`
   first, or use `setup-devkit.ps1 -Tool claude`, which falls back to `marketplace add`

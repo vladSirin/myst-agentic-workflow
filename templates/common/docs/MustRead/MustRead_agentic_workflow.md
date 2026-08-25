@@ -4,6 +4,14 @@
 
 This guide explains the recommended human workflow for turning discussion into tracked, verifiable work.
 
+## Before any of this works: get the kit
+
+Every slash command named above ships in the `myst-dev-kit` plugin, which is installed **once per user**. It does not arrive with your version-control sync, and **nothing installs it when you trust the repo** — there is no plugin prompt to accept. Install it with `setup-devkit.ps1` (the documented path, and the only one that also covers Codex and OpenCode), or type `/plugin install myst-dev-kit@myst` into the Claude chat box as a manual fallback. No `marketplace add` step is needed inside this project: the committed `.claude/settings.json` pre-registers the `myst` marketplace. Restart the session afterwards — Claude loads a new plugin version only at session start.
+
+Full onboarding for all three tools is **SETUP.md** in the `myst-agentic-workflow` repo.
+
+**If your machine was set up before v4.50.0**, also run `~/.claude/plugins/marketplaces/myst/scripts/migrate-project-scope-installs.ps1` once (dry-run by default, `-Apply` to act, backs up first, safe to re-run). It removes duplicate project-scope install records; leave them in place and install order decides which plugin payload loads, with nothing reporting the winner. **Run it only after this repo's `enabledPlugins` removal has synced to your workspace** — converge sooner and the next session recreates the records you just removed.
+
 ## Core workflow
 
 ```text
