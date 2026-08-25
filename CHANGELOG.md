@@ -45,6 +45,15 @@ stops NEW records being created; it does not remove the ones already on a machin
 Dry-run by default, `-Apply` to act, timestamped backup written before any change. Idempotent.
 Missing / empty / unparsable registries are stated no-ops, never crashes.
 
+- **It writes the file as BOM-less UTF-8 with LF, matching what the CLI wrote.** Windows
+  PowerShell 5.1's `Set-Content -Encoding UTF8` emits a UTF-8 BOM (and CRLF, and a trailing
+  newline); the registry is Node-written with none of those. A BOM is not cosmetic here --
+  `JSON.parse()` throws on a leading BOM, so a converge that reported success would break the
+  registry on the next read. The round-trip check cannot catch it, because PowerShell strips a
+  BOM on read: the guard that proves the write is safe is blind to the corruption the write
+  introduces. Covered by a byte-level test, mutation-verified (restoring the `Set-Content` line
+  fails it with `first bytes EF BB BF`).
+
 - **It edits the registry directly rather than calling `claude plugin uninstall --scope project`.**
   Measured 2026-08-25 (CLI v2.1.231): from the repo root, under identical preconditions, that
   command removed one plugin's project record and REFUSED for two others, advising `--scope user`

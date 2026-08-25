@@ -1,4 +1,4 @@
-# migrate-project-scope-installs.ps1 - converge duplicate plugin installs to one record each.
+# migrate-project-scope-installs.ps1 - remove duplicate PROJECT-scope plugin install records.
 #
 # WHY THIS EXISTS
 #   ~/.claude/plugins/installed_plugins.json can hold BOTH a user-scope and a project-scope
@@ -153,6 +153,14 @@ foreach ($prop in @($check.plugins.PSObject.Properties)) {
     }
 }
 
-Set-Content -LiteralPath $registry -Value $json -Encoding UTF8
+# Write the bytes explicitly. On Windows PowerShell 5.1 `-Encoding UTF8` emits a UTF-8 BOM,
+# and Set-Content also appends a trailing newline and CRLF terminators. The registry is
+# Node-written: no BOM, LF, no trailing newline. The BOM is the fatal one -- JSON.parse()
+# throws on a leading BOM -- and the round-trip check above cannot catch it, because
+# PowerShell strips a BOM on read. So the guard that exists to prove the write is safe is
+# blind to the one corruption the write itself introduces.
+$json = $json -replace "`r`n", "`n"
+$target = (Resolve-Path -LiteralPath $registry).ProviderPath
+[System.IO.File]::WriteAllText($target, $json, (New-Object System.Text.UTF8Encoding($false)))
 Write-Output "removed $($removals.Count) project-scope record(s). Re-run to confirm it reports clean."
 exit 0
