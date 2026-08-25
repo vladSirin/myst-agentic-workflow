@@ -53,6 +53,13 @@ read from your installed manifest — you don't re-specify them.
   chose to skip — diff them against the package source if you want to hand-pick any.
 - **Lower-level alternative:** `scripts/migrate-retired-skills.ps1` only removes retired skills
   (Perforce-aware), if you want to stage that step separately.
+- **One-shot, if you installed plugins before v4.49.0:** `scripts/migrate-project-scope-installs.ps1`
+  removes duplicate PROJECT-scope records from `~/.claude/plugins/installed_plugins.json`, so one
+  plugin id has one install record. Without it, which payload loads is decided by install order
+  and nothing reports the winner. Dry-run by default; `-Apply` acts and writes a backup first.
+  **Order matters:** run it only AFTER the `enabledPlugins` removal has synced to your
+  workspace. Converging while those entries are still committed lets the next session recreate
+  the very records you just removed - measured, not theoretical.
 
 ## Notes
 

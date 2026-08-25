@@ -4,7 +4,7 @@
 
 The skills, workflows, and conventions you'd hand-copy between projects, packaged as a single source of truth with a crash-safe installer, drift detection, and a promotion path. Every skill and agent lives ONCE; each tool consumes the same files through its native mechanism.
 
-[![tests](https://img.shields.io/badge/tests-21%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.49.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-21%20suites%20passing-brightgreen)](#) [![version](https://img.shields.io/badge/version-v4.50.0-blue)](https://github.com/vladSirin/myst-agentic-workflow/releases) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## TL;DR
 
@@ -438,6 +438,7 @@ myst-agentic-workflow/
     ├── diff-installed.ps1         # local drift report
     ├── promote-from-project.ps1   # underlying promote primitive
     ├── migrate-retired-skills.ps1 # upgrade helper: remove retired skills from old installs
+    ├── migrate-project-scope-installs.ps1 # one-shot: converge duplicate plugin install records
     ├── check-mattpocock-updates.ps1
     ├── check-plugin-parity.ps1    # tool-capability matrix vs the plugin tree
     ├── run-skeleton-preflight.ps1 # 10-point write-mode gate

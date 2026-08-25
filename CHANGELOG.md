@@ -27,6 +27,54 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.50.0] - 2026-08-25 - One-shot converge for duplicate plugin install records
+
+MINOR: a new maintenance script consumers get automatically. Nothing existing changes.
+
+### The problem
+
+`~/.claude/plugins/installed_plugins.json` can hold BOTH a user-scope and a project-scope record
+for one plugin id. Selection takes the first applicable record in stored-array order whose
+`installPath` exists -- there is no scope precedence -- so which payload loads is decided by the
+order you happened to install things in, and nothing reports the winner. A stale project record
+installed first wins every session, silently. Dropping the committed `enabledPlugins` entries
+stops NEW records being created; it does not remove the ones already on a machine.
+
+### `scripts/migrate-project-scope-installs.ps1`
+
+Dry-run by default, `-Apply` to act, timestamped backup written before any change. Idempotent.
+Missing / empty / unparsable registries are stated no-ops, never crashes.
+
+- **It edits the registry directly rather than calling `claude plugin uninstall --scope project`.**
+  Measured 2026-08-25 (CLI v2.1.231): from the repo root, under identical preconditions, that
+  command removed one plugin's project record and REFUSED for two others, advising `--scope user`
+  -- the flag that deletes the copy you are keeping. The governing rule was never determined.
+  When it does succeed it also strips the entry from the project's committed
+  `.claude/settings.json` and leaves that file modified but not opened for edit: a shared,
+  version-controlled file silently going dirty during someone's setup.
+- **It never leaves a plugin with zero records.** If every record for an id is project-scope,
+  removing them would uninstall the plugin outright, so it reports and skips instead.
+- **It detects `projectPath` with or without `scope: project`** -- the writer stamps one field
+  and the selector reads the other, so trusting a single field leaves the other kind behind.
+
+### A PowerShell 5.1 hazard worth knowing about
+
+On 5.1 a one-element filter result unrolls to a scalar, so `ConvertTo-Json` writes
+`"id": { .. }` where `"id": [ { .. } ]` is required. That is still valid JSON and a completely
+different shape -- it would corrupt the registry of any consumer whose plugin ends up with one
+remaining record, which is the normal outcome of converging. Guarded twice, and backstopped by a
+round-trip check that refuses to write unless every entry re-parses as a list.
+
+Mutation-tested: removing either guard alone changes nothing (each covers the other), and
+removing BOTH fails the suite *and* trips the abort with the original left untouched. The first
+two mutation attempts passed, which is how the "load bearing" comment on one wrapper was found
+to be wrong and corrected.
+
+### Verification
+
+`scripts/run-converge-tests.ps1` -- 18 tests, run against **PowerShell 5.1** deliberately, since
+5.1 is the version whose array unrolling causes the corruption above.
+
 ## [4.49.0] - 2026-08-25 - Say what an EOL flip actually costs, and how to spot one
 
 MINOR: new reviewer guidance in `review-and-submit`, and a corrected overstatement. No script
