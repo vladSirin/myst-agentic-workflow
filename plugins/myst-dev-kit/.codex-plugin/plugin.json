@@ -1,6 +1,6 @@
 {
     "name": "myst-dev-kit",
-    "version": "4.49.0",
+    "version": "4.50.0",
     "description": "Team dev kit: 30 skills - engineering/productivity (spec, TDD, triage, debugging, grilling...) plus the team process rules as on-demand skills (review-and-submit, changelist-verification, pre-implementation-gate...), sync-build-submit + package commands, and the Submit-Audit warning bridge. The two reviewer agents ship as Markdown (inert here); run setup-devkit.ps1 to generate them as ~/.codex/agents/*.toml with sandbox_mode read-only, or review INLINE via the review-changes skill (review-and-submit's no-subagent path). See docs/tool-capability-matrix.md.",
     "author": {
         "name": "Sirin",
