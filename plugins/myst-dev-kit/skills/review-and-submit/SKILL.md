@@ -420,12 +420,14 @@ After the Review Record block is in place:
       A reviewer asked whether two things contradict either finds a contradiction or does not.
       The question is closed, so the loop terminates.
    3. **There is no client-side audit to run.** `submit-audit-warn.sh` was deleted in CL 2454.
-      Its checks split two ways, and neither is a step you perform:
+      Its checks split two ways; neither is a gate you run, though the first needs your
+      eyes when the hook misses:
       - **EOL flips** — `normalize-eol.sh` (PostToolUse on Edit) repairs the mixed-ending
         fingerprint, so there is normally nothing to normalize here. It misses a file already
-        flipped wholesale to LF: when a diff looks absurdly large, `p4 diff -dw` collapses it
-        to the real change. Restore the depot form with `p4 sync -f` (`p4 revert` alone leaves
-        it LF), then re-diff and review that.
+        flipped wholesale to LF: when a diff looks absurdly large, `p4 diff -dl` collapses it
+        to the real change. To fix it, restore CRLF in the working file itself - it stays open
+        and the edit survives. Do not reach for `p4 sync -f` (it skips open files and reports
+        `up-to-date`) or `p4 revert` (it discards the edit). Then re-diff and review that.
       - **Everything else** — the server trigger, post-commit, warning to the team channel.
 
       > **A quiet submit is not evidence the audit passed**, only that nothing blocked you —
