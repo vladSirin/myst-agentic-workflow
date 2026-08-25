@@ -27,6 +27,76 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
 and the README badge. Update all five in the same commit; the badge is the one that drifts.
 
+## [4.49.0] - 2026-08-25 - Say what an EOL flip actually costs, and how to spot one
+
+MINOR: new reviewer guidance in `review-and-submit`, and a corrected overstatement. No script
+changes; `normalize-eol.sh` stays exactly as it is.
+
+### What was wrong
+
+The skill said `normalize-eol.sh` "is now the only thing preventing that class" of EOL damage.
+It is not: its repair test is `cr>0 && cr<lf`, which by construction cannot see a file already
+flipped wholesale to LF.
+
+### What is actually true, measured
+
+`p4 diff` decides WHETHER files differ using an EOL-normalized check, then diffs RAW BYTES.
+Measured 2026-08-25 (P4 2025.1, `LineEnd: local` -- a CLIENT spec field, so check your own
+`p4 client -o`), same file, same client:
+
+| Case | `p4 diff` |
+|---|---|
+| a pure CRLF->LF flip, nothing else changed | 1 line, no hunks |
+| a real one-line edit, CRLF kept | 5 lines - the actual change |
+| that same edit **plus** an LF flip | 111 lines - the whole file |
+| `p4 diff -dw` on that last case | 5 lines |
+
+A live instance: a 2-line header edit to a 317-line script diffed as **636 lines**; restoring
+CRLF brought it to **8**.
+
+So a flip is invisible right until it matters, and then it buries the change. **Submitted
+history is unaffected** -- the depot stores normalized content and `p4 diff2` across stored
+revisions shows only the real change -- so this is a pre-submit reviewability problem, which
+is precisely where it does damage.
+
+### Why not `p4 sync -f` or `p4 revert`
+
+Measured against P4 2026.1, `LineEnd: local` Windows client, on a 105-line CRLF depot file
+opened for edit in a pending CL -- the only situation this bullet applies to:
+
+| Command | Result |
+|---|---|
+| `p4 diff`, real 1-line edit, CRLF kept | 5 lines |
+| `p4 diff`, same edit + wholesale LF flip | 213 lines -- the whole file |
+| `p4 diff -dl` (or `-dw`) on that state | 5 lines |
+| `p4 sync -f` on the open file | no-op: byte-identical, `up-to-date`, exit 0 |
+| `p4 revert` | restored CRLF **and discarded the edit** |
+| restore CRLF in place | edit intact, file still open, diff back to 5 |
+
+`p4 sync -f` does not affect open files (P4 cmdref), so it fails silently on exactly the file
+you are trying to fix -- and because it reports success, the next reach is `p4 revert`, which
+fixes the line endings by throwing away the change under review. Restoring CRLF in the working
+file is the only one of the three that leaves you something to review. `-dl` is preferred over
+`-dw` because it ignores line-ending convention specifically, not all whitespace. `p4 sync -f`
+stays correct for UNOPENED drift (see `docs/perforce-consumer.md`); the open-file case breaks it.
+
+### Changed
+
+- `review-and-submit` SKILL.md: the "EOL flips" bullet drops the overstatement and carries
+  the diagnostic - `p4 diff -dl` when a diff looks absurdly large, then restore CRLF in the
+  working file itself, which clears the noise without costing the edit. Net +4 lines on the
+  skill. The measurements above are deliberately NOT in it: a skill is always-loaded
+  context, so the rationale lives here and only the actionable rule ships in the skill.
+
+### Corrigendum
+
+An earlier revision of this branch claimed the opposite -- that P4 normalizes EOL so flips are
+harmless and EOL tooling should not be built. That was drawn from testing flips in ISOLATION,
+the one case where the problem does not appear, and it was wrong. It never merged. Recorded
+here because the reasoning error is the reusable part: measuring a variable alone proved
+nothing about the case that occurs in practice, and a clean result read as licence to delete a
+working guard.
+
 ## [4.48.1] - 2026-08-24 - One install command, no clone step
 
 PATCH: documentation only, no behaviour change. `setup-devkit.ps1` is untouched -- what
