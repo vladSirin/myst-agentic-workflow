@@ -7,246 +7,97 @@ How to get the Myst team's AI setup on your machine, whichever tool(s) you use.
 | Layer | Delivered by | Contains |
 |---|---|---|
 | **Committed core** | Perforce sync (automatic) | Team `CLAUDE.md`/`AGENTS.md`, `.claude/settings.json` (hooks + marketplace registration), rules, hook scripts, team docs (`Docs/MustRead`, `Docs/agents`) |
-| **Dev kit** | `myst-dev-kit` plugin / `setup-devkit.ps1` (this repo) | 30 skills, the two reviewer agents (Claude native; generated for Codex + OpenCode — see below), `sync-build-submit` + package commands, the Submit-Audit warning bridge (Codex; verified firing 2026-08-06) |
-| **Personal kit** | you, outside Perforce | `~/.claude/`, `CLAUDE.local.md`, `.claude/settings.local.json`, `~/.config/opencode/`, own skills/plugins |
+| **Dev kit** | the `myst-dev-kit` plugin (this repo) | the skills library — delivery workflow, publication protocols, engineering/productivity skills, the vendored code-review engine |
+| **Personal layer** | you, outside Perforce | `~/.claude/`, `CLAUDE.local.md`, `.claude/settings.local.json`, personal skills/plugins |
 
-Governance is **advisory everywhere**: nothing blocks your work; non-compliant
-submits are warned about in-session and posted to Feishu `#cl-audit` by the
-server-side Submit-Audit.
+Governance is **advisory everywhere**: nothing blocks your work; the server-side
+audit reports non-compliant submits to Feishu `#cl-audit` after the fact.
 
-The full skills catalog (all 24, with when-to-use guidance) lives in the package
-README's [Reference section](README.md#reference).
+## Install (once per user, per tool)
 
-## ONE command, every tool
+- **Claude Code**: type `/plugin install myst-dev-kit@myst` into the chat box,
+  then restart the session. No `marketplace add` step inside team projects — the
+  committed `.claude/settings.json` pre-registers the `myst` marketplace via
+  `extraKnownMarketplaces`, and that is the only thing it pre-registers (plugins
+  like `context7` come from the built-in `claude-plugins-official` marketplace).
+  **Nothing installs itself when you trust the repo** — there is no plugin
+  prompt to accept. Outside a team project, register first:
+  `claude plugin marketplace add vladSirin/myst-agentic-workflow`.
+- **Codex**:
 
-Once per machine (and again any time you want to update — install and update are
-the same run):
-
-```powershell
-irm https://raw.githubusercontent.com/vladSirin/myst-agentic-workflow/main/setup-devkit.ps1 -OutFile "$env:TEMP\setup-devkit.ps1"
-& "$env:TEMP\setup-devkit.ps1"
-```
-
-**There is no clone step, for any tool.** Codex and OpenCode need the package on
-disk, so the script clones it for you at `~/.myst-agentic-workflow` and checks out
-the latest release tag. Claude Code needs nothing on disk at all — that leg drives
-`claude`'s own plugin manager, and falls back to `marketplace add` if the
-marketplace is not registered yet (so it works outside the team project too).
-
-Run it with `-DryRun` first if you want to see the plan before anything is written.
-
-<details>
-<summary>Prefer to clone and read the source first? Same result.</summary>
-
-```powershell
-git clone https://github.com/vladSirin/myst-agentic-workflow "$env:USERPROFILE\.myst-agentic-workflow"
-& "$env:USERPROFILE\.myst-agentic-workflow\setup-devkit.ps1"
-```
-
-Clone to **exactly** that path: the script only moves the git state of the
-dedicated clone at `~/.myst-agentic-workflow`, and any other checkout is used
-**as-is** — point it at a clone sitting on `main` and you install unreleased
-commits with no tag involved (`-ForceGitUpdate` overrides). The checkout also
-leaves you on a **detached HEAD** at the release tag, which is correct for a
-consumer clone: update by re-running the script, not by `git pull`.
-
-</details>
-
-The script detects which AI CLIs are on PATH and drives each tool's NATIVE
-mechanism — it never replaces the tools' own plugin managers, it saves you from
-remembering three different command sets:
-
-| Detected tool | What the script does |
-|---|---|
-| Claude Code | `claude plugin marketplace update myst`, then install-if-missing / `claude plugin update myst-dev-kit@myst`. Reminds you to restart the session. |
-| Codex | `codex plugin marketplace add` (tolerated if registered) + `codex plugin marketplace upgrade` + always attempts `codex plugin add` (harmless when installed; fails loudly only if the list still says `not installed`), then generates the two reviewer agents as `~/.codex/agents/*.toml` (`sandbox_mode = "read-only"`). |
-| OpenCode | Checks the clone out at the latest release tag, registers the 30 skills via `skills.paths` in `~/.config/opencode/opencode.json`, writes the unreal-engine MCP entry and the manual-skill ask-map, generates the two reviewer agents, then self-verifies delivery. |
-
-One tool failing does not abort the others; the summary names any failed leg.
-`-Tool claude|codex|opencode` scopes to one tool; `-Version vX.Y.Z` pins or rolls
-back; `-Uninstall` removes everything the script added (the clone stays).
-
-**Claude-only and allergic to scripts? That archetype is retired as of v4.50.0.**
-It used to read: `p4 sync`, open the project, accept the plugin prompt — zero
-touch. **That prompt no longer offers the kit.** The team project's committed
-`enabledPlugins` key was removed deliberately: it was minting a second,
-project-scope install record for every plugin, and which record won was decided
-by the order you happened to install things in, with nothing reporting the
-winner. The auto-install went with it. This is called out rather than quietly
-dropped because the path was sold here explicitly.
-
-What is left is still short, and still script-free: `/plugin install myst-dev-kit@myst`
-in the chat box, then restart. No `marketplace add` — the committed
-`extraKnownMarketplaces` still pre-registers `myst`. Updating is then two
-commands (`claude plugin marketplace update myst`, `claude plugin update
-myst-dev-kit@myst`) instead of the one this script runs for you. The script
-remains the unifier for updates, multi-tool users, Codex/OpenCode agent
-generation, and OpenCode setup.
-
-## Upgrading from before v4.50.0 — converge your install records
-
-Do this **once**, and only if you installed the kit before v4.50.0:
-
-```powershell
-$s = "$HOME\.claude\plugins\marketplaces\myst\scripts\migrate-project-scope-installs.ps1"
-& $s              # dry run - shows what it would remove
-& $s -Apply       # act, after backing the registry up
-```
-
-That path is your **marketplace clone**, which every Claude Code user has; run
-`claude plugin marketplace update myst` first if it looks out of date. If you use
-`setup-devkit.ps1`, the same script is also in the package clone it maintains at
-`~/.myst-agentic-workflow/scripts/`.
-
-It removes duplicate **project-scope** records from
-`~/.claude/plugins/installed_plugins.json`, leaving one install record per plugin
-id. Until you run it, a plugin can have both a user record and a project record;
-selection takes the first applicable one in stored order — there is no scope
-precedence — so install order silently decides which payload loads, and nothing
-reports the winner. Dry-run is the default, `-Apply` backs the registry up before
-writing, and re-running it is safe.
-
-**Order matters.** Run it only **after** the project's `enabledPlugins` removal
-has synced to your workspace (`p4 sync`). Converge while those entries are still
-committed and the next session recreates the very records you just removed —
-measured, not theoretical. `setup-devkit.ps1` deliberately does **not** do this
-for you: it is a one-shot migration, not something that should run behind your
-back on every update.
-
-## Just ask the agent (fastest path)
-
-After `p4 sync`, you don't have to remember any of this. Paste into your tool:
-
-> **Install or update my myst dev kit (fetch setup-devkit.ps1 from the repo and
-> run it — it clones anything it needs itself), verify the result, and tell me
-> what I still have to do myself.**
-
-Two things it **cannot** do, so expect them:
-
-- **Restart your Claude session.** Claude loads the new version on the next
-  session start; the agent will tell you, but you have to do it. (Codex applies
-  upgrades in place; OpenCode reads the clone live.)
-- **Approve its own commands.** You may get a permission prompt the first time.
-
-## Per-tool notes (the mechanics under the one command)
-
-### Claude Code
-
-- Install: `setup-devkit.ps1` (the documented path), or `/plugin install myst-dev-kit@myst`
-  as a manual fallback. There is **no trust-prompt install** — see the retirement
-  note above. No `marketplace add` is needed inside the team project because the
-  committed `.claude/settings.json` carries `extraKnownMarketplaces`, which
-  pre-registers the `myst` marketplace — and that is the only thing it
-  pre-registers. `context7` and `claude-md-management` come from the built-in
-  `claude-plugins-official` marketplace and owe the committed file nothing;
-  install those with `/plugin install context7@claude-plugins-official`. **Outside
-  the team project** there are no committed settings, so the marketplace is not
-  pre-registered — either `claude plugin marketplace add vladSirin/myst-agentic-workflow`
-  first, or use `setup-devkit.ps1 -Tool claude`, which falls back to `marketplace add`
-  on its own.
-- Update — TWO steps, then a restart (the marketplace refresh alone updates
-  nothing you have installed; the plugin update without the refresh only sees the
-  old snapshot):
   ```
-  claude plugin marketplace update myst
-  claude plugin update myst-dev-kit@myst
+  codex plugin marketplace add vladSirin/myst-agentic-workflow
+  codex plugin add myst-dev-kit@myst
   ```
-  What "latest" means is authoritative in ONE place: the CHANGELOG head in your
-  marketplace clone (`~/.claude/plugins/marketplaces/myst/CHANGELOG.md`) — and on
-  the [GitHub Releases page](https://github.com/vladSirin/myst-agentic-workflow/releases),
-  which republishes each tagged version.
-- Opt out: `{ "enabledPlugins": { "myst-dev-kit@myst": false } }` in
-  `.claude/settings.local.json`. The committed core works regardless.
 
-### Codex
+  then a new session. Codex reads `AGENTS.md` natively from the synced project.
+- **OpenCode**: `npx skills add vladSirin/myst-agentic-workflow` — pick the
+  skills you want; they install at personal scope and OpenCode auto-scans them.
+  OpenCode also reads the project's `AGENTS.md` natively.
 
-- Install (once): `codex plugin marketplace add vladSirin/myst-agentic-workflow`,
-  then `codex plugin add myst-dev-kit@myst`, new session.
-- Update — ONE command, *not* the same shape as Claude's:
-  ```
-  codex plugin marketplace upgrade
-  ```
-  Codex has **no `plugin update` subcommand**; refreshing the marketplace snapshot
-  replaces the installed plugin in place (verified 4.18.0 → 4.19.0).
-- **What Codex gets**: the skills, the commands, the Submit-Audit bridge
-  (verified firing 2026-08-06), and — via `setup-devkit.ps1` — the two reviewer
-  agents generated as `~/.codex/agents/*.toml` (`sandbox_mode = "read-only"`,
-  body verbatim from the shared source; ask a session to "run
-  architecture-reviewer on this change" to spawn one). The inline
-  `review-changes` skill is the no-subagent path: it runs the same two axes
-  (Standards + Spec) inline, sequentially, and is why Codex keeps a review path at
-  all. It is no longer a "fast path" -- v4.48.0 retired the tiers, so agent-capable
-  sessions always spawn the axes.
-- **What Codex does NOT get**: the always-on rules (`.claude/rules/*.md` reaches
-  Claude only; Codex reads `AGENTS.md`, which is why every always-on rule has an
-  `AGENTS.md` counterpart, enforced by `check-rule-parity.sh`) and project-level
-  hooks (measured: repo-committed hook files are ignored; hooks reach Codex only
-  through the plugin).
+## Update
 
-### OpenCode
+- **Claude Code** — two steps, then restart:
+  `claude plugin marketplace update myst` then
+  `claude plugin update myst-dev-kit@myst`. The marketplace refresh alone moves
+  nothing you have installed.
+- **Codex** — one step: `codex plugin marketplace upgrade`. There is no separate
+  plugin-update subcommand; the marketplace refresh replaces the install.
+- **npx consumers** — re-run the add command.
 
-Everything arrives via `setup-devkit.ps1` (above) plus what OpenCode reads
-natively from the synced project — `AGENTS.md` (same rules baseline as Codex,
-same parity guarantee). Daily use is nothing: `cd` the project, run `opencode`.
-Updates: re-run the script; because `skills.paths` and the generated agents read
-the dedicated clone, the tag checkout IS the update.
+What "latest" means is authoritative in the [CHANGELOG](CHANGELOG.md) head,
+republished per tag on the
+[Releases page](https://github.com/vladSirin/myst-agentic-workflow/releases).
 
-Known gaps, deliberate (same posture as Codex where applicable):
+## Migrating from v4
 
-| Gap | Status |
-|---|---|
-| Blocking hooks (`check-raw-protect.sh`, `check-script-standard.sh`) and `normalize-eol.sh` do not run | Same as Codex. Server-side Submit-Audit still covers submits. A JS guard plugin (`myst-guards.mjs`, spawning the same `.claude/scripts/*.sh`) is the designed follow-up — built when a user actually trips a guard, or immediately if OpenCode's edit tool proves to flip CRLF on this P4 repo. |
-| Reviewer subagents | **Delivered** — generated opencode-native files (`mode: subagent`, `permission: edit deny`) under `~/.config/opencode/agents/myst/`; spawn them as `myst/architecture-reviewer` / `myst/radical-design-critic`. The shared Claude agent files are never loaded directly. On machines that ALSO run Claude Code, OpenCode surfaces the Claude plugin's own agent copies as `myst-dev-kit:<name>` — measured resolving with `edit: true` (Claude's `tools:` string does not restrict them there), so the script ships them **disabled** in your config; use the `myst/` variants. |
-| `disable-model-invocation` on the 9 designed-manual skills is ignored by OpenCode | Restored as a `permission.skill` ask-map written by the script — OpenCode asks before auto-firing a workflow-gate skill (`to-spec`, `to-tickets`, `triage`, `implement`, `handoff`, ...). |
-| Slash commands | Not delivered — all 3 are maintainer/build-machine commands; nothing user-facing is lost. |
-| Rules full text | `AGENTS.md` tier (native). Full `.claude/rules/*.md` auto-load costs ~9.5k tokens/session, 65% of it path-scoped rules that should not load unconditionally — available as a personal `instructions` glob in your own config if you want it anyway. |
+If this machine had the v4 kit (installer scripts, the dedicated clone at
+`~/.myst-agentic-workflow`, generated reviewer agents):
 
-## Poweruser (bring your own kit)
+1. Fetch `retire-legacy.ps1` from this repo and run it with `-WhatIf`
+   (report-only), then without. It refuses to touch state it cannot prove
+   committed and backs up configs before writing.
+2. Run your tool's install one-liner above.
+3. If step 1's report flags duplicate install records in
+   `~/.claude/plugins/installed_plugins.json` (machines set up before v4.50.0
+   that never ran the converge step), follow the recovery command it prints —
+   the CHANGELOG's v5.0.0 section has the same instructions.
 
-Everything above, plus your personal layer — none of it touches Perforce:
+Details: the CHANGELOG's v5.0.0 section. Also check `CLAUDE.local.md` and
+`~/.claude/CLAUDE.md` for references to commands v5 removed.
+
+## Per-tool notes
+
+- **Claude Code** is the fully-loaded tool: always-on rules (`.claude/rules/`),
+  team hooks, and the plugin's skills.
+- **Codex / OpenCode** read `AGENTS.md` (the same baseline; parity is maintained
+  in the depot) plus the plugin's skills. Both spawn the review protocol's
+  sub-agents natively; Codex may need `features.multi_agent_v2` enabled in
+  `~/.codex/config.toml` once.
+- **Opt out** (Claude): `{ "enabledPlugins": { "myst-dev-kit@myst": false } }`
+  in `.claude/settings.local.json`. The committed core works regardless.
+
+## Personal layer (never version-controlled)
 
 - **`~/.claude/CLAUDE.md`** — global personal instructions (additive).
 - **`CLAUDE.local.md`** at repo root — per-project personal instructions
   (additive; `.p4ignore`d).
 - **`.claude/settings.local.json`** — personal hooks/permissions.
-  ⚠ To remove a hook locally, DELETE the key — an empty array (`"PreToolUse": []`)
-  is an active override that can shadow team hooks.
-- **`~/.claude/skills/`** — personal skills. Note some may shadow-duplicate
-  plugin skills in the skill list; harmless, but prune for clarity.
-- **Codex personal layer**: `~/.codex/AGENTS.md` (additive). `AGENTS.override.md`
-  REPLACES the project file — escape hatch only.
-- **OpenCode personal layer**: `~/.config/opencode/opencode.json` (the script
-  merges around your keys and backs the file up first; a JSONC config with
-  comments is never rewritten — the script prints the snippet for you to paste),
-  `~/.config/opencode/AGENTS.md` (global rules, additive).
+  ⚠ To remove a hook locally, DELETE the key — an empty array
+  (`"PreToolUse": []`) is an active override that shadows team hooks.
+- **`~/.claude/skills/`, `~/.agents/skills/`** — personal skills; personal scope
+  overrides project scope in resolution order, so your choice always wins.
+- **Codex**: `~/.codex/AGENTS.md` (additive). `AGENTS.override.md` REPLACES the
+  project file — escape hatch only.
 - Improved something generally useful? Push it back:
   see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Prerequisites & troubleshooting
+## Verify your install (1 minute)
 
-- **git** — for the package clone (`setup-devkit.ps1` clones/updates it).
-- **Bash** (Git Bash/WSL) — the hooks and scripts need it.
-- **GitHub access**: the marketplace repo is public today, so installs need no
-  auth. If it goes private: get collaborator access + `gh auth login` once
-  (plus `GITHUB_TOKEN` in your env if you want background auto-updates).
-- **Plugin skills missing?** New sessions only — restart after install/update.
-- **OpenCode not seeing the kit?** `opencode debug skill` should list the myst
-  skills and `opencode agent list` the two reviewers; if not, re-run
-  `setup-devkit.ps1` (it self-verifies and names what failed).
-- **No Submit-Audit warning on a bad submit?** The warning renders as a dim
-  collapsible line under the Bash call (expand it / ctrl-o). If genuinely
-  absent, check your `settings.local.json` for empty hook-array overrides.
-- **Feishu `#cl-audit`** is the team-visible audit trail; advisory, never blocks.
-
-## Verify your install (2 minutes)
-
-1. Claude: `/plugin` shows `myst-dev-kit` enabled at the current version; typing
-   `/` lists dev-kit skills (`tdd`, `grilling`, `review-and-submit`...).
-2. Codex: `codex plugin list` shows `myst-dev-kit@myst` installed; with the
-   script run, `~/.codex/agents/architecture-reviewer.toml` exists.
-3. OpenCode: `opencode debug skill` lists the myst skills;
-   `opencode agent list` shows `architecture-reviewer` and
-   `radical-design-critic`; in the project, ask "what hard rules apply" and it
-   answers from `AGENTS.md`.
+1. Claude: `/plugin` shows `myst-dev-kit` at the current version; typing `/`
+   lists dev-kit skills (`tdd`, `grilling`, `review-and-submit`...).
+2. Codex: `codex plugin list` shows `myst-dev-kit@myst` installed.
+3. OpenCode: `opencode debug skill` lists the skills you added.
 4. Optional full check: submit a scratch CL with a tag-less description —
-   expect ONE in-session warning + one Feishu message, and the submit succeeds.
+   expect one Feishu `#cl-audit` message, and the submit succeeds (advisory,
+   never blocks).

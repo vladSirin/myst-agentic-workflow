@@ -1,47 +1,49 @@
 ---
 name: changelist-verification
-description: "HARD RULE - use whenever a task involves MORE THAN ONE Perforce changelist. Execute CL-by-CL with a stop-and-verify gate between each; never batch CLs."
+description: "HARD RULE - use whenever a task involves MORE THAN ONE changeset (Perforce changelist, PR, or commit batch). Execute changeset-by-changeset with a stop-and-verify gate between each; never batch them."
 ---
 
 # CRITICAL WORKFLOW REQUIREMENT
 
-## Changelist-by-Changelist Verification
+## Changeset-by-Changeset Verification
 
-When executing a multi-step plan that spans multiple changelists, you **MUST**:
+A **changeset** is one named, reviewable unit of work — a Perforce changelist, a git PR, or
+a commit batch published as one step. When executing a multi-step plan that spans multiple
+changesets, you **MUST**:
 
 ---
 
 ## Hard Rule
 
 > [!CAUTION]
-> **NEVER** batch multiple changelists into a single action or auto-submit them sequentially.
+> **NEVER** batch multiple changesets into a single action or auto-publish them sequentially.
 >
-> Each changelist requires **explicit user verification** before proceeding to the next.
+> Each changeset requires **explicit user verification** before proceeding to the next.
 
 ---
 
 ## Required Workflow
 
-For plans with multiple changelists (CL1, CL2, CL3, etc.):
+For plans with multiple changesets (CL1/PR1, CL2/PR2, etc.):
 
-1. **Execute CL1 work** → Present results → **STOP**
-2. **Wait for user verification** of CL1
-3. **Only after approval**: Execute CL2 work → Present results → **STOP**
-4. **Wait for user verification** of CL2
-5. Continue this pattern for all subsequent changelists
+1. **Execute changeset 1's work** → Present results → **STOP**
+2. **Wait for user verification** of changeset 1
+3. **Only after approval**: Execute changeset 2's work → Present results → **STOP**
+4. **Wait for user verification** of changeset 2
+5. Continue this pattern for all subsequent changesets
 
 ---
 
 ## Exception
 
 The **ONLY** exception is when the user **explicitly** states one of:
-- "Do all changelists at once"
+- "Do all changesets at once"
 - "Submit them all without verification"
-- "Skip CL-by-CL verification"
+- "Skip changeset-by-changeset verification"
 - Or similar explicit override
 
 > [!CAUTION]
-> **The exception itself has one carve-out: `ready-for-human` tickets.** That label means a human implements the ticket, so a CL against one should not exist — and if you are holding one, it is NEVER covered by the batch override above, in any mode. `p4 shelve -c <CL>` it (files stay open locally — exclude from later reconcile/submit-all), append `GATED-SHELVED: process error - agent implemented a ready-for-human ticket` to its description, report it, and continue; the human unshelves, reviews, and submits. Changing its `Status:` to clear the block — to `ready-for-agent`, to `claimed`, to anything — is user-only, never yours. See the `pre-implementation-gate` skill's handoff section.
+> **The exception itself has one carve-out: `ready-for-human` tickets.** That label means a human implements the ticket, so a changeset against one should not exist — and if you are holding one, it is NEVER covered by the batch override above, in any mode. Park it instead (Perforce: `p4 shelve -c <CL>` — files stay open locally, exclude from later reconcile/submit-all; git: leave on its branch, no merge/PR), append `GATED-SHELVED: process error - agent implemented a ready-for-human ticket` to its description, report it, and continue; the human reviews and publishes it personally. Changing its `Status:` to clear the block — to `ready-for-agent`, to `claimed`, to anything — is user-only, never yours. Full mechanics: the review-and-submit skill's `ready-for-human` rule.
 
 ---
 
@@ -49,16 +51,16 @@ The **ONLY** exception is when the user **explicitly** states one of:
 
 - Allows user to catch issues early before they compound
 - Enables course correction between steps
-- Prevents cascading errors across multiple submissions
+- Prevents cascading errors across multiple publications
 - Maintains user control over version control state
 
 ---
 
 ## Enforcement
 
-If you execute multiple changelist steps without stopping for verification between each, you have violated this requirement.
+If you execute multiple changeset steps without stopping for verification between each, you have violated this requirement.
 
-**Workflow**: `CL1 → Verify → CL2 → Verify → CL3 → Verify` (NEVER: `CL1 → CL2 → CL3 → Done`)
+**Workflow**: `CS1 → Verify → CS2 → Verify → CS3 → Verify` (NEVER: `CS1 → CS2 → CS3 → Done`)
 
 ---
 

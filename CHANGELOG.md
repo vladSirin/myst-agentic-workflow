@@ -8,12 +8,17 @@ SemVer, scoped to **what an install has to do about it** — not to how big the 
 
 | Bump | When | Examples |
 |---|---|---|
-| **MAJOR** | An existing install **breaks or needs manual migration**. | Manifest schema change; installer/marker contract change; a path or ownership move `update.ps1` / `upgrade.ps1` cannot resolve on its own. |
-| **MINOR** | Anything a consumer gets **automatically** — including removals. | New or retired skills, rules, docs; behaviour changes to an existing skill; content moved between skills. `upgrade.ps1` already adds new files and removes retired ones. |
+| **MAJOR** | An existing install **breaks or needs manual migration**. | A changed install channel; a protocol skill's trigger contract renamed or removed; anything that requires the consumer to run a migration step. |
+| **MINOR** | Anything a plugin consumer gets **automatically** — including removals. | New or retired skills; behaviour changes to an existing skill; content moved between skills. A plugin update replaces the directory wholesale. |
 | **PATCH** | No behavioural change. | Typos, links, wording, formatting. |
 
-Retiring a skill or a rule is **MINOR**, not MAJOR. It is consumer-visible — say so in the entry,
-and record what was lost — but the upgrade path handles it without anyone editing a file.
+Retiring a skill is **MINOR**, not MAJOR, for plugin consumers. It is consumer-visible — say so
+in the entry, and record what was lost — but the plugin update handles it without anyone editing
+a file. Copy-install (`npx skills add`) consumers self-manage removals; that is inherent to the
+npx model, not a reason to call the release MAJOR. When a MAJOR example seems to collide with
+this rule, the MAJOR **criterion** controls, not the example: a retirement is MAJOR only when it
+breaks an existing install or forces manual migration (as this release does), and MINOR when
+consumers simply receive the removal.
 
 **One bump per merge to `main`.** Not per commit, and not once per PR in a stack: three PRs that
 land the same change set share one version. If you are about to write a second `## [x.y.z]`
@@ -23,9 +28,97 @@ heading dated today, you almost certainly want to extend the first one instead.
 v3.0.0 through v6.0.0 were written into four JSON files and never tagged, which is exactly how
 two spurious majors went unnoticed. Either tag on merge, or leave the number alone.
 
-**The number lives in five places** — `package-manifest.json`, `.claude-plugin/marketplace.json`,
-`plugins/myst-dev-kit/.claude-plugin/plugin.json`, `plugins/myst-dev-kit/.codex-plugin/plugin.json`,
-and the README badge. Update all five in the same commit; the badge is the one that drifts.
+**The number lives in two places** — `plugins/myst-dev-kit/.claude-plugin/plugin.json` and
+`plugins/myst-dev-kit/.codex-plugin/plugin.json`. `./bump.ps1 -Version X.Y.Z` updates both,
+checks this file has the matching section, and tags. (Before v5.0.0 the number lived in five
+places; the other three sites no longer exist.)
+
+## [5.0.0] - 2026-08-27 - Lean Library: the scaffold becomes a skills repo
+
+MAJOR: the v4 machinery layer is deleted and migration is manual — the two commands below.
+Direction set by the 2026-08-26 roundtable plus owner decisions; the architecture record is
+[ADR-0007](docs/adr-0007-lean-library-supersedes-vendor-render-model.md), and every file's
+disposition is in the inventory at [docs/migration-v5.md](docs/migration-v5.md).
+
+### Migrating from v4 (once per machine)
+
+1. Fetch `retire-legacy.ps1` from this repo and run it with `-WhatIf` (report-only),
+   then again without. It deletes the dedicated clone, the generated reviewer agents,
+   and the dead OpenCode config keys; backs configs up first; and REFUSES if it finds
+   an uncommitted v4 install journal (that state needs a human).
+2. Run your tool's install one-liner from [README.md](README.md).
+
+Then check personal instruction files (`CLAUDE.local.md`, `~/.claude/CLAUDE.md`) for
+references to commands that no longer exist (the v4 update/promote round-trip commands,
+the retired installer). The installer script itself remains as a deprecation stub that
+prints these steps and exits 1; the stub and `retire-legacy.ps1` are deleted together in
+a later MINOR.
+
+One legacy condition `retire-legacy.ps1` only REPORTS, never fixes: duplicate records for
+one plugin id in `~/.claude/plugins/installed_plugins.json` (the pre-v4.50.0 scope-
+duplication bug — see the v4.50.0/v4.50.1 entries below). The converge script those
+entries describe is deleted with the rest of `scripts/`; if the report flags your
+registry, recover it from history —
+`git show 2ad8ac3:scripts/migrate-project-scope-installs.ps1 > converge.ps1` (`2ad8ac3`
+is the v4.50.1 release commit; the v4.50.x releases were never tagged) — and run it once
+(dry-run by default, `-Apply` to act). The v4.50.1 **ordering constraint still applies**:
+converge only AFTER your project's committed `enabledPlugins` removal has synced to your
+workspace — converging first lets the next session recreate the very records you just
+removed.
+
+### Deleted (git history is the archive)
+
+- The whole machinery layer: all 44 `scripts/` files, the four lifecycle orchestrators
+  (setup/update/upgrade/promote), the render/marker system and its manifests
+  (`package-manifest.json`, `manifest-template.json`), vendored-hash drift tracking, the
+  README badge, and the plugin's `hooks/`, `commands/`, `scripts/`, and `agents/` — the
+  plugin now ships skills only.
+- Skills retired: `setup-agentic-workflow` (front-end over deleted scripts),
+  `review-changes` (both Codex — multi-agent v2 — and OpenCode spawn sub-agents natively),
+  `pre-implementation-gate` (the concept survives as a paragraph in `agentic-workflow`;
+  team enforcement lives project-side).
+- Agents retired: `architecture-reviewer` and `radical-design-critic`, replaced by the
+  vendored two-axis `code-review` engine; their additive canon is archived in history and
+  returns as same-dir reference briefs only if review quality visibly drops.
+- Docs superseded: `install.md`, `upgrade.md`, `perforce-consumer.md`,
+  `tool-capability-matrix.md`; `overlays/myst-project/` (project-specific content lives in
+  the consuming project, not here).
+
+### Changed
+
+- `review-and-submit` generalized VCS-agnostic: changeset vocabulary, dual Perforce/git
+  command forms, the review engine is `myst-dev-kit:code-review` (cite it namespaced — the
+  bare name resolves to the official git-diff review plugin), and the Docs-alignment
+  closed-question brief folds inline as a generic sub-agent preflight.
+- `changelist-verification` generalized to multi-changeset (CL / PR / commit batch).
+- `design` and `agentic-workflow` scrubbed project-agnostic; `agentic-workflow` gains the
+  pre-implementation gate paragraph (spec → tickets → triage before multi-changeset work).
+- `templates/` + `overlays/` → `reference/`: frozen starter docs for consuming projects.
+- README, SETUP.md, CONTRIBUTING.md rewritten to the v5 story (per-tool one-liner installs,
+  direct-PR contribution gate, no counts anywhere in prose).
+- Version sites: five → two; the marketplace entry no longer carries `version` or
+  `description` (duplicating the version there pins consumers to stale snapshots).
+
+### Added
+
+- Vendored `code-review` skill from
+  [mattpocock/skills](https://github.com/mattpocock/skills) `skills/engineering/code-review`
+  @ `6654f6b` — verbatim, with a `PROVENANCE.md` note.
+- `bump.ps1` (two manifests + CHANGELOG-section check + tag) and `retire-legacy.ps1`
+  (+ a synthetic `committed:false` journal fixture for its refusal path).
+- CI: the suites job is gone with the suites; a `lint` job takes its place — SKILL.md
+  frontmatter validity, two-manifest version agreement, README install one-liners present,
+  and a dead-reference grep over the tree. `release.yml` now hard-fails when the tagged
+  version has no CHANGELOG section (it used to warn and publish an empty-bodied release).
+
+### Given up, on record
+
+Upstream drift-tracking (re-vendoring is a manual wholesale replace), the generated
+per-tool reviewer agents (including their pinned review model/effort and their curated
+read-only tool surface — the briefs now carry the "effort barbell" and
+submission-authority rules as prose instead), the render system, and the client-side
+audit surfaces (the plugin ships zero hooks; server-side post-submit audit remains the
+net where a team runs one). Details and rationale: ADR-0007.
 
 ## [4.50.1] - 2026-08-25 - Truth up the documented install path
 

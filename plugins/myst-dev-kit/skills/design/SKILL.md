@@ -36,11 +36,11 @@ Ask the user clarifying questions if needed to understand:
 
 ### Step 2: Create the Document
 
-> **Naming rules**: See `.claude/rules/DocumentStandard.md` (installed by the myst-project
-> overlay) for the full naming convention and lifecycle.
+> **Naming rules**: If the project defines a document-standard rule (e.g.
+> `.claude/rules/DocumentStandard.md`), follow it for the full naming convention and lifecycle.
 
 > **Search before you create.** Glob `plan_*.md`, `design_*.md`, `guide_*.md` under the
-> game Docs dir (`Myst_Proto/Docs/` here; see the CLAUDE.md Project section) and
+> game Docs dir named in the project's CLAUDE.md and
 > `.scratch/*/spec.md` for the feature, system, or phase name first. If a related document
 > exists, extend it — update status, add sections, keep its history — rather than opening a
 > second one. Two documents for one feature don't error; they split the source of truth, and
@@ -115,11 +115,11 @@ Use this template structure:
 
 ## Implementation Plan
 
-### CL X.1: {First Milestone}
+### Changeset X.1: {First Milestone}
 **Deliverables**: {bullet list}
 **Verification**: {how to test}
 
-### CL X.2: {Second Milestone}
+### Changeset X.2: {Second Milestone}
 **Deliverables**: {bullet list}
 **Verification**: {how to test}
 
@@ -170,7 +170,7 @@ When the user approves the design:
 
 ## Notes
 
-- Always check existing docs in the game Docs dir (`Myst_Proto/Docs/` here) for related designs before starting
-- Reference `split_fiction_scripts/` for AngelScript patterns when applicable
-- Follow the project's established architecture patterns (FrogEvent, Subsystems, etc.)
+- Always check existing docs in the game Docs dir (named in the project's CLAUDE.md) for related designs before starting
+- Reference the project's designated reference codebase, if CLAUDE.md names one, for established patterns
+- Follow the project's established architecture patterns (event systems, subsystems, etc.)
 - Keep designs LD-friendly as per project philosophy

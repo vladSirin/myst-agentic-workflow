@@ -1,10 +1,8 @@
-# Install/runtime state (created by install.ps1, never source-controlled)
+# Legacy v4 install/runtime state (harmless to keep ignoring)
 .agentic-state/
 *.lock
 .install-lock
 .install-journal/
-
-# Fixture temp dirs (created by run-*-tests.ps1)
 fixtures/_tmp/
 fixtures/.run/
 

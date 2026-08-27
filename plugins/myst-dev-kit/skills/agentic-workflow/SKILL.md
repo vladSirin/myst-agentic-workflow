@@ -9,7 +9,7 @@ description: "Team delivery process (discussion -> spec -> tickets -> triage -> 
 
 This workflow is the **end-to-end shape** for non-trivial work: discussion → captured intent (spec) → planned slices (tickets) → triaged → built → verified → submitted.
 
-For work involving **game design** (mechanics, UX, levels, player experience), the Discussion phase is **extended** via the [design](../design/SKILL.md) skill — that produces a finalized design doc in the game project's Docs dir (`Myst_Proto/Docs/` here; see the CLAUDE.md Project section), and the spec phase here references it. For pure code / system / bugfix work, Discussion can stay in chat and you jump straight to the spec (`/to-spec`).
+For work involving **game design** (mechanics, UX, levels, player experience), the Discussion phase is **extended** via the [design](../design/SKILL.md) skill — that produces a finalized design doc in the game Docs dir named in the project's CLAUDE.md, and the spec phase here references it. For pure code / system / bugfix work, Discussion can stay in chat and you jump straight to the spec (`/to-spec`).
 
 Three flow shapes the project supports:
 
@@ -21,7 +21,7 @@ Three flow shapes the project supports:
 
 Examples that go straight to this workflow (no `design`-skill Discussion):
 
-- Refactor or extend a subsystem (Flow, Objective, FrogEvent integration, etc.)
+- Refactor or extend a subsystem (flow control, objectives, event-system integration, etc.)
 - Fix a bug or regression
 - Build a tool, pipeline, or CI mechanism
 - Integrate a new plugin or library
@@ -37,6 +37,14 @@ When a user asks for non-trivial in-scope (see above) work, use this workflow un
 ```text
 Discussion -> Spec -> Tickets -> Triage -> Implement -> Verify -> Review/Submit
 ```
+
+**The pre-implementation gate**: implementation is the LAST phase, not the first. Before
+proposing any plan that spans multiple changesets, verify the earlier phases actually
+happened — a spec exists, vertical-slice tickets exist, and at least one is triaged
+`ready-for-agent` — or the user has explicitly skipped the workflow, recorded as
+`Workflow: skipped (<reason>)` in each changeset description. A `ready-for-human` ticket is
+a handoff to a human, never work you pick up. Teams may enforce this gate with their own
+always-on rule files; this paragraph is the workflow's own statement of it.
 
 ## Required references
 
@@ -92,11 +100,11 @@ Lifecycle states say how far the work has got:
 
 ### 7. Review and submit
 
-For Perforce submission, follow the `review-and-submit` skill. Never submit without explicit user approval.
+For publication (Perforce submit, or git merge/PR), follow the `review-and-submit` skill. Never publish without explicit user approval.
 
 ## Guardrails
 
-- Search before creating a planning artifact: Glob `plan_*.md` and `design_*.md` under the game project's Docs dir (`Myst_Proto/Docs/` here; see the CLAUDE.md Project section), plus `.scratch/*/spec.md`, for the feature/system/phase name. If one exists, extend it rather than opening a second — duplicates don't error, they split the source of truth.
-- Do not batch multiple changelists without explicit user approval; follow the `changelist-verification` skill.
-- Do not modify the game Docs dir's `_Raw/` (`Myst_Proto/Docs/_Raw/` here) without the protected-material approval flow.
+- Search before creating a planning artifact: Glob `plan_*.md` and `design_*.md` under the game Docs dir named in the project's CLAUDE.md, plus `.scratch/*/spec.md`, for the feature/system/phase name. If one exists, extend it rather than opening a second — duplicates don't error, they split the source of truth.
+- Do not batch multiple changesets without explicit user approval; follow the `changelist-verification` skill.
+- Do not modify the game Docs dir's `_Raw/` (where the project defines a protected raw-material area) without the protected-material approval flow.
 - Keep ticket state changes explicit in the issue file's `Status:` line.

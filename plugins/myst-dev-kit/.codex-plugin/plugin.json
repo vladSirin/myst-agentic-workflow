@@ -1,7 +1,7 @@
 {
     "name": "myst-dev-kit",
-    "version": "4.50.1",
-    "description": "Team dev kit: 30 skills - engineering/productivity (spec, TDD, triage, debugging, grilling...) plus the team process rules as on-demand skills (review-and-submit, changelist-verification, pre-implementation-gate...), sync-build-submit + package commands, and the Submit-Audit warning bridge. The two reviewer agents ship as Markdown (inert here); run setup-devkit.ps1 to generate them as ~/.codex/agents/*.toml with sandbox_mode read-only, or review INLINE via the review-changes skill (review-and-submit's no-subagent path). See docs/tool-capability-matrix.md.",
+    "version": "5.0.0",
+    "description": "A skills library for agentic delivery: spec -> tickets -> triage -> implement -> verify -> review/publish, plus engineering skills (TDD, design, debugging, grilling) and a vendored two-axis code-review engine. Protocols are VCS-agnostic with Perforce and git command forms. Skills only - no agents, commands, hooks, or scripts; Codex runs the review sub-agents natively via multi-agent v2. Install: the paste block in the repo README.",
     "author": {
         "name": "Sirin",
         "email": "sirinwintersong@gmail.com"
@@ -10,10 +10,9 @@
     "license": "MIT",
     "keywords": ["workflow", "skills", "perforce", "review", "myst"],
     "skills": "./skills/",
-    "hooks": "./hooks/hooks.json",
     "interface": {
         "displayName": "Myst Dev Kit",
-        "shortDescription": "Myst team skills, review workflows, and Submit-Audit warning",
+        "shortDescription": "Myst team skills library for agentic delivery and review",
         "developerName": "Myst team",
         "category": "Productivity"
     }

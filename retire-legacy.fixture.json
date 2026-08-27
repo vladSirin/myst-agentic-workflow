@@ -1,0 +1,14 @@
+﻿{
+    "schema": 1,
+    "operation": "install",
+    "startedUtc": "2026-07-02T09:14:33Z",
+    "committed": false,
+    "openedFiles": [
+        "//UEPrototype/main/CLAUDE.md",
+        "//UEPrototype/main/.claude/settings.json"
+    ],
+    "stages": [
+        ".scratch/install-20260702-091433.agentic-stage"
+    ],
+    "note": "SYNTHETIC FIXTURE - a committed:false journal for testing retire-legacy.ps1's refusal path. Not produced by any real install."
+}
