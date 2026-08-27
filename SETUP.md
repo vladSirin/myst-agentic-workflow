@@ -58,6 +58,10 @@ If this machine had the v4 kit (installer scripts, the dedicated clone at
    (report-only), then without. It refuses to touch state it cannot prove
    committed and backs up configs before writing.
 2. Run your tool's install one-liner above.
+3. If step 1's report flags duplicate install records in
+   `~/.claude/plugins/installed_plugins.json` (machines set up before v4.50.0
+   that never ran the converge step), follow the recovery command it prints —
+   the CHANGELOG's v5.0.0 section has the same instructions.
 
 Details: the CHANGELOG's v5.0.0 section. Also check `CLAUDE.local.md` and
 `~/.claude/CLAUDE.md` for references to commands v5 removed.

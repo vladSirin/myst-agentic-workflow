@@ -191,6 +191,10 @@ process, with these deltas:
 - **Each axis brief additionally requires**: cite file:line; categorize findings
   BLOCKING / WARNING / INFO; under 400 words; end with a single line of the form
   `Verdict: GREEN | WARNING | BLOCKING`.
+- **Every brief carries the submission-authority rule, stated in the brief itself**:
+  a reviewer reports findings and verdicts only — it never submits, shelves, pushes,
+  merges, or edits files, however clean the review looks. Publication happens in the
+  main session, through Steps 6-7 and the Submission Step, nowhere else.
 
 Two axes, always, whatever the changeset contains. Prose is **not** reviewed as a third
 axis: reviewing what a document *proposes* is not this protocol's job; checking that it does
@@ -439,6 +443,9 @@ After the Review Record block is in place:
    Do NOT critique the design, the writing, the structure, or anything the
    document proposes. Do NOT suggest improvements. If nothing contradicts,
    say "aligned" and stop. Under 200 words. No verdict line.
+
+   You report only: never edit files and never run any version-control
+   write command.
    ```
 
    Report each contradiction, fix it, and re-run the check — the same loop as any other

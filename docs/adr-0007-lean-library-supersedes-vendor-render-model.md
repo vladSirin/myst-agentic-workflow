@@ -54,8 +54,9 @@ thin marketplace, reference docs, ~zero machinery.
   skills stay byte-faithful to upstream's format.
 - **ADR-0004** (local-origin provenance, `core-local` overlay): the placement
   principle (local-origin never lives where a re-vendor writes) survives in
-  spirit via per-skill `PROVENANCE.md` notes; the overlay mechanism and the
-  manifest flag are retired.
+  spirit via LICENSE's pinned-commit attribution for the pre-v5 vendored set
+  and per-skill `PROVENANCE.md` notes for skills vendored v5.0.0 onward; the
+  overlay mechanism and the manifest flag are retired.
 - **ADR-0005** (OpenCode pointer consumer, agents by generation): retired.
   OpenCode now consumes skills like any npx consumer at personal scope, and
   there are no agents to generate — the reviewer agents are deleted in favor of
@@ -71,7 +72,13 @@ thin marketplace, reference docs, ~zero machinery.
   Nothing will nag when upstream moves.
 - **Generated reviewer agents**: the two custom reviewer agent definitions are
   deleted. Their genuinely-additive canon is archived in git history; a same-dir
-  reference brief is added later ONLY if review quality visibly drops.
+  reference brief is added later ONLY if review quality visibly drops. Deleted
+  with them is their pinned review model/effort — pinned (commit `78f8675`)
+  after a ground-truth harness measured an effort-inheriting reviewer falling
+  from 6/6 defects found to 0/2. Generic sub-agents inherit the session's
+  model/effort again; only the wrapper's prose "effort barbell" instruction
+  pushes back, so a low-effort session can weaken a review silently. Accepted
+  under the same reactive gate as the canon.
 - **The render system and co-owned-file markers**: consuming projects hand-own
   their bible files; the reference templates here are frozen snapshots.
 - **Client-side audit surfaces**: the plugin ships zero hooks; post-submit

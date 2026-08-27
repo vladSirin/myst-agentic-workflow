@@ -15,7 +15,10 @@ SemVer, scoped to **what an install has to do about it** — not to how big the 
 Retiring a skill is **MINOR**, not MAJOR, for plugin consumers. It is consumer-visible — say so
 in the entry, and record what was lost — but the plugin update handles it without anyone editing
 a file. Copy-install (`npx skills add`) consumers self-manage removals; that is inherent to the
-npx model, not a reason to call the release MAJOR.
+npx model, not a reason to call the release MAJOR. When a MAJOR example seems to collide with
+this rule, the MAJOR **criterion** controls, not the example: a retirement is MAJOR only when it
+breaks an existing install or forces manual migration (as this release does), and MINOR when
+consumers simply receive the removal.
 
 **One bump per merge to `main`.** Not per commit, and not once per PR in a stack: three PRs that
 land the same change set share one version. If you are about to write a second `## [x.y.z]`
@@ -50,6 +53,14 @@ references to commands that no longer exist (the v4 update/promote round-trip co
 the retired installer). The installer script itself remains as a deprecation stub that
 prints these steps and exits 1; the stub and `retire-legacy.ps1` are deleted together in
 a later MINOR.
+
+One legacy condition `retire-legacy.ps1` only REPORTS, never fixes: duplicate records for
+one plugin id in `~/.claude/plugins/installed_plugins.json` (the pre-v4.50.0 scope-
+duplication bug — see the v4.50.0/v4.50.1 entries below). The converge script those
+entries describe is deleted with the rest of `scripts/`; if the report flags your
+registry, recover it from history —
+`git show v4.50.1:scripts/migrate-project-scope-installs.ps1 > converge.ps1` — and run
+it once (dry-run by default, `-Apply` to act).
 
 ### Deleted (git history is the archive)
 

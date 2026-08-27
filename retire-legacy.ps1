@@ -20,7 +20,11 @@
 #   4. Generated reviewer agents: ~/.codex/agents/architecture-reviewer.toml
 #      and radical-design-critic.toml, and the opencode-generated
 #      ~/.config/opencode/agents/myst/ directory.
-#   5. Optional (-PruneCache): old myst-dev-kit versions in the Claude plugin
+#   5. Claude install registry (~/.claude/plugins/installed_plugins.json):
+#      REPORT-ONLY check for the pre-v4.50.0 duplicate-scope record condition
+#      the retired v4 converge script used to fix. Prints recovery
+#      instructions; never edits the registry.
+#   6. Optional (-PruneCache): old myst-dev-kit versions in the Claude plugin
 #      cache (~/.claude/plugins/cache/myst/myst-dev-kit/) -- keeps the newest.
 #      Reported always; deleted only with the switch.
 #
@@ -192,7 +196,38 @@ foreach ($name in @('architecture-reviewer', 'radical-design-critic')) {
     }
 }
 
-# --- 5. Claude plugin cache (report always, prune only on -PruneCache) ------
+# --- 5. Claude install registry (report only - never edited here) -----------
+$reg = Join-Path $HomeDir '.claude/plugins/installed_plugins.json'
+if (Test-Path $reg) {
+    $dupes = @()
+    $regOk = $true
+    try {
+        $regData = [IO.File]::ReadAllText($reg) | ConvertFrom-Json
+        if ($regData.PSObject.Properties['plugins']) {
+            foreach ($p in $regData.plugins.PSObject.Properties) {
+                $records = @($p.Value)
+                if ($records.Count -gt 1) {
+                    $scopes = @($records | ForEach-Object { $_.scope }) -join ', '
+                    $dupes += ("{0} ({1} records: {2})" -f $p.Name, $records.Count, $scopes)
+                }
+            }
+        }
+    } catch {
+        $regOk = $false
+        Say ("Install registry at {0} could not be read - duplicate-record check skipped." -f $reg)
+    }
+    if ($regOk -and $dupes.Count -gt 0) {
+        Say 'Install registry holds more than one record for the same plugin id (the'
+        Say 'pre-v4.50.0 condition: which record wins is decided by stored order, silently).'
+        Say 'This script never edits the registry. Recover the v4 converge script from'
+        Say 'git history and run it (dry-run by default, -Apply to act):'
+        Say '  git show v4.50.1:scripts/migrate-project-scope-installs.ps1 > converge.ps1'
+        Say 'Affected ids:'
+        foreach ($d in $dupes) { Say ('  ' + $d) }
+    }
+}
+
+# --- 6. Claude plugin cache (report always, prune only on -PruneCache) ------
 $cache = Join-Path $HomeDir '.claude/plugins/cache/myst/myst-dev-kit'
 if (Test-Path $cache) {
     $versions = @(Get-ChildItem -Path $cache -Directory | Sort-Object {

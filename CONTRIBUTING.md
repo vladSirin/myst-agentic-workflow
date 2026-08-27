@@ -40,10 +40,12 @@ The unit of review is the unit of installation.
       model sees before deciding to load the skill.
 - [ ] **Genericity**: no project-specific paths or names; protocols state the
       neutral rule and may carry per-VCS command forms (Perforce and git).
-- [ ] **Provenance**: vendored upstream content (see the skill's PROVENANCE.md)
-      stays verbatim and keeps its attribution; local additions go in same-dir
-      reference files, never in upstream's files. Re-vendoring replaces the
-      skill wholesale from upstream and updates the note.
+- [ ] **Provenance**: vendored upstream content stays verbatim and keeps its
+      attribution. The upstream pin for the pre-v5 vendored set lives in
+      [LICENSE](LICENSE); skills vendored v5.0.0 onward carry a same-dir
+      PROVENANCE.md. Local additions go in same-dir reference files, never in
+      upstream's files. Re-vendoring replaces the skill wholesale from upstream
+      and updates the note.
 - [ ] **No hidden authority**: skills that touch version control state the
       submission-authority rule (reviewers never submit; agents never publish
       shared state without the protocol).
