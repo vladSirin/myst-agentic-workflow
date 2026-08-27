@@ -35,7 +35,7 @@ param(
     [switch] $WhatIf,
     [string] $WorkspaceRoot = '',    # skip p4 discovery, scan this tree
     [string] $OpenCodeConfig = '',   # config path override (tests)
-    [string] $HomeDir = '',          # HOME override (tests) - scopes steps 2-5
+    [string] $HomeDir = '',          # HOME override (tests) - scopes steps 2-6
     [switch] $PruneCache
 )
 
@@ -221,7 +221,11 @@ if (Test-Path $reg) {
         Say 'pre-v4.50.0 condition: which record wins is decided by stored order, silently).'
         Say 'This script never edits the registry. Recover the v4 converge script from'
         Say 'git history and run it (dry-run by default, -Apply to act):'
-        Say '  git show v4.50.1:scripts/migrate-project-scope-installs.ps1 > converge.ps1'
+        Say '  git show 2ad8ac3:scripts/migrate-project-scope-installs.ps1 > converge.ps1'
+        Say '(2ad8ac3 is the v4.50.1 release commit; the v4.50.x releases were never tagged.)'
+        Say 'ORDER MATTERS: converge only AFTER your project has removed any committed'
+        Say 'enabledPlugins entries and that removal has synced to your workspace -'
+        Say 'converging first lets the next session recreate the records you just removed.'
         Say 'Affected ids:'
         foreach ($d in $dupes) { Say ('  ' + $d) }
     }

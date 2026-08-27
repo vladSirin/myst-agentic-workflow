@@ -59,8 +59,12 @@ one plugin id in `~/.claude/plugins/installed_plugins.json` (the pre-v4.50.0 sco
 duplication bug — see the v4.50.0/v4.50.1 entries below). The converge script those
 entries describe is deleted with the rest of `scripts/`; if the report flags your
 registry, recover it from history —
-`git show v4.50.1:scripts/migrate-project-scope-installs.ps1 > converge.ps1` — and run
-it once (dry-run by default, `-Apply` to act).
+`git show 2ad8ac3:scripts/migrate-project-scope-installs.ps1 > converge.ps1` (`2ad8ac3`
+is the v4.50.1 release commit; the v4.50.x releases were never tagged) — and run it once
+(dry-run by default, `-Apply` to act). The v4.50.1 **ordering constraint still applies**:
+converge only AFTER your project's committed `enabledPlugins` removal has synced to your
+workspace — converging first lets the next session recreate the very records you just
+removed.
 
 ### Deleted (git history is the archive)
 
@@ -110,9 +114,11 @@ it once (dry-run by default, `-Apply` to act).
 ### Given up, on record
 
 Upstream drift-tracking (re-vendoring is a manual wholesale replace), the generated
-per-tool reviewer agents, the render system, and the client-side audit surfaces (the
-plugin ships zero hooks; server-side post-submit audit remains the net where a team runs
-one). Details and rationale: ADR-0007.
+per-tool reviewer agents (including their pinned review model/effort and their curated
+read-only tool surface — the briefs now carry the "effort barbell" and
+submission-authority rules as prose instead), the render system, and the client-side
+audit surfaces (the plugin ships zero hooks; server-side post-submit audit remains the
+net where a team runs one). Details and rationale: ADR-0007.
 
 ## [4.50.1] - 2026-08-25 - Truth up the documented install path
 

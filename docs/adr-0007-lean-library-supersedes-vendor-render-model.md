@@ -77,8 +77,12 @@ thin marketplace, reference docs, ~zero machinery.
   after a ground-truth harness measured an effort-inheriting reviewer falling
   from 6/6 defects found to 0/2. Generic sub-agents inherit the session's
   model/effort again; only the wrapper's prose "effort barbell" instruction
-  pushes back, so a low-effort session can weaken a review silently. Accepted
-  under the same reactive gate as the canon.
+  pushes back, so a low-effort session can weaken a review silently. The agent
+  definitions also carried a curated read-only tool list (no Edit/Write/Agent);
+  generic sub-agents get the default tool surface, so the reviewer's read-only
+  posture is now stated in every brief (the submission-authority rule) rather
+  than enforced structurally. Both accepted under the same reactive gate as
+  the canon.
 - **The render system and co-owned-file markers**: consuming projects hand-own
   their bible files; the reference templates here are frozen snapshots.
 - **Client-side audit surfaces**: the plugin ships zero hooks; post-submit
