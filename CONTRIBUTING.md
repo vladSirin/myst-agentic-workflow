@@ -52,6 +52,10 @@ The unit of review is the unit of installation.
 - [ ] **Advisory posture**: nothing in a skill may hard-block a human.
 - [ ] **Size**: a skill the model loads on demand should earn its tokens —
       prefer one tight SKILL.md + reference files over a monolith.
+- [ ] **Catalog row**: the README's skills catalog gains (or updates) the
+      skill's one-line entry — right category, and under the invocation type
+      matching its frontmatter (`disable-model-invocation: true` ⇒
+      User-invoked). Retiring a skill removes its row in the same PR.
 
 ## Versioning
 
