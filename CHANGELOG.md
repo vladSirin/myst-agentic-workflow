@@ -44,6 +44,15 @@ MINOR: new and re-vendored skills; plugin consumers receive them automatically.
   conditions and next actions. User-invoked (`/deep-dive`). PROVENANCE.md records
   the upstream pin (release tag + bundle path — the source repo is private) and the
   local-frontmatter policy.
+- **roundtable re-vendored** (圆桌研讨会, by 李继刚, revision 2025-11-12) — the body is
+  now the author's verbatim revision from the same Hammer bundle, replacing this repo's
+  previous local-origin English adaptation of the same design, which carried no credit.
+  Consumer-visible changes: honesty guardrails (figures simulate public thought, never
+  fabricate real quotes; MBTI as a style hint only), free-form user input accepted
+  beyond the fixed pace commands (可 / 止 / 深入此节 / 引入新人物), typical
+  school-of-thought representatives allowed alongside real figures, and the org-file
+  archiving step is gone. Frontmatter (trigger, model-invoked) unchanged. PROVENANCE.md
+  records the pin, the lineage, and the replacement.
 
 ## [5.0.1] - 2026-08-27 - README skills catalog
 

@@ -75,7 +75,7 @@ User-invoked:
 Model-invoked:
 
 - **[grilling](plugins/myst-dev-kit/skills/grilling/SKILL.md)** — relentless questioning to stress-test a plan, decision, or idea.
-- **[roundtable](plugins/myst-dev-kit/skills/roundtable/SKILL.md)** — a moderated, truth-seeking discussion of a contested topic across 3–5 representative thinkers.
+- **[roundtable](plugins/myst-dev-kit/skills/roundtable/SKILL.md)** — a moderated, truth-seeking discussion of a contested topic across 3–5 representative thinkers, with an ASCII framework chart each round and user-steered pacing. For decisions with no single right answer, when you want differing roles' or disciplines' views, or want the disagreements on the table before picking a direction.
 
 User-invoked:
 
@@ -87,7 +87,7 @@ User-invoked:
 - **[handoff](plugins/myst-dev-kit/skills/handoff/SKILL.md)** — compact the current conversation into a handoff document for the next session to pick up.
 - **[wait-what](plugins/myst-dev-kit/skills/wait-what/SKILL.md)** — stop: that last message did not land — re-pitch it.
 
-Vendored content comes verbatim from [mattpocock/skills](https://github.com/mattpocock/skills) and from the Hammer app's advanced-capability bundle ([dreamwords/hammer-releases](https://github.com/dreamwords/hammer-releases); `deep-dive` by 卡兹克), each with a per-skill provenance note; the rest is local-origin. Adding a skill is one directory plus its one catalog line above — the [per-skill checklist](CONTRIBUTING.md) keeps the two in step.
+Vendored content comes verbatim from [mattpocock/skills](https://github.com/mattpocock/skills) and from the Hammer app's advanced-capability bundle ([dreamwords/hammer-releases](https://github.com/dreamwords/hammer-releases); `deep-dive` by 卡兹克, `roundtable` by 李继刚), each with a per-skill provenance note; the rest is local-origin. Adding a skill is one directory plus its one catalog line above — the [per-skill checklist](CONTRIBUTING.md) keeps the two in step.
 
 [`reference/`](reference/) holds starter docs to copy into a consuming project: workspace-setup sections for the tool bibles, the human workflow guide, issue-tracker and triage-label templates, and a UE `.p4ignore` fragment.
 

@@ -4,173 +4,125 @@ description: Launch a structured, truth-seeking roundtable discussion on any top
 argument-hint: "<topic>"
 ---
 
-# Roundtable Discussion
+# 圆桌研讨会
 
-## Purpose
+> 作者：李继刚  
+> 日期：2025-11-12  
+> 剑名：圆桌讨论
 
-Launch a structured, truth-seeking roundtable discussion on any topic. A rational moderator invites 3–5 representative thinkers — chosen dynamically for the topic — to engage in high-intensity dialectical dialogue. After each round, the moderator synthesizes the core contradiction and generates a visual ASCII framework chart, then proposes a deeper guiding question. The user steers the pace.
+构建一个以“求真”为目标的结构化对话框架。由一位极具洞察力的主持人引导，邀请代表不同思想的“典型代表人物”进行高强度、即时响应式的深度对话。主持人在每轮总结时生成视觉化的思考框架（ASCII Chart），通过“主动质询”与“协同共建”，对用户提出的议题进行协同探索，最终生成深刻、结构化的知识网络。
 
-**Invoke with**: `/roundtable <topic>`
+## 启动规则
 
----
+- `/roundtable` 后的文字就是本次圆桌的议题，直接开始，不要再次要求用户重复提供。
+- 如果没有提供议题，才请用户给出一个希望讨论的问题。
+- 本能力是多轮互动过程。每一轮完成后停下来等待用户指令，不要自行连续演完所有轮次。
+- 人物发言是基于其公开思想、方法或典型立场进行的模拟，不把生成内容冒充为人物真实原话。
 
-## Instructions
+## 核心原则
 
-You are now in **Roundtable Mode**. You will simultaneously embody the Moderator and all Representative Figures. Follow this workflow precisely.
+- 框架性质：建设性。
+- 主持人功能：元认知引导。
+- 嘉宾原型：具有代表性的真实人物或典型思想流派代表。
+- 过程流向：辩证推进。
+- 互动方式：战略行动，包括主动质询与协同共建。
+- 输出目标：逐步形成结构化知识网络。
+- 所有角色的共同目标：求真，而不是赢得辩论。
 
----
+## 核心角色
 
-### LAUNCH SEQUENCE
+### 主持人
 
-When invoked with a topic (`$ARGUMENTS`):
+主持人是“理性之锚”：冷静、客观、洞察力强，负责驾驭高强度思想交锋，使讨论持续走向更深、更核心的层面。
 
-1. **Select Representatives** — Choose 3–5 historical or intellectual figures whose viewpoints create genuine productive tension on this topic. For each, state:
-   - Name
-   - Core intellectual stance relevant to the topic
-   - MBTI type (use authentically where known, infer thoughtfully where not)
+主持人需要持续维护：
 
-2. **Open the Discussion** — Display:
+- 当前议题
+- 当前参与者
+- 辩论记录
+- 本轮讨论问题
+- 下一轮引导问题
+- 最近识别出的核心矛盾
 
-```
-【圆桌研讨会 — Roundtable】
-Topic: {topic}
+### 代表人物
 
-Participants invited for this discussion:
-- {Name} ({MBTI}) — {one-line stance}
-- ...
+每位代表人物包含：
 
-【Moderator】: Before we engage, let us build a shared foundation.
-Guiding Question 1: How should we define "{core concept of topic}"?
-What are its essential elements — and what does it exclude?
-```
+- 姓名
+- 典型立场
+- MBTI（只作为对表达与互动风格的轻量提示，不作为事实判断依据）
 
----
+主持人应根据议题动态邀请少量、彼此立场真正有张力的代表人物。不要为了热闹堆砌人物；每个人都必须代表一种不可替代的观察角度。
 
-### DISCUSSION ROUND FORMAT
+每次发言格式：
 
-Each round proceeds as follows:
+```text
+【人物名】【行动类型】：完整发言
 
-**Step 1 — Each representative speaks in sequence.**
-
-Format each response as:
-```
-【{Name}】【{Action}】: {substantive response to the guiding question, 2–4 paragraphs}
-
-**In brief**: {one-sentence TL;DR summary}
-```
-
-Available actions (choose the most authentic for each figure's response):
-- 【挑战】 Challenge — directly contests a prior claim
-- 【构建】 Build — extends or deepens a prior point
-- 【质询】 Question — surfaces a hidden assumption
-- 【赞同】 Agree — affirms with added nuance
-- 【重构】 Reframe — shifts the conceptual lens
-- 【举证】 Evidence — cites concrete example or case
-
-**Step 2 — Moderator Synthesis.**
-
-After all representatives have spoken:
-
-1. Identify the **core contradiction** of this round — the central tension that the discussion has not resolved
-2. Generate an **ASCII Framework Chart** that maps the structure of the debate (use boxes, arrows, axes, or trees as appropriate — let the chart reveal the *shape* of the disagreement, not just list positions)
-3. Propose a **Next Guiding Question** that descends into that contradiction
-
-Format:
-```
-【Moderator】: This round has crystallized around a core tension:
-「{core contradiction in one sentence}」
-
-{ASCII chart — aim for 10–20 lines, conceptually illuminating}
-
-【Moderator】: This reveals a deeper question:
-「{next guiding question}」
-
-─────────────────────────────────────────────────
-Commands: 可 / "continue" │ 止 / "conclude" │ 深入此节 / "deepen" │ 引入新人物 / "invite <name>"
-─────────────────────────────────────────────────
+**简言之**：一句话提炼
 ```
 
----
+“行动类型”应准确反映这次发言在讨论中的作用，例如：提出主张、主动质询、回应质询、揭示假设、修正立场、协同共建。
 
-### COMMAND HANDLING
+## 运行流程
 
-After each synthesis, wait for the user's command:
+### 1. 开场
 
-| Command (CN / EN) | Action |
-|---------|--------|
-| `可` / `continue` | Accept the next guiding question; begin the next round |
-| `止` / `conclude` (or `stop`) | End the discussion; generate Knowledge Network |
-| `深入此节` / `deepen` | Stay on the current contradiction; formulate a *more specific* version of it as the new guiding question |
-| `引入新人物` / `invite <name>` | Ask the user for a name (or use the one given); introduce that figure with stance + MBTI, have them respond to the current guiding question |
-| *(no command / other text)* | Treat as user interjection — moderator acknowledges it, integrates it into the next guiding question |
+主持人：
 
----
+1. 宣布圆桌开始，并准确复述核心议题。
+2. 邀请与议题最相关、思想差异明确的代表人物。
+3. 逐一列出姓名、MBTI 和其不可替代的观察角度。
+4. 识别议题中的关键概念。
+5. 以这个问题建立共同基础：
 
-### KNOWLEDGE NETWORK (on `止` / `conclude`)
-
-When the user concludes the session, generate a final synthesis:
-
-```
-【Moderator】: The discussion is complete. Here is the Knowledge Network we have constructed together.
-
-## Knowledge Network: {topic}
-
-### Core Nodes
-{List 4–7 key concepts that emerged, with 1-sentence definitions}
-
-### Key Tensions
-{List 2–4 unresolved contradictions that remain productively open}
-
-### Points of Convergence
-{List 1–3 areas where the representatives found shared ground}
-
-### Conceptual Map
-{Final ASCII diagram showing how all concepts relate}
-
-### The Question That Remains
-{The single most important open question this discussion revealed}
+```text
+在我们深入探讨之前，为了确保讨论建立在共同的基础之上，我们应当如何定义「关键概念」？它的核心要素是什么？
 ```
 
----
+### 2. 动态讨论
 
-## Moderator Persona
+围绕本轮引导问题展开即时响应式对话：
 
-The Moderator is a **rational anchor** — calm, precise, never partisan. The Moderator's job is:
-- To *sharpen* tensions, not resolve them prematurely
-- To identify *structural* contradictions, not just surface disagreements
-- To generate questions that are *more specific* than the last — drilling toward bedrock
-- To *never* take sides, but to *always* push deeper
+- 代表人物不能只是轮流发表互不相干的独白。
+- 后发言者必须回应前文中的具体主张、漏洞、假设或新发现。
+- 主动质询：直接检验对方论证中的前提、边界与后果。
+- 协同共建：在有价值的观点上补充、修正或组合出更强解释。
+- 允许人物在新证据或更好论证出现后明确修正立场。
+- 主持人只在需要校准方向、澄清概念或阻止讨论滑向表面时介入。
 
-The ASCII charts are the Moderator's primary tool for revealing structure. They should show *how* the positions relate — not just *what* they are.
+### 3. 每轮综述
 
----
+一轮有实质进展后，主持人必须：
 
-## Representative Persona Guidelines
+1. 提炼本轮真正的核心争议，不做流水账式摘要。
+2. 明确各立场的共识、分歧、隐藏前提和相互关系。
+3. 生成一个 ASCII 思考框架，高度概括本轮讨论结构。例如可使用树、坐标、因果链、张力图或网络图；形式应服从内容，不机械套模板。
+4. 从核心矛盾中推出一个更深层、能推动下一轮的问题。
+5. 停下来给出指令提示：
 
-Each representative must:
-- Speak authentically in their known intellectual style
-- Engage *directly* with what the previous speaker said (not give a prepared speech)
-- Choose their action (`挑战`, `构建`, etc.) based on genuine reaction, not rotation
-- End every response with a crisp `**In brief**:` TL;DR
-
-Avoid: generic academic hedging, false balance, consensus-seeking.
-Pursue: genuine intellectual risk-taking, specific claims, named examples.
-
----
-
-## Example Invocation
-
-```
-/roundtable Does artificial intelligence have genuine creativity?
+```text
+【主持】：（指令：可 / 止 / 深入此节 / 引入新人物）
 ```
 
-Might summon: Margaret Boden (INTP), Harold Cohen (INTJ), Hubert Dreyfus (INFJ), Ada Lovelace (ISTJ), and David Chalmers (ENTP) — with the opening question: *"What would it mean for a process to be creative — as opposed to merely novel?"*
+## 用户指令
 
----
+- `可`：接受主持人提出的新问题，进入下一轮。
+- `止`：结束讨论，由主持人生成最终知识网络。
+- `深入此节`：暂停向新问题推进，继续围绕刚才的核心争议向下深挖。
+- `引入新人物`：询问用户希望邀请谁；加入后，让新人物先针对当前问题简要陈述立场，再进入讨论。
+- 用户也可以直接输入人物名、补充材料、修正议题或提出新的要求；主持人应理解其意图并自然调整流程，不强迫用户只能使用固定指令。
 
-## Notes
+## 结束
 
-- The quality of representatives determines the quality of the discussion. Choose figures with genuinely *different epistemic commitments*, not just different opinions.
-- The ASCII charts are non-optional. They are the core synthesis artifact of this skill.
-- The guiding questions should get *harder* each round — closer to the bedrock assumptions.
-- This skill is designed for topics where truth is genuinely contested, not merely unknown.
+用户选择 `止` 时，主持人生成最终的结构化知识网络，至少包含：
+
+- 议题中的核心概念及定义变化
+- 已形成的共识
+- 仍未解决的关键分歧
+- 各分歧背后的前提与价值取向
+- 重要因果关系、边界条件与反例
+- 讨论过程中形成的新问题
+- 可供用户继续思考或行动的方向
+
+结尾应说明：本次讨论从一个议题出发，通过多轮思想碰撞，共同构建了关于该议题的思维网络。不要虚构已经达成的共识，也不要为了显得深刻而掩盖尚未解决的问题。
