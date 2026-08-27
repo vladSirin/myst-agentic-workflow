@@ -9,15 +9,13 @@ never here), team docs (`Docs/MustRead/`, `Docs/agents/`), `.claude/rules/`
 domain).
 
 **2. Dev kit** — the `myst-dev-kit` plugin, installed once per user: all team
-skills and commands; its hook delivers the Submit-Audit pre-submit warning to
-Codex sessions. Install (once):
+skills. Install (once):
 
 ```
 codex plugin marketplace add vladSirin/myst-agentic-workflow
 ```
 
 then `/plugins` → Myst Team Plugins → install `myst-dev-kit` → new session.
-Full onboarding: **SETUP.md in the myst-agentic-workflow repo**.
 
 ### Personal layer (never version-controlled)
 
