@@ -1,6 +1,6 @@
 {
     "name": "myst-dev-kit",
-    "version": "5.0.1",
+    "version": "5.1.0",
     "description": "A skills library for agentic delivery: spec -> tickets -> triage -> implement -> verify -> review/publish, plus engineering skills (TDD, design, debugging, grilling) and a vendored two-axis code-review engine. Protocols are VCS-agnostic with Perforce and git command forms. Skills only - no agents, commands, hooks, or scripts; Codex runs the review sub-agents natively via multi-agent v2. Install: the paste block in the repo README.",
     "author": {
         "name": "Sirin",
