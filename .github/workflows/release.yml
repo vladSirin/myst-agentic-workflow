@@ -1,9 +1,9 @@
 name: release
 
 # Tag push -> GitHub Release, body = that version's CHANGELOG section.
-# The Releases page is the team-visible "what is latest" surface (README links it;
-# setup-devkit.ps1's printed version delta is the CLI surface). CONTRIBUTING step 6:
-# push the tag and the release publishes itself.
+# The Releases page is the team-visible "what is latest" surface (README and
+# SETUP.md link it). CONTRIBUTING step 6: push the tag and the release
+# publishes itself.
 
 on:
   push:
@@ -30,10 +30,10 @@ jobs:
               if ($lines[$i] -match ('^## \[' + [regex]::Escape($ver) + '\]')) { $start = $i; break }
           }
           if ($start -lt 0) {
-              "::warning title=changelog::no '## [$ver]' section found; release body will point at CHANGELOG.md"
-              "See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details." |
-                  Out-File body.md -Encoding utf8
-              exit 0
+              # HARD FAIL: a tag without its CHANGELOG section would publish a
+              # release whose body says nothing - tag it or don't bump it.
+              Write-Output "::error title=changelog::no '## [$ver]' section found in CHANGELOG.md - add it, retag, and push again"
+              exit 1
           }
           $end = $lines.Count
           for ($i = $start + 1; $i -lt $lines.Count; $i++) {
