@@ -1,7 +1,7 @@
 {
     "name": "myst-dev-kit",
     "displayName": "Myst Dev Kit",
-    "version": "4.50.1",
+    "version": "5.0.0",
     "description": "A skills library for agentic delivery: spec -> tickets -> triage -> implement -> verify -> review/publish, plus engineering skills (TDD, design, debugging, grilling) and a vendored two-axis code-review engine. Protocols are VCS-agnostic with Perforce and git command forms. Skills only - no agents, commands, hooks, or scripts.",
     "author": {
         "name": "Sirin",
