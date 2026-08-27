@@ -164,8 +164,14 @@ jobs:
           if ($LASTEXITCODE -eq 0) {
               $hits | ForEach-Object { Write-Output "::error title=dead reference::$_" }
               throw "dead references to retired machinery found"
+          } elseif ($LASTEXITCODE -ne 1) {
+              # 0 = hits, 1 = clean; anything else means git grep itself broke
+              # (bad regex, stale pathspec) - a check that did not run must
+              # never look like a check that passed.
+              throw "git grep failed with exit code $LASTEXITCODE"
           }
           "No dead references."
-          # A clean tree means git grep exited 1, and the runner's pwsh wrapper
-          # ends every step with `exit $LASTEXITCODE` - reset it or clean fails.
+          # A clean tree means git grep exited 1, and in a step that ran a native
+          # command the runner's pwsh wrapper ends with `exit $LASTEXITCODE` -
+          # reset it or the clean path fails the step.
           exit 0
