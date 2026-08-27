@@ -27,13 +27,66 @@ Also check personal instruction files (`CLAUDE.local.md`, `~/.claude/CLAUDE.md`)
 
 [`plugins/myst-dev-kit/skills/`](plugins/myst-dev-kit/skills/) is the library — one directory per skill, one shared source for every tool. Browse it directly: each `SKILL.md`'s frontmatter description is its trigger ("use when…"), which is exactly what your agent reads when deciding to load it.
 
-The spine, so you know what's here without a catalog:
+Two kinds of skill, split by how they start:
 
-- **Delivery workflow** — `agentic-workflow` (the stage map), plus the stage skills it names (spec, tickets, triage, implement, wayfinding).
-- **Publication protocol** — `review-and-submit` (two-axis review, Review Record, human-gated publish; Perforce and git forms) and `changelist-verification` (multi-changeset execution, one verify gate between each). The review engine is the vendored `code-review` skill — cite it namespaced as `myst-dev-kit:code-review`; the bare name resolves to the official git-diff review plugin.
-- **Engineering + productivity** — TDD, bug diagnosis, design docs, domain modeling, grilling, handoffs, research, and more.
+- **User-invoked** — inert until you call them: type `/name` in Claude Code, or ask for the skill by name in Codex/OpenCode. The model never fires them on its own (`disable-model-invocation: true` in frontmatter).
+- **Model-invoked** — the agent loads them itself whenever the task matches the description. You can also call any of them explicitly; the marker only removes the automatic path, never the manual one.
 
-Vendored content comes verbatim from [mattpocock/skills](https://github.com/mattpocock/skills) with a per-skill provenance note; the rest is local-origin. Adding a skill is one directory — no prose to update, no counts to bump.
+### Delivery & publishing
+
+The pipeline: discussion → spec → tickets → triage → implement → verify → review/publish.
+
+Model-invoked:
+
+- **[agentic-workflow](plugins/myst-dev-kit/skills/agentic-workflow/SKILL.md)** — the stage map: which process stage you are in and what comes next. Fires on any non-trivial feature work.
+- **[review-and-submit](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md)** — the mandatory pre-publish protocol: changeset organization, two-axis review, Review Record, human-gated submit (Perforce and git forms).
+- **[code-review](plugins/myst-dev-kit/skills/code-review/SKILL.md)** — the review engine: Standards and Spec axes in parallel sub-agents, reported side by side. Cite it namespaced as `myst-dev-kit:code-review` — the bare name resolves to the official git-diff review plugin.
+- **[changelist-verification](plugins/myst-dev-kit/skills/changelist-verification/SKILL.md)** — hard rule for multi-changeset tasks: execute one at a time with a stop-and-verify gate between each, never batched.
+- **[resolving-merge-conflicts](plugins/myst-dev-kit/skills/resolving-merge-conflicts/SKILL.md)** — work through an in-progress git merge/rebase conflict.
+
+User-invoked:
+
+- **[to-spec](plugins/myst-dev-kit/skills/to-spec/SKILL.md)** — turn the current conversation into a spec on the project tracker: no interview, just synthesis of what was discussed.
+- **[to-tickets](plugins/myst-dev-kit/skills/to-tickets/SKILL.md)** — break a spec or plan into tracer-bullet tickets, each declaring its blocking edges.
+- **[triage](plugins/myst-dev-kit/skills/triage/SKILL.md)** — move issues and external PRs through triage roles: categorise, verify, grill if needed, write agent-ready briefs.
+- **[implement](plugins/myst-dev-kit/skills/implement/SKILL.md)** — implement a piece of work from a spec or set of tickets.
+- **[wayfinder](plugins/myst-dev-kit/skills/wayfinder/SKILL.md)** — plan work too big for one session as a shared map of decision tickets, resolved one at a time until the way is clear.
+
+### Engineering
+
+Model-invoked:
+
+- **[tdd](plugins/myst-dev-kit/skills/tdd/SKILL.md)** — test-driven development: red-green-refactor, features and bug fixes built test-first.
+- **[diagnosing-bugs](plugins/myst-dev-kit/skills/diagnosing-bugs/SKILL.md)** — a diagnosis loop for hard bugs and performance regressions.
+- **[design](plugins/myst-dev-kit/skills/design/SKILL.md)** — design and plan documents: correct name, correct location, standard template, WIP-to-final lifecycle.
+- **[prototype](plugins/myst-dev-kit/skills/prototype/SKILL.md)** — build a throwaway prototype to answer a design question before committing to it.
+- **[codebase-design](plugins/myst-dev-kit/skills/codebase-design/SKILL.md)** — the deep-module vocabulary: interface design, seam placement, testability, AI-navigability.
+- **[domain-modeling](plugins/myst-dev-kit/skills/domain-modeling/SKILL.md)** — build and sharpen the project's domain model: terminology, CONTEXT.md, ADRs.
+- **[research](plugins/myst-dev-kit/skills/research/SKILL.md)** — investigate a question against high-trust primary sources; findings land as a Markdown file in the repo.
+- **[wizard](plugins/myst-dev-kit/skills/wizard/SKILL.md)** — generate an interactive bash wizard for steps only a human can perform: credentials, dashboards, one-off cutovers.
+- **[writing-for-agents](plugins/myst-dev-kit/skills/writing-for-agents/SKILL.md)** — writing documents agents will read: skills, AGENTS.md, CLAUDE.md.
+
+User-invoked:
+
+- **[improve-codebase-architecture](plugins/myst-dev-kit/skills/improve-codebase-architecture/SKILL.md)** — scan a codebase for deepening opportunities, presented as a visual HTML report, then grill through whichever you pick.
+
+### Thinking & productivity
+
+Model-invoked:
+
+- **[grilling](plugins/myst-dev-kit/skills/grilling/SKILL.md)** — relentless questioning to stress-test a plan, decision, or idea.
+- **[roundtable](plugins/myst-dev-kit/skills/roundtable/SKILL.md)** — a moderated, truth-seeking discussion of a contested topic across 3–5 representative thinkers.
+
+User-invoked:
+
+- **[grill-me](plugins/myst-dev-kit/skills/grill-me/SKILL.md)** — get interviewed about a plan or design until every branch of the decision tree is resolved.
+- **[grill-with-docs](plugins/myst-dev-kit/skills/grill-with-docs/SKILL.md)** — the same interview, writing ADRs and glossary entries as it goes.
+- **[teach](plugins/myst-dev-kit/skills/teach/SKILL.md)** — learn a skill or concept, taught inside this workspace.
+- **[to-questionnaire](plugins/myst-dev-kit/skills/to-questionnaire/SKILL.md)** — turn a decision you can't fully answer into a questionnaire for the person who can.
+- **[handoff](plugins/myst-dev-kit/skills/handoff/SKILL.md)** — compact the current conversation into a handoff document for the next session to pick up.
+- **[wait-what](plugins/myst-dev-kit/skills/wait-what/SKILL.md)** — stop: that last message did not land — re-pitch it.
+
+Vendored content comes verbatim from [mattpocock/skills](https://github.com/mattpocock/skills) with a per-skill provenance note; the rest is local-origin. Adding a skill is one directory plus its one catalog line above — the [per-skill checklist](CONTRIBUTING.md) keeps the two in step.
 
 [`reference/`](reference/) holds starter docs to copy into a consuming project: workspace-setup sections for the tool bibles, the human workflow guide, issue-tracker and triage-label templates, and a UE `.p4ignore` fragment.
 

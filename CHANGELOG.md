@@ -33,6 +33,20 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 checks this file has the matching section, and tags. (Before v5.0.0 the number lived in five
 places; the other three sites no longer exist.)
 
+## [5.0.1] - 2026-08-27 - README skills catalog
+
+PATCH: docs only, no behavioural change.
+
+- README: the three-bullet "spine" is now a full skills catalog — all 28 skills listed
+  with a one-line description and a link, grouped by area (Delivery & publishing /
+  Engineering / Thinking & productivity) and split **User-invoked** vs **Model-invoked**,
+  mirroring each skill's `disable-model-invocation` frontmatter. A consumer can now see
+  which skills they must type and which the agent picks up on its own.
+- CONTRIBUTING: the per-skill review checklist gains a **Catalog row** checkbox, and the
+  README's "no prose to update" claim is amended to match — adding a skill is one
+  directory plus its catalog line. The catalog is hand-maintained by design (no
+  generator machinery returns in v5); the checkbox is what keeps it honest.
+
 ## [5.0.0] - 2026-08-27 - Lean Library: the scaffold becomes a skills repo
 
 MAJOR: the v4 machinery layer is deleted and migration is manual — the two commands below.
