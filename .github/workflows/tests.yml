@@ -166,3 +166,6 @@ jobs:
               throw "dead references to retired machinery found"
           }
           "No dead references."
+          # A clean tree means git grep exited 1, and the runner's pwsh wrapper
+          # ends every step with `exit $LASTEXITCODE` - reset it or clean fails.
+          exit 0
