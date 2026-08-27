@@ -33,6 +33,18 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 checks this file has the matching section, and tags. (Before v5.0.0 the number lived in five
 places; the other three sites no longer exist.)
 
+## [5.1.0] - 2026-08-27 - Thinking skills vendored from the Hammer app
+
+MINOR: new and re-vendored skills; plugin consumers receive them automatically.
+
+- New skill **deep-dive** (找出真问题, by 卡兹克) — vendored verbatim from the Hammer
+  app v0.19.0 advanced-capabilities bundle. A two-step decision interview:
+  bidirectional steel-manning of both sides, the real crux and key variables, ONE
+  decisive question back to the user, and only then a clear verdict with boundary
+  conditions and next actions. User-invoked (`/deep-dive`). PROVENANCE.md records
+  the upstream pin (release tag + bundle path — the source repo is private) and the
+  local-frontmatter policy.
+
 ## [5.0.1] - 2026-08-27 - README skills catalog
 
 PATCH: docs only, no behavioural change.

@@ -81,12 +81,13 @@ User-invoked:
 
 - **[grill-me](plugins/myst-dev-kit/skills/grill-me/SKILL.md)** — get interviewed about a plan or design until every branch of the decision tree is resolved.
 - **[grill-with-docs](plugins/myst-dev-kit/skills/grill-with-docs/SKILL.md)** — the same interview, writing ADRs and glossary entries as it goes.
+- **[deep-dive](plugins/myst-dev-kit/skills/deep-dive/SKILL.md)** — bring it a decision you keep circling: it steel-mans *both* sides to their strongest versions, surfaces the real crux, asks you one decisive question, and only after your answer gives a verdict with boundary conditions and next actions. For questions still tangled, answers that feel plausible but shaky, or premises you suspect you're not seeing.
 - **[teach](plugins/myst-dev-kit/skills/teach/SKILL.md)** — learn a skill or concept, taught inside this workspace.
 - **[to-questionnaire](plugins/myst-dev-kit/skills/to-questionnaire/SKILL.md)** — turn a decision you can't fully answer into a questionnaire for the person who can.
 - **[handoff](plugins/myst-dev-kit/skills/handoff/SKILL.md)** — compact the current conversation into a handoff document for the next session to pick up.
 - **[wait-what](plugins/myst-dev-kit/skills/wait-what/SKILL.md)** — stop: that last message did not land — re-pitch it.
 
-Vendored content comes verbatim from [mattpocock/skills](https://github.com/mattpocock/skills) with a per-skill provenance note; the rest is local-origin. Adding a skill is one directory plus its one catalog line above — the [per-skill checklist](CONTRIBUTING.md) keeps the two in step.
+Vendored content comes verbatim from [mattpocock/skills](https://github.com/mattpocock/skills) and from the Hammer app's advanced-capability bundle ([dreamwords/hammer-releases](https://github.com/dreamwords/hammer-releases); `deep-dive` by 卡兹克), each with a per-skill provenance note; the rest is local-origin. Adding a skill is one directory plus its one catalog line above — the [per-skill checklist](CONTRIBUTING.md) keeps the two in step.
 
 [`reference/`](reference/) holds starter docs to copy into a consuming project: workspace-setup sections for the tool bibles, the human workflow guide, issue-tracker and triage-label templates, and a UE `.p4ignore` fragment.
 
