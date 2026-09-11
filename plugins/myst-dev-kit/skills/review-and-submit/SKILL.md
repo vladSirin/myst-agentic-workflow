@@ -117,8 +117,9 @@ within each. The gate verdict for Steps 6-7 is the worst of the two; both stay r
 
 **BLOCKING on either axis:** fix it now, by the rules below, and re-run the affected axis
 without waiting for the user; a finding you decline goes in the re-review brief with the
-reason, and that axis re-runs on it. Report what was fixed, declined, and why when the round
-ends. **GREEN on the first pass, no fix applied, and the user named this changeset by ID:**
+reason, and that axis re-runs on it; a BLOCKING re-raised on a finding you declined goes to
+the user as a Step 6 decision, with your reason and the reviewer's, never another re-run.
+Report what was fixed, declined, and why when the round ends. **GREEN on the first pass, no fix applied, and the user named this changeset by ID:**
 that is the Step 6 approval; go to Step 7 (a preflight warning in the Submission step still
 re-asks). **Otherwise, WARNING or GREEN alike, any fix applied included:** stop and offer
 the options: submit now; fix and re-review the affected axis; fix named findings only and
@@ -160,7 +161,8 @@ with no BLOCKING finding is the last round: record remaining WARNING and INFO it
 
 ## 6. Wait for the user's decision
 
-Reached only with a GREEN or WARNING aggregate (Step 5 fixes BLOCKING first). Unless the
+Reached with a GREEN or WARNING aggregate (Step 5 fixes BLOCKING first), or with a BLOCKING
+re-raised on a finding you declined (submit is then not an option). Unless the
 Step 5 first-pass approval applies, do not act until the user chooses: submit, fix (Step 5,
 re-run the affected axis), named findings only, or defer.
 
@@ -180,8 +182,8 @@ governs verification, never submit authority. One approval covers one changeset;
 standing instruction covers a publish.
 
 - **The approval** is the user's instruction naming publication for that changeset by ID
-  ("submit 1970", "merge PR 42"). Do not re-ask when the review is GREEN and no preflight
-  warned.
+  ("submit 1970", "merge PR 42"). Do not re-ask when the review is GREEN on the first pass,
+  no fix was applied, and no preflight warned.
 - **Re-ask** when: the verdict is not GREEN (WARNING included); a preflight failed or
   warned; the user never named this ID; the contents grew after they asked; a fix was
   applied during the run.
