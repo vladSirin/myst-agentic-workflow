@@ -111,8 +111,11 @@ you addressed.
 Present both reports under `## Standards` and `## Spec`. Never merge or re-rank findings
 across axes and never name a single winner; end with findings per axis and the worst issue
 within each. The gate verdict for Steps 6-7 is the worst of the two; both stay recorded.
-Then offer: submit now (only with no BLOCKING on either axis); fix and re-review the
-affected axis; fix named findings only; defer.
+
+**BLOCKING on either axis:** fix it now, by the rules below, and re-run the affected axis
+without waiting for the user; report what was fixed and why when the round ends. **GREEN or
+WARNING:** stop and offer the options: submit now; fix and re-review the affected axis; fix
+named findings only; defer. Recommend one and say why.
 
 ### Fixing a false claim: strip, downgrade, derive
 
@@ -150,12 +153,13 @@ with no BLOCKING finding is the last round: record remaining WARNING and INFO it
 
 ## 6. Wait for the user's decision
 
-Do not act until the user chooses: submit (only with no BLOCKING), fix (Step 5, re-run the
-affected axis), named findings only, or defer.
+Reached only with a GREEN or WARNING aggregate (Step 5 fixes BLOCKING first). Do not act
+until the user chooses: submit, fix (Step 5, re-run the affected axis), named findings
+only, or defer.
 
-**No direct submit after fixing a BLOCKER.** Re-run the axis that raised it and present a
-new aggregate first, except for the closed list in Step 5. Only the reviewer's own
-re-verdict clears its BLOCKING.
+**No direct submit after fixing a BLOCKER.** Re-run the axis that raised it and present the
+new aggregate here first, except for the closed list in Step 5. Only the reviewer's own
+re-verdict clears its BLOCKING, and the user still decides on the result.
 
 **A changeset implementing a `ready-for-human` ticket is never published**, in any mode.
 Park it (VCS-MECHANICS), append `GATED-SHELVED: process error - agent implemented a
