@@ -27,9 +27,9 @@ Any explicit submit instruction naming a changeset ("review and submit {ID}", "s
 
 ## 1. Organize the changeset
 
-One named changeset, created at task START (VCS-MECHANICS). Verify its file list before
-review: every intended file in, nothing unrelated mixed in. Never sweep the default change
-wholesale; it usually holds the human's own WIP.
+One named changeset, created at task START (VCS-MECHANICS); use the default change only if
+the user asks, and never sweep it wholesale. Verify the file list before review: every
+intended file in, nothing unrelated mixed in.
 
 **Description** (CL description / PR body, same shape either way):
 
@@ -56,6 +56,9 @@ Title - brief, specific summary (follow the project's title-tag convention; unsu
   expanded into mechanism, values, or scope. Record its limits alongside.
 - **Claims of work done carry their evidence.** "Swept", "verified", "no X exists" appear
   only next to the command and result; otherwise leave the sentence out.
+- **Cap: the body before the Review Record fits in about 150 words**, one line per bullet.
+  Over the cap means the description is restating what the files own, or the changeset is
+  too big; fix whichever it is, never the cap.
 - Perforce: English/ASCII only, Review Record included (ASCII `-` in Verdict lines). Bullets
   over paragraphs; name classes and files.
 
@@ -113,9 +116,12 @@ across axes and never name a single winner; end with findings per axis and the w
 within each. The gate verdict for Steps 6-7 is the worst of the two; both stay recorded.
 
 **BLOCKING on either axis:** fix it now, by the rules below, and re-run the affected axis
-without waiting for the user; report what was fixed and why when the round ends. **GREEN or
-WARNING:** stop and offer the options: submit now; fix and re-review the affected axis; fix
-named findings only; defer. Recommend one and say why.
+without waiting for the user; a finding you decline goes in the re-review brief with the
+reason, and that axis re-runs on it. Report what was fixed, declined, and why when the round
+ends. **GREEN, clean preflight, and the user named this changeset by ID:** that is the
+Step 6 approval; proceed. **Otherwise (WARNING, or GREEN without that approval):** stop and
+offer the options: submit now; fix and re-review the affected axis; fix named findings only
+and re-review the affected axis; defer. Recommend one and say why.
 
 ### Fixing a false claim: strip, downgrade, derive
 
@@ -124,8 +130,9 @@ Stop at the first rung that applies:
 1. **Strip.** A file already owns the fact (count, status, quoted line, CL number): delete
    the sentence; point at the owner if needed.
 2. **Downgrade.** The sentence asserts work done ("verified in PIE", "criteria MET", "no
-   callers anywhere") and nothing else records that state: make it true by weakening it
-   ("not verified", "checked with `<command>`: `<result>`"). Never strengthen.
+   callers anywhere") and nothing else records that state: in a ticket or doc, make it true
+   by weakening it ("not verified", "checked with `<command>`: `<result>`"); in the
+   description, delete it (the ticket owns that state). Never strengthen.
 3. **Derive.** Correct the value only from a command run now, shown next to it, and
    regenerated before submit.
 
@@ -136,9 +143,8 @@ target; a stripped or downgraded one ends the loop.
 
 At any severity: a missing Review Record block; a missing or wrong project title tag; an
 EOL flip; non-ASCII in the description; a missing `Ticket:` / `Workflow: skipped` line whose
-ticket or decision already exists; deleting a claim from the description (rung 1,
-description only). The list is closed: nothing on it can change behaviour or add reviewable
-content. Off it: creating the ticket or making the skip decision; deletions inside tickets
+ticket or decision already exists; deleting a sentence from the description. The list is
+closed: nothing on it can change behaviour or add reviewable content. Off it: creating the ticket or making the skip decision; deletions inside tickets
 or docs; validator findings that touch file content. Anything else, a wrong claim in the
 description body included, is a real finding. You skip the reviewer pass, never the gate.
 
@@ -220,8 +226,9 @@ Findings:
 
 ## Submission step
 
-1. **Project preflight validators**, if any are defined: on a warning or non-zero exit,
-   report, fix, re-run. None defined: say so.
+1. **Project preflight validators**, if any are defined (the project's CLAUDE.md /
+   AGENTS.md or scripts directory names them): on a warning or non-zero exit, report, fix,
+   re-run. None defined: say so.
 2. **Docs-alignment check**, when the changeset contains any `.md`/`.txt`. Spawn ONE
    general-purpose sub-agent:
 
