@@ -49,7 +49,8 @@ MINOR: behaviour change to an existing skill; plugin consumers receive it automa
   claims, stale self-references, or overclaims in descriptions and tickets, not defects
   in the delivered files; review loops consumed ~26% of all tokens; a corrected claim is a
   fresh target for the next pass, while a stripped or downgraded one ends the loop.
-- The protocol is rewritten at about half its word count with every rule kept:
+- Step 5/6 decision rule: a BLOCKING aggregate is fixed and its axis re-run without waiting for the user; GREEN or WARNING stops for the user with a recommended option. The submit itself stays human-gated.
+- The protocol is rewritten at well under half its word count with every rule kept:
   Perforce and git command forms and their traps move to the new same-dir
   `VCS-MECHANICS.md`; rationale paragraphs are cut to one sentence each; the three hard
   rules in Step 6 keep their conditions and lose their essays.
