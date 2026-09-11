@@ -68,8 +68,8 @@ and not `p4 revert` (discards the edit). Re-diff, then review that.
 
 ## git
 
-- Work on a named branch created at task start, never on the default branch. Commit titles
-  follow the description's title convention; a PR carries the full description as its body.
+- Commit titles follow the description's title convention; a PR carries the full
+  description as its body.
 - Pin: `git rev-parse {base}` must resolve; `git diff {base}...HEAD` (three-dot, against
   the merge-base); `git log {base}..HEAD --oneline`. An empty diff stops in front of the user.
 - Review Record: `gh pr edit {PR} --body-file {scratch}/body.md`; with no PR, amend the

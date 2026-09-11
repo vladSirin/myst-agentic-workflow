@@ -118,10 +118,11 @@ within each. The gate verdict for Steps 6-7 is the worst of the two; both stay r
 **BLOCKING on either axis:** fix it now, by the rules below, and re-run the affected axis
 without waiting for the user; a finding you decline goes in the re-review brief with the
 reason, and that axis re-runs on it. Report what was fixed, declined, and why when the round
-ends. **GREEN, clean preflight, and the user named this changeset by ID:** that is the
-Step 6 approval; proceed. **Otherwise (WARNING, or GREEN without that approval):** stop and
-offer the options: submit now; fix and re-review the affected axis; fix named findings only
-and re-review the affected axis; defer. Recommend one and say why.
+ends. **GREEN on the first pass, no fix applied, and the user named this changeset by ID:**
+that is the Step 6 approval; go to Step 7 (a preflight warning in the Submission step still
+re-asks). **Otherwise, WARNING or GREEN alike, any fix applied included:** stop and offer
+the options: submit now; fix and re-review the affected axis; fix named findings only and
+re-review the affected axis; defer. Recommend one and say why.
 
 ### Fixing a false claim: strip, downgrade, derive
 
@@ -130,9 +131,8 @@ Stop at the first rung that applies:
 1. **Strip.** A file already owns the fact (count, status, quoted line, CL number): delete
    the sentence; point at the owner if needed.
 2. **Downgrade.** The sentence asserts work done ("verified in PIE", "criteria MET", "no
-   callers anywhere") and nothing else records that state: in a ticket or doc, make it true
-   by weakening it ("not verified", "checked with `<command>`: `<result>`"); in the
-   description, delete it (the ticket owns that state). Never strengthen.
+   callers anywhere") and nothing else records that state: make it true by weakening it
+   ("not verified", "checked with `<command>`: `<result>`"). Never strengthen.
 3. **Derive.** Correct the value only from a command run now, shown next to it, and
    regenerated before submit.
 
@@ -144,9 +144,10 @@ target; a stripped or downgraded one ends the loop.
 At any severity: a missing Review Record block; a missing or wrong project title tag; an
 EOL flip; non-ASCII in the description; a missing `Ticket:` / `Workflow: skipped` line whose
 ticket or decision already exists; deleting a sentence from the description. The list is
-closed: nothing on it can change behaviour or add reviewable content. Off it: creating the ticket or making the skip decision; deletions inside tickets
-or docs; validator findings that touch file content. Anything else, a wrong claim in the
-description body included, is a real finding. You skip the reviewer pass, never the gate.
+closed: nothing on it can change behaviour or add reviewable content. Off it: creating the
+ticket or making the skip decision; deletions inside tickets or docs; validator findings
+that touch file content. Anything else, a wrong claim in the description body included, is
+a real finding. You skip the reviewer pass, never the gate.
 
 ### Fix discipline
 
@@ -159,9 +160,9 @@ with no BLOCKING finding is the last round: record remaining WARNING and INFO it
 
 ## 6. Wait for the user's decision
 
-Reached only with a GREEN or WARNING aggregate (Step 5 fixes BLOCKING first). Do not act
-until the user chooses: submit, fix (Step 5, re-run the affected axis), named findings
-only, or defer.
+Reached only with a GREEN or WARNING aggregate (Step 5 fixes BLOCKING first). Unless the
+Step 5 first-pass approval applies, do not act until the user chooses: submit, fix (Step 5,
+re-run the affected axis), named findings only, or defer.
 
 **No direct submit after fixing a BLOCKER.** Re-run the axis that raised it and present the
 new aggregate here first, except for the closed list in Step 5. Only the reviewer's own
