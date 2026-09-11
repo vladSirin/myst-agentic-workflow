@@ -33,6 +33,31 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 checks this file has the matching section, and tags. (Before v5.0.0 the number lived in five
 places; the other three sites no longer exist.)
 
+## [5.2.0] - 2026-09-11 - review-and-submit: strip claims first, protocol halved
+
+MINOR: behaviour change to an existing skill; plugin consumers receive it automatically.
+
+- **review-and-submit** gains a fix ladder for false or unverifiable prose claims:
+  **strip** (a file already owns the fact) before **downgrade** ("not verified",
+  "checked with `<command>`: `<result>`") before **derive** (a corrected value only from a
+  command shown next to it). Every reviewer brief prescribes
+  in that order and Docs-alignment contradictions are fixed in that order. Deleting a
+  sentence from the CL description joins the closed list of fixes (whose principle is now
+  "cannot change behaviour or add reviewable content", no longer "has a validator behind it")
+  that never cost a re-review; deletions inside tickets or docs do not. The description
+  rules gain "point, never restate", "owner reports verbatim", and "claims of work done
+  carry their evidence". Why: a 2026-09-11 audit of 58 reviewed CLs and 254 review loops
+  in the consuming project found ~75% of BLOCKING findings were counts, completeness
+  claims, stale self-references, or overclaims in descriptions and tickets, not defects
+  in the delivered files; review loops consumed ~26% of all tokens; a corrected claim is a
+  fresh target for the next pass, while a stripped or downgraded one ends the loop.
+- Step 5/6 decision rule: a BLOCKING aggregate is fixed and its axis re-run without waiting for the user; a first-pass GREEN with no fix applied on a changeset the user named by ID proceeds; anything else, any fix applied included, stops for the user with a recommended option. The submit itself stays human-gated.
+- Description body cap: about 150 words before the Review Record, one line per bullet. Over the cap means restating or an oversized changeset, never a reason to lift the cap.
+- The protocol is rewritten much shorter with every rule kept:
+  Perforce and git command forms and their traps move to the new same-dir
+  `VCS-MECHANICS.md`; rationale paragraphs are cut to one sentence each; the three hard
+  rules in Step 6 keep their conditions and lose their essays.
+
 ## [5.1.0] - 2026-08-27 - Thinking skills vendored from the Hammer app
 
 MINOR: new and re-vendored skills; plugin consumers receive them automatically.
