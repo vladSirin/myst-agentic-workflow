@@ -33,6 +33,27 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 checks this file has the matching section, and tags. (Before v5.0.0 the number lived in five
 places; the other three sites no longer exist.)
 
+## [5.3.0] - 2026-09-21 - review-and-submit: re-read dependents after a claim fix
+
+MINOR: behaviour change to an existing skill; plugin consumers receive it automatically.
+
+- **review-and-submit** corrects a sentence 5.2.0 shipped. It said a stripped or downgraded
+  claim ends the loop. It ends the loop only once the author re-reads what asserts things
+  about the changed text (labels, headings, summaries, the description) and fixes those by
+  the same ladder. Why: in one deep review in the consuming project (one changeset, several
+  passes on each axis), several accepted BLOCKING findings were dependents stranded by the
+  previous round's own fix: a verdict label still reading "verified" above a body downgraded
+  to "not established"; a heading reading "resolved" above rows reading "open"; a
+  description carrying a figure the document no longer supported. This adds a step; it
+  does not remove one.
+- Every reviewer brief now asks each finding to name the artifact and revision it was read
+  from. Why: in the same review the overruled findings were a reviewer reading a real
+  artifact but the wrong one (the workspace in place of the pinned revision; a neighbouring
+  string in place of the quoted one; a path that does not exist). The line does not prevent
+  the misread; it makes the misread quick to settle.
+- Evidence is one changeset, observed, not measured; 5.2.0's rule rested on an audit of 58.
+  Guidance only: no hook, no gate.
+
 ## [5.2.0] - 2026-09-11 - review-and-submit: strip claims first, protocol halved
 
 MINOR: behaviour change to an existing skill; plugin consumers receive it automatically.

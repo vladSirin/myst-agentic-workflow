@@ -89,8 +89,9 @@ the briefs. Deltas:
 
 - The diff is Step 2's; the spec is Step 3's; paste the smell baseline into the Standards
   brief.
-- Each brief: cite file:line; categorize BLOCKING / WARNING / INFO; under 400 words; end
-  with one line `Verdict: GREEN | WARNING | BLOCKING`.
+- Each brief: cite file:line, naming the artifact and revision each finding was read from;
+  categorize BLOCKING / WARNING / INFO; under 400 words; end with one line
+  `Verdict: GREEN | WARNING | BLOCKING`.
 - Each brief states: a reviewer reports only; it never submits, shelves, pushes, merges, or
   edits files. Publication happens in the main session through Steps 6-7, nowhere else.
 - Each brief states the prose-fix rule (Step 5): for a false or unverifiable claim in the
@@ -138,7 +139,9 @@ Stop at the first rung that applies:
    regenerated before submit.
 
 Never answer a wrong count with more counts: a corrected assertion is the next pass's
-target; a stripped or downgraded one ends the loop.
+target. A stripped or downgraded one ends the loop only once you re-read what asserts
+things about the text you changed (labels, headings, summaries, the description) and fix
+those by the same ladder.
 
 ### Fixes that never cost a re-review
 
