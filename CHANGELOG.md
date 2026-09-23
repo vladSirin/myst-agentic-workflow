@@ -37,19 +37,13 @@ places; the other three sites no longer exist.)
 
 PATCH: template formatting and a clarified existing rule; no new step or behaviour.
 
-- **review-and-submit**'s ASCII-only rule now names the characters that slip past it:
-  punctuation copied from docs (the section sign, dashes, arrows, curly quotes), with the ASCII
-  form to write instead. Why: in the consuming project, two submitted descriptions each carried a
-  section sign copied from a document reference; the server is non-unicode, so a GBK P4V
-  rendered it as mojibake and the submit audit warned after the fact.
-- **review-and-submit** puts a blank line under each `##` heading in the description template
-  and the Review Record template, and says why in the ASCII rule next to it. P4V renders CL
-  descriptions as Markdown; with text directly under a heading, it drew the rest of the
-  description in heading font. Why: in the consuming project, every agent-written CL copied the
-  template layout and rendered that way. Adding the blank line to three submitted descriptions
-  (`p4 change -f`, only blank lines added) fixed their rendering once P4V was restarted.
-- Limits: observed in P4V only, on one team's install; no other viewer was tested. P4V caches
-  submitted descriptions, so an edit shows only after a restart.
+- **review-and-submit**: a blank line under each `##` heading in the description and Review
+  Record templates; the Perforce ASCII rule now says typographic punctuation counts. The why
+  sits in a new VCS-MECHANICS "Description traps" subsection. Why: in the consuming project,
+  punctuation copied from docs showed as mojibake on a client in another code page, and P4V
+  drew every description written from the template in heading font. Adding the blank line
+  fixed the rendering, seen after a P4V restart.
+- Limits: observed in P4V only; no other viewer was tested.
 
 ## [5.3.0] - 2026-09-21 - review-and-submit: re-read dependents after a claim fix
 

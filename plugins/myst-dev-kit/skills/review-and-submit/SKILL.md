@@ -62,12 +62,9 @@ Title - brief, specific summary (follow the project's title-tag convention; unsu
 - **Cap: the body before the Review Record fits in about 150 words**, one line per bullet.
   Over the cap means the description is restating what the files own, or the changeset is
   too big; fix whichever it is, never the cap.
-- Perforce: English/ASCII only, Review Record included (ASCII `-` in Verdict lines).
-  Punctuation copied from docs counts: write `section 4.6`, `-`, `->`, straight quotes, never
-  the section sign, dashes, arrows or curly quotes. Bullets
-  over paragraphs; name classes and files. Keep the blank line under every `##` heading:
-  P4V renders descriptions as Markdown and, without it, draws the rest of the text in
-  heading font.
+- Perforce: English/ASCII only, typographic punctuation and the Review Record included (ASCII
+  `-` in Verdict lines); keep the blank line under each heading (why: VCS-MECHANICS). Bullets
+  over paragraphs; name classes and files.
 
 ---
 
