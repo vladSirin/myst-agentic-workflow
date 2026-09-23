@@ -37,14 +37,17 @@ intended file in, nothing unrelated mixed in.
 Title - brief, specific summary (follow the project's title-tag convention; unsure: ASK)
 
 ## What
+
 - Concrete changes: which files, systems, config
 
 ## Why
+
 - The problem solved or the plan step advanced; link the design doc if one exists
 - Ticket: .scratch/<slug>/issues/<NN>-<slug>.md   (what the Spec axis reviews against)
   or, if the user skipped the workflow: Workflow: skipped (<reason>)   (agent changesets only)
 
 ## Notes (optional)
+
 - Migration steps, known limitations, dependencies, what needs testing
 ```
 
@@ -59,8 +62,8 @@ Title - brief, specific summary (follow the project's title-tag convention; unsu
 - **Cap: the body before the Review Record fits in about 150 words**, one line per bullet.
   Over the cap means the description is restating what the files own, or the changeset is
   too big; fix whichever it is, never the cap.
-- Perforce: English/ASCII only, Review Record included (ASCII `-` in Verdict lines). Bullets
-  over paragraphs; name classes and files.
+- Perforce: English/ASCII only, typographic punctuation and the Review Record included (ASCII
+  `-` in Verdict lines). Bullets over paragraphs; name classes and files.
 
 ---
 
@@ -207,6 +210,7 @@ After approval and before any preflight or submit, append to every changeset
 
 ```
 ## Review
+
 Standards: myst-dev-kit:code-review sub-agent - Verdict: WARNING (2 passes)
 Spec:      sub-agent vs .scratch/foo/issues/03-bar.md - Verdict: GREEN
 Docs-alignment: aligned
