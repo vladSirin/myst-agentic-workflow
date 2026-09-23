@@ -33,17 +33,15 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 checks this file has the matching section, and tags. (Before v5.0.0 the number lived in five
 places; the other three sites no longer exist.)
 
-## [5.3.1] - 2026-09-23 - review-and-submit: description heading layout, ASCII look-alikes
+## [5.3.1] - 2026-09-23 - review-and-submit: heading spacing, typographic punctuation
 
 PATCH: template formatting and a clarified existing rule; no new step or behaviour.
 
 - **review-and-submit**: a blank line under each `##` heading in the description and Review
-  Record templates; the Perforce ASCII rule now says typographic punctuation counts. The why
-  sits in a new VCS-MECHANICS "Description traps" subsection. Why: in the consuming project,
-  punctuation copied from docs showed as mojibake on a client in another code page, and P4V
-  drew every description written from the template in heading font. Adding the blank line
-  fixed the rendering, seen after a P4V restart.
-- Limits: observed in P4V only; no other viewer was tested.
+  Record templates, and the Perforce ASCII rule now says typographic punctuation counts. Why:
+  in the consuming project, a Markdown-rendering client drew descriptions written from the
+  template in heading font until the blank line was added, and punctuation copied from docs
+  broke the ASCII rule. Client-specific detail stays in that project's own notes.
 
 ## [5.3.0] - 2026-09-21 - review-and-submit: re-read dependents after a claim fix
 

@@ -39,17 +39,6 @@ both Bash and native tools resolve identically (the session scratchpad). MSYS `/
 invisible to python and editors on Windows; a spec written there is silently not edited
 and you re-submit the old description.
 
-### Description traps
-
-- Typographic punctuation (section sign, dashes, arrows, curly quotes, no-break spaces)
-  arrives by copying from docs and breaks ASCII-only. A server without Unicode mode stores
-  the bytes as-is, and a client in another code page shows them as mojibake. Write the
-  ASCII form: `-`, `->`, straight quotes.
-- P4V renders descriptions as Markdown. With text directly under a heading, it draws the
-  rest of the description in heading font: keep a blank line under each heading.
-- P4V caches submitted descriptions. After editing one (`p4 change -u` as its owner, or
-  `-f` with admin access), restart P4V to see the change.
-
 ### Pin the change
 
 ```bash

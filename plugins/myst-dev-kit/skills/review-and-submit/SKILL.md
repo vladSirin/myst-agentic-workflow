@@ -63,8 +63,7 @@ Title - brief, specific summary (follow the project's title-tag convention; unsu
   Over the cap means the description is restating what the files own, or the changeset is
   too big; fix whichever it is, never the cap.
 - Perforce: English/ASCII only, typographic punctuation and the Review Record included (ASCII
-  `-` in Verdict lines); keep the blank line under each heading (why: VCS-MECHANICS). Bullets
-  over paragraphs; name classes and files.
+  `-` in Verdict lines). Bullets over paragraphs; name classes and files.
 
 ---
 
