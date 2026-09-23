@@ -33,6 +33,19 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 checks this file has the matching section, and tags. (Before v5.0.0 the number lived in five
 places; the other three sites no longer exist.)
 
+## [5.4.0] - 2026-09-23 - review-and-submit: blank line under every description heading
+
+MINOR: behaviour change to an existing skill; plugin consumers receive it automatically.
+
+- **review-and-submit** puts a blank line under each `##` heading in the description template
+  and the Review Record template, and says why in the ASCII rule next to it. P4V renders CL
+  descriptions as Markdown; with text directly under a heading, it drew the rest of the
+  description in heading font. Why: in the consuming project, every agent-written CL copied the
+  template layout and rendered that way. Adding the blank line to three submitted descriptions
+  (`p4 change -f`, only blank lines added) fixed their rendering once P4V was restarted.
+- Limits: observed in P4V only, on one team's install; no other viewer was tested. P4V caches
+  submitted descriptions, so an edit shows only after a restart.
+
 ## [5.3.0] - 2026-09-21 - review-and-submit: re-read dependents after a claim fix
 
 MINOR: behaviour change to an existing skill; plugin consumers receive it automatically.
