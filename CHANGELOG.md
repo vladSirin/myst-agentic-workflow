@@ -33,10 +33,15 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 checks this file has the matching section, and tags. (Before v5.0.0 the number lived in five
 places; the other three sites no longer exist.)
 
-## [5.4.0] - 2026-09-23 - review-and-submit: blank line under every description heading
+## [5.3.1] - 2026-09-23 - review-and-submit: description heading layout, ASCII look-alikes
 
-MINOR: behaviour change to an existing skill; plugin consumers receive it automatically.
+PATCH: template formatting and a clarified existing rule; no new step or behaviour.
 
+- **review-and-submit**'s ASCII-only rule now names the characters that slip past it:
+  punctuation copied from docs (the section sign, dashes, arrows, curly quotes), with the ASCII
+  form to write instead. Why: in the consuming project, two submitted descriptions each carried a
+  section sign copied from a document reference; the server is non-unicode, so a GBK P4V
+  rendered it as mojibake and the submit audit warned after the fact.
 - **review-and-submit** puts a blank line under each `##` heading in the description template
   and the Review Record template, and says why in the ASCII rule next to it. P4V renders CL
   descriptions as Markdown; with text directly under a heading, it drew the rest of the
