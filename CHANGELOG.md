@@ -42,7 +42,7 @@ MINOR: behaviour change to an existing skill; plugin consumers receive it automa
   a trailing `~:NNN` hint; the Review Record template's example follows. Why: the Findings block
   is copied into the changeset description, which outlives the text it cites. In the consuming
   project, a Review Record's `file:line` pointed at different text after later edits, and the
-  project has since made anchor-only citation a hard rule that the old template broke.
+  project has since made citation by anchor a hard rule that the old template broke.
 
 ## [5.3.1] - 2026-09-23 - review-and-submit: heading spacing, typographic punctuation
 
