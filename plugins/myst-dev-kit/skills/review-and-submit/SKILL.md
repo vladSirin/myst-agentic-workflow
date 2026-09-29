@@ -92,8 +92,9 @@ the briefs. Deltas:
 
 - The diff is Step 2's; the spec is Step 3's; paste the smell baseline into the Standards
   brief.
-- Each brief: cite file:line, naming the artifact and revision each finding was read from;
-  categorize BLOCKING / WARNING / INFO; under 400 words; end with one line
+- Each brief: cite by anchor (file plus a symbol, heading or short quoted phrase; a line
+  number only as a trailing `~:NNN` hint), naming the artifact and revision each finding
+  was read from; categorize BLOCKING / WARNING / INFO; under 400 words; end with one line
   `Verdict: GREEN | WARNING | BLOCKING`.
 - Each brief states: a reviewer reports only; it never submits, shelves, pushes, merges, or
   edits files. Publication happens in the main session through Steps 6-7, nowhere else.
@@ -215,7 +216,7 @@ Standards: myst-dev-kit:code-review sub-agent - Verdict: WARNING (2 passes)
 Spec:      sub-agent vs .scratch/foo/issues/03-bar.md - Verdict: GREEN
 Docs-alignment: aligned
 Findings:
-- [FIXED] BLOCKING Standards SomeFile.cpp:88 - one-line description
+- [FIXED] BLOCKING Standards SomeFile.cpp Tick() - one-line description
 - [ACCEPTED] WARNING Standards - magic number in threshold
 - [DEFERRED] INFO Spec - criterion 4 deferred to ticket 06
 ```
