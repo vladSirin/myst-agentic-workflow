@@ -33,6 +33,17 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 checks this file has the matching section, and tags. (Before v5.0.0 the number lived in five
 places; the other three sites no longer exist.)
 
+## [5.4.0] - 2026-09-29 - review-and-submit: cite findings by anchor, not line number
+
+MINOR: behaviour change to an existing skill; plugin consumers receive it automatically.
+
+- **review-and-submit**: reviewer briefs cite each finding by file plus an anchor that survives
+  edits to that file (a symbol, a heading, or a short quoted phrase), with a line number only as
+  a trailing `~:NNN` hint; the Review Record template's example follows. Why: the Findings block
+  is copied into the changeset description, which outlives the text it cites. In the consuming
+  project, a Review Record's `file:line` pointed at different text after later edits, and the
+  project has since made citation by anchor a hard rule that the old template broke.
+
 ## [5.3.1] - 2026-09-23 - review-and-submit: heading spacing, typographic punctuation
 
 PATCH: template formatting and a clarified existing rule; no new step or behaviour.
