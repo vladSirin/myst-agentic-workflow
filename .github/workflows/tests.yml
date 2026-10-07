@@ -24,6 +24,27 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  upstream-source:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Source verifier acceptance tests
+        shell: pwsh
+        run: python -m unittest discover -s tests -p test_verify_upstream.py -v
+      - name: Verify pinned source and declared migration debt
+        shell: pwsh
+        env:
+          REQUIRE_COMPLETE: ${{ github.ref == 'refs/heads/main' || github.base_ref == 'main' }}
+        run: |
+          $verifyArgs = @('tools/verify_upstream.py')
+          if ($env:REQUIRE_COMPLETE -eq 'true') { $verifyArgs += '--require-complete' }
+          python @verifyArgs
+          exit $LASTEXITCODE
+
   # Windows PowerShell 5.1 gates: the shipped .ps1 files must parse under the
   # OTHER engine consumers still run, and stay pure ASCII with no BOM.
   ps51-gates:

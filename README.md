@@ -121,6 +121,8 @@ myst-agentic-workflow/
 ├── bump.ps1                          # release helper: 2 manifest versions + CHANGELOG check + tag
 ├── retire-legacy.ps1                 # transitional v4-state cleanup (dies with the stub in a later MINOR)
 ├── .github/workflows/tests.yml       # CI: PS 5.1 parse gate, ASCII/BOM gate, lint
+├── tools/verify_upstream.py          # repository-only pinned-source verifier
+├── upstream-policy.json             # local skills and explicit migration debt
 ├── .github/workflows/release.yml     # tag push v* -> GitHub Release from the CHANGELOG section
 ├── .claude-plugin/marketplace.json   # plugin marketplace (Claude Code native)
 ├── .agents/plugins/marketplace.json  # plugin marketplace (Codex native)

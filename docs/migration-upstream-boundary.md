@@ -6,6 +6,10 @@ The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance
 [ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision.
 This inventory owns migration status. A pending row is not a source-integrity
 or runtime-pass claim. Add actual changeset and evidence references as work lands.
+The [verifier policy](../upstream-policy.json) lists machine-checked local skills
+and pending waivers; update it with each skill's inventory row. The
+[verification guide](upstream-source-verification.md) defines the source record
+and commands.
 
 ## Source targets
 
@@ -73,8 +77,8 @@ raw source subtree. The proposed nested layout remains subject to the pilot.
 
 | Owner | Work | Status |
 | --- | --- | --- |
-| Documentation and CI branch selection | Boundary ADR, contribution exception, honest README, inventory, approved plan and copy-cleanup scope | Changeset 0 prepared; awaiting user verification |
-| Repository verifier | Source-record schema and narrow independent integrity checks | Pending Changeset 1 |
+| Documentation and CI branch selection | Boundary ADR, contribution exception, honest README, inventory, approved plan and copy-cleanup scope | Changeset 0 verified by user on 2026-10-07; local commit 12d7a75 |
+| Repository verifier | Source-record schema and narrow independent integrity checks | Changeset 1 prepared; awaiting user verification |
 | agentic-workflow | Shared wrapper routing, tracker pointers, glossary compatibility | Pending |
 | review-and-submit | VCS formatter routing and Review Record retirement; preserve review and authority | Pending |
 | p4-description | New local-origin formatter, credited to pr inspiration; no runtime call to pr | Pending addition |

@@ -57,8 +57,9 @@ PR targets and release timing; each skill still has its own review gate.
       bundle when re-vendoring, preserving local files. Follow
       [ADR-0008](docs/adr-0008-strict-upstream-boundary.md).
 - [ ] **Loading and integrity**: provide source comparison evidence and a
-      working entry-to-source/reference path. Run the narrow verifier once
-      Changeset 1 lands; its current absence is not a passing check. A skill's
+      working entry-to-source/reference path. Run `python tools/verify_upstream.py`
+      using the [source-record contract](docs/upstream-source-verification.md).
+      Remove the skill's pending waiver when adding its source record. A skill's
       wrapper, bundle, provenance, catalog row, and evidence belong in its PR.
 - [ ] **No hidden authority**: local entry points that touch version control must state or load the
       submission-authority rule (reviewers never submit; agents never publish

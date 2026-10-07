@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Myst UPSTREAM.json version 1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "provider", "root", "source", "files", "dependencies"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "provider": {"enum": ["git", "github-release-zip"]},
+    "root": {"$ref": "#/$defs/path"},
+    "source": {"type": "object"},
+    "files": {
+      "type": "object",
+      "required": ["SKILL.md"],
+      "propertyNames": {"$ref": "#/$defs/path"},
+      "additionalProperties": {"$ref": "#/$defs/hash"}
+    },
+    "dependencies": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/skillName"}
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"provider": {"const": "git"}}},
+      "then": {
+        "properties": {
+          "source": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["url", "revision", "subtree"],
+            "properties": {
+              "url": {"$ref": "#/$defs/repository"},
+              "revision": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+              "subtree": {"$ref": "#/$defs/path"}
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "source": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["url", "revision", "subtree", "assetId"],
+            "properties": {
+              "url": {"$ref": "#/$defs/repository"},
+              "revision": {"type": "string", "minLength": 1},
+              "subtree": {"$ref": "#/$defs/path"},
+              "assetId": {"type": "integer", "minimum": 1},
+              "archiveSha256": {"$ref": "#/$defs/hash"}
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "path": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.?(?:/|$))[^\\\\:/]+(?:/[^\\\\:/]+)*$"
+    },
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "skillName": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "repository": {
+      "type": "string",
+      "pattern": "^https://github\\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+    }
+  }
+}

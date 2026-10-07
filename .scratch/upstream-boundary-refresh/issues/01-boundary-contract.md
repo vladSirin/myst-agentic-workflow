@@ -1,7 +1,7 @@
 # Changeset 0: Ratify the boundary and migration contract
 
 Type: task
-Status: claimed
+Status: closed
 Spec: [approved plan, Changeset 0](../../../docs/plan_upstream_boundary_refresh.md#changeset-0-ratify-the-boundary-and-migration-contract)
 
 ## Scope
@@ -44,6 +44,5 @@ codex/upstream-boundary-refresh. No remote issue or PR has been published.
 - Claude CLI is unavailable; its plugin validation did not run. Hosted CI has
   not run because this changeset has not been pushed.
 
-Prepared locally; awaiting user verification before Changeset 1. The ticket
-remains claimed until that gate is satisfied. No source verifier, skill update,
+The user verified Changeset 0 on 2026-10-07 and authorized Changeset 1. No source verifier, skill update,
 installed-copy cleanup, or consumer migration was performed.
