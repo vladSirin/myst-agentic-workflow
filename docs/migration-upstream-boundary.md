@@ -20,7 +20,8 @@ and commands.
 - Hammer: v0.30.0, Intel ZIP asset ID `614238989`. Paths are under
   `Hammer.app/Contents/Resources/advanced-capabilities/`. Preserve the existing
   redistribution permission. See [source evidence](research-hammer-update-2026-10-06.md).
-  The adjacent bundled README still needs inspection before import finalization.
+  The adjacent README was inspected during the
+  [deep-dive migration](deep-dive-wrapper-2026-10-07.md); it adds no method dependency.
 
 ## Imported skills
 
@@ -33,7 +34,7 @@ records the fix, passed checks, and remaining runtime gates.
 | Skill | Source subtree | Required migration | Status |
 | --- | --- | --- | --- |
 | handoff | skills/productivity/handoff | First packaging pilot; refresh temporary-path guidance and metadata | Source/package checks and Codex/OpenCode runtime passed; OpenCode requires a local invocation rule; Claude runtime deferred by owner, no longer a migration blocker ([evidence](handoff-pilot-2026-10-07.md)) |
-| implement | skills/engineering/implement | Restore source; move publication/tracker routing into local wrapper | Changeset 4 implemented; source and bounded runtime checks passed; awaiting owner verification ([evidence](implement-wrapper-2026-10-07.md)) |
+| implement | skills/engineering/implement | Restore source; move publication/tracker routing into local wrapper | Changeset 4 verified by owner on 2026-10-07; local commit 0a38ca7 ([evidence](implement-wrapper-2026-10-07.md)) |
 | tdd | skills/engineering/tdd | Restore source; retain tracker/glossary compatibility; no speculative question relay | Pending |
 | to-spec | skills/engineering/to-spec | Move tracker lookup out of source | Pending |
 | to-tickets | skills/engineering/to-tickets | Restore source; local tracker lookup; refresh ticket relationships | Pending |
@@ -54,7 +55,7 @@ records the fix, passed checks, and remaining runtime gates.
 | teach | skills/productivity/teach | Complete source bundle, metadata, provenance, and loading proof | Pending |
 | to-questionnaire | skills/productivity/to-questionnaire | Complete source bundle, metadata, provenance, and loading proof | Pending |
 | writing-for-agents | skills/productivity/writing-for-agents | Complete source bundle, metadata, provenance, and loading proof | Pending |
-| deep-dive | Hammer: deep-dive | Preserve original Chinese frontmatter; English local trigger and user-only invocation | Pending |
+| deep-dive | Hammer: deep-dive | Preserve original Chinese frontmatter; English local trigger and user-only invocation | Changeset 5 implemented; source, Codex discovery, and method checks complete; awaiting owner verification ([evidence](deep-dive-wrapper-2026-10-07.md)) |
 | roundtable | Hammer: roundtable | Preserve original Chinese frontmatter; local discovery metadata; method behavior checks | Pending |
 | pr | skills/engineering/pr | Add unchanged source and credits; Git-only wrapper and concise actual review evidence | Pending addition |
 | implement-spec | skills/engineering/implement-spec | Add unchanged source; Git-only entry and bounded pilot; no speculative orchestration | Pending addition |

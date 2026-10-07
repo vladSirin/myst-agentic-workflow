@@ -8,7 +8,6 @@
   "pendingImports": [
     "code-review",
     "codebase-design",
-    "deep-dive",
     "diagnosing-bugs",
     "domain-modeling",
     "grill-me",

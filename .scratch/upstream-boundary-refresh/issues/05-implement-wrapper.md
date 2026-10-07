@@ -1,8 +1,7 @@
 # Changeset 4: Restore implement behind a local wrapper
 
 Type: task
-Status: resolved
-Outstanding: Owner verifies Changeset 4 in chat before the next skill migration.
+Status: closed
 Spec: [approved plan, Changesets 4 onward](../../../docs/plan_upstream_boundary_refresh.md#changesets-4-onward-restore-and-refresh-each-imported-skill)
 
 ## Scope
@@ -32,3 +31,5 @@ owner reports that Claude works. Publication is not authorized.
 upstream changes from local behavior and records the Git implementation,
 missing-dependency, and P4 mirror preflight fixtures. Source comparison and
 repository checks passed. Independent migration review is recorded there.
+
+The owner verified continuation on 2026-10-07. Local commit: 0a38ca7.
