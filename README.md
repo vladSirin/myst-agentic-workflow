@@ -87,7 +87,25 @@ User-invoked:
 - **[handoff](plugins/myst-dev-kit/skills/handoff/SKILL.md)** — compact the current conversation into a handoff document for the next session to pick up.
 - **[wait-what](plugins/myst-dev-kit/skills/wait-what/SKILL.md)** — stop: that last message did not land — re-pitch it.
 
-Vendored content comes verbatim from [mattpocock/skills](https://github.com/mattpocock/skills) and from the Hammer app's advanced-capability bundle ([dreamwords/hammer-releases](https://github.com/dreamwords/hammer-releases); `deep-dive` by 卡兹克, `roundtable` by 李继刚), each with a per-skill provenance note; the rest is local-origin. Adding a skill is one directory plus its one catalog line above — the [per-skill checklist](CONTRIBUTING.md) keeps the two in step.
+Imported content comes from [mattpocock/skills](https://github.com/mattpocock/skills)
+and the Hammer app's advanced-capability bundle
+([dreamwords/hammer-releases](https://github.com/dreamwords/hammer-releases);
+`deep-dive` by 卡兹克, `roundtable` by 李继刚); the remaining skills are local-origin.
+Older Matt imports use the attribution pin in [LICENSE](LICENSE); later imports
+also carry per-skill provenance notes.
+
+**Upstream-boundary migration is pending.** Current imports include local inline
+adaptations, intentionally omitted upstream metadata, and local Hammer
+frontmatter. The approved target is complete unchanged source bundles with
+separate Myst entry points. That source guarantee does not imply identical
+runtime behavior: the local entries own Myst integration. The
+[migration inventory](docs/migration-upstream-boundary.md) tracks each skill and
+its acceptance evidence. The catalog above describes the current package;
+planned additions and removals are not yet shipped.
+
+Adding or retiring a skill updates its catalog row through the
+[per-skill checklist](CONTRIBUTING.md). During the refresh, reviewed skill PRs
+land on a migration branch before one final integration and release.
 
 [`reference/`](reference/) holds starter docs to copy into a consuming project: workspace-setup sections for the tool bibles, the human workflow guide, issue-tracker and triage-label templates, and a UE `.p4ignore` fragment.
 

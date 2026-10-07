@@ -13,9 +13,9 @@ name: tests
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, codex/upstream-boundary-refresh]
   push:
-    branches: [main]
+    branches: [main, codex/upstream-boundary-refresh]
   workflow_dispatch:
 
 # A second push to the same PR makes the first run's answer worthless - cancel it.
