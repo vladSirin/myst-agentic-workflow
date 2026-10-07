@@ -9,7 +9,7 @@ description: "Team delivery process (discussion -> spec -> tickets -> triage -> 
 
 This workflow is the **end-to-end shape** for non-trivial work: discussion → captured intent (spec) → planned slices (tickets) → triaged → built → verified → submitted.
 
-For work involving **game design** (mechanics, UX, levels, player experience), the Discussion phase is **extended** via the [design](../design/SKILL.md) skill — that produces a finalized design doc in the game Docs dir named in the project's CLAUDE.md, and the spec phase here references it. For pure code / system / bugfix work, Discussion can stay in chat and you jump straight to the spec (`/to-spec`).
+For work involving **game design** (mechanics, UX, levels, player experience), the Discussion phase is **extended** via the [design](../design/SKILL.md) skill — that produces a finalized design doc in the design-docs directory identified by the project's instructions, and the spec phase here references it. For pure code / system / bugfix work, Discussion can stay in chat and you jump straight to the spec (`/to-spec`).
 
 Three flow shapes the project supports:
 
@@ -48,14 +48,18 @@ always-on rule files; this paragraph is the workflow's own statement of it.
 
 ## Required references
 
-Before creating or updating specs, tickets, or workflow state, read (paths below are under the project's team docs root — `Docs/` in this project; see the CLAUDE.md Project section):
+Before dispatching another skill, changing tracker state, resolving domain
+vocabulary, or following VCS instructions, read
+[the local integration contract](LOCAL-INTEGRATION.md). It owns dependency
+selection, target VCS checks, project pointers, and legacy/new glossary mapping.
+Wrappers that need shared integration must load that reference before their
+upstream workflow.
 
-- `Docs/MustRead/MustRead_agentic_workflow.md`
-- `Docs/agents/issue-tracker.md`
-- `Docs/agents/triage-labels.md`
-- `Docs/agents/domain.md`
-
-If `CONTEXT.md` exists, read it before naming domain concepts. If relevant ADRs exist under `Docs/adr/`, read them before proposing architecture changes.
+Before creating or updating specs, tickets, or workflow state, resolve and read
+the project's workflow guide, tracker, and triage model through its applicable
+AGENTS.md / CLAUDE.md or existing scoped spec. Read the project's domain docs
+before naming concepts and relevant ADRs before architecture changes. Missing
+or conflicting configuration must be resolved before dependent writes.
 
 ## Stage rules
 
@@ -65,11 +69,13 @@ Use normal conversation, `/roundtable`, or `/grill-with-docs` while intent is un
 
 ### 2. Spec
 
-Use `/to-spec` or write a spec directly under `.scratch/<feature-slug>/spec.md` when the idea is ready to capture. New specs start at `Status: needs-triage`.
+Use `/to-spec` or write the spec at the location defined by the project tracker
+(default: `.scratch/<feature-slug>/spec.md`) when the idea is ready to capture. New specs start at `Status: needs-triage`.
 
 ### 3. Tickets
 
-Use `/to-tickets` or write ticket files under `.scratch/<feature-slug>/issues/`. Tickets must be vertical slices, independently understandable, and small enough to verify.
+Use `/to-tickets` or write ticket files at the project tracker location
+(default: `.scratch/<feature-slug>/issues/`). Tickets must be vertical slices, independently understandable, and small enough to verify.
 
 Assign initial ticket status during creation: `ready-for-agent`, `ready-for-human`, or `needs-info`. Do not default generated tickets back to `needs-triage` — tickets you generated from a spec are already specified, so they skip triage, which is for issues that arrive raw from elsewhere.
 
@@ -77,7 +83,8 @@ Avoid specific file paths or code snippets in ticket bodies because they go stal
 
 ### 4. Triage
 
-Use the status model in `Docs/agents/triage-labels.md` (team docs root — see the CLAUDE.md Project section).
+Use the project's resolved triage model. The roles below are the default when
+the project has adopted Myst's model.
 
 Triage **roles** say who should pick the ticket up:
 
@@ -104,7 +111,7 @@ For publication (Perforce submit, or git merge/PR), follow the `review-and-submi
 
 ## Guardrails
 
-- Search before creating a planning artifact: Glob `plan_*.md` and `design_*.md` under the game Docs dir named in the project's CLAUDE.md, plus `.scratch/*/spec.md`, for the feature/system/phase name. If one exists, extend it rather than opening a second — duplicates don't error, they split the source of truth.
+- Search before creating a planning artifact: Glob `plan_*.md` and `design_*.md` under the design-docs directory identified by the project's instructions, plus specs in the resolved tracker, for the feature/system/phase name. If one exists, extend it rather than opening a second — duplicates don't error, they split the source of truth.
 - Do not batch multiple changesets without explicit user approval; follow the `changelist-verification` skill.
 - Do not modify the game Docs dir's `_Raw/` (where the project defines a protected raw-material area) without the protected-material approval flow.
 - Keep ticket state changes explicit in the issue file's `Status:` line.

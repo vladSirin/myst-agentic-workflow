@@ -81,7 +81,7 @@ records the fix, passed checks, and remaining runtime gates.
 | --- | --- | --- |
 | Documentation and CI branch selection | Boundary ADR, contribution exception, honest README, inventory, approved plan and copy-cleanup scope | Changeset 0 verified by user on 2026-10-07; local commit 12d7a75 |
 | Repository verifier | Source-record schema and narrow independent integrity checks | Changeset 1 verified by user on 2026-10-07; local commit 1a9cabf |
-| agentic-workflow | Shared wrapper routing, tracker pointers, glossary compatibility | Pending |
+| agentic-workflow | Shared wrapper routing, tracker pointers, glossary compatibility | Changeset 3 implemented; targeted checks complete; awaiting owner verification ([evidence](shared-local-integration-2026-10-07.md)) |
 | review-and-submit | VCS formatter routing and Review Record retirement; preserve review and authority | Pending |
 | p4-description | New local-origin formatter, credited to pr inspiration; no runtime call to pr | Pending addition |
 | design, changelist-verification | Retain existing behavior | No skill change planned |

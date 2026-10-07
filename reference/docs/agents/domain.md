@@ -1,20 +1,26 @@
 # Domain Docs
 
-This repo is treated as single-context for now.
+Project setup: identify the authoritative glossary or context map here using
+links relative to this file. Point to existing files; do not rename them as part
+of setup. Also identify the ADR directory. Replace this paragraph with the
+project's choices before treating this template as project configuration.
 
-## Before exploring, read these
+## Before exploring
 
-- `CONTEXT.md` at the repo root, if it exists
-- `Docs/adr/` for architectural decision records that touch the area you are working in
+Read the authoritative domain docs for the work area and relevant ADRs. A map's
+links select the scoped glossaries; follow those links rather than guessing
+filenames. Live project pointers take precedence over starter templates.
 
-If `CONTEXT-MAP.md` appears later, switch to multi-context behavior and follow it for context-scoped docs.
-
-## Current layout
-
-Single-context repos use one root `CONTEXT.md` plus `Docs/adr/`.
+For a Myst wrapper, use agentic-workflow's LOCAL-INTEGRATION.md to resolve
+legacy CONTEXT.md / CONTEXT-MAP.md and new GLOSSARY.md / GLOSSARY-MAP.md names.
+Use the selected files for both reads and writes. If both naming families exist
+without authoritative pointers, establish ownership before writing. During
+staged migration, retain the project's established convention. A new default
+requires verified reader/writer readiness; absence of files is not that proof.
 
 ## Consumer rule
 
-Use the vocabulary in `CONTEXT.md` when naming issues, refactors, hypotheses, or tests. If a term is not defined there yet, treat that as a signal to check with the existing domain language before inventing a synonym.
-
-`CONTEXT.md` is a glossary only. Do not use it as a spec, scratch pad, implementation plan, or repository for implementation decisions. Durable implementation decisions belong in ADRs.
+Use the selected glossary's vocabulary in issues, refactors, hypotheses, and
+tests. Check existing domain language before inventing a synonym. Glossaries
+hold vocabulary; specs and implementation decisions belong in their own docs
+and ADRs. Do not create a second vocabulary source during an upstream refresh.
