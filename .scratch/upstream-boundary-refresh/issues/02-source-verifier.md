@@ -1,7 +1,7 @@
 # Changeset 1: Establish the source verifier
 
 Type: task
-Status: claimed
+Status: closed
 Spec: [approved plan, Changeset 1](../../../docs/plan_upstream_boundary_refresh.md#changeset-1-establish-the-source-verifier)
 
 ## Scope and acceptance
@@ -44,4 +44,5 @@ verified Changeset 0 until its separately gated integration.
 - Claude CLI is unavailable and hosted CI has not run. No push, PR, merge, tag,
   release, or installed-skill update occurred.
 
-Prepared locally; awaiting user verification before Changeset 2's handoff pilot.
+The user verified Changeset 1 on 2026-10-07 and authorized continuation to the
+handoff pilot. Implementation is locally committed as 1a9cabf; no publication occurred.

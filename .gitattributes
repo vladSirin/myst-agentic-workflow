@@ -4,3 +4,5 @@
 # installer's EOL policy (InstallJournal.ps1) and consumer depot conventions;
 # renormalizing them package-wide would churn every clone.
 *.sh text eol=lf
+# Pilot source archive: preserve the container and original member bytes.
+plugins/myst-dev-kit/skills/handoff/upstream.zip -text

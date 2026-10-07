@@ -1,6 +1,6 @@
 # Upstream Boundary and Skill Refresh Plan
 
-**Version**: v1.6 | **Updated**: 2026-10-07
+**Version**: v1.9 | **Updated**: 2026-10-07
 **Reference**: ADR-0002, ADR-0006, ADR-0007; upstream research notes below
 **Status**: APPROVED for implementation, changeset by changeset. Publication remains separately gated.
 
@@ -15,6 +15,9 @@
 | v1.4 | 2026-10-07 | User approved retiring the standalone Review Record format; retain concise review evidence in Evidence and preserve review/publication rules. |
 | v1.5 | 2026-10-07 | User approved a migration branch with per-skill reviews and one final release. Preserve upstream implement-spec and tdd behavior; defer extra orchestration rules until a pilot shows a concrete need. |
 | v1.6 | 2026-10-07 | User accepted copy-install cleanup and approved implementation. Finalize the plan; start Changeset 0 and retain per-changeset verification and publication gates. |
+| v1.7 | 2026-10-07 | Record visible-folder duplicate discovery and the .upstream trial. Codex passes, but repeated OpenCode scans can bypass the wrapper; packaging and further migration remain blocked. |
+| v1.8 | 2026-10-07 | Resolve discovery collisions by storing the complete original subtree in a ZIP. Verify member bytes independently and read locally through the wrapper. Discovery fix passes; full host-runtime acceptance remains pending. |
+| v1.9 | 2026-10-07 | Owner deferred outstanding Claude runtime tests until they explicitly report Claude works. These tests no longer block changeset acceptance or further migration; keep their results unverified. |
 
 ## Overview
 
@@ -146,13 +149,13 @@ plugins/myst-dev-kit/skills/<public-name>/
   PROVENANCE.md                # ownership, adaptations, source-record pointer
   UPSTREAM.json                # authoritative source pin/path/file record
   LOCAL.md                     # only when local integration needs explanation
-  upstream/
+  upstream.zip                 # complete original subtree; archive members:
     SKILL.md                   # complete original, including frontmatter
     agents/openai.yaml         # original metadata, where supplied
     <all other source files>   # original names and relative layout
 ```
 
-The source root is relocated as a unit; file names and its internal layout stay
+The source root is archived as a unit; member names, layout, and bytes stay
 unchanged. Record that root mapping. Keep the full selected source inside the
 public skill directory so a per-skill copy install can include its dependencies
 on local files. An external sibling vendor directory would risk broken npx
@@ -165,6 +168,20 @@ unwrapped skill. Also test recursive discovery modes and report their behavior.
 If a supported default install exposes duplicate entries, reject this layout
 before migrating more skills. Resolve packaging explicitly; do not fix it by
 editing upstream metadata or by silently dropping an install channel.
+
+The [handoff pilot](handoff-pilot-2026-10-07.md) rejected the original visible
+upstream/ folder: Codex 0.160.1 registered both the local and raw entries.
+The revised .upstream/ mapping preserves every original filename and byte.
+Codex discovery passed with that mapping, but repeated OpenCode scans selected
+the raw entry and bypassed the wrapper. Both loose-folder candidates were
+rejected. The ZIP layout above resolves that collision: Codex discovery and
+ten fresh OpenCode copy scans select the wrapper. The wrapper reads SKILL.md
+from the archive with a local ZIP reader (Python or Windows PowerShell in this
+pilot). This is packaging glue, not a source transformation or runtime download.
+Codex and OpenCode runtime checks subsequently passed. The owner deferred the
+remaining Claude runtime checks on 2026-10-07 until they report Claude works.
+That deferred evidence no longer gates Changeset 3; ordinary changeset review
+and user verification still apply.
 
 Current skills.sh source supports ordinary discovery stopping below a found
 skill; full-depth scanning can still recurse. This supports the proposal but
@@ -202,7 +219,7 @@ already verified record. Downloads are build/review inputs, never runtime work.
 | Commit/publish | Upstream commit and PR instructions run only within the user's scope and the project's VCS rules. | Perforce use does not create a Git commit; no submit, push, merge, or ticket closure bypasses the existing protocol. |
 | Description writing | Git uses upstream pr; Perforce uses local p4-description. review-and-submit supplies concise review results for Evidence. | No standalone Review Record block; final axis results and relevant detail references remain traceable, with existing approval rules intact. |
 | Git-only skills | Local discovery text and entry checks restrict pr and implement-spec to Git-managed target work. P4 routing never invokes either skill. | Automatic, cross-skill, and direct requests in P4 stop before the upstream workflow runs; a nested Git mirror does not override the project VCS. |
-| Hammer metadata | English discovery text and current invocation choices live at the local root. Original Chinese frontmatter remains unchanged in upstream/. | deep-dive remains user-invoked; roundtable retains its agreed trigger behavior and its original method. |
+| Hammer metadata | English discovery text and current invocation choices live at the local root. Original Chinese frontmatter remains unchanged in the source archive. | deep-dive remains user-invoked; roundtable retains its agreed trigger behavior and its original method. |
 | Codex metadata | Preserve original metadata in source. Set local metadata to the intended public contract and test the current host. | Fresh-session discovery and explicit invocation, with recorded versions and no duplicate skills. |
 
 Keep common policy in the existing local owner, agentic-workflow or
@@ -486,6 +503,13 @@ links, Windows temporary-directory behavior, and correct invocation metadata
 in fresh supported-host sessions. Test normal plugin and copy-install routes;
 record full-depth discovery separately. Stop the migration if packaging fails.
 
+**Owner exception, 2026-10-07:** defer outstanding Claude runtime and invocation
+restriction tests until the owner explicitly notifies us that Claude works.
+Do not retry or schedule those tests in the meantime. They remain unverified,
+not failed packaging checks or passed acceptance evidence. Their deferral does
+not block closing this changeset or continuing the migration. Other changeset
+verification and publication requirements remain in force.
+
 ### Changeset 3: Establish shared local integration
 
 **Deliverables:** update the existing agentic-workflow local contract and its
@@ -587,9 +611,11 @@ large prose-test framework. Keep runtime acceptance traces short and record the
 host/version, input, selected entry/source, observed behavior, and limitation.
 No test trace is a statistical guarantee of model compliance.
 
-Claude CLI was not found in PATH during planning. Its validation and runtime
-checks are outstanding work for an environment where it is available. Do not
-report those checks as passed based on Codex or source inspection alone.
+Claude CLI was unavailable during planning. The later pilot passed manifest,
+installation, and offline command-registration checks, but execution failed
+because the account was on hold. The owner deferred the remaining runtime
+checks until they explicitly report Claude works. Keep those checks unverified;
+do not infer a Claude runtime pass from another host or static inspection.
 
 ## Edge Cases & Considerations
 

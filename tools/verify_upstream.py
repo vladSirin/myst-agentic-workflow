@@ -97,6 +97,26 @@ def regular_tree(directory):
     return files
 
 
+def packaged_source(path):
+    """Read a plain subtree or its discovery-safe ZIP without extracting it."""
+    require(not path.is_symlink() and not path.is_junction(),
+            f'Source root must not be a link: {path}')
+    if path.is_dir():
+        return {name: file.read_bytes() for name, file in regular_tree(path).items()}
+    require(path.is_file() and path.suffix == '.zip',
+            f'Expected a source directory or ZIP: {path}')
+    files = {}
+    with zipfile.ZipFile(path) as archive:
+        for entry in archive.infolist():
+            name = relative_path(entry.filename)
+            require(name not in files, 'Duplicate packaged member: ' + name)
+            mode = stat.S_IFMT(entry.external_attr >> 16)
+            require(not entry.is_dir() and mode in (0, stat.S_IFREG),
+                    'Packaged member must be a regular file: ' + name)
+            files[name] = archive.read(entry)
+    return files
+
+
 def local_links(file, root):
     text = file.read_text(encoding='utf-8')
     # Only actual inline Markdown links; examples in fenced blocks are not loading pointers.
@@ -226,17 +246,18 @@ def verify(root, require_complete):
             raw_root = package / relative_path(record['root'])
             expected = record['files']
             require(raw_root.resolve().is_relative_to(package.resolve()), f'{name}: source root escapes package')
-            actual = regular_tree(raw_root)
+            actual = packaged_source(raw_root)
             require(set(actual) == set(expected), f'{name}: imported file inventory differs')
-            require((raw_root / 'SKILL.md').resolve() in local_links(package / 'SKILL.md', root),
-                    f'{name}: entry point must link to raw SKILL.md')
+            loading_target = raw_root / 'SKILL.md' if raw_root.is_dir() else raw_root
+            require(loading_target.resolve() in local_links(package / 'SKILL.md', root),
+                    f'{name}: entry point must link to raw SKILL.md or its source ZIP')
             require(record_file.resolve() in local_links(package / 'PROVENANCE.md', root),
                     f'{name}: provenance must link to UPSTREAM.json')
             for dependency in record['dependencies']:
                 require(dependency != name and (skills / dependency / 'SKILL.md').is_file(),
                         f'{name}: missing or self-referencing dependency {dependency}')
-            for path, file in actual.items():
-                require(hashlib.sha256(file.read_bytes()).hexdigest() == expected[path],
+            for path, data in actual.items():
+                require(hashlib.sha256(data).hexdigest() == expected[path],
                         f'{name}/{path}: imported bytes differ from recorded hash')
             original = sources.files(record)
             require(set(original) == set(expected), f'{name}: pinned source inventory differs')

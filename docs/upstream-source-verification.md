@@ -16,8 +16,9 @@ from downloaded sources. These are repository tools, not plugin runtime files.
 
 CI runs the fixture tests and verifier on the migration branch and main. PRs
 targeting main and pushes to main use --require-complete. Existing checks remain.
-No migrated bundles exist at Changeset 1: a successful current run reports zero
-verified imports and the declared debt; it does not certify the old imports.
+At the Changeset 1 baseline, no bundles had migrated. The handoff pilot now
+verifies one import, with 24 pending imports and four local skills. This does
+not certify the old imports or complete the host-runtime acceptance gate.
 
 ## Source record
 
@@ -30,7 +31,7 @@ and cross-file checks. Use lowercase full SHA-256 values for every source file.
 | --- | --- |
 | schemaVersion | Integer 1 |
 | provider | git or github-release-zip |
-| root | Relative raw-source directory inside this skill; initially upstream |
+| root | Relative source directory or ZIP inside this skill; handoff uses upstream.zip to prevent nested skill discovery |
 | source.url | HTTPS GitHub repository URL |
 | source.revision | Full Git commit SHA, or the release tag for ZIP assets |
 | source.subtree | Original skill directory in the repository or archive |
@@ -46,7 +47,17 @@ be excused by removing it from the record. Symlinks, escaping paths, and
 case-colliding file names are rejected. Source files are compared as raw bytes,
 without newline or BOM normalization.
 
-The local SKILL.md must contain an inline Markdown link to the raw SKILL.md;
+A source ZIP contains only files, with member paths relative to the original
+skill root. It preserves each original filename, relative path, and byte.
+The verifier reads members without extracting them and rejects duplicate,
+unsafe, linked, or non-file entries. It compares member hashes against the same
+independent source as a directory bundle. Container timestamps and compression
+are not source content. Do not leave loose source copies beside an archive:
+they would restore the discovery bug documented in the
+[handoff pilot](handoff-pilot-2026-10-07.md).
+
+The local SKILL.md must contain an inline Markdown link to the raw SKILL.md
+or, for an archived bundle, its ZIP and instructions to read SKILL.md inside it;
 PROVENANCE.md must link to UPSTREAM.json. Relative inline links in those two
 local files must resolve inside this repository. Each declared dependency must
 have a public SKILL.md in the library. These are structural checks: they do not

@@ -97,3 +97,34 @@ target; the inventory lists current debt until each skill passes its checks.
 Acceptance requires source equality, complete bundles, proven loading and
 compatibility, and current attribution for every retained import. The README
 may claim complete migration only after the inventory and install matrix pass.
+
+## Pilot follow-up, 2026-10-07
+
+The handoff pilot rejected the visible upstream/ candidate: Codex 0.160.1
+discovered two public entries in both source-plugin and project-copy scans.
+Moving the raw subtree to .upstream/ fixed Codex discovery without changing
+source filenames or bytes. Repeated OpenCode scans, however, selected the raw
+entry in one run and wrappers in others. A single listed name is insufficient:
+the selected entry must reliably be the wrapper. This revised candidate is
+also unaccepted. See the [pilot evidence](handoff-pilot-2026-10-07.md).
+Resolve the packaging failure and remaining host-runtime checks before further
+migration. These observations do not relax the source or acceptance contract.
+
+### Discovery fix, 2026-10-07
+
+Keep the complete original subtree in upstream.zip, with original member
+filenames and bytes. Only the public wrapper remains a discoverable SKILL.md.
+The source record points at the archive; the verifier checks its complete
+member set against independent upstream source. The wrapper reads bundled
+instructions with a local ZIP reader. No network fetch, source rewrite, or
+runtime hook is added. Python and Windows PowerShell readers were tested.
+
+Codex discovery and ten fresh OpenCode copy scans select the wrapper with this
+layout. This resolves the observed discovery blocker. It adds a local ZIP-reader
+requirement; the remaining host-runtime acceptance checks still apply. Loose
+source folders above are retained in this ADR only as the failed pilot history.
+
+The owner subsequently deferred outstanding Claude runtime tests until they
+explicitly report Claude works. The [plan's v1.9 exception](plan_upstream_boundary_refresh.md)
+permits migration to continue while that evidence remains unverified; it does
+not relax source ownership or grant publication authority.

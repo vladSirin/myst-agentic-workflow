@@ -85,6 +85,68 @@ class VerifyUpstreamTests(unittest.TestCase):
         status, output = self.verify('--require-complete')
         self.assertEqual(status, 0, output)
 
+    def package_zip(self, files=None):
+        with zipfile.ZipFile(self.package / 'upstream.zip', 'w') as archive:
+            for name, data in (self.original if files is None else files).items():
+                archive.writestr(name, data)
+        self.record['root'] = 'upstream.zip'
+        self.save_record()
+        (self.package / 'SKILL.md').write_text('Read SKILL.md in [Source](upstream.zip).\n')
+
+    def test_packaged_zip_verifies_original_members_and_loading_link(self):
+        self.package_zip()
+        status, output = self.verify('--require-complete')
+        self.assertEqual(status, 0, output)
+        (self.package / 'SKILL.md').write_text('Missing archive pointer.\n')
+        status, output = self.verify()
+        self.assertEqual(status, 1, output)
+        self.assertIn('entry point must link', output)
+
+    def test_packaged_zip_cannot_hide_changed_missing_or_extra_members(self):
+        cases = [dict(self.original, **{'SKILL.md': b'Changed'}),
+                 {'SKILL.md': self.original['SKILL.md']},
+                 dict(self.original, **{'extra.txt': b'Extra'})]
+        for files in cases:
+            with self.subTest(files=files):
+                self.package_zip(files)
+                status, output = self.verify()
+                self.assertEqual(status, 1, output)
+
+    def test_packaged_zip_rehashed_edit_fails_independent_comparison(self):
+        changed = dict(self.original, **{'SKILL.md': b'Changed'})
+        self.package_zip(changed)
+        self.record['files']['SKILL.md'] = hashlib.sha256(b'Changed').hexdigest()
+        self.save_record()
+        status, output = self.verify()
+        self.assertEqual(status, 1, output)
+        self.assertIn('independently acquired source', output)
+
+    def test_packaged_zip_rejects_unsafe_duplicate_and_link_members(self):
+        self.package_zip()
+        cases = [('escape', '../SKILL.md', b'escape'),
+                 ('duplicate', 'SKILL.md', self.original['SKILL.md']),
+                 ('link', 'link.md', b'SKILL.md')]
+        for kind, name, data in cases:
+            with self.subTest(kind=kind):
+                self.package_zip()
+                with zipfile.ZipFile(self.package / 'upstream.zip', 'a') as archive:
+                    member = zipfile.ZipInfo(name)
+                    if kind == 'link':
+                        member.create_system = 3
+                        member.external_attr = 0o120777 << 16
+                    with self.assertWarns(UserWarning) if kind == 'duplicate' else contextlib.nullcontext():
+                        archive.writestr(member, data)
+                status, output = self.verify()
+                self.assertEqual(status, 1, output)
+                self.assertRegex(output, 'Unsafe relative path|Duplicate packaged member|regular file')
+
+    def test_packaged_zip_rejects_corruption(self):
+        self.package_zip()
+        (self.package / 'upstream.zip').write_bytes(b'not a zip')
+        status, output = self.verify()
+        self.assertEqual(status, 1, output)
+        self.assertIn('zip', output.lower())
+
     def test_changed_source_is_rejected(self):
         (self.raw / 'SKILL.md').write_bytes(b'Locally rewritten source.\n')
         status, output = self.verify()

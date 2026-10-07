@@ -1,6 +1,6 @@
 # Upstream boundary migration inventory
 
-Status: implementation started; skill migration pending.
+Status: handoff verified by owner for continuation; Claude runtime deferred until they report Claude works.
 
 The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance.
 [ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision.
@@ -26,11 +26,13 @@ and commands.
 
 Destination for every retained or added import:
 `plugins/myst-dev-kit/skills/<skill>/`, with local entry/provenance and a complete
-raw source subtree. The proposed nested layout remains subject to the pilot.
+source archive. Handoff uses upstream.zip after visible and hidden loose source
+folders caused discovery collisions. The [pilot report](handoff-pilot-2026-10-07.md)
+records the fix, passed checks, and remaining runtime gates.
 
 | Skill | Source subtree | Required migration | Status |
 | --- | --- | --- | --- |
-| handoff | skills/productivity/handoff | First packaging pilot; refresh temporary-path guidance and metadata | Pending |
+| handoff | skills/productivity/handoff | First packaging pilot; refresh temporary-path guidance and metadata | Source/package checks and Codex/OpenCode runtime passed; OpenCode requires a local invocation rule; Claude runtime deferred by owner, no longer a migration blocker ([evidence](handoff-pilot-2026-10-07.md)) |
 | implement | skills/engineering/implement | Restore source; move publication/tracker routing into local wrapper | Pending |
 | tdd | skills/engineering/tdd | Restore source; retain tracker/glossary compatibility; no speculative question relay | Pending |
 | to-spec | skills/engineering/to-spec | Move tracker lookup out of source | Pending |
@@ -78,7 +80,7 @@ raw source subtree. The proposed nested layout remains subject to the pilot.
 | Owner | Work | Status |
 | --- | --- | --- |
 | Documentation and CI branch selection | Boundary ADR, contribution exception, honest README, inventory, approved plan and copy-cleanup scope | Changeset 0 verified by user on 2026-10-07; local commit 12d7a75 |
-| Repository verifier | Source-record schema and narrow independent integrity checks | Changeset 1 prepared; awaiting user verification |
+| Repository verifier | Source-record schema and narrow independent integrity checks | Changeset 1 verified by user on 2026-10-07; local commit 1a9cabf |
 | agentic-workflow | Shared wrapper routing, tracker pointers, glossary compatibility | Pending |
 | review-and-submit | VCS formatter routing and Review Record retirement; preserve review and authority | Pending |
 | p4-description | New local-origin formatter, credited to pr inspiration; no runtime call to pr | Pending addition |

@@ -29,7 +29,7 @@ Also check personal instruction files (`CLAUDE.local.md`, `~/.claude/CLAUDE.md`)
 
 Two kinds of skill, split by how they start:
 
-- **User-invoked** — inert until you call them: type `/name` in Claude Code, or ask for the skill by name in Codex/OpenCode. The model never fires them on its own (`disable-model-invocation: true` in frontmatter).
+- **User-invoked** — intended to start only on your request. Claude uses `disable-model-invocation: true`; migrated Codex entries also carry native invocation metadata. OpenCode needs a permission rule and an explicit `/name` command; see the [tested handoff setup](docs/handoff-pilot-2026-10-07.md#opencode-invocation-configuration). The frontmatter flag alone does not enforce this in every host.
 - **Model-invoked** — the agent loads them itself whenever the task matches the description. You can also call any of them explicitly; the marker only removes the automatic path, never the manual one.
 
 ### Delivery & publishing
@@ -84,7 +84,7 @@ User-invoked:
 - **[deep-dive](plugins/myst-dev-kit/skills/deep-dive/SKILL.md)** — bring it a decision you keep circling: it steel-mans *both* sides to their strongest versions, surfaces the real crux, asks you one decisive question, and only after your answer gives a verdict with boundary conditions and next actions. For questions still tangled, answers that feel plausible but shaky, or premises you suspect you're not seeing.
 - **[teach](plugins/myst-dev-kit/skills/teach/SKILL.md)** — learn a skill or concept, taught inside this workspace.
 - **[to-questionnaire](plugins/myst-dev-kit/skills/to-questionnaire/SKILL.md)** — turn a decision you can't fully answer into a questionnaire for the person who can.
-- **[handoff](plugins/myst-dev-kit/skills/handoff/SKILL.md)** — compact the current conversation into a handoff document for the next session to pick up.
+- **[handoff](plugins/myst-dev-kit/skills/handoff/SKILL.md)** — compact the conversation into an OS-temporary handoff file. Unchanged upstream files in a ZIP, read through a local entry; [host validation in progress](docs/handoff-pilot-2026-10-07.md).
 - **[wait-what](plugins/myst-dev-kit/skills/wait-what/SKILL.md)** — stop: that last message did not land — re-pitch it.
 
 Imported content comes from [mattpocock/skills](https://github.com/mattpocock/skills)
