@@ -3,36 +3,40 @@ name: tdd
 description: Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions "red-green-refactor", or wants integration tests.
 ---
 
-# Test-Driven Development
+Read [Myst's local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md)
+before the upstream workflow. Apply its project glossary mapping for reads and
+writes, including legacy CONTEXT.md paths, and the project's workflow rules.
 
-TDD is the red → green loop. This skill is the reference that makes that loop produce tests worth keeping: what a good test is, where tests go, the anti-patterns, and the rules of the loop. Every section applies on every cycle: consult them before and during the loop, not after.
+Required Myst dependencies for copy installs: agentic-workflow, codebase-design,
+review-and-submit, and code-review. Use the Myst namespace or the explicit
+sibling entries below when the source reaches those references:
 
-When exploring the codebase, read `CONTEXT.md` (if it exists) so test names and interface vocabulary match the project's domain language, and respect ADRs in the area you're touching.
+- `codebase-design` means Myst [codebase-design](../codebase-design/SKILL.md).
+  Consult its vocabulary when the interface shape is in question.
+- The review-stage `code-review` reference maps to Myst
+  [review-and-submit](../review-and-submit/SKILL.md), whose review engine is
+  [myst-dev-kit:code-review](../code-review/SKILL.md).
 
-## What a good test is
+Read SKILL.md inside the complete [upstream source](upstream.zip), then follow
+it with those local mappings. Read tests.md and mocking.md when the source
+calls for them. Resolve source-relative links inside the archive from the
+referring member's directory; keep the original member names.
 
-Tests verify behavior through public interfaces, not implementation details. Code can change entirely; tests shouldn't. A good test reads like a specification: "user can checkout with valid cart" tells you exactly what capability exists, and it survives refactors because it doesn't care about internal structure.
+Use a local ZIP reader, substituting this entry's directory and the requested
+member (SKILL.md first):
 
-See [tests.md](tests.md) for examples and [mocking.md](mocking.md) for mocking guidelines.
+```text
+python -c "import sys,zipfile; sys.stdout.buffer.write(zipfile.ZipFile(sys.argv[1]).read(sys.argv[2]))" "<skill-directory>/upstream.zip" "SKILL.md"
+```
 
-## Seams: where tests go
+On Windows without Python, set sourceMember to the requested member:
 
-A **seam** is the public boundary you test at: the interface where you observe behavior without reaching inside. Tests live at seams, never against internals.
-
-**Test only at pre-agreed seams.** Before writing any test, write down the seams under test and confirm them with the user. No test is written at an unconfirmed seam. You can't test everything, so agreeing the seams up front is how testing effort lands on the critical paths and complex logic instead of every edge case.
-
-Ask: "What's the public interface, and which seams should we test?"
-
-When the shape of that interface is itself in question (how deep the module is, where the seam belongs, what the interface should expose), call the Skill tool with "codebase-design" for the vocabulary. It is the shared source of the module, interface, depth, seam, adapter, leverage and locality terms, and it is a reference to consult, not a session to run.
-
-## Anti-patterns
-
-- **Implementation-coupled**: mocks internal collaborators, tests private methods, or verifies through a side channel (querying the database instead of using the interface). The tell: the test breaks when you refactor but behavior hasn't changed.
-- **Tautological**: the assertion recomputes the expected value the way the code does (`expect(add(a, b)).toBe(a + b)`, a snapshot derived by hand the same way, a constant asserted equal to itself), so it passes by construction and can never disagree with the code. Expected values must come from an independent source of truth: a known-good literal, a worked example, the spec.
-- **Horizontal slicing**: writing all tests first, then all implementation. Bulk tests verify _imagined_ behavior: you test the _shape_ of things rather than user-facing behavior, the tests go insensitive to real changes, and you commit to test structure before understanding the implementation. Work in **vertical slices** instead: one test → one implementation → repeat, each test a **tracer bullet** that responds to what the last cycle taught you.
-
-## Rules of the loop
-
-- **Red before green.** Write the failing test first, then only enough code to pass it. Don't anticipate future tests or add speculative features.
-- **One slice at a time.** One seam, one test, one minimal implementation per cycle.
-- **Refactoring is not part of the loop.** It belongs to the review stage (see the `review-and-submit` skill), not the red → green implementation cycle.
+```powershell
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$sourceMember = 'SKILL.md'
+$sourceZip = [IO.Compression.ZipFile]::OpenRead('<skill-directory>/upstream.zip')
+try {
+    $sourceReader = [IO.StreamReader]::new($sourceZip.GetEntry($sourceMember).Open())
+    try { $sourceReader.ReadToEnd() } finally { $sourceReader.Dispose() }
+} finally { $sourceZip.Dispose() }
+```

@@ -35,7 +35,7 @@ records the fix, passed checks, and remaining runtime gates.
 | --- | --- | --- | --- |
 | handoff | skills/productivity/handoff | First packaging pilot; refresh temporary-path guidance and metadata | Source/package checks and Codex/OpenCode runtime passed; OpenCode requires a local invocation rule; Claude runtime deferred by owner, no longer a migration blocker ([evidence](handoff-pilot-2026-10-07.md)) |
 | implement | skills/engineering/implement | Restore source; move publication/tracker routing into local wrapper | Changeset 4 verified by owner on 2026-10-07; local commit 0a38ca7 ([evidence](implement-wrapper-2026-10-07.md)) |
-| tdd | skills/engineering/tdd | Restore source; retain tracker/glossary compatibility; no speculative question relay | Pending |
+| tdd | skills/engineering/tdd | Restore source; retain tracker/glossary compatibility; no speculative question relay | Changeset 7 implemented; source, discovery, and bounded runtime checks complete; awaiting owner verification ([evidence](tdd-wrapper-2026-10-08.md)) |
 | to-spec | skills/engineering/to-spec | Move tracker lookup out of source | Pending |
 | to-tickets | skills/engineering/to-tickets | Restore source; local tracker lookup; refresh ticket relationships | Pending |
 | triage | skills/engineering/triage | Restore source; local tracker/glossary mapping | Pending |
@@ -43,7 +43,7 @@ records the fix, passed checks, and remaining runtime gates.
 | domain-modeling | skills/engineering/domain-modeling | Complete companions including upstream glossary format; local path mapping | Pending |
 | diagnosing-bugs | skills/engineering/diagnosing-bugs | Refresh source; local glossary mapping | Pending |
 | improve-codebase-architecture | skills/engineering/improve-codebase-architecture | Refresh source; local glossary mapping | Pending |
-| codebase-design | skills/engineering/codebase-design | Refresh DESIGN-IT-TWICE companion; local glossary mapping | Changeset 6 implemented; source/loading checks complete; runtime presentation limits recorded; awaiting owner verification ([evidence](codebase-design-wrapper-2026-10-07.md)) |
+| codebase-design | skills/engineering/codebase-design | Refresh DESIGN-IT-TWICE companion; local glossary mapping | Changeset 6 verified by owner on 2026-10-08 with runtime limits discussed; local commit de12d6a ([evidence](codebase-design-wrapper-2026-10-07.md)) |
 | wait-what | skills/productivity/wait-what | Refresh source; local glossary mapping | Pending |
 | code-review | skills/engineering/code-review | Preserve complete source and metadata; keep namespaced Myst routing | Pending |
 | grill-with-docs | skills/engineering/grill-with-docs | Complete source bundle, metadata, provenance, and loading proof | Pending |

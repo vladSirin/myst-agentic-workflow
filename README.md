@@ -56,7 +56,7 @@ User-invoked:
 
 Model-invoked:
 
-- **[tdd](plugins/myst-dev-kit/skills/tdd/SKILL.md)** — test-driven development: red-green-refactor, features and bug fixes built test-first.
+- **[tdd](plugins/myst-dev-kit/skills/tdd/SKILL.md)** — test-first development through unchanged upstream seam confirmation and red-green cycles, with local glossary and review routing. Copy installs also need agentic-workflow, codebase-design, review-and-submit, and code-review ([migration evidence](docs/tdd-wrapper-2026-10-08.md)).
 - **[diagnosing-bugs](plugins/myst-dev-kit/skills/diagnosing-bugs/SKILL.md)** — a diagnosis loop for hard bugs and performance regressions.
 - **[design](plugins/myst-dev-kit/skills/design/SKILL.md)** — design and plan documents: correct name, correct location, standard template, WIP-to-final lifecycle.
 - **[prototype](plugins/myst-dev-kit/skills/prototype/SKILL.md)** — build a throwaway prototype to answer a design question before committing to it.

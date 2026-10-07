@@ -1,8 +1,7 @@
 # Changeset 6: Restore codebase-design and companion loading
 
 Type: task
-Status: resolved
-Outstanding: Owner verifies Changeset 6, including its recorded runtime limits, before the next skill migration.
+Status: closed
 Spec: [approved plan](../../../docs/plan_upstream_boundary_refresh.md)
 
 ## Scope
@@ -34,3 +33,7 @@ passed. A direct control and two wrapped design samples exercised the workflow.
 The evidence report records the first wrapped presentation omission and the
 unchanged repeat, which included all alternatives. Exact method/output
 compliance is not claimed. Independent review is recorded in that report.
+
+Owner verification: "Ok if so, carry on" on 2026-10-08, after local commit
+de12d6a and discussion of invocation, presentation limits, and the similarity
+of the design alternatives. This permits the next changeset, not publication.
