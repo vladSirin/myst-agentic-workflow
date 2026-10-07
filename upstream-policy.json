@@ -7,7 +7,6 @@
   ],
   "pendingImports": [
     "code-review",
-    "codebase-design",
     "diagnosing-bugs",
     "domain-modeling",
     "grill-me",

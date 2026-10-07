@@ -1,8 +1,7 @@
 # Changeset 5: Restore deep-dive with local invocation metadata
 
 Type: task
-Status: resolved
-Outstanding: Owner verifies Changeset 5 in chat before the next skill migration.
+Status: closed
 Spec: [approved plan, Hammer](../../../docs/plan_upstream_boundary_refresh.md#hammer)
 
 ## Scope
@@ -33,3 +32,6 @@ notification. No publication is authorized.
 old/new source equality, complete-archive verification, adjacent README
 inspection, local discovery, first-step comparison, and a second-step check.
 Repository checks passed. Independent review is recorded in that report.
+
+Owner verification: "Good continue" on 2026-10-07, after local commit 58509c2.
+This permits the next changeset; it does not authorize publication.

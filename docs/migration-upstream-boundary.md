@@ -43,7 +43,7 @@ records the fix, passed checks, and remaining runtime gates.
 | domain-modeling | skills/engineering/domain-modeling | Complete companions including upstream glossary format; local path mapping | Pending |
 | diagnosing-bugs | skills/engineering/diagnosing-bugs | Refresh source; local glossary mapping | Pending |
 | improve-codebase-architecture | skills/engineering/improve-codebase-architecture | Refresh source; local glossary mapping | Pending |
-| codebase-design | skills/engineering/codebase-design | Refresh DESIGN-IT-TWICE companion; local glossary mapping | Pending |
+| codebase-design | skills/engineering/codebase-design | Refresh DESIGN-IT-TWICE companion; local glossary mapping | Changeset 6 implemented; source/loading checks complete; runtime presentation limits recorded; awaiting owner verification ([evidence](codebase-design-wrapper-2026-10-07.md)) |
 | wait-what | skills/productivity/wait-what | Refresh source; local glossary mapping | Pending |
 | code-review | skills/engineering/code-review | Preserve complete source and metadata; keep namespaced Myst routing | Pending |
 | grill-with-docs | skills/engineering/grill-with-docs | Complete source bundle, metadata, provenance, and loading proof | Pending |
@@ -55,7 +55,7 @@ records the fix, passed checks, and remaining runtime gates.
 | teach | skills/productivity/teach | Complete source bundle, metadata, provenance, and loading proof | Pending |
 | to-questionnaire | skills/productivity/to-questionnaire | Complete source bundle, metadata, provenance, and loading proof | Pending |
 | writing-for-agents | skills/productivity/writing-for-agents | Complete source bundle, metadata, provenance, and loading proof | Pending |
-| deep-dive | Hammer: deep-dive | Preserve original Chinese frontmatter; English local trigger and user-only invocation | Changeset 5 implemented; source, Codex discovery, and method checks complete; awaiting owner verification ([evidence](deep-dive-wrapper-2026-10-07.md)) |
+| deep-dive | Hammer: deep-dive | Preserve original Chinese frontmatter; English local trigger and user-only invocation | Changeset 5 verified by owner on 2026-10-07; local commit 58509c2 ([evidence](deep-dive-wrapper-2026-10-07.md)) |
 | roundtable | Hammer: roundtable | Preserve original Chinese frontmatter; local discovery metadata; method behavior checks | Pending |
 | pr | skills/engineering/pr | Add unchanged source and credits; Git-only wrapper and concise actual review evidence | Pending addition |
 | implement-spec | skills/engineering/implement-spec | Add unchanged source; Git-only entry and bounded pilot; no speculative orchestration | Pending addition |
