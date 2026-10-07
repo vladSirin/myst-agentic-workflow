@@ -2,23 +2,27 @@
 
 The upstream method is from [Matt Pocock's skills](https://github.com/mattpocock/skills).
 [UPSTREAM.json](UPSTREAM.json) records the exact revision, complete subtree,
-original file hashes, and required local skill dependencies.
+original file hashes, packaged filename mapping, and required local dependencies.
 
-upstream.zip preserves SKILL.md, both companions, and agents/openai.yaml
-byte-for-byte. Myst owns the public SKILL.md, public agents/openai.yaml,
+The references/upstream directory preserves all four source files byte-for-byte.
+The original SKILL.md is packaged as UPSTREAM.md; both companions and
+agents/openai.yaml retain their names and relative layout. Myst owns the
+public SKILL.md, public agents/openai.yaml,
 source record, and this provenance note. The public entry retains the existing
 name, trigger, and automatic invocation; the public host metadata matches the
-archived upstream metadata.
+preserved upstream metadata.
 
 The local entry loads agentic-workflow's shared contract to map upstream domain
 vocabulary references to the project's selected files. It also explains how to
-read the archived source and its relative companion links. Copy installs need
+read the plain source and map companion back-links from SKILL.md to UPSTREAM.md.
+Literal back-links remain unresolved in a normal Markdown viewer. Copy installs need
 the declared sibling dependency. The architecture method, parallel design
 briefs, and comparison steps remain in the upstream source.
 
-The original loose companions now live inside the complete source archive.
-Source equality does not prove runtime behavior; the repository's codebase-design
-migration report records loading and bounded design-workflow evidence separately.
+Source equality does not prove runtime behavior. The repository's plain-source
+pilot report records Codex/OpenCode loading and bounded workflow evidence;
+Claude runtime remains deferred. No upstream method or source pin changed in
+the plain-file conversion.
 
 ## Upstream MIT notice
 

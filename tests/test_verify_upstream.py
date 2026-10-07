@@ -201,7 +201,7 @@ class VerifyUpstreamTests(unittest.TestCase):
         self.assertIn('dependency', output)
 
     def test_record_rejects_unknown_version_mutable_pin_and_escaping_root(self):
-        for field, value in [('schemaVersion', 2), ('root', '../outside'), ('extra', True)]:
+        for field, value in [('schemaVersion', 3), ('root', '../outside'), ('extra', True)]:
             with self.subTest(field=field):
                 original = dict(self.record)
                 self.record[field] = value
@@ -227,6 +227,102 @@ class VerifyUpstreamTests(unittest.TestCase):
         status, output = self.verify('--require-complete')
         self.assertEqual(status, 1, output)
         self.assertIn('Migration debt', output)
+
+    def package_mapped(self):
+        (self.raw / 'SKILL.md').rename(self.raw / 'UPSTREAM.md')
+        self.record.update(schemaVersion=2, pathMap={'SKILL.md': 'UPSTREAM.md'})
+        self.save_record()
+        (self.package / 'SKILL.md').write_text('[Source](upstream/UPSTREAM.md)\n')
+
+    def test_mapped_directory_preserves_original_inventory(self):
+        self.package_mapped()
+        status, output = self.verify('--require-complete')
+        self.assertEqual(status, 0, output)
+        self.assertEqual((self.raw / 'UPSTREAM.md').read_bytes(), self.original['SKILL.md'])
+        (self.package / 'SKILL.md').write_text('[Companion](upstream/companion.md)\n')
+        status, output = self.verify()
+        self.assertEqual(status, 1, output)
+        self.assertIn('entry point must link', output)
+
+    def test_mapped_directory_rejects_changed_missing_extra_and_rehashed_source(self):
+        self.package_mapped()
+        entry = self.raw / 'UPSTREAM.md'
+        entry.write_bytes(b'changed')
+        status, output = self.verify()
+        self.assertEqual(status, 1, output)
+        self.assertIn('recorded hash', output)
+        self.record['files']['SKILL.md'] = hashlib.sha256(b'changed').hexdigest()
+        self.save_record()
+        status, output = self.verify()
+        self.assertEqual(status, 1, output)
+        self.assertIn('independently acquired source', output)
+        entry.unlink()
+        status, output = self.verify()
+        self.assertEqual(status, 1, output)
+        self.assertIn('inventory', output)
+        entry.write_bytes(self.original['SKILL.md'])
+        (self.raw / 'SKILL.md').write_bytes(self.original['SKILL.md'])
+        status, output = self.verify()
+        self.assertEqual(status, 1, output)
+        self.assertIn('inventory', output)
+
+    def test_mapped_directory_cannot_omit_a_companion_from_both_record_and_package(self):
+        self.package_mapped()
+        (self.raw / 'companion.md').unlink()
+        del self.record['files']['companion.md']
+        self.save_record()
+        status, output = self.verify()
+        self.assertEqual(status, 1, output)
+        self.assertIn('pinned source inventory', output)
+
+    def test_mapping_rejects_missing_unsafe_or_unapproved_renames(self):
+        self.package_mapped()
+        for mapping in [None, {}, {'SKILL.md': '../UPSTREAM.md'},
+                        {'SKILL.md': 'C:/UPSTREAM.md'}, {'SKILL.md': 'companion.md'},
+                        {'SKILL.md': 'UPSTREAM.md', 'companion.md': 'elsewhere.md'}]:
+            with self.subTest(mapping=mapping):
+                self.record['pathMap'] = mapping
+                self.save_record()
+                status, output = self.verify()
+                self.assertEqual(status, 1, output)
+                self.assertIn('pathMap', output)
+        del self.record['pathMap']
+        self.save_record()
+        status, output = self.verify()
+        self.assertEqual(status, 1, output)
+        self.assertIn('missing or unknown fields', output)
+
+    def test_mapping_rejects_collision_with_unmapped_source_path(self):
+        self.package_mapped()
+        for name in ['UPSTREAM.md', 'upstream.md']:
+            with self.subTest(name=name):
+                self.record['files'][name] = hashlib.sha256(b'other source').hexdigest()
+                self.save_record()
+                status, output = self.verify()
+                self.assertEqual(status, 1, output)
+                self.assertIn('Case-colliding packaged paths', output)
+                del self.record['files'][name]
+
+    def test_mapping_rejects_nested_discovery_entry(self):
+        self.package_mapped()
+        self.record['files']['nested/SKILL.md'] = self.record['files']['SKILL.md']
+        self.save_record()
+        status, output = self.verify()
+        self.assertEqual(status, 1, output)
+        self.assertIn('discoverable SKILL.md', output)
+
+    def test_mapping_is_not_accepted_in_version_one_or_zip_packages(self):
+        self.package_mapped()
+        self.record['schemaVersion'] = 1
+        self.save_record()
+        status, output = self.verify()
+        self.assertEqual(status, 1, output)
+        self.assertIn('missing or unknown fields', output)
+        self.record['schemaVersion'] = 2
+        self.package_zip()
+        status, output = self.verify()
+        self.assertEqual(status, 1, output)
+        self.assertIn('mapped source must be a directory', output)
 
     def archive_fixture(self):
         buffer = io.BytesIO()

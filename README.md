@@ -60,7 +60,7 @@ Model-invoked:
 - **[diagnosing-bugs](plugins/myst-dev-kit/skills/diagnosing-bugs/SKILL.md)** — a diagnosis loop for hard bugs and performance regressions.
 - **[design](plugins/myst-dev-kit/skills/design/SKILL.md)** — design and plan documents: correct name, correct location, standard template, WIP-to-final lifecycle.
 - **[prototype](plugins/myst-dev-kit/skills/prototype/SKILL.md)** — build a throwaway prototype to answer a design question before committing to it.
-- **[codebase-design](plugins/myst-dev-kit/skills/codebase-design/SKILL.md)** — the deep-module vocabulary: interface design, seam placement, testability, AI-navigability. Complete upstream source and companions stay unchanged; the local wrapper maps project glossary paths. Copy installs also need `agentic-workflow` ([migration evidence](docs/codebase-design-wrapper-2026-10-07.md)).
+- **[codebase-design](plugins/myst-dev-kit/skills/codebase-design/SKILL.md)** — the deep-module vocabulary: interface design, seam placement, testability, AI-navigability. Upstream bytes stay unchanged in plain references; the entry is packaged as UPSTREAM.md. The local wrapper maps project glossary paths. Copy installs also need `agentic-workflow` ([packaging evidence](docs/plain-source-pilot-2026-10-08.md)).
 - **[domain-modeling](plugins/myst-dev-kit/skills/domain-modeling/SKILL.md)** — build and sharpen the project's domain model: terminology, CONTEXT.md, ADRs.
 - **[research](plugins/myst-dev-kit/skills/research/SKILL.md)** — investigate a question against high-trust primary sources; findings land as a Markdown file in the repo.
 - **[wizard](plugins/myst-dev-kit/skills/wizard/SKILL.md)** — generate an interactive bash wizard for steps only a human can perform: credentials, dashboards, one-off cutovers.
@@ -99,6 +99,8 @@ adaptations, intentionally omitted upstream metadata, and local Hammer
 frontmatter. The approved target is complete unchanged source bundles with
 separate Myst entry points. That source guarantee does not imply identical
 runtime behavior: the local entries own Myst integration. The
+[plain-reference packaging decision](docs/adr-0009-plain-upstream-references.md)
+permits one entry filename mapping while preserving every upstream byte. The
 [migration inventory](docs/migration-upstream-boundary.md) tracks each skill and
 its acceptance evidence. The catalog above describes the current package;
 planned additions and removals are not yet shipped.

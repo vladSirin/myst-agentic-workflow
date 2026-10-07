@@ -1,8 +1,16 @@
 # Upstream Boundary and Skill Refresh Plan
 
-**Version**: v1.9 | **Updated**: 2026-10-07
+**Version**: v2.0 | **Updated**: 2026-10-08
 **Reference**: ADR-0002, ADR-0006, ADR-0007; upstream research notes below
 **Status**: APPROVED for implementation, changeset by changeset. Publication remains separately gated.
+
+**Accepted packaging amendment, 2026-10-08:** the owner authorized production
+implementation after the disposable pilot. [ADR-0009](adr-0009-plain-upstream-references.md)
+supersedes the ZIP default and permits only the root entry filename mapping.
+Existing ZIP packages remain valid until their individual conversions. The
+[pilot report](plain-source-pilot-2026-10-08.md)
+records passing Codex runtime/install checks and OpenCode discovery/runtime,
+with answer-quality limits recorded separately and Claude deferred.
 
 ## Change Log
 
@@ -18,6 +26,8 @@
 | v1.7 | 2026-10-07 | Record visible-folder duplicate discovery and the .upstream trial. Codex passes, but repeated OpenCode scans can bypass the wrapper; packaging and further migration remain blocked. |
 | v1.8 | 2026-10-07 | Resolve discovery collisions by storing the complete original subtree in a ZIP. Verify member bytes independently and read locally through the wrapper. Discovery fix passes; full host-runtime acceptance remains pending. |
 | v1.9 | 2026-10-07 | Owner deferred outstanding Claude runtime tests until they explicitly report Claude works. These tests no longer block changeset acceptance or further migration; keep their results unverified. |
+| Draft amendment | 2026-10-08 | Research plain reference-file packaging with a narrow filename exception. Proposal and disposable discovery check only; no production skill changes. |
+| v2.0 | 2026-10-08 | Owner approved production implementation after Codex/OpenCode tests. Adopt ADR-0009, version 2 source records, and codebase-design as the first conversion. Retain per-skill gates. |
 
 ## Overview
 
@@ -85,7 +95,8 @@ Sources: [Matt assessment](research-matt-pocock-updates-2026-10-06.md),
 ### 1. Preserve source files, not only their main prose
 
 Intact means the full upstream file: frontmatter, body, filenames, companion
-files, and internal directory structure. No English rewrites, footer injection,
+files, and internal directory structure, with only ADR-0009's packaged root
+SKILL.md to UPSTREAM.md exception. No English rewrites, footer injection,
 reference remaps, or invocation flags inside the source copy. Preserve source
 bytes through checkout with narrowly scoped Git attributes if required. Scope
 that rule to imported files; do not renormalize the rest of the repository.
@@ -140,7 +151,11 @@ Use the same public skill names where possible. Keep local-origin skills such
 as agentic-workflow, review-and-submit, changelist-verification, and design
 local; they do not need artificial upstream source folders.
 
-### Proposed self-contained package layout
+### Earlier ZIP layout, retained for unconverted packages
+
+The accepted [plain-reference layout](#recommended-layout-and-boundary) below
+supersedes this default for reviewed conversions. This section preserves the
+earlier discovery findings and explains the remaining ZIP packages.
 
 ```text
 plugins/myst-dev-kit/skills/<public-name>/
@@ -688,3 +703,146 @@ change is included. New optional skills are not exit criteria.
 At the end of the pilot, capture a short handoff with the chosen layout, source
 pins, actual runtime evidence, open failures, and remaining inventory rows.
 That is the useful checkpoint before distributing the per-skill migration work.
+
+## Accepted packaging amendment — 2026-10-08
+
+**Status: Approved for production implementation, one skill at a time.**
+ADR-0009 records the narrow filename exception. The first conversion is
+codebase-design; the remaining ZIP packages stay in place until separately
+verified. Source pins, upstream behavior, and local routing policy do not change.
+
+### Problem and evidence
+
+The ZIP solved a demonstrated discovery collision: some hosts treated the
+wrapper and its nested original `SKILL.md` as separate skills. But it adds a
+custom archive-reading step to normal skill use and makes source review harder.
+That is an avoidable maintenance cost, not proof that ZIP execution is broken.
+
+The [Agent Skills specification](https://agentskills.io/specification) and sampled
+Anthropic, OpenAI, Superpowers, Vercel, and Matt Pocock repositories use readable
+skill instructions with linked support files. Archives used to distribute a
+package are distinct from an archive that the model must read during execution.
+The sample supports plain files as the common pattern; it is not a statistical
+survey of every repository. See the [research report](research-skill-packaging-2026-10-08.md)
+for primary sources, host versions, and discovery limits.
+
+### Recommended layout and boundary
+
+Keep one public `SKILL.md` wrapper and store the original upstream entry as
+ordinary reference Markdown. Rename the packaged entry only; preserve its bytes.
+
+```text
+skills/codebase-design/
+  SKILL.md                         # Myst entry, routing, and direct source links
+  agents/openai.yaml               # Myst invocation metadata
+  UPSTREAM.json                    # Source revision, original paths, hashes, mapping
+  PROVENANCE.md
+  references/upstream/
+    UPSTREAM.md                    # Original SKILL.md bytes, including frontmatter
+    DEEPENING.md                    # Original bytes and filename
+    DESIGN-IT-TWICE.md              # Original bytes and filename
+    agents/openai.yaml             # Original upstream metadata
+```
+
+This uses the standard reference-file mechanism. The vendoring filename and
+path map are Myst conventions, not an official cross-host packaging standard.
+Register the public skill directory, never the upstream reference directory.
+
+The proposed source contract is:
+
+1. Preserve every upstream file's bytes, including frontmatter, companion files,
+   and any source license files. Preserve required attribution and license notices.
+2. Record the immutable source revision and complete original file inventory.
+   Map original `SKILL.md` to packaged `UPSTREAM.md` explicitly in `UPSTREAM.json`.
+   Retain other names and relative layout under the reference root.
+3. Extend the existing verifier with a small, versioned path-map field. Compare
+   packaged bytes to original source hashes through this map. Reject missing or
+   extra files, unsafe paths, mapping collisions, and unexpected byte changes.
+   The agent does not need to parse this manifest during normal execution.
+4. Keep Myst policy in the wrapper and shared integration contract. Link the
+   source entry and important companions directly from the wrapper. Do not add
+   local instructions to upstream files or merge the two instruction bodies.
+
+This is a filename-preservation exception. It must not be described as preserving
+the complete original filesystem layout. ADR-0009 explicitly supersedes only the
+relevant packaging and filename clauses of ADR-0008.
+
+### Relative links and limits
+
+The codebase-design companions link back to `SKILL.md`. The wrapper must state:
+resolve upstream-relative links from `references/upstream/`, and map a reference
+to the original entry `SKILL.md` to `UPSTREAM.md`. Other companion links retain
+their existing relative paths. A normal Markdown viewer will not apply this
+mapping, so the original back-links remain broken in that viewer. Do not add a
+`SKILL.md` alias or symlink; that can reintroduce discovery collisions.
+
+Audit each skill for scripts or tools that require a physical file named
+`SKILL.md`, nested skill entries, or links that leave its source subtree. Agent
+instructions cannot fix a script's filesystem dependency. Stop that conversion
+if one exists; keep its current package until a concrete solution is reviewed.
+Do not prebuild a general-purpose virtual filesystem or rendering pipeline.
+
+### Costs and alternatives
+
+| Choice | Benefit | Cost or limitation | Recommendation |
+| --- | --- | --- | --- |
+| Plain references with an explicit entry rename | Ordinary file reads; visible source diffs; self-contained copy installs | Filename exception and back-link mapping | Pilot this first |
+| Current runtime ZIP | Original names and layout inside the archive; tested discovery isolation | Archive reader instructions and commands; less direct source review | Keep until the replacement passes |
+| Exact source outside the installed skills tree | Preserves names and avoids the ordinary discovery root | Per-skill copy installs omit sibling source directories; needs another distribution rule | Do not add a custom installer for this |
+| Hidden directory or host-specific disable rules | Can retain the original entry name | Hidden-directory trial already failed OpenCode; no portable exclusion rule found | Reject as the shared default |
+| Generated combined entry | Can reduce runtime reads | Adds source/render maintenance and changes the distributed representation | Avoid the machinery retired by ADR-0007 |
+
+Plain references remove the archive-reading step. The wrapper, shared contract,
+and original instructions still need to be read. Do not promise zero extra tool
+calls, a measured token reduction, or identical model outputs. The public name
+and invocation metadata stay on the wrapper, so explicit and automatic selection
+remain intended behavior; verify both through the supported hosts.
+
+### Evidence so far
+
+On 2026-10-08, a disposable codebase-design package preserved all four original
+members by hash, with only the entry filename mapped. Fresh Codex 0.160.1
+`skills/list` returned one candidate entry at the public wrapper. Debug prompt
+inspection included that wrapper in the available-skills catalog. This was a
+discovery-only check; it made no model request and proves no runtime behavior.
+
+The fixture is local evidence, not a shipped package:
+`%TEMP%/myst-plain-source-proposal-20261008/`. The loader source findings in the
+research report support the design but do not replace installed-host tests.
+
+The later owner-authorized [runtime and installation pilot](plain-source-pilot-2026-10-08.md)
+passed source integrity, copy/plugin installation, Codex explicit and automatic
+use, companion/back-link loading, missing-dependency handling, conflicting-domain
+handling, and copy upgrade/rollback. A full three-agent design exercise passed
+in a normal fresh Codex session after ephemeral mode failed to start an agent.
+OpenCode discovery passed three fresh scans; its owner-approved DeepSeek runtime
+passed source/companion loading and local vocabulary mapping, with minor answer
+defects recorded in the report. Claude runtime remains deferred. These tests
+support the conversion; production implementation evidence follows in that report.
+
+### Implementation and acceptance
+
+1. Record the accepted filename exception, then extend the existing verifier.
+   Check unchanged bytes and complete source inventory, plus meaningful failure
+   cases for a bad map, duplicate destination, missing member, and changed bytes.
+2. Convert codebase-design alone as the pilot. It exercises companion files and
+   back-links. Keep source pins and local behavior unchanged. Review the complete
+   package, wrapper links, provenance, and catalog changes as one changeset.
+3. Test normal per-skill copy installation and plugin installation in disposable
+   fixtures. Confirm exactly one entry per candidate skill in Codex and OpenCode,
+   with the intended public name and explicit/automatic invocation metadata.
+   Test runtime source and companion reads, back-link mapping, dependency routing,
+   and the required local glossary decision before any dependent work proceeds.
+4. Test upgrade and rollback, including stale archive/reference cleanup. Confirm
+   the installed package remains self-contained after copying. Use the approved
+   ownership checks; do not remove unrelated or personal installed files.
+5. Retain the owner's Claude runtime deferral until they report Claude works.
+   Record static/install evidence separately; do not label Claude runtime passed.
+6. After pilot verification, convert the other migrated skills one changeset at
+   a time, then use the accepted layout for remaining imports. A behavior failure
+   blocks that skill's conversion; it does not justify edits to upstream content.
+
+Rollback restores the complete earlier package, wrapper, manifest, and provenance
+together. Keep the ZIP layout available through Git history until the pilot is
+accepted. This proposal does not authorize consumer edits, publication, or a new
+source-version update. The pending TDD owner verification remains separate.

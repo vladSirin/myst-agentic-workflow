@@ -1,15 +1,19 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Myst UPSTREAM.json version 1",
+  "title": "Myst UPSTREAM.json versions 1 and 2",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "provider", "root", "source", "files", "dependencies"],
   "properties": {
-    "schemaVersion": {"const": 1},
+    "schemaVersion": {"type": "integer", "enum": [1, 2]},
     "provider": {"enum": ["git", "github-release-zip"]},
     "root": {
       "$ref": "#/$defs/path",
-      "description": "Relative source directory or ZIP file. ZIP member paths start at the original skill root."
+      "description": "Relative source directory or ZIP file for version 1; directory only for version 2."
+    },
+    "pathMap": {
+      "const": {"SKILL.md": "UPSTREAM.md"},
+      "description": "Version 2 only: the sole approved packaged filename exception. Inventory keys remain original paths."
     },
     "source": {"type": "object"},
     "files": {
@@ -25,6 +29,11 @@
     }
   },
   "allOf": [
+    {
+      "if": {"properties": {"schemaVersion": {"const": 1}}},
+      "then": {"not": {"required": ["pathMap"]}},
+      "else": {"required": ["pathMap"]}
+    },
     {
       "if": {"properties": {"provider": {"const": "git"}}},
       "then": {

@@ -51,11 +51,16 @@ def skill_names(value):
 
 
 def validate_record(record):
-    require(isinstance(record, dict) and set(record) == {
-        'schemaVersion', 'provider', 'root', 'source', 'files', 'dependencies'},
-        'Source record has missing or unknown fields')
-    require(type(record['schemaVersion']) is int and record['schemaVersion'] == 1,
+    require(isinstance(record, dict), 'Source record must be an object')
+    version = record.get('schemaVersion')
+    require(type(version) is int and version in (1, 2),
             'Unsupported source-record schemaVersion')
+    fields = {'schemaVersion', 'provider', 'root', 'source', 'files', 'dependencies'}
+    require(set(record) == fields | ({'pathMap'} if version == 2 else set()),
+            'Source record has missing or unknown fields')
+    if version == 2:
+        require(record['pathMap'] == {'SKILL.md': 'UPSTREAM.md'},
+                'Version 2 pathMap must map only SKILL.md to UPSTREAM.md')
     relative_path(record['root'])
     skill_names(record['dependencies'])
     source = record['source']
@@ -84,6 +89,12 @@ def validate_record(record):
     for path, digest in files.items():
         relative_path(path)
         require(isinstance(digest, str) and re.fullmatch(HASH, digest), f'Invalid SHA-256: {path}')
+    if version == 2:
+        mapped = [record['pathMap'].get(path, path) for path in files]
+        require(len({path.casefold() for path in mapped}) == len(mapped),
+                'Case-colliding packaged paths after mapping')
+        require(not any(PurePosixPath(path).name.casefold() == 'skill.md' for path in mapped),
+                'Mapped source contains another discoverable SKILL.md; review packaging separately')
 
 
 def regular_tree(directory):
@@ -246,17 +257,21 @@ def verify(root, require_complete):
             raw_root = package / relative_path(record['root'])
             expected = record['files']
             require(raw_root.resolve().is_relative_to(package.resolve()), f'{name}: source root escapes package')
+            if record['schemaVersion'] == 2:
+                require(raw_root.is_dir(), f'{name}: mapped source must be a directory')
+            paths = {path: record.get('pathMap', {}).get(path, path) for path in expected}
             actual = packaged_source(raw_root)
-            require(set(actual) == set(expected), f'{name}: imported file inventory differs')
-            loading_target = raw_root / 'SKILL.md' if raw_root.is_dir() else raw_root
+            require(set(actual) == set(paths.values()), f'{name}: imported file inventory differs')
+            loading_target = raw_root / paths['SKILL.md'] if raw_root.is_dir() else raw_root
             require(loading_target.resolve() in local_links(package / 'SKILL.md', root),
-                    f'{name}: entry point must link to raw SKILL.md or its source ZIP')
+                    f'{name}: entry point must link to the packaged upstream entry or its source ZIP')
             require(record_file.resolve() in local_links(package / 'PROVENANCE.md', root),
                     f'{name}: provenance must link to UPSTREAM.json')
             for dependency in record['dependencies']:
                 require(dependency != name and (skills / dependency / 'SKILL.md').is_file(),
                         f'{name}: missing or self-referencing dependency {dependency}')
-            for path, data in actual.items():
+            for path, packaged_path in paths.items():
+                data = actual[packaged_path]
                 require(hashlib.sha256(data).hexdigest() == expected[path],
                         f'{name}/{path}: imported bytes differ from recorded hash')
             original = sources.files(record)

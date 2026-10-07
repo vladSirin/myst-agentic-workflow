@@ -3,7 +3,9 @@
 Status: handoff verified by owner for continuation; Claude runtime deferred until they report Claude works.
 
 The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance.
-[ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision.
+[ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision;
+[ADR-0009](adr-0009-plain-upstream-references.md) amends the packaging and root
+entry filename rule.
 This inventory owns migration status. A pending row is not a source-integrity
 or runtime-pass claim. Add actual changeset and evidence references as work lands.
 The [verifier policy](../upstream-policy.json) lists machine-checked local skills
@@ -27,9 +29,10 @@ and commands.
 
 Destination for every retained or added import:
 `plugins/myst-dev-kit/skills/<skill>/`, with local entry/provenance and a complete
-source archive. Handoff uses upstream.zip after visible and hidden loose source
-folders caused discovery collisions. The [pilot report](handoff-pilot-2026-10-07.md)
-records the fix, passed checks, and remaining runtime gates.
+source bundle. Codebase-design now uses plain references with the single mapped
+entry filename. The four other migrated imports retain upstream.zip until their
+separate conversions. The [plain-source pilot](plain-source-pilot-2026-10-08.md)
+records the accepted replacement for the earlier ZIP workaround.
 
 | Skill | Source subtree | Required migration | Status |
 | --- | --- | --- | --- |
@@ -43,7 +46,7 @@ records the fix, passed checks, and remaining runtime gates.
 | domain-modeling | skills/engineering/domain-modeling | Complete companions including upstream glossary format; local path mapping | Pending |
 | diagnosing-bugs | skills/engineering/diagnosing-bugs | Refresh source; local glossary mapping | Pending |
 | improve-codebase-architecture | skills/engineering/improve-codebase-architecture | Refresh source; local glossary mapping | Pending |
-| codebase-design | skills/engineering/codebase-design | Refresh DESIGN-IT-TWICE companion; local glossary mapping | Changeset 6 verified by owner on 2026-10-08 with runtime limits discussed; local commit de12d6a ([evidence](codebase-design-wrapper-2026-10-07.md)) |
+| codebase-design | skills/engineering/codebase-design | Refresh DESIGN-IT-TWICE companion; local glossary mapping | Changeset 6 previously verified (de12d6a). Plain-reference conversion and verifier mapping passed production checks and Standards/Spec reviews; awaiting owner verification ([evidence](plain-source-pilot-2026-10-08.md)) |
 | wait-what | skills/productivity/wait-what | Refresh source; local glossary mapping | Pending |
 | code-review | skills/engineering/code-review | Preserve complete source and metadata; keep namespaced Myst routing | Pending |
 | grill-with-docs | skills/engineering/grill-with-docs | Complete source bundle, metadata, provenance, and loading proof | Pending |
@@ -82,6 +85,7 @@ records the fix, passed checks, and remaining runtime gates.
 | --- | --- | --- |
 | Documentation and CI branch selection | Boundary ADR, contribution exception, honest README, inventory, approved plan and copy-cleanup scope | Changeset 0 verified by user on 2026-10-07; local commit 12d7a75 |
 | Repository verifier | Source-record schema and narrow independent integrity checks | Changeset 1 verified by user on 2026-10-07; local commit 1a9cabf |
+| Plain-reference packaging | ADR-0009, version 2 filename mapping, codebase-design conversion | Implemented and reviewed; awaiting owner verification; remaining skills retain version 1 packages |
 | agentic-workflow | Shared wrapper routing, tracker pointers, glossary compatibility | Changeset 3 verified by owner on 2026-10-07; local commit 5b3b1f3 ([evidence](shared-local-integration-2026-10-07.md)) |
 | review-and-submit | VCS formatter routing and Review Record retirement; preserve review and authority | Pending |
 | p4-description | New local-origin formatter, credited to pr inspiration; no runtime call to pr | Pending addition |

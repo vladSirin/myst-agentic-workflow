@@ -14,7 +14,9 @@ PR targets and release timing; each skill still has its own review gate.
    project first (personal-scope `.claude/skills/...`) and dogfood it in real
    sessions before proposing it.
 2. **Keep source and local integration separate.** Import the complete selected
-   upstream skill at a recorded revision, unchanged. Put Myst behavior in its
+   upstream skill at a recorded revision, unchanged in bytes. The sole packaged
+   filename exception, SKILL.md to UPSTREAM.md, is defined in
+   [ADR-0009](docs/adr-0009-plain-upstream-references.md). Put Myst behavior in its
    local entry point and references. For local-origin content, remove project
    specifics; those belong in the consuming project's docs. Stack-specific but
    reusable content (Perforce command forms, UE debugging) counts as agnostic.
@@ -55,7 +57,8 @@ PR targets and release timing; each skill still has its own review gate.
       Historical imports still use [LICENSE](LICENSE) and existing provenance;
       the inventory names their pending migration. Replace only the source
       bundle when re-vendoring, preserving local files. Follow
-      [ADR-0008](docs/adr-0008-strict-upstream-boundary.md).
+      [ADR-0008](docs/adr-0008-strict-upstream-boundary.md) and its narrow
+      [packaging amendment](docs/adr-0009-plain-upstream-references.md).
 - [ ] **Loading and integrity**: provide source comparison evidence and a
       working entry-to-source/reference path. Run `python tools/verify_upstream.py`
       using the [source-record contract](docs/upstream-source-verification.md).

@@ -16,22 +16,22 @@ from downloaded sources. These are repository tools, not plugin runtime files.
 
 CI runs the fixture tests and verifier on the migration branch and main. PRs
 targeting main and pushes to main use --require-complete. Existing checks remain.
-At the Changeset 1 baseline, no bundles had migrated. The handoff pilot now
-verifies one import, with 24 pending imports and four local skills. This does
-not certify the old imports or complete the host-runtime acceptance gate.
+The verifier reports current migrated and pending counts. See the inventory
+for status; source equality does not complete the host-runtime acceptance gate.
 
 ## Source record
 
 Each migrated import has UPSTREAM.json at its public skill root. The
-[version 1 schema](upstream-source-record.schema.json) documents the format;
+[version 1/2 schema](upstream-source-record.schema.json) documents the format;
 the command validates its fields with the standard library and adds filesystem
 and cross-file checks. Use lowercase full SHA-256 values for every source file.
 
 | Field | Meaning |
 | --- | --- |
-| schemaVersion | Integer 1 |
+| schemaVersion | Integer 1 for the original format, or 2 for mapped plain references |
 | provider | git or github-release-zip |
-| root | Relative source directory or ZIP inside this skill; handoff uses upstream.zip to prevent nested skill discovery |
+| root | Relative source directory or ZIP inside this skill for version 1; directory only for version 2 |
+| pathMap | Required only in version 2; exactly {"SKILL.md": "UPSTREAM.md"} |
 | source.url | HTTPS GitHub repository URL |
 | source.revision | Full Git commit SHA, or the release tag for ZIP assets |
 | source.subtree | Original skill directory in the repository or archive |
@@ -40,12 +40,24 @@ and cross-file checks. Use lowercase full SHA-256 values for every source file.
 | files | Object mapping every raw-source relative filename to its SHA-256 |
 | dependencies | Unique list of required public Myst skill names; empty when none |
 
-Preserve original paths and all companions. The raw-source file set must equal
-both the record and the complete upstream subtree. A changed file plus a new
+Preserve original paths and all companions, except the explicit version 2 entry
+rename approved in [ADR-0009](adr-0009-plain-upstream-references.md). Inventory
+keys always use original upstream paths. Map only SKILL.md to UPSTREAM.md in
+the packaged directory; other mappings and nested SKILL.md entries are rejected.
+Packaged destinations must be unique, including case-insensitive comparison
+against unmapped files. An upstream UPSTREAM.md collision blocks conversion.
+The mapped file set must equal both the record and the complete upstream subtree.
+A changed file plus a new
 local hash still fails comparison with pinned source. A missing companion cannot
 be excused by removing it from the record. Symlinks, escaping paths, and
 case-colliding file names are rejected. Source files are compared as raw bytes,
 without newline or BOM normalization.
+
+Use references/upstream as the version 2 root and protect that imported subtree
+with a scoped Git `-text` attribute. Read the entry through an ordinary Markdown
+link. The wrapper explains the SKILL.md back-link mapping; no manifest parser
+or archive reader is needed at runtime. Audit filesystem-dependent scripts
+before conversion. The verifier checks file identity, not semantic link use.
 
 A source ZIP contains only files, with member paths relative to the original
 skill root. It preserves each original filename, relative path, and byte.
@@ -56,7 +68,8 @@ are not source content. Do not leave loose source copies beside an archive:
 they would restore the discovery bug documented in the
 [handoff pilot](handoff-pilot-2026-10-07.md).
 
-The local SKILL.md must contain an inline Markdown link to the raw SKILL.md
+The local SKILL.md must contain an inline Markdown link to the packaged upstream
+entry (SKILL.md for version 1 directories, UPSTREAM.md for version 2 directories)
 or, for an archived bundle, its ZIP and instructions to read SKILL.md inside it;
 PROVENANCE.md must link to UPSTREAM.json. Relative inline links in those two
 local files must resolve inside this repository. Each declared dependency must
