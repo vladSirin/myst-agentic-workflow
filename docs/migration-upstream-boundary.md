@@ -33,7 +33,7 @@ records the fix, passed checks, and remaining runtime gates.
 | Skill | Source subtree | Required migration | Status |
 | --- | --- | --- | --- |
 | handoff | skills/productivity/handoff | First packaging pilot; refresh temporary-path guidance and metadata | Source/package checks and Codex/OpenCode runtime passed; OpenCode requires a local invocation rule; Claude runtime deferred by owner, no longer a migration blocker ([evidence](handoff-pilot-2026-10-07.md)) |
-| implement | skills/engineering/implement | Restore source; move publication/tracker routing into local wrapper | Pending |
+| implement | skills/engineering/implement | Restore source; move publication/tracker routing into local wrapper | Changeset 4 implemented; source and bounded runtime checks passed; awaiting owner verification ([evidence](implement-wrapper-2026-10-07.md)) |
 | tdd | skills/engineering/tdd | Restore source; retain tracker/glossary compatibility; no speculative question relay | Pending |
 | to-spec | skills/engineering/to-spec | Move tracker lookup out of source | Pending |
 | to-tickets | skills/engineering/to-tickets | Restore source; local tracker lookup; refresh ticket relationships | Pending |
@@ -81,7 +81,7 @@ records the fix, passed checks, and remaining runtime gates.
 | --- | --- | --- |
 | Documentation and CI branch selection | Boundary ADR, contribution exception, honest README, inventory, approved plan and copy-cleanup scope | Changeset 0 verified by user on 2026-10-07; local commit 12d7a75 |
 | Repository verifier | Source-record schema and narrow independent integrity checks | Changeset 1 verified by user on 2026-10-07; local commit 1a9cabf |
-| agentic-workflow | Shared wrapper routing, tracker pointers, glossary compatibility | Changeset 3 implemented; targeted checks complete; awaiting owner verification ([evidence](shared-local-integration-2026-10-07.md)) |
+| agentic-workflow | Shared wrapper routing, tracker pointers, glossary compatibility | Changeset 3 verified by owner on 2026-10-07; local commit 5b3b1f3 ([evidence](shared-local-integration-2026-10-07.md)) |
 | review-and-submit | VCS formatter routing and Review Record retirement; preserve review and authority | Pending |
 | p4-description | New local-origin formatter, credited to pr inspiration; no runtime call to pr | Pending addition |
 | design, changelist-verification | Retain existing behavior | No skill change planned |

@@ -49,7 +49,7 @@ User-invoked:
 - **[to-spec](plugins/myst-dev-kit/skills/to-spec/SKILL.md)** — turn the current conversation into a spec on the project tracker: no interview, just synthesis of what was discussed.
 - **[to-tickets](plugins/myst-dev-kit/skills/to-tickets/SKILL.md)** — break a spec or plan into tracer-bullet tickets, each declaring its blocking edges.
 - **[triage](plugins/myst-dev-kit/skills/triage/SKILL.md)** — move issues and external PRs through triage roles: categorise, verify, grill if needed, write agent-ready briefs.
-- **[implement](plugins/myst-dev-kit/skills/implement/SKILL.md)** — implement a piece of work from a spec or set of tickets.
+- **[implement](plugins/myst-dev-kit/skills/implement/SKILL.md)** — implement a spec or tickets through unchanged upstream instructions and Myst dependency/review routing; supports Git and Perforce targets. Copy installs need agentic-workflow, tdd, review-and-submit, and code-review.
 - **[wayfinder](plugins/myst-dev-kit/skills/wayfinder/SKILL.md)** — plan work too big for one session as a shared map of decision tickets, resolved one at a time until the way is clear.
 
 ### Engineering

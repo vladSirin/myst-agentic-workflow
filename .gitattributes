@@ -6,3 +6,4 @@
 *.sh text eol=lf
 # Pilot source archive: preserve the container and original member bytes.
 plugins/myst-dev-kit/skills/handoff/upstream.zip -text
+plugins/myst-dev-kit/skills/implement/upstream.zip -text

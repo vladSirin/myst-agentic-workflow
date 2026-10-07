@@ -1,8 +1,7 @@
 # Changeset 3: Shared local integration
 
 Type: task
-Status: resolved
-Outstanding: Owner verifies this changeset in chat before Changeset 4 begins.
+Status: closed
 Spec: [approved plan, Changeset 3](../../../docs/plan_upstream_boundary_refresh.md#changeset-3-establish-shared-local-integration)
 
 ## Scope
@@ -31,4 +30,6 @@ The [targeted report](../../../docs/shared-local-integration-2026-10-07.md)
 records fresh-session wrapper-to-reference loading, the synthetic routing
 matrix, the focused path-base check, repository checks, and review findings.
 Implementation and agent checks are complete. User changeset verification is
-still required before the next skill migration.
+was required before the next skill migration. The owner verified continuation
+on 2026-10-07 after the additional direct-versus-wrapper experiments. Local
+commit: 5b3b1f3.
