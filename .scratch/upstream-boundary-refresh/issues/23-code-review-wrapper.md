@@ -1,7 +1,7 @@
 # Preserve code-review and route Git/Perforce evidence
 
 Type: task
-Status: implemented; both reviews GREEN; owner verification pending
+Status: resolved; bd7fbd3 owner-verified after alignment recheck on 2026-10-08
 Review base: cbed6f0
 Spec: [review-engine milestone](../../../docs/plan_upstream_boundary_refresh.md#required-upstream-review-engine-changeset)
 and [ADR-0009](../../../docs/adr-0009-plain-upstream-references.md).
@@ -27,3 +27,5 @@ selection with a competing plugin present. Fixture files and HEADs stayed intact
 The temporary test plugin was removed; host plugin/marketplace settings match the
 pre-test baseline. Both independent review axes are GREEN. Package checks passed.
 No publication or installed Myst update. Next skill after owner acceptance: pr.
+
+Owner conditional acceptance fulfilled after the saved alignment evidence recheck.

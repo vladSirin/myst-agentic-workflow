@@ -1,7 +1,7 @@
 # Code-review source and wrapper migration - 2026-10-08
 
 Status: implemented, tested, and independently reviewed; both axes GREEN.
-Owner verification pending. Review base: cbed6f0. Only code-review migrates here.
+Owner verified bd7fbd3 on 2026-10-08 after alignment recheck. Review base: cbed6f0. Only code-review migrates here.
 
 ## Source and local integration
 
@@ -139,5 +139,16 @@ Final Spec review: GREEN, zero actionable findings. It checked the eight saved
 replies and trace hashes, candidate identity, unchanged inventories/HEADs, input
 guards, and full-path competitor routing. Both preserve the stated test limits.
 The six CI scripts and staged whitespace check also passed on the final content.
-Owner acceptance remains pending. No push, PR, merge, release, or consumer update
+Owner acceptance is recorded below. No push, PR, merge, release, or consumer update
 is included.
+
+
+## Alignment recheck and owner acceptance
+
+The owner requested alignment testing, conditional verification, and continuation.
+All eight saved runs were rechecked against bd7fbd3: package identity, unchanged
+inventories/HEADs, trace/reply hashes, and the recorded plugin cleanup still match.
+The actual direct/wrapped replies align on every seeded defect; the extra valid
+P4 keyword finding and overlapping naming count remain disclosed above.
+alignment-recheck.json records PASS with zero new model calls. Under the owner's
+conditional approval, bd7fbd3 is verified. Test limits and Claude deferral remain.
