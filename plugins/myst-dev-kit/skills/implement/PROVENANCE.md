@@ -4,10 +4,11 @@ The upstream method is from [Matt Pocock's skills](https://github.com/mattpocock
 [UPSTREAM.json](UPSTREAM.json) records the exact revision, complete subtree,
 original file hashes, and required local skill dependencies.
 
-upstream.zip preserves SKILL.md and agents/openai.yaml byte-for-byte. Myst owns
+references/upstream preserves both original files byte-for-byte. SKILL.md is
+packaged as UPSTREAM.md; agents/openai.yaml keeps its original name. Myst owns
 this directory's public SKILL.md, public agents/openai.yaml, source record, and
 this provenance note. The public metadata retains the implement name and explicit
-user invocation; its current values match the archived upstream metadata.
+user invocation; its current values match the bundled upstream metadata.
 
 The local entry loads agentic-workflow's shared contract. It maps upstream TDD
 and review calls to Myst's entries, retains review-and-submit as coordinator,
@@ -16,10 +17,10 @@ The source still says to commit; the local entry limits that instruction to
 Git target work within user authorization. No TDD or orchestration rewrite is
 part of this migration. Copy installs need all declared sibling dependencies.
 
-The ZIP follows the discovery-safe handoff layout. Its original files are not
-loose discoverable skills. Source equality does not prove runtime behavior;
-loading and bounded implementation evidence are recorded separately in the
-repository's implement migration report.
+The plain-reference layout follows ADR-0009. Only the public SKILL.md is a
+discoverable entry. Source equality does not prove runtime behavior; loading and
+bounded implementation evidence are recorded in the repository's implement
+migration report and plain-source conversion report.
 
 ## Upstream MIT notice
 

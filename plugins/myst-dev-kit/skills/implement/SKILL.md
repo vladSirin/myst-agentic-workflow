@@ -26,21 +26,6 @@ Apply these mappings while following the source:
   changelist workflow. Review completion does not authorize publication or
   ticket closure; keep human acceptance and tracker rules intact.
 
-Read `SKILL.md` inside the complete [upstream source](upstream.zip), then follow
-it with those local mappings. Use a local ZIP reader; substitute this entry's
-directory in the command:
-
-```text
-python -c "import sys,zipfile; sys.stdout.buffer.write(zipfile.ZipFile(sys.argv[1]).read('SKILL.md'))" "<skill-directory>/upstream.zip"
-```
-
-On Windows without Python:
-
-```powershell
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-$sourceZip = [IO.Compression.ZipFile]::OpenRead('<skill-directory>/upstream.zip')
-try {
-    $sourceReader = [IO.StreamReader]::new($sourceZip.GetEntry('SKILL.md').Open())
-    try { $sourceReader.ReadToEnd() } finally { $sourceReader.Dispose() }
-} finally { $sourceZip.Dispose() }
-```
+Read the bundled [upstream instructions](references/upstream/UPSTREAM.md), then
+follow them with those local mappings. The original source bytes are unchanged;
+only the packaged entry filename differs.
