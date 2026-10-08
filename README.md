@@ -46,7 +46,7 @@ Model-invoked:
 
 User-invoked:
 
-- **[to-spec](plugins/myst-dev-kit/skills/to-spec/SKILL.md)** — turn the current conversation into a spec on the project tracker: no interview, just synthesis of what was discussed.
+- **[to-spec](plugins/myst-dev-kit/skills/to-spec/SKILL.md)** — synthesize the conversation into a spec through unchanged upstream instructions and local tracker, glossary, and state rules. Copy installs need agentic-workflow ([migration evidence](docs/to-spec-wrapper-2026-10-08.md)).
 - **[to-tickets](plugins/myst-dev-kit/skills/to-tickets/SKILL.md)** — break a spec or plan into tracer-bullet tickets, each declaring its blocking edges.
 - **[triage](plugins/myst-dev-kit/skills/triage/SKILL.md)** — move issues and external PRs through triage roles: categorise, verify, grill if needed, write agent-ready briefs.
 - **[implement](plugins/myst-dev-kit/skills/implement/SKILL.md)** — implement a spec or tickets through unchanged plain upstream references and Myst dependency/review routing; supports Git and Perforce targets. Copy installs need agentic-workflow, tdd, review-and-submit, and code-review.
