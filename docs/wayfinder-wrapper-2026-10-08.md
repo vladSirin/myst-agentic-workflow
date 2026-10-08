@@ -1,6 +1,7 @@
 # Wayfinder source and wrapper migration - 2026-10-08
 
-Status: implemented, tested, and independently reviewed; owner verification pending.
+Status: implemented, tested, independently reviewed, and owner-verified for
+7fbda73 on 2026-10-08 after alignment recheck.
 Review base: 192344e. After conditional triage acceptance, the user explicitly
 authorized the next skill. Only wayfinder migrates in this changeset.
 
@@ -131,5 +132,21 @@ Standards review: GREEN, zero findings. Spec review found one P3 overstatement
 about named references; the report now records the shared bare-ID narration
 and limits the pass claim. No implementation defect was found. Final Spec recheck is GREEN with zero open
 findings. Standards has zero findings. The staged whitespace check passed.
-Owner verification remains pending.
+Owner verification is recorded below.
 No push, PR, merge, release, or consumer update is included.
+
+
+## Alignment recheck and owner acceptance
+
+The owner requested alignment testing, conditional verification, and continuation
+to the next skill. The existing actual direct/wrapped executions were rechecked:
+task facts, claims, one-ticket resolution, map pointers, and the human-decision
+pause align. Package/source equality, all six trace hashes, output hashes,
+changed-file inventories, unchanged HEADs, and paired input equality match the
+recorded evidence. alignment-recheck.json records this fresh check of existing
+executions; no new model call was needed.
+
+Result: PASS within the stated scope. Under that conditional approval, 7fbda73
+is owner-verified. The shared bare-ID presentation defect and all other test
+limits remain documented; this acceptance does not assert full instruction
+compliance. Claude runtime remains deferred.

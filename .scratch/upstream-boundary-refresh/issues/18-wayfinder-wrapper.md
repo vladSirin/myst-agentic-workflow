@@ -1,7 +1,7 @@
 # Restore wayfinder with project tracker routing
 
 Type: task
-Status: in-review
+Status: resolved
 Review base: 192344e
 Spec: [approved plan](../../../docs/plan_upstream_boundary_refresh.md)
 and [ADR-0009](../../../docs/adr-0009-plain-upstream-references.md).
@@ -23,4 +23,5 @@ Evidence: [migration report](../../../docs/wayfinder-wrapper-2026-10-08.md).
 Package checks and all six runtime behavior tests passed. A shared bare-ID
 narration defect is disclosed in the report; full instruction compliance is not
 claimed. Standards and final Spec reviews are GREEN with zero open findings.
-Owner acceptance remains pending.
+Owner accepted 7fbda73 on 2026-10-08 after the requested alignment recheck.
+The shared presentation defect and coverage limits remain recorded.
