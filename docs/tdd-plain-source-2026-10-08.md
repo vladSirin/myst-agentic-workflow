@@ -1,6 +1,7 @@
 # TDD plain-source conversion - 2026-10-08
 
-Status: converted, tested, and independently reviewed; owner verification pending.
+Status: converted, tested, independently reviewed, and owner-verified on 2026-10-08
+for c9e531c. After reviewing the results, the owner instructed "Good carry on."
 Review base: 52ef497. The owner verified deep-dive and authorized continuation.
 Only TDD changes source layout here. This also prepares the current TDD package
 for the owner verification still outstanding from its earlier wrapper migration.
@@ -140,9 +141,10 @@ with the actual test outputs and event positions.
 Final independent reviews: Standards GREEN, zero findings; Spec GREEN, zero
 findings. Both reviewers checked the completed evidence. The Spec review also
 checked actual source/test outputs, responses, test order, trace hashes, and
-unchanged Git HEADs. Owner verification remains pending.
+unchanged Git HEADs. The owner accepted the current TDD package on 2026-10-08.
 
 These fixtures do not test the review stage, real external mocks, databases,
 or persistence implementations. They cannot prove identical wording or every
 future TDD behavior. Claude runtime, publication, and consumer updates remain
-outside this changeset. Owner verification remains required.
+outside this changeset. This acceptance also resolves the earlier TDD wrapper
+verification item in issue 08.

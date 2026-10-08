@@ -2,7 +2,9 @@
 
 Type: task
 Status: resolved
-Outstanding: Owner verifies Changeset 7 in chat before the next skill migration.
+Owner verification: the current TDD package was accepted on 2026-10-08 at
+c9e531c after its plain-source conversion and direct comparison; see
+[issue 14](14-tdd-plain-source.md).
 Spec: [approved plan](../../../docs/plan_upstream_boundary_refresh.md)
 
 ## Scope
