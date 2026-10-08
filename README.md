@@ -61,7 +61,7 @@ Model-invoked:
 - **[design](plugins/myst-dev-kit/skills/design/SKILL.md)** — design and plan documents: correct name, correct location, standard template, WIP-to-final lifecycle.
 - **[prototype](plugins/myst-dev-kit/skills/prototype/SKILL.md)** — build a throwaway prototype to answer a design question before committing to it.
 - **[codebase-design](plugins/myst-dev-kit/skills/codebase-design/SKILL.md)** — the deep-module vocabulary: interface design, seam placement, testability, AI-navigability. Upstream bytes stay unchanged in plain references; the entry is packaged as UPSTREAM.md. The local wrapper maps project glossary paths. Copy installs also need `agentic-workflow` ([packaging evidence](docs/plain-source-pilot-2026-10-08.md)).
-- **[domain-modeling](plugins/myst-dev-kit/skills/domain-modeling/SKILL.md)** — build and sharpen the project's domain model: terminology, CONTEXT.md, ADRs.
+- **[domain-modeling](plugins/myst-dev-kit/skills/domain-modeling/SKILL.md)** — Matt Pocock source with Myst glossary-path routing; sharpen domain terms and record durable ADRs. Supports legacy, new, and scoped glossary paths; verification tracked in the migration inventory.
 - **[research](plugins/myst-dev-kit/skills/research/SKILL.md)** — investigate a question against high-trust primary sources; findings land as a Markdown file in the repo.
 - **[wizard](plugins/myst-dev-kit/skills/wizard/SKILL.md)** — generate an interactive bash wizard for steps only a human can perform: credentials, dashboards, one-off cutovers.
 - **[writing-for-agents](plugins/myst-dev-kit/skills/writing-for-agents/SKILL.md)** — writing documents agents will read: skills, AGENTS.md, CLAUDE.md.

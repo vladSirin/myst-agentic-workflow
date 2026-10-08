@@ -1,6 +1,6 @@
 # Upstream boundary migration inventory
 
-Status: wayfinder owner-verified after alignment recheck. Further imports remain pending. Claude runtime deferred until they report Claude works.
+Status: domain-modeling implemented and alignment tested; both review axes GREEN; owner verification pending. Further imports remain pending. Claude runtime deferred until they report Claude works.
 
 The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance.
 [ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision;
@@ -29,9 +29,9 @@ and commands.
 
 Destination for every retained or added import:
 `plugins/myst-dev-kit/skills/<skill>/`, with local entry/provenance and a complete
-source bundle. All nine packaged imports use plain references with the single
-mapped entry filename. TDD completed the earlier ZIP conversions. Wayfinder is
-the latest prepared import; the other 16 declared imports remain pending. The [plain-source pilot](plain-source-pilot-2026-10-08.md)
+source bundle. All ten packaged imports use plain references with the single
+mapped entry filename. TDD completed the earlier ZIP conversions. Domain-modeling is
+the latest prepared import; the other 15 declared imports remain pending. The [plain-source pilot](plain-source-pilot-2026-10-08.md)
 records the accepted replacement for the earlier ZIP workaround.
 
 | Skill | Source subtree | Required migration | Status |
@@ -43,7 +43,7 @@ records the accepted replacement for the earlier ZIP workaround.
 | to-tickets | skills/engineering/to-tickets | Restore source; local tracker lookup; refresh ticket relationships | Plain-source wrapper and six runtime checks complete; direct results align for local tickets and mock native links; both reviews GREEN; 5b7079d owner-verified on 2026-10-08 after alignment recheck ([evidence](to-tickets-wrapper-2026-10-08.md)) |
 | triage | skills/engineering/triage | Restore source; local tracker/glossary mapping | Owner-verified on 2026-10-08 after final direct/wrapped alignment retries; both review axes GREEN; initial service failures retained as history ([evidence](triage-wrapper-2026-10-08.md)) |
 | wayfinder | skills/engineering/wayfinder | Move tracker lookup out of source | Plain-source wrapper and six runtime tests complete; direct outputs align for task resolution and human-decision pause; both reviews GREEN; 7fbda73 owner-verified on 2026-10-08; shared naming defect documented ([evidence](wayfinder-wrapper-2026-10-08.md)) |
-| domain-modeling | skills/engineering/domain-modeling | Complete companions including upstream glossary format; local path mapping | Pending |
+| domain-modeling | skills/engineering/domain-modeling | Complete companions including upstream glossary format; local path mapping | Wrapper/source and package checks complete; eight selected behavior checks passed including direct alignment; one excluded timeout retained; both reviews GREEN; owner verification pending ([evidence](domain-modeling-wrapper-2026-10-08.md)) |
 | diagnosing-bugs | skills/engineering/diagnosing-bugs | Refresh source; local glossary mapping | Pending |
 | improve-codebase-architecture | skills/engineering/improve-codebase-architecture | Refresh source; local glossary mapping | Pending |
 | codebase-design | skills/engineering/codebase-design | Refresh DESIGN-IT-TWICE companion; local glossary mapping | Changeset 6 previously verified (de12d6a). Owner verified plain-reference conversion 23c01bf as OK on 2026-10-08 ([evidence](plain-source-pilot-2026-10-08.md)) |

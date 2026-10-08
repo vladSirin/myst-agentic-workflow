@@ -14,3 +14,4 @@ plugins/myst-dev-kit/skills/to-spec/references/upstream/** -text
 plugins/myst-dev-kit/skills/to-tickets/references/upstream/** -text
 plugins/myst-dev-kit/skills/triage/references/upstream/** -text
 plugins/myst-dev-kit/skills/wayfinder/references/upstream/** -text
+plugins/myst-dev-kit/skills/domain-modeling/references/upstream/** -text
