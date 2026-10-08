@@ -1,7 +1,7 @@
 # Restore improve-codebase-architecture behind a Myst wrapper
 
 Type: task
-Status: awaiting owner verification
+Status: resolved
 Review base: 9933b03
 Spec: [approved plan](../../../docs/plan_upstream_boundary_refresh.md)
 and [ADR-0009](../../../docs/adr-0009-plain-upstream-references.md).
@@ -25,4 +25,4 @@ retained and excluded due to failed required delegation. Actual report meaning
 and selection pauses align; interview glossary outputs are byte-identical and
 both wait on the same decisions. Package and visual checks passed. Both review
 axes are GREEN with zero actionable findings. The report retains coverage and
-recommendation-variation limits. Owner verification remains pending.
+recommendation-variation limits. Owner accepted e123a5f on 2026-10-08 after alignment recheck.

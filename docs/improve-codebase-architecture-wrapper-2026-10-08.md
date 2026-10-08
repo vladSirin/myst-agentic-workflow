@@ -1,6 +1,7 @@
 # Improve-codebase-architecture source and wrapper migration - 2026-10-08
 
-Status: implemented, tested, and independently reviewed; owner verification pending.
+Status: implemented, tested, independently reviewed, and owner-verified for
+e123a5f on 2026-10-08 after alignment recheck.
 Review base: 9933b03. Only improve-codebase-architecture migrates here.
 
 ## Source and local integration
@@ -150,5 +151,20 @@ source ownership, user-only invocation, dependency and companion routing, and
 honest evidence limits. Final Spec review: GREEN, zero actionable findings. It
 checked actual reports, interviews, output/trace/session hashes, allowed changes,
 and unchanged HEADs. The complete staged whitespace check passed.
-Owner verification remains pending. No push, PR, merge, release, or installed-copy
+Owner acceptance is recorded below. No push, PR, merge, release, or installed-copy
 update is included.
+
+## Alignment recheck and owner acceptance
+
+The owner requested alignment testing, conditional verification, and continuation.
+Existing direct/wrapped executions were rechecked against e123a5f. Paired inputs,
+source/wrapper hashes, trace/session/output hashes, permitted file changes,
+fixture HEADs, and successful delegation records match the reviewed evidence.
+Both reports still recommend the same candidate and preserve the Receipt ADR.
+Glossary output bytes and the selected interview decisions still align. Saved
+visual results and screenshot hashes were checked; no fresh render was needed.
+
+alignment-recheck.json records PASS within the stated scope. No new model call
+was needed. Under the owner's conditional approval, e123a5f is verified. The
+excluded ephemeral attempts, advice variation, and coverage limits remain.
+Claude runtime is still deferred.
