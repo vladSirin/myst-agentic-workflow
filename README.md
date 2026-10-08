@@ -85,7 +85,7 @@ User-invoked:
 - **[teach](plugins/myst-dev-kit/skills/teach/SKILL.md)** — learn a skill or concept, taught inside this workspace.
 - **[to-questionnaire](plugins/myst-dev-kit/skills/to-questionnaire/SKILL.md)** — turn a decision you can't fully answer into a questionnaire for the person who can.
 - **[handoff](plugins/myst-dev-kit/skills/handoff/SKILL.md)** — compact the conversation into an OS-temporary handoff file. Unchanged upstream bytes in plain references, read through a user-invoked local entry; [conversion evidence and host limits](docs/handoff-plain-source-2026-10-08.md).
-- **[wait-what](plugins/myst-dev-kit/skills/wait-what/SKILL.md)** — stop: that last message did not land — re-pitch it.
+- **[wait-what](plugins/myst-dev-kit/skills/wait-what/SKILL.md)** — Matt Pocock source with Myst glossary routing; re-explain with context and simple project terms. User-only; OpenCode needs its local invocation rule ([evidence](docs/wait-what-wrapper-2026-10-08.md)).
 
 Imported content comes from [mattpocock/skills](https://github.com/mattpocock/skills)
 and the Hammer app's advanced-capability bundle

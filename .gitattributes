@@ -17,3 +17,4 @@ plugins/myst-dev-kit/skills/wayfinder/references/upstream/** -text
 plugins/myst-dev-kit/skills/domain-modeling/references/upstream/** -text
 plugins/myst-dev-kit/skills/diagnosing-bugs/references/upstream/** -text
 plugins/myst-dev-kit/skills/improve-codebase-architecture/references/upstream/** -text
+plugins/myst-dev-kit/skills/wait-what/references/upstream/** -text
