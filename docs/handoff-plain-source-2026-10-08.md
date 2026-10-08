@@ -1,6 +1,6 @@
 # Handoff plain-source conversion - 2026-10-08
 
-Status: implemented and reviewed; awaiting owner verification.
+Status: implemented, reviewed, and owner-verified on 2026-10-08 (7e05f31).
 Review base: 23c01bf. The owner verified codebase-design's conversion as OK and
 authorized continued per-skill rollout. Only handoff changes source layout here.
 
@@ -70,7 +70,11 @@ Standards: GREEN, zero remaining findings. A stale README description of the ZIP
 layout was found and corrected to plain references and the current evidence.
 The reviewer verified that correction. Spec: GREEN, zero findings; the reviewer
 independently compared both source files to the base archive and confirmed exact
-bytes, inventory, metadata, and scope. Owner verification is the next gate.
+bytes, inventory, metadata, and scope. After the generated handoff was checked
+against the test request and upstream instructions, the owner instructed
+"Good verify it now." Verification is recorded for commit 7e05f31 on 2026-10-08.
+This accepts the tested conversion; Claude runtime remains deferred and no
+publication authority is added.
 
 The current changeset also makes the already-required review/description workstream explicit in the plan
 and tracker. It does not implement code-review, pr, p4-description, or the

@@ -36,7 +36,7 @@ records the accepted replacement for the earlier ZIP workaround.
 
 | Skill | Source subtree | Required migration | Status |
 | --- | --- | --- | --- |
-| handoff | skills/productivity/handoff | First packaging pilot; refresh temporary-path guidance and metadata | Plain-reference conversion passed source, copy/discovery, focused Codex runtime, and both reviews; awaiting owner verification. OpenCode still needs its local invocation rule; Claude deferred ([evidence](handoff-plain-source-2026-10-08.md)) |
+| handoff | skills/productivity/handoff | First packaging pilot; refresh temporary-path guidance and metadata | Owner verified plain-reference conversion 7e05f31 on 2026-10-08 after output review. OpenCode still needs its local invocation rule; Claude deferred ([evidence](handoff-plain-source-2026-10-08.md)) |
 | implement | skills/engineering/implement | Restore source; move publication/tracker routing into local wrapper | Changeset 4 verified by owner on 2026-10-07; local commit 0a38ca7 ([evidence](implement-wrapper-2026-10-07.md)) |
 | tdd | skills/engineering/tdd | Restore source; retain tracker/glossary compatibility; no speculative question relay | Changeset 7 implemented; source, discovery, and bounded runtime checks complete; awaiting owner verification ([evidence](tdd-wrapper-2026-10-08.md)) |
 | to-spec | skills/engineering/to-spec | Move tracker lookup out of source | Pending |

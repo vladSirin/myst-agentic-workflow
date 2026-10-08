@@ -2,7 +2,9 @@
 
 Type: task
 Status: resolved
-Outstanding: Owner verification before the next skill conversion.
+Owner verification: accepted on 2026-10-08 for commit 7e05f31.
+After the generated result was checked against the request and source, the
+owner instructed: "Good verify it now."
 Spec: [ADR-0009](../../../docs/adr-0009-plain-upstream-references.md)
 and [approved plan](../../../docs/plan_upstream_boundary_refresh.md).
 
