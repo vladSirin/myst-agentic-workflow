@@ -1,7 +1,7 @@
 # Restore wait-what with project glossary routing
 
 Type: task
-Status: awaiting owner verification
+Status: resolved
 Review base: 3c85c96
 Spec: [approved plan](../../../docs/plan_upstream_boundary_refresh.md)
 and [ADR-0009](../../../docs/adr-0009-plain-upstream-references.md).
@@ -22,5 +22,4 @@ Evidence: [migration report](../../../docs/wait-what-wrapper-2026-10-08.md).
 All package checks and four fresh direct/wrapped tests passed. Legacy and scoped
 explanations preserve the same meaning and proposal status. No fixture file or
 HEAD changed. Both review axes are GREEN with zero actionable findings. The
-report records wording differences and coverage limits. Owner verification
-remains pending.
+report records wording differences and coverage limits. Owner accepted 62bcd4a on 2026-10-08 after alignment recheck.

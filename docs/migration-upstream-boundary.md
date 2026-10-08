@@ -1,6 +1,6 @@
 # Upstream boundary migration inventory
 
-Status: improve-codebase-architecture owner-verified. Wait-what implemented, tested, and reviewed; owner verification pending. Further imports remain pending. Claude runtime deferred until they report Claude works.
+Status: wait-what owner-verified after alignment recheck. Further imports remain pending. Claude runtime deferred until they report Claude works.
 
 The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance.
 [ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision;
@@ -47,7 +47,7 @@ records the accepted replacement for the earlier ZIP workaround.
 | diagnosing-bugs | skills/engineering/diagnosing-bugs | Refresh source; local glossary mapping | Plain-source wrapper and four runtime checks complete; direct fix and stop-path results align; both review axes GREEN; 9e22e7a owner-verified on 2026-10-08 ([evidence](diagnosing-bugs-wrapper-2026-10-08.md)) |
 | improve-codebase-architecture | skills/engineering/improve-codebase-architecture | Refresh source; local glossary mapping | Four selected runtime comparisons align for report and interview; initial ephemeral delegation failures retained; package and visual checks pass; both review axes GREEN; e123a5f owner-verified on 2026-10-08 ([evidence](improve-codebase-architecture-wrapper-2026-10-08.md)) |
 | codebase-design | skills/engineering/codebase-design | Refresh DESIGN-IT-TWICE companion; local glossary mapping | Changeset 6 previously verified (de12d6a). Owner verified plain-reference conversion 23c01bf as OK on 2026-10-08 ([evidence](plain-source-pilot-2026-10-08.md)) |
-| wait-what | skills/productivity/wait-what | Refresh source; local glossary mapping | Four direct/wrapped explanation tests align; legacy and scoped terms resolve correctly; package checks pass; both review axes GREEN; owner verification pending ([evidence](wait-what-wrapper-2026-10-08.md)) |
+| wait-what | skills/productivity/wait-what | Refresh source; local glossary mapping | Four direct/wrapped explanation tests align; legacy and scoped terms resolve correctly; package checks pass; both review axes GREEN; 62bcd4a owner-verified on 2026-10-08 ([evidence](wait-what-wrapper-2026-10-08.md)) |
 | code-review | skills/engineering/code-review | Refresh to approved source pin; compare method delta; preserve source/metadata and namespaced Git/P4 routing | Required, pending ([review workstream](../.scratch/upstream-boundary-refresh/issues/11-review-delivery-refresh.md)) |
 | grill-with-docs | skills/engineering/grill-with-docs | Complete source bundle, metadata, provenance, and loading proof | Pending |
 | prototype | skills/engineering/prototype | Complete source bundle, metadata, provenance, and loading proof | Pending |

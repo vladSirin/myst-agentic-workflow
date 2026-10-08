@@ -1,6 +1,7 @@
 # Wait-what source and wrapper migration - 2026-10-08
 
-Status: implemented, tested, and independently reviewed; owner verification pending.
+Status: implemented, tested, independently reviewed, and owner-verified for
+62bcd4a on 2026-10-08 after alignment recheck.
 Review base: 3c85c96. Only wait-what migrates in this changeset.
 
 ## Source and local integration
@@ -117,5 +118,17 @@ Final Standards review: GREEN, zero actionable findings. It confirmed source
 ownership, user-only metadata, glossary routing, and honest style/host claims.
 Final Spec review: GREEN, zero actionable findings. It checked actual replies,
 trace reads and hashes, unchanged inventories/HEADs, and candidate identity.
-The complete staged whitespace check passed. Owner verification remains pending.
+The complete staged whitespace check passed. Owner acceptance is recorded below.
 No push, PR, merge, release, or installed-copy update is included.
+
+## Alignment recheck and owner acceptance
+
+The owner requested alignment testing, conditional verification, and continuation.
+Existing direct/wrapped executions were rechecked against 62bcd4a. The paired
+project inputs, complete source/wrapper hashes, trace/reply hashes, glossary reads,
+unchanged file inventories, and fixture HEADs match the reviewed evidence.
+Legacy and scoped meanings still align; the minor wording differences remain.
+
+alignment-recheck.json records PASS in this bounded scope, with no new model
+request. Under the owner's conditional approval, 62bcd4a is verified. Style and
+host coverage limits remain. Claude runtime is still deferred.
