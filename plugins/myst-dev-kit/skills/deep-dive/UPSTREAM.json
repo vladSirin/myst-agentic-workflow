@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "provider": "github-release-zip",
-  "root": "upstream.zip",
+  "root": "references/upstream",
   "source": {
     "url": "https://github.com/dreamwords/hammer-releases",
     "revision": "v0.30.0",
@@ -12,5 +12,8 @@
   "files": {
     "SKILL.md": "bbb960312b72e2bf1c3b6a98f2dba96bf62dbb0e7dcc9ad382fd91a9659fb9ff"
   },
-  "dependencies": []
+  "dependencies": [],
+  "pathMap": {
+    "SKILL.md": "UPSTREAM.md"
+  }
 }

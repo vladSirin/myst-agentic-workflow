@@ -5,24 +5,6 @@ disable-model-invocation: true
 argument-hint: "<the decision or question you keep going back and forth on>"
 ---
 
-Read `SKILL.md` inside the bundled [upstream source](upstream.zip), then follow
-its instructions for the user's request. The ZIP preserves the original files
-and prevents hosts from registering a second skill.
-
-Use a local ZIP reader. For example, replace `<skill-directory>` with this
-entry's directory and run:
-
-```text
-python -c "import sys,zipfile; sys.stdout.buffer.write(zipfile.ZipFile(sys.argv[1]).read('SKILL.md'))" "<skill-directory>/upstream.zip"
-```
-
-On Windows without Python, read the member with PowerShell:
-
-```powershell
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-$sourceZip = [IO.Compression.ZipFile]::OpenRead('<skill-directory>/upstream.zip')
-try {
-    $sourceReader = [IO.StreamReader]::new($sourceZip.GetEntry('SKILL.md').Open())
-    try { $sourceReader.ReadToEnd() } finally { $sourceReader.Dispose() }
-} finally { $sourceZip.Dispose() }
-```
+Read the bundled [upstream instructions](references/upstream/UPSTREAM.md), then
+follow them for the user's request. The original source bytes are unchanged;
+only the packaged entry filename differs.
