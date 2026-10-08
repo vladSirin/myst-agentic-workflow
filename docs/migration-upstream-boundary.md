@@ -1,6 +1,6 @@
 # Upstream boundary migration inventory
 
-Status: deep-dive plain-reference conversion tested and reviewed; owner verification pending. Claude runtime deferred until they report Claude works.
+Status: deep-dive plain-reference conversion owner-verified after both-step alignment check. Claude runtime deferred until they report Claude works.
 
 The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance.
 [ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision;
@@ -58,7 +58,7 @@ records the accepted replacement for the earlier ZIP workaround.
 | teach | skills/productivity/teach | Complete source bundle, metadata, provenance, and loading proof | Pending |
 | to-questionnaire | skills/productivity/to-questionnaire | Complete source bundle, metadata, provenance, and loading proof | Pending |
 | writing-for-agents | skills/productivity/writing-for-agents | Complete source bundle, metadata, provenance, and loading proof | Pending |
-| deep-dive | Hammer: deep-dive | Preserve original Chinese frontmatter; English local trigger and user-only invocation | Changeset 5 verified by owner (58509c2). Plain-reference conversion tested against direct upstream on both steps and reviewed GREEN; owner verification pending ([evidence](deep-dive-plain-source-2026-10-08.md)) |
+| deep-dive | Hammer: deep-dive | Preserve original Chinese frontmatter; English local trigger and user-only invocation | Changeset 5 verified by owner (58509c2). Plain-reference conversion c64c236 owner-verified on 2026-10-08 after both-step direct-upstream alignment check; reviews GREEN ([evidence](deep-dive-plain-source-2026-10-08.md)) |
 | roundtable | Hammer: roundtable | Preserve original Chinese frontmatter; local discovery metadata; method behavior checks | Pending |
 | pr | skills/engineering/pr | Add unchanged source and credits; Git-only wrapper and concise actual review evidence | Pending addition |
 | implement-spec | skills/engineering/implement-spec | Add unchanged source; Git-only entry and bounded pilot; no speculative orchestration | Pending addition |

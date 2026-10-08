@@ -1,6 +1,7 @@
 # Deep-dive plain-source conversion - 2026-10-08
 
-Status: converted, tested, and independently reviewed; owner verification pending.
+Status: converted, tested, independently reviewed, and owner-verified on 2026-10-08
+for conversion commit c64c236 after alignment verification.
 Review base: 74bea52. The owner verified implement and authorized continuation.
 Only deep-dive changes source layout in this changeset.
 
@@ -107,10 +108,27 @@ and the following trace hashes:
 
 Final independent reviews: Standards GREEN, zero findings; Spec GREEN, zero
 findings. Reviewers checked the report against actual responses, trace hashes,
-source reads, and unchanged fixture inputs. Owner verification remains pending.
+source reads, and unchanged fixture inputs. Owner verification is recorded below.
 
 One comparison can establish alignment on this scenario, not deterministic
 wording or universal decision quality. Discovery, copy installation, and runtime
 behavior are separate evidence. Native slash-menu interaction was not repeated.
-Owner verification is required before another changeset. Publication and
-consumer migration remain outside this work.
+Publication and consumer migration remain outside this work.
+
+
+## Owner verification
+
+The owner instructed: "Run the alignment test too and confirm if it is ok, if
+so consider verified." The direct-versus-wrapper tests above already covered
+both steps. Their four actual outputs were re-read, and their trace hashes,
+exit codes, output-to-trace equality, and unchanged fixture inputs were checked
+again. The committed package matches the runtime-tested wrapper copy exactly;
+the direct entry matches the preserved upstream source exactly. No extra model
+run was needed. alignment-recheck.json records these checks in the evidence root.
+
+Alignment is acceptable for the tested scenario: both runs strengthen both
+sides, ask one decisive question and wait, then use the supplied answer to give
+the same present recommendation, with reasons, conditions, and actions. The
+noted difference in future conditions remains a limit, not an identical-output
+claim. The owner's condition is met; conversion c64c236 is owner-verified on
+2026-10-08. Claude runtime remains deferred.

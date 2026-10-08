@@ -21,5 +21,8 @@ Evidence: [conversion report](../../../docs/deep-dive-plain-source-2026-10-08.md
 Source, copy/discovery, checkout, and both two-step comparisons passed.
 Final independent Standards and Spec reviews are GREEN with zero findings.
 Original Markdown author-credit whitespace is preserved and documented.
-Outstanding: owner verification before another changeset.
+Owner verification: accepted on 2026-10-08 for conversion c64c236. The owner
+authorized verification if alignment was acceptable. Both-step direct/wrapped
+outputs and trace integrity were rechecked; the tested package matches the
+commit. The report retains the different future-condition judgments as a limit.
 No publication or consumer update is included.
