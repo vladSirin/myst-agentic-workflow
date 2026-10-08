@@ -1,7 +1,7 @@
 # PR source and wrapper adoption - 2026-10-08
 
 Status: implemented, tested, and independently reviewed; both axes GREEN.
-Owner verification pending.
+Owner verified d8c2c53 on 2026-10-08 after alignment recheck.
 Review base: eaf9944. This changeset adopts pr alone.
 
 ## Source and local integration
@@ -136,5 +136,17 @@ ownership, Git-only routing, credit preservation, and accurate evidence limits.
 Final Spec review: GREEN, zero actionable findings. It checked actual replies,
 source/package identity, unchanged inventories/HEADs, the seven selected cases,
 and P4 exclusion. Both retained the stated test and host limits.
-Final six CI gates and staged whitespace check passed. Owner verification pending.
+Final six CI gates and staged whitespace check passed. Owner verified d8c2c53 on 2026-10-08 after alignment recheck.
 No push, PR, merge, release, or consumer update is included.
+
+
+## Alignment recheck and owner acceptance
+
+The owner requested alignment testing, conditional verification, and continuation.
+The seven selected saved cases were rechecked against d8c2c53: exact package
+identity, paired inputs, trace/reply hashes, unchanged files/HEADs, and the
+three-section output checks still match. Actual review states, evidence limits,
+and risk meanings align; presentation differences remain documented above.
+alignment-recheck.json records PASS with zero new model calls. The initial
+reader-startup failure remains excluded. Under the owner's conditional approval,
+d8c2c53 is verified. Claude deferral and all stated coverage limits remain.

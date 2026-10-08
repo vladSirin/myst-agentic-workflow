@@ -1,7 +1,7 @@
 # Adopt Git-only pr with local review evidence
 
 Type: task
-Status: implemented; both reviews GREEN; owner verification pending
+Status: resolved; d8c2c53 owner-verified after alignment recheck on 2026-10-08
 Review base: eaf9944
 Spec: [description-writing changesets](../../../docs/plan_upstream_boundary_refresh.md#required-description-writing-changesets)
 and [Git-only skills](../../../docs/plan_upstream_boundary_refresh.md#git-only-skills-pr-and-implement-spec).
@@ -22,3 +22,5 @@ states), plus direct/automatic/cross-skill P4 exclusion with a Git mirror. One
 initial reader-startup failure is retained; the identical-input retry passed.
 Package checks, independent source verification, and both review axes are GREEN.
 Next after owner verification: local p4-description. No publication included.
+
+Owner conditional acceptance fulfilled after the saved alignment recheck.

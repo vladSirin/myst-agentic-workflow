@@ -31,3 +31,5 @@ selection and supported diff commands. The code-review adapter already uses the
 correct form. Keep formatter and Review Record retirement work in that later step.
 
 PR adoption has [its own changeset](24-pr-wrapper.md) and [evidence](../../../docs/pr-wrapper-2026-10-08.md). Local p4-description and protocol integration remain next, after verification.
+
+PR d8c2c53 is owner-verified after alignment recheck on 2026-10-08. Proceed with the separate local p4-description skill.
