@@ -12,3 +12,4 @@ plugins/myst-dev-kit/skills/codebase-design/references/upstream/** -text
 plugins/myst-dev-kit/skills/tdd/references/upstream/** -text
 plugins/myst-dev-kit/skills/to-spec/references/upstream/** -text
 plugins/myst-dev-kit/skills/to-tickets/references/upstream/** -text
+plugins/myst-dev-kit/skills/triage/references/upstream/** -text
