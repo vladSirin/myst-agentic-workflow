@@ -5,21 +5,22 @@ under the MIT terms reproduced below for standalone copy installs.
 The exact source identity, original subtree, and raw-file hashes are recorded in
 [UPSTREAM.json](UPSTREAM.json).
 
-The complete selected subtree is preserved inside upstream.zip, including its
-original SKILL.md frontmatter and agents/openai.yaml. Myst owns this directory's
+The complete selected subtree is preserved in references/upstream, including its
+original frontmatter and agents/openai.yaml. The original SKILL.md is packaged
+as UPSTREAM.md through the explicit mapping in the source record. All source
+bytes remain unchanged. Myst owns this directory's
 root SKILL.md, root agents/openai.yaml, this note, and the source record.
 
 The local entry delegates the method without rewriting it. Public metadata keeps
 the existing handoff name and explicit user invocation. No new handoff behavior
 or required skill dependency is added. Packaging and runtime evidence belongs
-to the repository's handoff pilot; byte equality alone does not prove loading.
+to the repository's handoff plain-source report; byte equality alone does not prove loading.
 
 Loose source folders caused duplicate registration in Codex 0.160.1 and wrapper
-bypass in OpenCode 1.18.35, including with a hidden .upstream/ folder. The ZIP
-keeps original member filenames and bytes intact while leaving one discoverable
-SKILL.md. The local entry reads its instructions with a local ZIP reader;
-Python and Windows PowerShell examples are supplied. No runtime download or
-extraction into a skill-discovery directory is needed.
+bypass in OpenCode 1.18.35, including with a hidden .upstream/ folder. Plain
+references with a renamed source entry replace the earlier ZIP workaround.
+Only the public wrapper is named SKILL.md; loading uses an ordinary file read.
+No runtime download, extraction, source rewrite, or new dependency is added.
 
 ## Upstream MIT notice
 

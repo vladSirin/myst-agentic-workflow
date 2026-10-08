@@ -1,6 +1,6 @@
 # Upstream Boundary and Skill Refresh Plan
 
-**Version**: v2.0 | **Updated**: 2026-10-08
+**Version**: v2.1 | **Updated**: 2026-10-08
 **Reference**: ADR-0002, ADR-0006, ADR-0007; upstream research notes below
 **Status**: APPROVED for implementation, changeset by changeset. Publication remains separately gated.
 
@@ -28,6 +28,7 @@ with answer-quality limits recorded separately and Claude deferred.
 | v1.9 | 2026-10-07 | Owner deferred outstanding Claude runtime tests until they explicitly report Claude works. These tests no longer block changeset acceptance or further migration; keep their results unverified. |
 | Draft amendment | 2026-10-08 | Research plain reference-file packaging with a narrow filename exception. Proposal and disposable discovery check only; no production skill changes. |
 | v2.0 | 2026-10-08 | Owner approved production implementation after Codex/OpenCode tests. Adopt ADR-0009, version 2 source records, and codebase-design as the first conversion. Retain per-skill gates. |
+| v2.1 | 2026-10-08 | Owner verified codebase-design's conversion. Confirm the already-required PR/P4 description and review-and-submit update; add an explicit upstream code-review milestone and tracker. Continue plain-file rollout with handoff. |
 
 ## Overview
 
@@ -552,6 +553,13 @@ record that result; wrapper migration is still a local behavior change.
 These are separate skill changesets after the wrapper pilot and before final
 release readiness:
 
+This work is required, not optional. It is planned but not yet implemented in
+the current review-and-submit package. The
+[review delivery tracker](../.scratch/upstream-boundary-refresh/issues/11-review-delivery-refresh.md)
+links it to the upstream review-engine refresh below. Retain separate skill
+changesets: code-review, pr, p4-description, then review-and-submit once its
+formatter dependencies are available. Keep normal verification between them.
+
 1. **pr:** vendor the full pinned upstream skill and credits; test the Git
    description entry point and the local addition of concise review evidence.
 2. **p4-description:** add the local-origin Perforce format above. Test ASCII
@@ -571,6 +579,25 @@ Review Record. Check GREEN, WARNING, BLOCKING, skipped-axis, missing-evidence,
 and unverified-acceptance cases. Formatting does not invent test results,
 review verdicts, or approval. No live changeset is published by a
 description-writing test.
+
+### Required upstream review-engine changeset
+
+**code-review:** refresh the complete upstream skill to the approved Matt source
+pin, including companions and host metadata, using the accepted plain-reference
+layout. Compare its existing attribution pin with the approved target separately
+from the local wrapper diff. Report unchanged source honestly if the comparison
+finds no new method behavior; do not invent a behavior update to justify import.
+
+Keep upstream review instructions intact. Myst's wrapper owns namespaced engine
+selection, project tracker/spec lookup, and Git/Perforce evidence routing. Verify
+the correct engine is selected with a competing review plugin present. A P4
+review must receive the intended CL evidence without treating a nested Git mirror
+as the target. Preserve the separate Standards and Spec axes.
+
+This is distinct from review-and-submit's later description change. The protocol
+continues to own review execution, finding disposition, preflight, and publication
+approval; the formatters present actual final review results under Evidence.
+The standalone Review Record is retired when that protocol changeset lands.
 
 ### Required Git-only implementation changeset
 

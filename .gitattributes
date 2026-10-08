@@ -5,7 +5,7 @@
 # renormalizing them package-wide would churn every clone.
 *.sh text eol=lf
 # Pilot source archive: preserve the container and original member bytes.
-plugins/myst-dev-kit/skills/handoff/upstream.zip -text
+plugins/myst-dev-kit/skills/handoff/references/upstream/** -text
 plugins/myst-dev-kit/skills/implement/upstream.zip -text
 plugins/myst-dev-kit/skills/deep-dive/upstream.zip -text
 plugins/myst-dev-kit/skills/codebase-design/references/upstream/** -text

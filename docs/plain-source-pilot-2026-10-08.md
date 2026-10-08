@@ -1,7 +1,7 @@
 # Plain-source packaging pilot - 2026-10-08
 
-**Status:** Pilot complete; first production conversion implemented and reviewed,
-awaiting owner verification. The owner authorized production work after the tests.
+**Status:** Pilot complete; first production conversion implemented, reviewed,
+and verified as OK by the owner on 2026-10-08 (commit 23c01bf).
 The earlier sections record the disposable pilot; production evidence is below.
 ADR-0008 is retained as history and narrowly amended by ADR-0009. Consumer
 installations remain unchanged. Claude runtime remains deferred.
@@ -207,6 +207,6 @@ source file against the approved base archive and confirmed exact bytes, source
 pin, complete inventory, local routing, and metadata. Only codebase-design is
 converted; the verifier rejects invalid mappings and retains independent checks.
 
-Review totals: Standards 0 findings; Spec 0 findings. Owner verification is the
-next gate before another skill conversion. No push, PR, release, or consumer
+Review totals: Standards 0 findings; Spec 0 findings. The owner verified this
+conversion as OK on 2026-10-08 and authorized continuation. No push, PR, release, or consumer
 update occurred. The separate TDD verification item remains outstanding.

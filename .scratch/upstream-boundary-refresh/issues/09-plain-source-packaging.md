@@ -1,7 +1,7 @@
 # Plain-source packaging and first production conversion
 
 Status: resolved
-Outstanding: Owner verifies this production changeset before the next conversion.
+Owner verified commit 23c01bf as OK on 2026-10-08 and authorized continuation.
 
 Spec: [approved packaging amendment](../../../docs/plan_upstream_boundary_refresh.md)
 and [ADR-0009](../../../docs/adr-0009-plain-upstream-references.md).

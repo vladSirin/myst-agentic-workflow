@@ -29,14 +29,14 @@ and commands.
 
 Destination for every retained or added import:
 `plugins/myst-dev-kit/skills/<skill>/`, with local entry/provenance and a complete
-source bundle. Codebase-design now uses plain references with the single mapped
-entry filename. The four other migrated imports retain upstream.zip until their
+source bundle. Codebase-design and handoff now use plain references with the single
+mapped entry filename. The three other migrated imports retain upstream.zip until their
 separate conversions. The [plain-source pilot](plain-source-pilot-2026-10-08.md)
 records the accepted replacement for the earlier ZIP workaround.
 
 | Skill | Source subtree | Required migration | Status |
 | --- | --- | --- | --- |
-| handoff | skills/productivity/handoff | First packaging pilot; refresh temporary-path guidance and metadata | Source/package checks and Codex/OpenCode runtime passed; OpenCode requires a local invocation rule; Claude runtime deferred by owner, no longer a migration blocker ([evidence](handoff-pilot-2026-10-07.md)) |
+| handoff | skills/productivity/handoff | First packaging pilot; refresh temporary-path guidance and metadata | Plain-reference conversion passed source, copy/discovery, focused Codex runtime, and both reviews; awaiting owner verification. OpenCode still needs its local invocation rule; Claude deferred ([evidence](handoff-plain-source-2026-10-08.md)) |
 | implement | skills/engineering/implement | Restore source; move publication/tracker routing into local wrapper | Changeset 4 verified by owner on 2026-10-07; local commit 0a38ca7 ([evidence](implement-wrapper-2026-10-07.md)) |
 | tdd | skills/engineering/tdd | Restore source; retain tracker/glossary compatibility; no speculative question relay | Changeset 7 implemented; source, discovery, and bounded runtime checks complete; awaiting owner verification ([evidence](tdd-wrapper-2026-10-08.md)) |
 | to-spec | skills/engineering/to-spec | Move tracker lookup out of source | Pending |
@@ -46,9 +46,9 @@ records the accepted replacement for the earlier ZIP workaround.
 | domain-modeling | skills/engineering/domain-modeling | Complete companions including upstream glossary format; local path mapping | Pending |
 | diagnosing-bugs | skills/engineering/diagnosing-bugs | Refresh source; local glossary mapping | Pending |
 | improve-codebase-architecture | skills/engineering/improve-codebase-architecture | Refresh source; local glossary mapping | Pending |
-| codebase-design | skills/engineering/codebase-design | Refresh DESIGN-IT-TWICE companion; local glossary mapping | Changeset 6 previously verified (de12d6a). Plain-reference conversion and verifier mapping passed production checks and Standards/Spec reviews; awaiting owner verification ([evidence](plain-source-pilot-2026-10-08.md)) |
+| codebase-design | skills/engineering/codebase-design | Refresh DESIGN-IT-TWICE companion; local glossary mapping | Changeset 6 previously verified (de12d6a). Owner verified plain-reference conversion 23c01bf as OK on 2026-10-08 ([evidence](plain-source-pilot-2026-10-08.md)) |
 | wait-what | skills/productivity/wait-what | Refresh source; local glossary mapping | Pending |
-| code-review | skills/engineering/code-review | Preserve complete source and metadata; keep namespaced Myst routing | Pending |
+| code-review | skills/engineering/code-review | Refresh to approved source pin; compare method delta; preserve source/metadata and namespaced Git/P4 routing | Required, pending ([review workstream](../.scratch/upstream-boundary-refresh/issues/11-review-delivery-refresh.md)) |
 | grill-with-docs | skills/engineering/grill-with-docs | Complete source bundle, metadata, provenance, and loading proof | Pending |
 | prototype | skills/engineering/prototype | Complete source bundle, metadata, provenance, and loading proof | Pending |
 | research | skills/engineering/research | Complete source bundle, metadata, provenance, and loading proof | Pending |
@@ -85,9 +85,9 @@ records the accepted replacement for the earlier ZIP workaround.
 | --- | --- | --- |
 | Documentation and CI branch selection | Boundary ADR, contribution exception, honest README, inventory, approved plan and copy-cleanup scope | Changeset 0 verified by user on 2026-10-07; local commit 12d7a75 |
 | Repository verifier | Source-record schema and narrow independent integrity checks | Changeset 1 verified by user on 2026-10-07; local commit 1a9cabf |
-| Plain-reference packaging | ADR-0009, version 2 filename mapping, codebase-design conversion | Implemented and reviewed; awaiting owner verification; remaining skills retain version 1 packages |
+| Plain-reference packaging | ADR-0009, version 2 filename mapping, codebase-design conversion | Owner verified 23c01bf as OK on 2026-10-08; conversions remain per-skill |
 | agentic-workflow | Shared wrapper routing, tracker pointers, glossary compatibility | Changeset 3 verified by owner on 2026-10-07; local commit 5b3b1f3 ([evidence](shared-local-integration-2026-10-07.md)) |
-| review-and-submit | VCS formatter routing and Review Record retirement; preserve review and authority | Pending |
+| review-and-submit | PR/P4 formatter routing; replace What/Why/Notes and standalone Review Record with verified review evidence; preserve review/authority | Required, pending after formatters ([review workstream](../.scratch/upstream-boundary-refresh/issues/11-review-delivery-refresh.md)) |
 | p4-description | New local-origin formatter, credited to pr inspiration; no runtime call to pr | Pending addition |
 | design, changelist-verification | Retain existing behavior | No skill change planned |
 | Consumer format parsers | Check compatibility before formatter rollout; local P4 audit warning dependency is named in the review report | Pending |
