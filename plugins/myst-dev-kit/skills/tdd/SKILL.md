@@ -17,26 +17,8 @@ sibling entries below when the source reaches those references:
   [review-and-submit](../review-and-submit/SKILL.md), whose review engine is
   [myst-dev-kit:code-review](../code-review/SKILL.md).
 
-Read SKILL.md inside the complete [upstream source](upstream.zip), then follow
-it with those local mappings. Read tests.md and mocking.md when the source
-calls for them. Resolve source-relative links inside the archive from the
-referring member's directory; keep the original member names.
-
-Use a local ZIP reader, substituting this entry's directory and the requested
-member (SKILL.md first):
-
-```text
-python -c "import sys,zipfile; sys.stdout.buffer.write(zipfile.ZipFile(sys.argv[1]).read(sys.argv[2]))" "<skill-directory>/upstream.zip" "SKILL.md"
-```
-
-On Windows without Python, set sourceMember to the requested member:
-
-```powershell
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-$sourceMember = 'SKILL.md'
-$sourceZip = [IO.Compression.ZipFile]::OpenRead('<skill-directory>/upstream.zip')
-try {
-    $sourceReader = [IO.StreamReader]::new($sourceZip.GetEntry($sourceMember).Open())
-    try { $sourceReader.ReadToEnd() } finally { $sourceReader.Dispose() }
-} finally { $sourceZip.Dispose() }
-```
+Read the bundled [upstream instructions](references/upstream/UPSTREAM.md), then
+follow them with those local mappings. Read [tests.md](references/upstream/tests.md)
+and [mocking.md](references/upstream/mocking.md) when the source calls for them.
+Resolve source-relative links from references/upstream. The original source
+bytes are unchanged; only the packaged entry filename differs.

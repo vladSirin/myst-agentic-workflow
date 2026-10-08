@@ -9,4 +9,4 @@ plugins/myst-dev-kit/skills/handoff/references/upstream/** -text
 plugins/myst-dev-kit/skills/implement/references/upstream/** -text
 plugins/myst-dev-kit/skills/deep-dive/references/upstream/** -text
 plugins/myst-dev-kit/skills/codebase-design/references/upstream/** -text
-plugins/myst-dev-kit/skills/tdd/upstream.zip -text
+plugins/myst-dev-kit/skills/tdd/references/upstream/** -text

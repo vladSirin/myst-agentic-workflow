@@ -4,10 +4,11 @@ The upstream method is from [Matt Pocock's skills](https://github.com/mattpocock
 [UPSTREAM.json](UPSTREAM.json) owns the source revision, complete subtree,
 original hashes, and required local skill dependencies.
 
-upstream.zip preserves SKILL.md, tests.md, mocking.md, and agents/openai.yaml
-byte-for-byte. Myst owns the public entry, public host metadata, source record,
+references/upstream preserves all four original files byte-for-byte. SKILL.md is
+packaged as UPSTREAM.md; tests.md, mocking.md, and agents/openai.yaml retain
+their original names. Myst owns the public entry, public host metadata, source record,
 and this provenance note. The public name, trigger, and automatic invocation
-are retained. Public host metadata matches the archived original.
+are retained. Public host metadata matches the bundled original.
 
 The local entry loads agentic-workflow's shared contract for project glossary
 and workflow mapping. It resolves the codebase-design reference to Myst's
@@ -17,10 +18,11 @@ review-reference change is no longer inside the source.
 
 The seam-confirmation rule, red-green loop, test guidance, and refactoring-stage
 rule stay in the upstream files. This migration adds no question relay, worker
-orchestration, or change to user confirmation. The former loose companions now
-live in the complete source archive. Copy installs need the declared siblings.
+orchestration, or change to user confirmation. The companions live beside
+UPSTREAM.md in the plain source directory under ADR-0009. Copy installs need
+the declared siblings.
 Loading and bounded behavior evidence are in the repository's TDD migration
-report; source equality alone does not prove runtime equivalence.
+and plain-source conversion reports; source equality alone does not prove runtime equivalence.
 
 ## Upstream MIT notice
 
