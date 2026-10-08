@@ -23,4 +23,7 @@ publication or consumer migration is included.
 Evidence: [migration report](../../../docs/to-spec-wrapper-2026-10-08.md).
 Source, copy/discovery, checkout, and four runtime checks passed.
 Final Standards and Spec reviews are GREEN with zero findings.
-Outstanding: owner verification before another changeset.
+Owner verification: accepted on 2026-10-08 for b1730da after the requested
+alignment check. Actual paired specs cover the same agreed requirements and
+project state; source/package, trace/spec hashes, and file/HEAD evidence match.
+The report retains the story-count and coverage limits.

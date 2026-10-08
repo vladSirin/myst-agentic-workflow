@@ -1,6 +1,7 @@
 # To-spec source and wrapper migration - 2026-10-08
 
-Status: implemented, tested, and independently reviewed; owner verification pending.
+Status: implemented, tested, independently reviewed, and owner-verified on
+2026-10-08 for conversion commit b1730da after the alignment recheck.
 Review base: 7d2888e. The owner verified TDD and authorized continuation.
 Only to-spec migrates in this changeset.
 
@@ -116,8 +117,27 @@ unchanged HEAD, and the following trace hashes:
 
 Final independent reviews: Standards GREEN, zero findings; Spec GREEN, zero
 findings. Reviewers checked actual specs, source integrity, trace/spec hashes,
-unchanged input files and HEADs, and the no-write cases. Owner verification
-remains pending. The tests prove bounded
+unchanged input files and HEADs, and the no-write cases. The tests prove bounded
 local-tracker behavior, not real remote issue creation, cross-host model output,
 prototype-snippet handling, or every large-spec coverage requirement. Shared
 publication and consumer migration remain outside this changeset.
+
+
+## Owner verification
+
+The owner requested: "Good do a test for result alignment if that works we can
+say it is verified." The completed direct/wrapped specs were re-read and checked
+against the supplied requirements. Both preserve all seven sections, literal
+acceptance/rejection outcomes, the approved public seam, glossary meaning,
+scope limits, and the project's proposed state. The five-versus-ten story count
+and prose differences do not remove an agreed requirement in this fixture.
+
+All four trace hashes, both generated-spec hashes, actual changed-file lists,
+and unchanged Git HEADs were rechecked. The committed wrapper package matches
+its tested copy exactly, and the direct entry/source metadata match the recorded
+upstream bytes. alignment-recheck.json records this check. No extra model run
+was needed because the paired execution already existed for this exact package.
+
+The owner's condition is met: to-spec conversion b1730da is owner-verified on
+2026-10-08 for the tested scope. The larger-spec coverage and remote-tracker
+limits above remain; Claude runtime is still deferred.
