@@ -1,7 +1,7 @@
 # Integrate formatters and retire the standalone Review Record
 
 Type: task
-Status: implemented; both review axes GREEN; owner verification pending
+Status: resolved; 39a285f owner-verified after alignment on 2026-10-08
 Review base: 62d3738
 Spec: [required description-writing changesets](../../../docs/plan_upstream_boundary_refresh.md#required-description-writing-changesets)
 and [Git/Perforce format and compatibility](../../../docs/plan_upstream_boundary_refresh.md#git-and-perforce-description-writing).
@@ -32,3 +32,7 @@ Package/source checks pass. Review evidence and limits are in the report.
 Standards recheck is GREEN: the INFO repair and missing-decision control resolve
 the initial WARNING. Spec is GREEN. No remaining actionable review findings.
 Owner verification is the next gate; no publication or next skill is started.
+
+Fresh direct/protocol alignment passes for Git and P4; missing INFO decision
+remains an explicit gap. Reader failures are excluded and preserved. The owner
+authorized verification as OK on pass and continuation to the next skill.

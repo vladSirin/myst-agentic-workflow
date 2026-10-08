@@ -1,7 +1,8 @@
 # Review and submit format integration - 2026-10-08
 
 Status: implemented, tested, and independently reviewed; both axes GREEN.
-The initial Standards WARNING is repaired and rechecked. Owner verification pending. Review base: 62d3738. Only review-and-submit changes behavior; README,
+The initial Standards WARNING is repaired and rechecked. Owner verified
+39a285f on 2026-10-08 after the authorized alignment comparison passed. Review base: 62d3738. Only review-and-submit changes behavior; README,
 migration state, and this evidence accompany it. No release or consumer migration.
 
 ## Change and ownership
@@ -186,3 +187,53 @@ Actual blocker repair/re-review, docs-alignment execution, goal-mode publication
 shelf/submitted snapshots, and live description application remain untested.
 The state/authority cases are hypothetical decisions over captured input.
 No full migration, release readiness, live acceptance, or identical prose is claimed.
+
+## Owner-authorized alignment recheck
+
+The owner authorized verification as OK and continuation if alignment passed.
+Fresh direct and protocol formatter comparisons use the final 39a285f candidate
+and identical JSON evidence within each VCS pair. Git directly reads the intact
+upstream pr source; P4 directly reads its local formatter, never Git-only pr.
+This compares formatter meaning, not new review execution or publication.
+
+| Selected run | Seconds | Result |
+| --- | ---: | --- |
+| git-direct | 89.432 | Intact upstream format; actual captured GREEN receipts and accepted INFO scope limit. |
+| git-protocol | 121.426 | Same change/evidence/risk; protocol axis fields and explicit disposition preserved. |
+| p4-accepted-direct | 86.388 | Correct tags, captured evidence, actual accepted INFO and Submit Risk. |
+| retry1-p4-accepted-protocol | 107.004 | Same facts and risk; compatible axis fields; no publication authority. |
+| p4-missing-decision | 150.780 | Actual GREEN reports remain; missing INFO decision returns to the main protocol, with no invented disposition. |
+
+The additional initial p4-direct run (106.748s) exposed a missing disposition
+in the supplied receipt set; it is retained as a diagnostic, not the usable-input
+comparison. The main protocol session records ACCEPTED for that intentional
+captured-scope INFO, preserving live/production/acceptance limits, before the
+positive P4 pair. Two protocol starts (57.297s and 40.884s) could not read fixture
+inputs and returned null bodies. They are excluded, not scored as alignment passes.
+The final retry retains the same candidate/evidence but adds scoped shell-recovery
+guidance to its prompt; successful read-only escalations are in the trace.
+
+Both positive pairs align on <= becoming <, the boolean API, actual before/after
+results, both GREEN axis receipts, actual INFO acceptance, and rollback/impact.
+Layouts differ: the protocol adds separate compatible axis fields and disposition
+checks. Git raw output expresses ACCEPTED without the protocol bracket style;
+that is the same recorded decision, not identical formatting. P4 missing-decision
+handling is an intended local guard. No claim of identical prose or live readiness.
+
+All selected packages match final repository bytes. Complete inventories and
+fixture HEADs remain unchanged. P4 has no pr package or observed pr read. The
+same-input, section, disposition, limit, and risk checks pass. Prior state/parser
+negative controls remain applicable; no skill source changed during this recheck.
+
+Evidence root: C:/Users/Shado/AppData/Local/Temp/myst-review-submit-alignment-20261008
+Full prompts, replies, failures, fixture inventories, main P4 disposition, and
+alignment-checks.json are retained. Owner verification is now recorded; installed
+copies, Claude runtime, live consumers, and publication remain outside this step.
+
+Alignment trace SHA256:
+
+- git-direct: `6a33938d789bb2d4cd4ee1c00c1a5a5bd9de481e15aa91b748c2b4d50950f193`
+- git-protocol: `d5627745b150158b9a0461dc353cc662b419638c59ac9611fbce6157a8948f84`
+- p4-accepted-direct: `25810abfedc2e9d8f54e8b13c7c75d678e355e64f354f0484fae2204e8f7a15c`
+- retry1-p4-accepted-protocol: `859046c1fab08d28f706cef82107964563949f2d1b695c4f29b2c174c10e3a2e`
+- p4-missing-decision: `4dcd46b962dc3c14c2a3a5e3b9be3dd66303e28caed89c6a50a8c53bd4e1a55e`
