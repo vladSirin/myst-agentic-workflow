@@ -1,6 +1,6 @@
 # Upstream boundary migration inventory
 
-Status: triage prepared; runtime alignment blocked by the model service usage limit. Triage remains unverified. Further imports remain pending. Claude runtime deferred until they report Claude works.
+Status: triage owner-verified after successful alignment retries and GREEN reviews. Further imports remain pending. Claude runtime deferred until they report Claude works.
 
 The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance.
 [ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision;
@@ -31,7 +31,7 @@ Destination for every retained or added import:
 `plugins/myst-dev-kit/skills/<skill>/`, with local entry/provenance and a complete
 source bundle. All eight packaged imports use plain references with the single
 mapped entry filename. TDD completed the earlier ZIP conversions. Triage is
-the latest prepared import; its runtime verification is incomplete. The other
+the latest verified import. The other
 17 declared imports remain pending. The [plain-source pilot](plain-source-pilot-2026-10-08.md)
 records the accepted replacement for the earlier ZIP workaround.
 
@@ -42,7 +42,7 @@ records the accepted replacement for the earlier ZIP workaround.
 | tdd | skills/engineering/tdd | Restore source; retain tracker/glossary compatibility; no speculative question relay | Changeset 7 implemented. Plain-reference conversion c9e531c owner-verified on 2026-10-08 after both direct comparisons and GREEN reviews ([evidence](tdd-plain-source-2026-10-08.md)) |
 | to-spec | skills/engineering/to-spec | Move tracker lookup out of source | Source unchanged across approved pins; wrapper and local-tracker tests complete; both reviews GREEN; b1730da owner-verified on 2026-10-08 after alignment recheck ([evidence](to-spec-wrapper-2026-10-08.md)) |
 | to-tickets | skills/engineering/to-tickets | Restore source; local tracker lookup; refresh ticket relationships | Plain-source wrapper and six runtime checks complete; direct results align for local tickets and mock native links; both reviews GREEN; 5b7079d owner-verified on 2026-10-08 after alignment recheck ([evidence](to-tickets-wrapper-2026-10-08.md)) |
-| triage | skills/engineering/triage | Restore source; local tracker/glossary mapping | Prepared; package checks and two guard tests passed; four runtime cases interrupted by model usage limit; reviews and owner verification pending ([evidence](triage-wrapper-2026-10-08.md)) |
+| triage | skills/engineering/triage | Restore source; local tracker/glossary mapping | Owner-verified on 2026-10-08 after final direct/wrapped alignment retries; both review axes GREEN; initial service failures retained as history ([evidence](triage-wrapper-2026-10-08.md)) |
 | wayfinder | skills/engineering/wayfinder | Move tracker lookup out of source | Pending |
 | domain-modeling | skills/engineering/domain-modeling | Complete companions including upstream glossary format; local path mapping | Pending |
 | diagnosing-bugs | skills/engineering/diagnosing-bugs | Refresh source; local glossary mapping | Pending |

@@ -1,7 +1,7 @@
 # Restore triage with project tracker and glossary routing
 
 Type: task
-Status: verification-blocked
+Status: resolved
 Review base: 993e5d1
 Spec: [approved plan](../../../docs/plan_upstream_boundary_refresh.md)
 and [ADR-0009](../../../docs/adr-0009-plain-upstream-references.md).
@@ -25,3 +25,9 @@ tracker and glossary writes did not execute. All baseline files/HEADs are intact
 one direct attempt added a Python cache. No completed alignment claim is made.
 Resume those four tests from fresh baseline fixtures when model access works,
 then finish independent reviews and owner acceptance.
+
+Final acceptance: model access recovered. Both final direct/wrapped pairs align
+for brief/state updates and custom glossary writes. The companion-link P3 was
+fixed and final wrapper runs match the package. Standards and Spec are GREEN
+with zero open findings. Owner verification follows the explicit conditional
+approval on 2026-10-08. All original failed attempts remain in the evidence.

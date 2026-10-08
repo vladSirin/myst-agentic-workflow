@@ -17,6 +17,9 @@ paths; preserve their invocation rules.
 
 Read the bundled [upstream instructions](references/upstream/UPSTREAM.md), then
 follow them with those mappings. Resolve its companion links inside the bundled
-source directory. Project rules govern labels, state changes, and publication;
+source directory. When writing a brief, use [AGENT-BRIEF.md](references/upstream/AGENT-BRIEF.md).
+When checking or recording prior rejections, use
+[OUT-OF-SCOPE.md](references/upstream/OUT-OF-SCOPE.md).
+Project rules govern labels, state changes, and publication;
 upstream close or comment instructions do not grant extra authority. The original
 source bytes are unchanged; only the packaged entry filename differs.
