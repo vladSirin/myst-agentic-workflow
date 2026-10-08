@@ -29,3 +29,5 @@ Code-review bd7fbd3 is owner-verified after alignment recheck on 2026-10-08. The
 replace the unsupported p4 diff -c command in VCS-MECHANICS.md with exact CL file
 selection and supported diff commands. The code-review adapter already uses the
 correct form. Keep formatter and Review Record retirement work in that later step.
+
+PR adoption has [its own changeset](24-pr-wrapper.md) and [evidence](../../../docs/pr-wrapper-2026-10-08.md). Local p4-description and protocol integration remain next, after verification.

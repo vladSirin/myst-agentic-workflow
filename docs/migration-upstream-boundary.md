@@ -1,6 +1,6 @@
 # Upstream boundary migration inventory
 
-Status: wait-what owner-verified; code-review owner-verified after alignment recheck. Further imports remain pending. Claude runtime deferred until they report Claude works.
+Status: code-review owner-verified after alignment recheck; pr implemented, tested, and independently reviewed; owner verification pending. Further imports remain pending. Claude runtime deferred until they report Claude works.
 
 The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance.
 [ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision;
@@ -29,8 +29,8 @@ and commands.
 
 Destination for every retained or added import:
 `plugins/myst-dev-kit/skills/<skill>/`, with local entry/provenance and a complete
-source bundle. All fourteen packaged imports use plain references with the single
-mapped entry filename. TDD completed the earlier ZIP conversions. Code-review is
+source bundle. All fifteen packaged imports use plain references with the single
+mapped entry filename. TDD completed the earlier ZIP conversions. PR is
 the latest prepared import; the other 11 declared imports remain pending. The [plain-source pilot](plain-source-pilot-2026-10-08.md)
 records the accepted replacement for the earlier ZIP workaround.
 
@@ -60,7 +60,7 @@ records the accepted replacement for the earlier ZIP workaround.
 | writing-for-agents | skills/productivity/writing-for-agents | Complete source bundle, metadata, provenance, and loading proof | Pending |
 | deep-dive | Hammer: deep-dive | Preserve original Chinese frontmatter; English local trigger and user-only invocation | Changeset 5 verified by owner (58509c2). Plain-reference conversion c64c236 owner-verified on 2026-10-08 after both-step direct-upstream alignment check; reviews GREEN ([evidence](deep-dive-plain-source-2026-10-08.md)) |
 | roundtable | Hammer: roundtable | Preserve original Chinese frontmatter; local discovery metadata; method behavior checks | Pending |
-| pr | skills/engineering/pr | Add unchanged source and credits; Git-only wrapper and concise actual review evidence | Pending addition |
+| pr | skills/engineering/pr | Add unchanged source and credits; Git-only wrapper and concise actual review evidence | Three-file source adopted; seven selected runtime checks pass, one environment failure retained; both reviews GREEN; owner verification pending ([evidence](pr-wrapper-2026-10-08.md)) |
 | implement-spec | skills/engineering/implement-spec | Add unchanged source; Git-only entry and bounded pilot; no speculative orchestration | Pending addition |
 | resolving-merge-conflicts | Removed upstream | Remove package/catalog references; document obsolete copy cleanup | Pending removal |
 

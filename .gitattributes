@@ -19,3 +19,4 @@ plugins/myst-dev-kit/skills/diagnosing-bugs/references/upstream/** -text
 plugins/myst-dev-kit/skills/improve-codebase-architecture/references/upstream/** -text
 plugins/myst-dev-kit/skills/wait-what/references/upstream/** -text
 plugins/myst-dev-kit/skills/code-review/references/upstream/** -text
+plugins/myst-dev-kit/skills/pr/references/upstream/** -text
