@@ -1,7 +1,7 @@
 # Add the local Perforce description formatter
 
 Type: task
-Status: implemented; both reviews GREEN; owner verification pending
+Status: resolved; 0dc4e03 owner-verified on 2026-10-08
 Review base: c17c3f2
 Spec: [Git and Perforce description writing](../../../docs/plan_upstream_boundary_refresh.md#git-and-perforce-description-writing)
 and [required formatter changesets](../../../docs/plan_upstream_boundary_refresh.md#required-description-writing-changesets).
@@ -23,3 +23,5 @@ data-loss risk, and Git exclusion. Three initial reader failures are retained;
 identical-input retries passed. Exact candidate packages, fixture inventories,
 and HEADs were verified. Package/source checks and both review axes are GREEN.
 Next after owner verification: review-and-submit integration and parser checks.
+
+Owner explicitly verified this skill as OK and authorized protocol integration.

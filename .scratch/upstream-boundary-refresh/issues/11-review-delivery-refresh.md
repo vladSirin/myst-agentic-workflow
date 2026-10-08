@@ -35,3 +35,5 @@ PR adoption has [its own changeset](24-pr-wrapper.md) and [evidence](../../../do
 PR d8c2c53 is owner-verified after alignment recheck on 2026-10-08. Proceed with the separate local p4-description skill.
 
 Local p4-description now has [its own changeset](25-p4-description.md) and [evidence report](../../../docs/p4-description-2026-10-08.md). Protocol integration follows after its verification.
+
+Local p4-description 0dc4e03 is owner-verified on 2026-10-08. Proceed with review-and-submit integration.

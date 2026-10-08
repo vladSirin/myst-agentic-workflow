@@ -1,6 +1,6 @@
 # Upstream boundary migration inventory
 
-Status: code-review owner-verified after alignment recheck; pr owner-verified after alignment recheck; local p4-description implemented, tested, and reviewed; owner verification pending. Further imports remain pending. Claude runtime deferred until they report Claude works.
+Status: code-review owner-verified after alignment recheck; pr owner-verified after alignment recheck; local p4-description owner-verified. Further imports remain pending. Claude runtime deferred until they report Claude works.
 
 The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance.
 [ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision;
@@ -88,7 +88,7 @@ records the accepted replacement for the earlier ZIP workaround.
 | Plain-reference packaging | ADR-0009, version 2 filename mapping, codebase-design conversion | Owner verified 23c01bf as OK on 2026-10-08; conversions remain per-skill |
 | agentic-workflow | Shared wrapper routing, tracker pointers, glossary compatibility | Changeset 3 verified by owner on 2026-10-07; local commit 5b3b1f3 ([evidence](shared-local-integration-2026-10-07.md)) |
 | review-and-submit | PR/P4 formatter routing; replace What/Why/Notes and standalone Review Record with verified review evidence; preserve review/authority | Required, pending after formatters ([review workstream](../.scratch/upstream-boundary-refresh/issues/11-review-delivery-refresh.md)) |
-| p4-description | New local-origin formatter, credited to pr/show-me inspiration; no runtime call to pr | Eight selected cases and package checks pass; three reader failures retained; both reviews GREEN; owner verification pending ([evidence](p4-description-2026-10-08.md)) |
+| p4-description | New local-origin formatter, credited to pr/show-me inspiration; no runtime call to pr | Eight selected cases and package checks pass; three reader failures retained; both reviews GREEN; 0dc4e03 owner-verified on 2026-10-08 ([evidence](p4-description-2026-10-08.md)) |
 | design, changelist-verification | Retain existing behavior | No skill change planned |
 | Consumer format parsers | Check compatibility before formatter rollout; local P4 audit warning dependency is named in the review report | Pending |
 | Release docs and install fixtures | Validate upgrade and rollback cleanup; remove only confirmed obsolete Myst copies and preserve personal edits | Pending |

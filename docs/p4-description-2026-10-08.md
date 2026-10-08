@@ -1,7 +1,7 @@
 # Local P4 description formatter - 2026-10-08
 
 Status: implemented, tested, and independently reviewed; both axes GREEN.
-Owner verification pending. Review base: c17c3f2. Only p4-description is added.
+Owner verified 0dc4e03 on 2026-10-08. Review base: c17c3f2. Only p4-description is added.
 
 ## Local ownership and behavior
 
@@ -138,6 +138,13 @@ ownership, attribution, P4 routing, evidence limits, and accurate test reporting
 Final Spec review: GREEN, zero actionable findings. It independently checked all
 eight selected outputs, artifact hashes, complete inventories, candidate packages,
 and HEADs against the approved requirements. Both retained the stated limits.
-The final six CI gates and staged whitespace check passed. Owner verification
-remains pending.
+The final six CI gates and staged whitespace check passed. Owner verification is recorded below.
 No push, PR, merge, release, live CL change, or consumer update is included.
+
+
+## Owner acceptance
+
+The owner explicitly verified this skill as OK on 2026-10-08 and authorized the
+next changeset. Saved package, trace/reply, inventory, and HEAD evidence still
+matches 0dc4e03. No new model call was needed. The eight selected cases, three
+excluded reader failures, and stated runtime/consumer limits remain unchanged.
