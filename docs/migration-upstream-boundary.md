@@ -1,6 +1,6 @@
 # Upstream boundary migration inventory
 
-Status: to-tickets implemented and tested; both review axes GREEN, owner verification pending. Further imports remain pending. Claude runtime deferred until they report Claude works.
+Status: to-tickets owner-verified after direct/wrapped alignment recheck. Further imports remain pending. Claude runtime deferred until they report Claude works.
 
 The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance.
 [ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision;
@@ -40,7 +40,7 @@ records the accepted replacement for the earlier ZIP workaround.
 | implement | skills/engineering/implement | Restore source; move publication/tracker routing into local wrapper | Changeset 4 verified by owner (0a38ca7). Plain-reference conversion d442595 owner-verified on 2026-10-08 after aligned direct-upstream comparison; both review axes GREEN ([evidence](implement-plain-source-2026-10-08.md)) |
 | tdd | skills/engineering/tdd | Restore source; retain tracker/glossary compatibility; no speculative question relay | Changeset 7 implemented. Plain-reference conversion c9e531c owner-verified on 2026-10-08 after both direct comparisons and GREEN reviews ([evidence](tdd-plain-source-2026-10-08.md)) |
 | to-spec | skills/engineering/to-spec | Move tracker lookup out of source | Source unchanged across approved pins; wrapper and local-tracker tests complete; both reviews GREEN; b1730da owner-verified on 2026-10-08 after alignment recheck ([evidence](to-spec-wrapper-2026-10-08.md)) |
-| to-tickets | skills/engineering/to-tickets | Restore source; local tracker lookup; refresh ticket relationships | Plain-source wrapper and six runtime checks complete; direct results align for local tickets and mock native links; both reviews GREEN; owner verification pending ([evidence](to-tickets-wrapper-2026-10-08.md)) |
+| to-tickets | skills/engineering/to-tickets | Restore source; local tracker lookup; refresh ticket relationships | Plain-source wrapper and six runtime checks complete; direct results align for local tickets and mock native links; both reviews GREEN; 5b7079d owner-verified on 2026-10-08 after alignment recheck ([evidence](to-tickets-wrapper-2026-10-08.md)) |
 | triage | skills/engineering/triage | Restore source; local tracker/glossary mapping | Pending |
 | wayfinder | skills/engineering/wayfinder | Move tracker lookup out of source | Pending |
 | domain-modeling | skills/engineering/domain-modeling | Complete companions including upstream glossary format; local path mapping | Pending |

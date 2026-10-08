@@ -1,6 +1,7 @@
 # To-tickets source and wrapper migration - 2026-10-08
 
-Status: implemented, tested, and independently reviewed; owner verification pending.
+Status: implemented, tested, independently reviewed, and owner-verified for
+5b7079d after the alignment recheck on 2026-10-08.
 Review base: 02d444f. The owner verified to-spec and requested the next skill.
 Only to-tickets migrates in this changeset.
 
@@ -133,5 +134,25 @@ align. Source inventory, metadata, license, guard behavior, hashes, and unchange
 Git HEADs match the requirements and report.
 
 Review summary: Standards 0 findings; Spec 0 findings. No worst issue on either
-axis. The complete staged git diff --check passed. Owner verification is pending.
+axis. The complete staged git diff --check passed. Owner verification is recorded below.
 No push, PR, merge, release, consumer migration, or Claude model test is included.
+
+
+## Alignment recheck and owner verification
+
+The owner instructed: "Do alignement test, if ok consider it verified."
+The actual local ticket sets and native mock issue bodies were read again and
+compared against the agreed plan. Scope, acceptance behavior, queued state,
+blockers, and parent links align. Wording, optional local parent references,
+and native operation order differ as already disclosed above.
+
+The recheck confirms the committed package 5b7079d equals the tested wrappers,
+and direct entries match the pinned source inventory. Paired prompts and project
+inputs match. All six trace hashes, output hashes, changed-file inventories,
+and fixture Git HEADs match the recorded evidence. Guard cases remain unchanged.
+The saved alignment-recheck.json records these checks. This was a revalidation
+of the existing direct/wrapped executions, with zero new model calls.
+
+Result: PASS within the documented scope. Under the owner's conditional approval,
+5b7079d is owner-verified. Live tracker integration and autonomous decomposition
+alignment are not proved by these fixtures. Claude runtime remains deferred.
