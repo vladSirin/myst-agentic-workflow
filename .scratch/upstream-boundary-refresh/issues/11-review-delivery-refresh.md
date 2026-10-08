@@ -37,3 +37,16 @@ PR d8c2c53 is owner-verified after alignment recheck on 2026-10-08. Proceed with
 Local p4-description now has [its own changeset](25-p4-description.md) and [evidence report](../../../docs/p4-description-2026-10-08.md). Protocol integration follows after its verification.
 
 Local p4-description 0dc4e03 is owner-verified on 2026-10-08. Proceed with review-and-submit integration.
+
+Review-and-submit integration now has [its own changeset](26-review-submit-format.md)
+and [evidence](../../../docs/review-submit-format-2026-10-08.md). Runtime/package and
+known offline consumer checks pass. Independent review and owner verification
+remain pending; required deployed consumer compatibility is still checked before
+exposure. This tracking task does not claim full release acceptance.
+
+Protocol Spec review is GREEN. Standards INFO-disposition WARNING is repaired
+and its targeted runtime checks pass; Standards recheck and owner verification
+remain pending. The repair is local; upstream source stays intact.
+
+Standards recheck is now GREEN; Spec is GREEN. Protocol owner verification
+remains pending. Required live/deployed consumer checks stay before exposure.

@@ -39,7 +39,7 @@ The pipeline: discussion → spec → tickets → triage → implement → verif
 Model-invoked:
 
 - **[agentic-workflow](plugins/myst-dev-kit/skills/agentic-workflow/SKILL.md)** — the stage map and shared local integration: project pointers, dependency routing, and legacy/new glossary paths. Fires on non-trivial feature work.
-- **[review-and-submit](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md)** — the mandatory pre-publish protocol: changeset organization, two-axis review, Review Record, human-gated submit (Perforce and git forms).
+- **[review-and-submit](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md)** — the mandatory pre-publish protocol: two-axis review, verified results inside Evidence, VCS-specific formatter routing, preflight, and human-gated publication. Copy installs need agentic-workflow, code-review, and the target formatter (pr for Git; p4-description for Perforce).
 - **[code-review](plugins/myst-dev-kit/skills/code-review/SKILL.md)** — unchanged Matt Pocock two-axis review method with Myst engine selection, project spec lookup, and Git/Perforce evidence mapping. Invoke `myst-dev-kit:code-review`, or its full Myst path in copy hosts ([evidence](docs/code-review-wrapper-2026-10-08.md)).
 - **[pr](plugins/myst-dev-kit/skills/pr/SKILL.md)** — Git-only PR bodies using intact Matt Pocock source and show-me credits; Myst adds project vocabulary, ticket pointers, and verified review evidence. Never used for P4 targets. Copy installs need agentic-workflow ([evidence](docs/pr-wrapper-2026-10-08.md)).
 - **[p4-description](plugins/myst-dev-kit/skills/p4-description/SKILL.md)** — local Perforce-only descriptions with established title tags, ASCII text, factual review evidence, and Submit Risk. Inspired by pr/show-me; never invokes Git-only pr. Copy installs need agentic-workflow ([evidence](docs/p4-description-2026-10-08.md)).
@@ -51,14 +51,14 @@ User-invoked:
 - **[to-spec](plugins/myst-dev-kit/skills/to-spec/SKILL.md)** — synthesize the conversation into a spec through unchanged upstream instructions and local tracker, glossary, and state rules. Copy installs need agentic-workflow ([migration evidence](docs/to-spec-wrapper-2026-10-08.md)).
 - **[to-tickets](plugins/myst-dev-kit/skills/to-tickets/SKILL.md)** — Matt Pocock source with Myst tracker routing; split approved work into tracer-bullet tickets with blockers and parent links. Plain-source migration; verification tracked in the migration inventory.
 - **[triage](plugins/myst-dev-kit/skills/triage/SKILL.md)** — Matt Pocock source with Myst tracker and glossary routing; categorise, verify, grill, and write agent briefs. Plain-source migration; verification tracked in the migration inventory.
-- **[implement](plugins/myst-dev-kit/skills/implement/SKILL.md)** — implement a spec or tickets through unchanged plain upstream references and Myst dependency/review routing; supports Git and Perforce targets. Copy installs need agentic-workflow, tdd, review-and-submit, and code-review.
+- **[implement](plugins/myst-dev-kit/skills/implement/SKILL.md)** — implement a spec or tickets through unchanged plain upstream references and Myst dependency/review routing; supports Git and Perforce targets. Copy installs need agentic-workflow, tdd, review-and-submit, code-review, and the target formatter required by review-and-submit.
 - **[wayfinder](plugins/myst-dev-kit/skills/wayfinder/SKILL.md)** — Matt Pocock source with Myst tracker and glossary routing; plan large work as a map of decision tickets. Plain-source migration; verification tracked in the migration inventory.
 
 ### Engineering
 
 Model-invoked:
 
-- **[tdd](plugins/myst-dev-kit/skills/tdd/SKILL.md)** — test-first development through unchanged plain upstream references and red-green cycles, with local glossary and review routing. Copy installs also need agentic-workflow, codebase-design, review-and-submit, and code-review ([conversion evidence](docs/tdd-plain-source-2026-10-08.md)).
+- **[tdd](plugins/myst-dev-kit/skills/tdd/SKILL.md)** — test-first development through unchanged plain upstream references and red-green cycles, with local glossary and review routing. Copy installs also need agentic-workflow, codebase-design, review-and-submit, code-review, and its target formatter ([conversion evidence](docs/tdd-plain-source-2026-10-08.md)).
 - **[diagnosing-bugs](plugins/myst-dev-kit/skills/diagnosing-bugs/SKILL.md)** — Matt Pocock source with Myst glossary and VCS routing; diagnose hard bugs and performance regressions. Verification tracked in the migration inventory.
 - **[design](plugins/myst-dev-kit/skills/design/SKILL.md)** — design and plan documents: correct name, correct location, standard template, WIP-to-final lifecycle.
 - **[prototype](plugins/myst-dev-kit/skills/prototype/SKILL.md)** — build a throwaway prototype to answer a design question before committing to it.
