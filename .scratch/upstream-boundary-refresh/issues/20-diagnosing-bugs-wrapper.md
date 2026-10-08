@@ -1,7 +1,7 @@
 # Restore diagnosing-bugs with local domain and VCS routing
 
 Type: task
-Status: awaiting owner verification
+Status: resolved
 Review base: 74148bf
 Spec: [approved plan](../../../docs/plan_upstream_boundary_refresh.md)
 and [ADR-0009](../../../docs/adr-0009-plain-upstream-references.md).
@@ -25,4 +25,4 @@ All package checks and four fresh runtime cases passed. The direct/wrapped
 implementations are byte-identical; test files differ only in one test name.
 Both no-reproduction cases stop without hypotheses or edits. Both review axes
 are GREEN with zero actionable findings. The report records the phase-order
-difference and bounded coverage. Owner verification remains pending.
+difference and bounded coverage. Owner accepted 9e22e7a on 2026-10-08 after alignment recheck.

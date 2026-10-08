@@ -1,6 +1,6 @@
 # Upstream boundary migration inventory
 
-Status: domain-modeling owner-verified. Diagnosing-bugs implemented, tested, and reviewed; owner verification pending. Further imports remain pending. Claude runtime deferred until they report Claude works.
+Status: diagnosing-bugs owner-verified after alignment recheck. Further imports remain pending. Claude runtime deferred until they report Claude works.
 
 The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance.
 [ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision;
@@ -44,7 +44,7 @@ records the accepted replacement for the earlier ZIP workaround.
 | triage | skills/engineering/triage | Restore source; local tracker/glossary mapping | Owner-verified on 2026-10-08 after final direct/wrapped alignment retries; both review axes GREEN; initial service failures retained as history ([evidence](triage-wrapper-2026-10-08.md)) |
 | wayfinder | skills/engineering/wayfinder | Move tracker lookup out of source | Plain-source wrapper and six runtime tests complete; direct outputs align for task resolution and human-decision pause; both reviews GREEN; 7fbda73 owner-verified on 2026-10-08; shared naming defect documented ([evidence](wayfinder-wrapper-2026-10-08.md)) |
 | domain-modeling | skills/engineering/domain-modeling | Complete companions including upstream glossary format; local path mapping | Wrapper/source and package checks complete; eight selected behavior checks passed including direct alignment; one excluded timeout retained; both reviews GREEN; 985627a owner-verified on 2026-10-08 ([evidence](domain-modeling-wrapper-2026-10-08.md)) |
-| diagnosing-bugs | skills/engineering/diagnosing-bugs | Refresh source; local glossary mapping | Plain-source wrapper and four runtime checks complete; direct fix and stop-path results align; both review axes GREEN; owner verification pending ([evidence](diagnosing-bugs-wrapper-2026-10-08.md)) |
+| diagnosing-bugs | skills/engineering/diagnosing-bugs | Refresh source; local glossary mapping | Plain-source wrapper and four runtime checks complete; direct fix and stop-path results align; both review axes GREEN; 9e22e7a owner-verified on 2026-10-08 ([evidence](diagnosing-bugs-wrapper-2026-10-08.md)) |
 | improve-codebase-architecture | skills/engineering/improve-codebase-architecture | Refresh source; local glossary mapping | Pending |
 | codebase-design | skills/engineering/codebase-design | Refresh DESIGN-IT-TWICE companion; local glossary mapping | Changeset 6 previously verified (de12d6a). Owner verified plain-reference conversion 23c01bf as OK on 2026-10-08 ([evidence](plain-source-pilot-2026-10-08.md)) |
 | wait-what | skills/productivity/wait-what | Refresh source; local glossary mapping | Pending |

@@ -1,6 +1,7 @@
 # Diagnosing-bugs source and wrapper migration - 2026-10-08
 
-Status: implemented, tested, and independently reviewed; owner verification pending.
+Status: implemented, tested, independently reviewed, and owner-verified for
+9e22e7a on 2026-10-08 after alignment recheck.
 Review base: 74148bf. Only diagnosing-bugs migrates in this changeset.
 
 ## Source and local integration
@@ -132,5 +133,17 @@ Final Standards review: GREEN, zero actionable findings. It confirmed source
 ownership, automatic invocation, direct helper access, and honest evidence limits.
 Final Spec review: GREEN, zero actionable findings. It checked actual traces,
 outputs, hashes, unchanged HEADs, regression order, and both stop-path results.
-The complete staged whitespace check passed. Owner verification remains pending
-for this changeset. No push, PR, merge, release, or consumer update.
+The complete staged whitespace check passed. Owner acceptance is recorded below. No push, PR, merge, release, or consumer update.
+
+## Alignment recheck and owner acceptance
+
+The owner requested alignment testing, conditional verification, and continuation.
+Existing direct/wrapped executions were rechecked against 9e22e7a. Paired inputs,
+complete package hashes, trace/output hashes, red-before-green evidence, output
+code/tests, fifty-case results, changed-file inventories, and fixture HEADs match
+the reviewed evidence. Both no-reproduction runs still show no writes.
+
+alignment-recheck.json records PASS for this bounded comparison. No new model
+request was needed. Under the owner's conditional approval, 9e22e7a is verified.
+The recorded phase-order difference and coverage limits remain. Claude runtime
+is still deferred.
