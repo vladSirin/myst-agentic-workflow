@@ -1,6 +1,6 @@
 # Upstream boundary migration inventory
 
-Status: implement plain-reference conversion tested and reviewed; awaiting owner verification. Claude runtime deferred until they report Claude works.
+Status: implement plain-reference conversion owner-verified after direct-upstream comparison. Claude runtime deferred until they report Claude works.
 
 The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance.
 [ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision;
@@ -37,7 +37,7 @@ records the accepted replacement for the earlier ZIP workaround.
 | Skill | Source subtree | Required migration | Status |
 | --- | --- | --- | --- |
 | handoff | skills/productivity/handoff | First packaging pilot; refresh temporary-path guidance and metadata | Owner verified plain-reference conversion 7e05f31 on 2026-10-08 after output review. OpenCode still needs its local invocation rule; Claude deferred ([evidence](handoff-plain-source-2026-10-08.md)) |
-| implement | skills/engineering/implement | Restore source; move publication/tracker routing into local wrapper | Changeset 4 verified by owner (0a38ca7). Plain-reference conversion tested and reviewed GREEN on both axes; owner verification pending ([evidence](implement-plain-source-2026-10-08.md)) |
+| implement | skills/engineering/implement | Restore source; move publication/tracker routing into local wrapper | Changeset 4 verified by owner (0a38ca7). Plain-reference conversion d442595 owner-verified on 2026-10-08 after aligned direct-upstream comparison; both review axes GREEN ([evidence](implement-plain-source-2026-10-08.md)) |
 | tdd | skills/engineering/tdd | Restore source; retain tracker/glossary compatibility; no speculative question relay | Changeset 7 implemented; source, discovery, and bounded runtime checks complete; awaiting owner verification ([evidence](tdd-wrapper-2026-10-08.md)) |
 | to-spec | skills/engineering/to-spec | Move tracker lookup out of source | Pending |
 | to-tickets | skills/engineering/to-tickets | Restore source; local tracker lookup; refresh ticket relationships | Pending |

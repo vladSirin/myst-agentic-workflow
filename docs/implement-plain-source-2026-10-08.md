@@ -1,6 +1,7 @@
 # Implement plain-source conversion - 2026-10-08
 
-Status: implemented, tested, and independently reviewed; owner verification pending.
+Status: implemented, tested, independently reviewed, and owner-verified on 2026-10-08
+for conversion commit d442595 after the requested direct-upstream comparison.
 Review base: bbd3b89. The owner verified handoff and authorized continuation.
 Only implement changes source layout in this changeset.
 
@@ -112,9 +113,47 @@ independent review of this package conversion.
 Final independent package reviews: Standards GREEN, zero findings; Spec GREEN,
 zero findings. Both reviewers checked the completed evidence report. The Spec
 reviewer also checked actual fixture outputs, test traces, unchanged HEAD, and
-all three trace hashes. Owner verification remains outstanding.
+all three trace hashes. The owner's later conditional verification is recorded below.
 
 Tests establish bounded behavior and loading. They do not prove identical
 wording across models, live P4 operations, or deferred Claude runtime behavior.
-Owner verification is required before the next changeset; publication and
-consumer migration remain outside this changeset.
+Publication and consumer migration remain outside this changeset.
+
+
+## Direct upstream comparison and owner verification
+
+The owner requested: "Good do a quick test if result align with the direct call
+of upstream skill, consider it verified."
+
+A fresh direct-upstream run used the same pre-implementation Git fixture as the
+wrapped run. Every baseline file outside the implement package matched exactly.
+The implement package contained only the two original upstream files, with
+SKILL.md restored to its original name and both hashes checked against
+UPSTREAM.json. It had no Myst implement wrapper. The prompt changed only its
+entry/loading sentence; task, project instructions, local dependencies, model,
+and no-commit/no-publication limits stayed the same.
+
+The direct run completed with exit 0 in 174.271 seconds. Actual files and test
+output were compared with the wrapper run:
+
+- Source code and test text are identical after newline normalization.
+- Both preserved zero, returned three for missing input, and kept positive input.
+- Both obtained a real failing zero regression before the fix, followed by green
+  focused and full suites. The direct run used the whole three-test file for
+  its red check; the wrapper used the focused one-test selection.
+- Both reported Standards and Spec GREEN and type checking unverified.
+- Both changed only source, tests, and ticket among baseline files. Git HEAD
+  stayed unchanged; the ticket was resolved with owner acceptance outstanding.
+- The direct skill used the local code-review engine directly. The wrapper used
+  the intended Myst review coordinator. This routing difference is deliberate.
+
+This confirms aligned results for the tested implementation. Dependency skills
+and project rules were held constant; it is not a test of an entirely upstream
+skillset or of unrestricted upstream publication behavior. Ticket wording and
+review routing differ; result equivalence does not require identical transcripts.
+
+Evidence is in upstream-direct/ under the existing temporary evidence root,
+with direct-comparison.json recording the checked results. Direct trace SHA-256:
+9950459ab5e87ebb7c59699be6c953bab05994fcfa8143b3680b5ff3167af182.
+The owner's stated condition is met. Implement conversion d442595 is recorded
+as owner-verified on 2026-10-08. Claude runtime remains deferred.
