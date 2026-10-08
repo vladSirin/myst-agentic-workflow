@@ -1,7 +1,7 @@
 # Restore domain-modeling with authoritative glossary paths
 
 Type: task
-Status: in-review
+Status: resolved
 Review base: 6aa0be2
 Spec: [approved plan](../../../docs/plan_upstream_boundary_refresh.md)
 and [ADR-0009](../../../docs/adr-0009-plain-upstream-references.md).
@@ -25,4 +25,5 @@ Package checks and eight selected runtime cases passed. Direct and wrapped
 legacy/scoped glossary outputs are byte-identical; ADR meaning/state/path align.
 An initial direct legacy timeout is preserved and excluded from pass evidence.
 Final Standards and Spec reviews are GREEN with zero actionable findings.
-Owner verification remains pending.
+Owner accepted 985627a on 2026-10-08 after the requested alignment recheck.
+The timeout and bounded coverage limits remain in the evidence.

@@ -1,6 +1,7 @@
 # Domain-modeling source and wrapper migration - 2026-10-08
 
-Status: implemented, tested, and independently reviewed; owner verification pending.
+Status: implemented, tested, independently reviewed, and owner-verified for
+985627a on 2026-10-08 after alignment recheck.
 Review base: 6aa0be2. Only domain-modeling migrates in this changeset.
 
 ## Source and local integration
@@ -134,6 +135,21 @@ and the separate original timeout. Trace hashes:
 
 Final Standards review: GREEN, zero actionable findings. Final Spec review:
 GREEN, zero actionable findings. Both reviewed the actual outputs and evidence
-limits. The complete staged whitespace check passed. Owner verification remains
-pending.
+limits. The complete staged whitespace check passed. Owner verification is recorded below.
 No publication, implementation, or consumer migration is included.
+
+
+## Alignment recheck and owner acceptance
+
+The owner requested alignment testing, conditional verification, and continuation
+to the next skill. Existing direct/wrapped executions were rechecked against
+985627a. The legacy and three scoped glossary outputs remain byte-identical.
+Both ADRs retain equivalent decision, rationale, accepted status, next number,
+and custom location. All selected trace/output hashes, paired prompts/project
+inputs, package/source hashes, changed-file inventories and fixture HEADs match.
+Both ownership guards remain unchanged. The original timeout remains excluded.
+
+alignment-recheck.json records this fresh validation of the existing executions;
+no new model request was needed. Result: PASS within the documented scope.
+Under the owner's conditional approval, 985627a is verified. The open-ended
+judgment and other coverage limits remain; Claude runtime is still deferred.
