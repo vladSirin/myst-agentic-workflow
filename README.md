@@ -40,7 +40,7 @@ Model-invoked:
 
 - **[agentic-workflow](plugins/myst-dev-kit/skills/agentic-workflow/SKILL.md)** — the stage map and shared local integration: project pointers, dependency routing, and legacy/new glossary paths. Fires on non-trivial feature work.
 - **[review-and-submit](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md)** — the mandatory pre-publish protocol: changeset organization, two-axis review, Review Record, human-gated submit (Perforce and git forms).
-- **[code-review](plugins/myst-dev-kit/skills/code-review/SKILL.md)** — the review engine: Standards and Spec axes in parallel sub-agents, reported side by side. Cite it namespaced as `myst-dev-kit:code-review` — the bare name resolves to the official git-diff review plugin.
+- **[code-review](plugins/myst-dev-kit/skills/code-review/SKILL.md)** — unchanged Matt Pocock two-axis review method with Myst engine selection, project spec lookup, and Git/Perforce evidence mapping. Invoke `myst-dev-kit:code-review`, or its full Myst path in copy hosts ([evidence](docs/code-review-wrapper-2026-10-08.md)).
 - **[changelist-verification](plugins/myst-dev-kit/skills/changelist-verification/SKILL.md)** — hard rule for multi-changeset tasks: execute one at a time with a stop-and-verify gate between each, never batched.
 - **[resolving-merge-conflicts](plugins/myst-dev-kit/skills/resolving-merge-conflicts/SKILL.md)** — work through an in-progress git merge/rebase conflict.
 

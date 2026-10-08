@@ -6,7 +6,6 @@
     "review-and-submit"
   ],
   "pendingImports": [
-    "code-review",
     "grill-me",
     "grill-with-docs",
     "grilling",
