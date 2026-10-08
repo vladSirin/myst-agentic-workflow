@@ -57,7 +57,7 @@ User-invoked:
 Model-invoked:
 
 - **[tdd](plugins/myst-dev-kit/skills/tdd/SKILL.md)** — test-first development through unchanged plain upstream references and red-green cycles, with local glossary and review routing. Copy installs also need agentic-workflow, codebase-design, review-and-submit, and code-review ([conversion evidence](docs/tdd-plain-source-2026-10-08.md)).
-- **[diagnosing-bugs](plugins/myst-dev-kit/skills/diagnosing-bugs/SKILL.md)** — a diagnosis loop for hard bugs and performance regressions.
+- **[diagnosing-bugs](plugins/myst-dev-kit/skills/diagnosing-bugs/SKILL.md)** — Matt Pocock source with Myst glossary and VCS routing; diagnose hard bugs and performance regressions. Verification tracked in the migration inventory.
 - **[design](plugins/myst-dev-kit/skills/design/SKILL.md)** — design and plan documents: correct name, correct location, standard template, WIP-to-final lifecycle.
 - **[prototype](plugins/myst-dev-kit/skills/prototype/SKILL.md)** — build a throwaway prototype to answer a design question before committing to it.
 - **[codebase-design](plugins/myst-dev-kit/skills/codebase-design/SKILL.md)** — the deep-module vocabulary: interface design, seam placement, testability, AI-navigability. Upstream bytes stay unchanged in plain references; the entry is packaged as UPSTREAM.md. The local wrapper maps project glossary paths. Copy installs also need `agentic-workflow` ([packaging evidence](docs/plain-source-pilot-2026-10-08.md)).

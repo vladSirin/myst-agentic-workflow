@@ -7,7 +7,6 @@
   ],
   "pendingImports": [
     "code-review",
-    "diagnosing-bugs",
     "grill-me",
     "grill-with-docs",
     "grilling",
