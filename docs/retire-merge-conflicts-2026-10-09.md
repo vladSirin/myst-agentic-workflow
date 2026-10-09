@@ -1,7 +1,8 @@
 # Merge-conflict skill retirement - 2026-10-09
 
 Status: obsolete package/catalog row and pending waiver removed. Disposable
-upgrade/rollback checks pass. Both independent reviews GREEN; owner verification pending.
+upgrade/rollback checks pass. Both independent reviews GREEN; 2222413 owner-verified
+on 2026-10-09 by explicit approval to remove the obsolete skill and move on.
 Review base: f0334fe. This changeset retires one skill; it does not release the kit.
 
 ## Change and boundary
@@ -169,3 +170,12 @@ Commit range and staging stayed empty.
 The verdict covers retirement and disposable copy migration. Global installs,
 native updater, symlink cleanup and Claude runtime stay outside this proof.
 Owner verification remains pending under issue line 25.
+
+## Owner verification - 2026-10-09
+
+The owner accepted removal and authorized the next phase: "Go ahead, as it is
+removal we just get rid of it and move on." Retirement commit
+22224136b4db4e27bc05fd1bbe7ec0fc6876abf3 is verified OK. Its committed package
+matched the tested snapshot and the worktree was clean. Review-time pending
+statements above remain historical. Combined release and consumer acceptance
+are the next changeset; no real installed-copy cleanup was authorized here.

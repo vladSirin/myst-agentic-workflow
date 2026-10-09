@@ -1,7 +1,7 @@
 # Retire the obsolete merge-conflict skill
 
 Type: task
-Status: retirement implemented; 70 disposable install assertions, eight host catalog checks and all package/source checks pass; both independent reviews GREEN; owner verification pending
+Status: 2222413 owner-verified on 2026-10-09 by explicit removal approval; 70 disposable install assertions, eight host catalog checks and package/source checks pass; both independent reviews GREEN
 Review base: f0334fe
 Spec: [approved retirement and copy cleanup](../../../docs/plan_upstream_boundary_refresh.md#copy-install-cleanup-approved)
 and [migration inventory](../../../docs/migration-upstream-boundary.md).
@@ -22,4 +22,4 @@ No new installer, real installed-copy changes, release, publication or Claude
 model runtime. Required source verifier must pass with no pending imports.
 
 Evidence: [report](../../../docs/retire-merge-conflicts-2026-10-09.md).
-Both review axes and owner verification are required before the next changeset.
+Both review axes and owner verification passed. Combined release acceptance follows.

@@ -1,6 +1,6 @@
 # Upstream boundary migration inventory
 
-Status: all retained imports are owner-verified, most recently implement-spec c2b0688 on 2026-10-09 after alignment artifact recheck. Resolving-merge-conflicts retirement and disposable cleanup checks pass; both independent reviews GREEN; its owner gate remains pending. Combined release acceptance remains pending. Claude runtime deferred until the owner reports Claude works.
+Status: all retained imports and resolving-merge-conflicts retirement are owner-verified; retirement 2222413 accepted on 2026-10-09. Both review axes GREEN. Combined release and consumer acceptance are now in progress. Claude runtime deferred until the owner reports Claude works.
 
 The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance.
 [ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision;
@@ -63,7 +63,7 @@ records the accepted replacement for the earlier ZIP workaround.
 | roundtable | Hammer: roundtable | Preserve original Chinese frontmatter; local discovery metadata; method behavior checks | Complete source and metadata implemented; ten actual turns align for opening, continuation, stop, no-topic pause and guards; package/loading checks pass; both reviews GREEN; e44e253 owner-verified on 2026-10-09 after alignment artifact recheck ([evidence](roundtable-wrapper-2026-10-09.md)) |
 | pr | skills/engineering/pr | Add unchanged source and credits; Git-only wrapper and concise actual review evidence | Three-file source adopted; seven selected runtime checks pass, one environment failure retained; both reviews GREEN; d8c2c53 owner-verified on 2026-10-08 ([evidence](pr-wrapper-2026-10-08.md)) |
 | implement-spec | skills/engineering/implement-spec | Add unchanged source; Git-only entry and bounded pilot; no speculative orchestration | Nine runtime cases and actual Git graph/results align; package/loading checks pass; both reviews GREEN; c2b0688 owner-verified on 2026-10-09 after alignment artifact recheck ([evidence](implement-spec-wrapper-2026-10-09.md)) |
-| resolving-merge-conflicts | Removed upstream | Remove package/catalog references; document obsolete copy cleanup | Removed in candidate; disposable upgrade/rollback and catalog checks pass; both reviews GREEN; owner gate pending ([evidence](retire-merge-conflicts-2026-10-09.md)) |
+| resolving-merge-conflicts | Removed upstream | Remove package/catalog references; document obsolete copy cleanup | Removed; disposable upgrade/rollback and catalog checks pass; both reviews GREEN; 2222413 owner-verified on 2026-10-09 ([evidence](retire-merge-conflicts-2026-10-09.md)) |
 
 ## Exceptions and exclusions
 
