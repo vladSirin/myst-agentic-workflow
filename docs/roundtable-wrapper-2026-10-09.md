@@ -1,7 +1,7 @@
 # Roundtable source and wrapper - 2026-10-09
 
 Status: implementation and all ten alignment/guard turns passed. Package checks
-passed. Both independent reviews GREEN; owner verification pending.
+passed. Both independent reviews GREEN; owner verified e44e253 on 2026-10-09.
 Review base: b644479. This changeset migrates roundtable alone.
 
 The complete original file at Hammer v0.19.0 and approved v0.30.0 is identical.
@@ -236,3 +236,12 @@ reported accurately. Shared fixture rules do not establish wrapper-only causatio
 
 All eleven pinned hashes, saved diff bytes, base/HEAD, empty commit list and
 staging match before and after review. Owner verification remains pending.
+
+## Owner verification - 2026-10-09
+
+The owner authorized verification if alignment passed, then the next skill.
+The saved ten turns were rechecked against committed e44e253. All source,
+package, actual continuation, final-network and protected-state checks pass.
+Both independent reviews remain GREEN. Roundtable is verified OK. Earlier
+pending statements above describe the pre-acceptance state. No new model run
+was needed for this unchanged package. Next: Git-only implement-spec.
