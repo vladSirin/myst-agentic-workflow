@@ -52,6 +52,7 @@ User-invoked:
 - **[to-tickets](plugins/myst-dev-kit/skills/to-tickets/SKILL.md)** — Matt Pocock source with Myst tracker routing; split approved work into tracer-bullet tickets with blockers and parent links. Plain-source migration; verification tracked in the migration inventory.
 - **[triage](plugins/myst-dev-kit/skills/triage/SKILL.md)** — Matt Pocock source with Myst tracker and glossary routing; categorise, verify, grill, and write agent briefs. Plain-source migration; verification tracked in the migration inventory.
 - **[implement](plugins/myst-dev-kit/skills/implement/SKILL.md)** — implement a spec or tickets through unchanged plain upstream references and Myst dependency/review routing; supports Git and Perforce targets. Copy installs need agentic-workflow, tdd, review-and-submit, code-review, and the target formatter required by review-and-submit.
+- **[implement-spec](plugins/myst-dev-kit/skills/implement-spec/SKILL.md)** -- intact Matt Pocock task-graph/worktree orchestration for an approved Git spec. User-only; never for Perforce. Myst retains project, dependency, review and publication rules. Copy installs need the declared dependencies and their closure ([evidence](docs/implement-spec-wrapper-2026-10-09.md)).
 - **[wayfinder](plugins/myst-dev-kit/skills/wayfinder/SKILL.md)** — Matt Pocock source with Myst tracker and glossary routing; plan large work as a map of decision tickets. Plain-source migration; verification tracked in the migration inventory.
 
 ### Engineering
