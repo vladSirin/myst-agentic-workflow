@@ -1,7 +1,7 @@
 # Grilling source and wrapper - 2026-10-09
 
 Status: implementation and alignment checks passed; both independent reviews
-GREEN. Owner verification pending.
+GREEN. Owner verified 51a07f5 on 2026-10-09 after alignment artifact recheck.
 Review base: 430bf23. This changeset migrates grilling alone.
 
 The former Myst entry exactly matches the approved Matt source pin. There is no
@@ -112,8 +112,8 @@ selection, native slash UI, live P4, OpenCode model execution, and Claude model
 runtime remain untested. The source method stays intact for those paths.
 
 Standards and Spec reviews assessed the same working-tree scope against
-430bf23, including complete added files. Owner verification remains pending for
-this grilling changeset. The earlier conditional approval verified grill-me
+430bf23, including complete added files. At review time, owner verification was
+pending for this grilling changeset. The earlier conditional approval verified grill-me
 1d481a5 after its alignment artifact recheck; it does not close this new gate.
 
 ## Standards review
@@ -155,6 +155,16 @@ Every fixture file, package, ticket, HEAD, and branch remains unchanged.
 
 This meets the plan's source integrity, complete companion, loading, behavior,
 and attribution requirements. The test limits above remain open. Owner
-verification remains pending.
+verification was pending at review time.
 
 Spec summary: GREEN; worst severity: none.
+
+## Owner verification
+
+The owner authorized verification if alignment passed, then the next skill. On
+2026-10-09, verify.py rechecked all six saved turns against committed package
+51a07f5. Exact package identity, matching inputs, continued session IDs, frontier
+progression, recommendations, waits, shared-understanding confirmation, actual
+fact children and code reads, and unchanged fixture state still pass. This was
+an artifact recheck, not a new model run. Both review axes were GREEN. Grilling
+is verified OK for this assessed scope; the listed runtime deferrals remain.

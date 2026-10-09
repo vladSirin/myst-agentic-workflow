@@ -1,6 +1,6 @@
 # Upstream boundary migration inventory
 
-Status: grill-me owner-verified on 2026-10-09 after alignment artifact recheck; grilling implementation and alignment checks complete, both reviews GREEN, owner verification pending. Further imports remain pending. Claude runtime deferred until they report Claude works.
+Status: grilling owner-verified on 2026-10-09 after alignment artifact recheck. Further imports remain pending. Claude runtime deferred until they report Claude works.
 
 The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance.
 [ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision;
@@ -54,7 +54,7 @@ records the accepted replacement for the earlier ZIP workaround.
 | research | skills/engineering/research | Complete source bundle, metadata, provenance, and loading proof | Complete source and local note routing implemented; grounded runs pass with actual background-agent and cited-note alignment; both reviews GREEN; 7a8dc27 owner-verified on 2026-10-09 after fresh alignment recheck ([evidence](research-wrapper-2026-10-09.md)) |
 | wizard | skills/engineering/wizard | Complete source bundle, metadata, provenance, and loading proof | Complete source and local setup/CI/capture routing implemented; direct/wrapped authoring alignment, P4 repeatable capture, scope pause, and package/loading checks pass; both reviews GREEN; 5b86625 owner-verified on 2026-10-09 after alignment artifact recheck ([evidence](wizard-wrapper-2026-10-09.md)) |
 | grill-me | skills/productivity/grill-me | Complete source bundle, metadata, provenance, and loading proof | Complete source alias and local Myst dependency routing implemented; direct/wrapped first rounds align; user-only, missing-dependency, and package/loading checks pass; both reviews GREEN; 1d481a5 owner-verified on 2026-10-09 after alignment artifact recheck ([evidence](grill-me-wrapper-2026-10-09.md)) |
-| grilling | skills/productivity/grilling | Complete source bundle, metadata, provenance, and loading proof | Complete source and local routing implemented; direct/wrapped three-round interviews align with actual fact delegation and unchanged state; package/loading checks pass; both reviews GREEN; owner verification pending ([evidence](grilling-wrapper-2026-10-09.md)) |
+| grilling | skills/productivity/grilling | Complete source bundle, metadata, provenance, and loading proof | Complete source and local routing implemented; direct/wrapped three-round interviews align with actual fact delegation and unchanged state; package/loading checks pass; both reviews GREEN; 51a07f5 owner-verified on 2026-10-09 after alignment artifact recheck ([evidence](grilling-wrapper-2026-10-09.md)) |
 | teach | skills/productivity/teach | Complete source bundle, metadata, provenance, and loading proof | Pending |
 | to-questionnaire | skills/productivity/to-questionnaire | Complete source bundle, metadata, provenance, and loading proof | Pending |
 | writing-for-agents | skills/productivity/writing-for-agents | Complete source bundle, metadata, provenance, and loading proof | Pending |
