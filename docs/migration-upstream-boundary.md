@@ -1,6 +1,6 @@
 # Upstream boundary migration inventory
 
-Status: grill-with-docs owner-verified on 2026-10-09 after fresh alignment recheck; both review axes GREEN. Further imports remain pending. Claude runtime deferred until they report Claude works.
+Status: grill-with-docs owner-verified on 2026-10-09 after fresh alignment recheck; prototype implemented and tested with both review axes GREEN, awaiting owner verification. Further imports remain pending. Claude runtime deferred until they report Claude works.
 
 The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance.
 [ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision;
@@ -29,9 +29,9 @@ and commands.
 
 Destination for every retained or added import:
 `plugins/myst-dev-kit/skills/<skill>/`, with local entry/provenance and a complete
-source bundle. All sixteen packaged imports use plain references with the single
-mapped entry filename. TDD completed the earlier ZIP conversions. Grill with Docs
-is the latest prepared import; the other 10 declared imports remain pending. The [plain-source pilot](plain-source-pilot-2026-10-08.md)
+source bundle. All seventeen packaged imports use plain references with the single
+mapped entry filename. TDD completed the earlier ZIP conversions. Prototype
+is the latest prepared import; the other nine declared imports remain pending. The [plain-source pilot](plain-source-pilot-2026-10-08.md)
 records the accepted replacement for the earlier ZIP workaround.
 
 | Skill | Source subtree | Required migration | Status |
@@ -50,7 +50,7 @@ records the accepted replacement for the earlier ZIP workaround.
 | wait-what | skills/productivity/wait-what | Refresh source; local glossary mapping | Four direct/wrapped explanation tests align; legacy and scoped terms resolve correctly; package checks pass; both review axes GREEN; 62bcd4a owner-verified on 2026-10-08 ([evidence](wait-what-wrapper-2026-10-08.md)) |
 | code-review | skills/engineering/code-review | Refresh to approved source pin; compare method delta; preserve source/metadata and namespaced Git/P4 routing | Source unchanged across pins; wrapper and input adapter implemented; eight runtime checks and package checks passed; both reviews GREEN; bd7fbd3 owner-verified on 2026-10-08 ([evidence](code-review-wrapper-2026-10-08.md)) |
 | grill-with-docs | skills/engineering/grill-with-docs | Complete source bundle, metadata, provenance, and loading proof | Final source/composition and guards pass; direct comparisons align in method/docs, with an initial open-choice recommendation difference retained; both reviews GREEN; 9da7632 owner-verified on 2026-10-09 after fresh alignment recheck ([evidence](grill-with-docs-wrapper-2026-10-08.md)) |
-| prototype | skills/engineering/prototype | Complete source bundle, metadata, provenance, and loading proof | Pending |
+| prototype | skills/engineering/prototype | Complete source bundle, metadata, provenance, and loading proof | Complete source and local capture routing implemented; five grounded runs and actual artifact checks align in method/behavior; exact designs/state shapes differ; both reviews GREEN; owner verification pending ([evidence](prototype-wrapper-2026-10-09.md)) |
 | research | skills/engineering/research | Complete source bundle, metadata, provenance, and loading proof | Pending |
 | wizard | skills/engineering/wizard | Complete source bundle, metadata, provenance, and loading proof | Pending |
 | grill-me | skills/productivity/grill-me | Complete source bundle, metadata, provenance, and loading proof | Pending |

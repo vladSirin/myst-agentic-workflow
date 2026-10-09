@@ -21,3 +21,4 @@ plugins/myst-dev-kit/skills/wait-what/references/upstream/** -text
 plugins/myst-dev-kit/skills/code-review/references/upstream/** -text
 plugins/myst-dev-kit/skills/pr/references/upstream/** -text
 plugins/myst-dev-kit/skills/grill-with-docs/references/upstream/** -text
+plugins/myst-dev-kit/skills/prototype/references/upstream/** -text
