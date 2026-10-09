@@ -10,8 +10,7 @@ The public entry, public host metadata, source record, and this note are Myst's
 integration files. Myst owns explicit user invocation, dependency identity,
 copy-install requirements, and the shared project/document mapping. The source
 still composes grilling and domain-modeling. Their methods own interview rounds,
-resolved vocabulary, and ADR decisions. Existing grilling remains a declared
-pending import; this changeset does not claim its boundary conversion is complete.
+resolved vocabulary, and ADR decisions.
 
 Public Codex metadata preserves allow_implicit_invocation: false. OpenCode needs
 its local explicit-command/skill-permission configuration; source metadata alone

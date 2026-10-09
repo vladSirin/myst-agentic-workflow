@@ -47,8 +47,8 @@ updates, PRs, tags, and releases remain later actions with their own scope.
 The refresh also adopts upstream pr for Git and a local p4-description skill
 for Perforce. Retire the standalone Review Record format and place concise
 review results under Evidence. The review process, handling of findings, and
-publication authority remain in review-and-submit. This format decision is
-approved; implementation is pending under this plan.
+publication authority remain in review-and-submit. Current execution status is
+recorded in the [migration inventory](migration-upstream-boundary.md).
 Both pr and implement-spec are Git-only and must not run in P4 environments.
 There is no P4 whole-spec implementation skill or concurrency-policy change
 in this plan.
@@ -553,8 +553,8 @@ record that result; wrapper migration is still a local behavior change.
 These are separate skill changesets after the wrapper pilot and before final
 release readiness:
 
-This work is required, not optional. It is planned but not yet implemented in
-the current review-and-submit package. The
+This work is required. Current execution status is in the
+[migration inventory](migration-upstream-boundary.md). The
 [review delivery tracker](../.scratch/upstream-boundary-refresh/issues/11-review-delivery-refresh.md)
 links it to the upstream review-engine refresh below. Retain separate skill
 changesets: code-review, pr, p4-description, then review-and-submit once its

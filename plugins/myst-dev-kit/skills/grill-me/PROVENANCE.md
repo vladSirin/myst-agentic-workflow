@@ -11,9 +11,8 @@ The local entry retains explicit user invocation, loads the shared contract,
 and selects the Myst grilling dependency through the host namespace or full
 installed path. It maps the source Skill call to reading the selected entry
 when that host has no Skill tool. Interview behavior remains owned by grilling.
-Copy installs require agentic-workflow and grilling. The current grilling entry
-matches the approved method; its own complete-source migration is still pending
-and is not part of this changeset. Public metadata matches the source and retains
+Copy installs require agentic-workflow and grilling.
+Public metadata matches the source and retains
 allow_implicit_invocation: false.
 
 ## Upstream MIT notice

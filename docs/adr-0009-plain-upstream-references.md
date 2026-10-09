@@ -1,6 +1,6 @@
 # ADR 0009 - Plain upstream references with one filename mapping
 
-**Status**: Accepted; per-skill rollout in progress
+**Status**: Accepted
 **Date**: 2026-10-08
 **Context owner**: package maintainer
 
