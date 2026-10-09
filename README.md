@@ -39,6 +39,11 @@ Two kinds of skill, split by how they start:
 - **User-invoked** — intended to start only on your request. Claude uses `disable-model-invocation: true`; migrated Codex entries also carry native invocation metadata. OpenCode needs a permission rule and an explicit `/name` command; see the [tested handoff setup](docs/handoff-pilot-2026-10-07.md#opencode-invocation-configuration). The frontmatter flag alone does not enforce this in every host.
 - **Model-invoked** — the agent loads them itself whenever the task matches the description. You can also call any of them explicitly; the marker only removes the automatic path, never the manual one.
 
+OpenCode 1.18.35 hides skill commands from slash-menu suggestions. A custom
+command alias can show a skill in that menu; it must load the public Myst wrapper.
+See the [tested menu setup](docs/handoff-pilot-2026-10-07.md#slash-menu-suggestions-11835).
+Skill discovery, menu display and model execution are separate checks.
+
 ### Delivery & publishing
 
 The pipeline: discussion → spec → tickets → triage → implement → verify → review/publish.

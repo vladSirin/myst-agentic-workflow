@@ -21,3 +21,16 @@ No main merge, tag, release or real consumer/plugin update is authorized by this
 preparation step. Those later decisions name the exact PR or release revision.
 
 Evidence: [candidate report](../../../docs/upstream-release-candidate-2026-10-09.md).
+
+Progress on 2026-10-09: reviewed candidate f34add6 is pushed and draft
+[PR #107](https://github.com/vladSirin/myst-agentic-workflow/pull/107) is created
+and attached. All six candidate CI checks pass. Disposable Codex HTTPS ref
+replacement and OpenCode HTTPS copy upgrade/rollback pass with exact source
+hashes and fresh catalogs. OpenCode's optional command alias appears in a
+typing-only menu check; Codex's authenticated menu remains unverified.
+
+Outstanding: the owner identifies any further required consumers and decides
+the exact PR merge with its stated menu/runtime limits. After an approved main
+merge, check the ordinary main-ref version transition. Tagging and real consumer
+updates remain separate decisions. Keep this preparation task claimed while
+these integration gates remain; do not pre-record human acceptance or release.

@@ -113,6 +113,46 @@ the host configuration is required. Only disposable fixture configuration was
 changed here. Apply the same pattern to other user-invoked skills only when
 their migration is reviewed; this pilot does not migrate them.
 
+### Slash-menu suggestions (1.18.35)
+
+Follow-up menu check on 2026-10-09: a fresh OpenCode terminal found the candidate
+handoff skill, but typing /handoff showed "No matching items". This is separate
+from the earlier successful CLI execution. Version 1.18.35
+[registers skill commands](https://github.com/anomalyco/opencode/blob/v1.18.35/packages/opencode/src/command/index.ts#L135)
+but [hides them from autocomplete](https://github.com/anomalyco/opencode/blob/v1.18.35/packages/tui/src/component/prompt/autocomplete.tsx#L450).
+Do not treat a missing suggestion as a missing skill or change the upstream
+instructions to fix menu display.
+
+For a visible /handoff suggestion, use an optional
+[custom command](https://opencode.ai/docs/commands/#json). Merge these fields
+into the project's existing opencode.json. Replace the path placeholder with
+the absolute path to its installed public Myst entry. Preserve existing settings
+and keep the skill-tool denial for this user-only skill.
+
+```json
+{
+  "permission": {
+    "skill": {
+      "handoff": "deny"
+    }
+  },
+  "command": {
+    "handoff": {
+      "description": "Compact the current conversation into a handoff document.",
+      "template": "Read and follow the public Myst handoff wrapper at <absolute-installed-path>/handoff/SKILL.md. Follow its bundled source instructions for this request: $ARGUMENTS"
+    }
+  }
+}
+```
+
+Start a fresh session. The disposable project used this configuration with its
+actual absolute copy path. Typing /handoff then showed the command and its
+description. The owner approved typing only; Enter was never pressed. This
+proves alias display, not execution or policy enforcement for this template.
+No provider was connected, no model request ran, and no real host configuration
+was changed. The [candidate report](upstream-release-candidate-2026-10-09.md)
+records the install, menu and rollback evidence and remaining limits.
+
 ## Deferred Claude verification
 
 - Rerun Claude project-copy and installed-plugin invocation only after the
