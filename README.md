@@ -81,7 +81,7 @@ Model-invoked:
 
 User-invoked:
 
-- **[grill-me](plugins/myst-dev-kit/skills/grill-me/SKILL.md)** — get interviewed about a plan or design until every branch of the decision tree is resolved.
+- **[grill-me](plugins/myst-dev-kit/skills/grill-me/SKILL.md)** — intact Matt Pocock user-only alias, routed to Myst's grilling engine. Copy installs need agentic-workflow and grilling ([evidence](docs/grill-me-wrapper-2026-10-09.md)).
 - **[grill-with-docs](plugins/myst-dev-kit/skills/grill-with-docs/SKILL.md)** — intact Matt Pocock composition of grilling and domain-modeling, with Myst dependency identity and project-doc mapping. User-only; copy installs need agentic-workflow, grilling, and domain-modeling ([evidence](docs/grill-with-docs-wrapper-2026-10-08.md)).
 - **[deep-dive](plugins/myst-dev-kit/skills/deep-dive/SKILL.md)** — bring it a decision you keep circling: it steel-mans *both* sides to their strongest versions, surfaces the real crux, asks you one decisive question, and only after your answer gives a verdict with boundary conditions and next actions. For questions still tangled, answers that feel plausible but shaky, or premises you suspect you're not seeing. Original Hammer source is preserved as plain references; English discovery and user-only metadata stay local ([conversion evidence](docs/deep-dive-plain-source-2026-10-08.md)).
 - **[teach](plugins/myst-dev-kit/skills/teach/SKILL.md)** — learn a skill or concept, taught inside this workspace.
