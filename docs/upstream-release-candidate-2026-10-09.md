@@ -35,7 +35,7 @@ Actual candidate PR/push CI: all six checks passed at f34add6.
 Native HTTPS candidate ref replacement and copy upgrade/rollback: passed.
 Ordinary main-branch version transition: untested before main merge.
 OpenCode slash-menu alias: displayed in a typing-only check; no execution.
-Codex console menu: pending the owner's check in a fresh normal session.
+Codex console menu: owner confirmed pr and p4-description are visible.
 Required first examples: UE_Blank_Proto (Perforce), myst-agentic-workflow (Git).
 Existing PC local-marketplace 5.4-to-5.5 update: passed; native catalogs checked.
 Claude model runtime: deferred by the owner.
@@ -244,10 +244,16 @@ reports and CI evidence. UE's description-parser checks are in the combined
 report; its workflow docs still use the old Review Record term. Align that wording
 before rolling out new Perforce descriptions. No UE doc update is claimed here.
 
-The owner will check the visible console menu in a fresh session using /skills.
+The owner confirmed the visible console entries on 2026-10-10:
+"Yes skill commands show pr and  p4 -description as personal skills."
+This confirms menu visibility for pr and p4-description, with the reported
+personal-skill label. It does not assert a visible count of 31, visibility of
+implement-spec, or model execution. The four native catalogs remain the evidence
+for the full selected-version skill list.
 Official [OpenAI command documentation](https://learn.chatgpt.com/docs/developer-commands?surface=cli)
-describes this picker. Record the owner's result when they provide it. Keep this
-check pending, rather than claiming that catalog success proves menu display.
+describes the /skills picker. The earlier pending-menu statements and review
+reports describe their recorded snapshots; this later owner report supplies
+the manual visibility evidence without changing their original review results.
 
 Evidence root: %TEMP%/myst-existing-install-20261009. preflight-checks.json records
 the exact old package and verified backup. post-update-checks.json, native plugin
@@ -293,3 +299,30 @@ Verdict: GREEN
 Independent docs preflight: "Aligned within the two-document scope."
 This clears the installation-evidence update. Rendering these verified reports
 adds no behavior, human acceptance or publication authority.
+
+## Owner menu-evidence review - 2026-10-10
+
+Both reviewers checked the two-document delta against 93c6472. Its SHA-256 was
+c824a5c21a4bef961f8238bb0a089012e7df254ca1bb869a9c46117bfb9a1a69.
+HEAD, branch, scope, both hashes and the regenerated capture matched before and
+after. No plugin file changed.
+
+### Standards
+
+Reviewer: final_migration_standards.
+BLOCKING 0; WARNING 0; INFO 0. Worst Standards issue: none.
+The exact owner quote and bounded acceptance follow the owner-report rule.
+No documented-standard breach or actionable smell across the twelve heuristics.
+Verdict: GREEN
+
+### Spec
+
+Reviewer: final_migration_spec.
+BLOCKING 0; WARNING 0; INFO 0. Worst Spec issue: none.
+No missing requirement, scope creep or incorrect claim. The two confirmed entries
+and their reported label remain separate from full discovery and runtime proof.
+Historical reports and pending publication decisions retain their scope.
+Verdict: GREEN
+
+Independent docs preflight: "Aligned within the two-document scope."
+Rendering these verified reports adds no behavior or publication authority.
