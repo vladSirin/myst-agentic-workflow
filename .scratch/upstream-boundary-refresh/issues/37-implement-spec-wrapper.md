@@ -1,7 +1,7 @@
 # Adopt Implement Spec for Git work
 
 Type: task
-Status: source/wrapper implemented; nine runtime cases, alignment and package checks passed; both independent reviews GREEN; owner verification pending
+Status: c2b0688 owner-verified on 2026-10-09 after the nine saved cases and committed package passed a fresh alignment recheck; both independent reviews GREEN
 Review base: d3eeede
 Spec: [Git-only adoption](../../../docs/plan_upstream_boundary_refresh.md#required-git-only-implementation-changeset)
 and [source boundary](../../../docs/adr-0008-strict-upstream-boundary.md).
@@ -19,4 +19,4 @@ P4 implementation counterpart, live P4, publication, consumer update, host edits
 or Claude model runtime. Local synthetic Git branches and merges are authorized.
 
 Evidence: [report](../../../docs/implement-spec-wrapper-2026-10-09.md).
-Owner verification remains the gate before the next changeset.
+Owner verification passed. The next changeset retires resolving-merge-conflicts.

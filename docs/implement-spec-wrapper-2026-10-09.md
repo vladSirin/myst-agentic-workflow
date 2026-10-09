@@ -2,7 +2,9 @@
 
 Status: complete source and local entry implemented. All nine configured root
 sessions, source and package checks pass. Whole-spec results align. Independent
-package reviews GREEN; owner verification remains pending. Review base: d3eeede. This changeset adopts implement-spec alone.
+package reviews GREEN; c2b0688 owner-verified on 2026-10-09 after the saved
+alignment artifacts passed a fresh recheck. Review base: d3eeede. This changeset
+adopts implement-spec alone.
 
 ## Source and local boundary
 
@@ -268,3 +270,16 @@ All eleven actions/hashes, pre-review report hash babad120c1218bb6ff51a187f805b3
 diff hash 6e6e4654d34f9e488baa357b807bcfa54310f0eac397fcd89bbaedd41580d953,
 base/HEAD d3eeede, branch, empty commit range and staging match before and after
 review. No reviewer edits or new model sessions occurred.
+
+## Owner verification - 2026-10-09
+
+The owner authorized acceptance if the alignment test passed, then the next
+changeset. The saved nine-case verifier passed against committed package
+c2b0688b4ff2ddf2cf4112047515922cbb49248d. Committed suite replays, literal public
+interface probes, source/package checks, graph ordering, worker ownership and
+guard receipts passed. Both independent reviews were already GREEN. No new
+model session or source change was needed for this recheck.
+
+Implement-spec is verified OK within the limits above. Earlier pending-gate
+statements describe the review-time state. The next changeset retires
+resolving-merge-conflicts and tests disposable copy-install upgrade/rollback.
