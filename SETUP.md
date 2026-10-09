@@ -43,7 +43,11 @@ audit reports non-compliant submits to Feishu `#cl-audit` after the fact.
   `claude plugin update myst-dev-kit@myst`. The marketplace refresh alone moves
   nothing you have installed.
 - **Codex** — one step: `codex plugin marketplace upgrade`. There is no separate
-  plugin-update subcommand; the marketplace refresh replaces the install.
+  plugin-update subcommand. This refreshes Git marketplace snapshots. For a
+  marketplace registered from a local path, re-run
+  `codex plugin add myst-dev-kit@myst` to select its changed plugin, then start
+  a new session. The local-path refresh alone left the old cache in the tested
+  CLI; see the [acceptance report](docs/upstream-release-acceptance-2026-10-09.md).
 - **npx consumers** — re-run the add command at the same selected scope.
   When crossing the upstream refresh boundary, first follow the
   [copy-install cleanup guide](docs/upstream-refresh-install-cleanup.md).

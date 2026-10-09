@@ -17,6 +17,9 @@ Skills for the delivery loop (discussion → spec → tickets → triage → imp
 Copy installs also need the [refresh cleanup steps](docs/upstream-refresh-install-cleanup.md)
 when crossing this migration boundary. Re-running add can leave retired skill
 folders. Check ownership and preserve personal edits before replacement or removal.
+For a Codex marketplace registered from a local path, re-run
+`codex plugin add myst-dev-kit@myst`, then start a new session. Marketplace
+upgrade refreshes Git sources; see [SETUP](SETUP.md#update) for the local-path case.
 
 ## Migrating from v4
 
@@ -97,8 +100,9 @@ Imported content comes from [mattpocock/skills](https://github.com/mattpocock/sk
 and the Hammer app's advanced-capability bundle
 ([dreamwords/hammer-releases](https://github.com/dreamwords/hammer-releases);
 `deep-dive` by 卡兹克, `roundtable` by 李继刚); the remaining skills are local-origin.
-Older Matt imports use the attribution pin in [LICENSE](LICENSE); later imports
-also carry per-skill provenance notes.
+All twenty-four Matt imports use the recorded refresh pin. Both Hammer imports
+record their selected release and existing permission. [LICENSE](LICENSE) and
+per-skill provenance notes preserve their respective attribution.
 
 **Source restoration is complete in this migration checkout.** All twenty-six
 retained or added imports have complete unchanged source bundles and separate
@@ -110,6 +114,8 @@ permits one entry filename mapping while preserving every upstream byte. The
 its acceptance evidence. The catalog above describes this checkout. Combined
 release and consumer acceptance remain pending; the published release has not
 changed. Claude runtime tests remain deferred.
+The [combined acceptance report](docs/upstream-release-acceptance-2026-10-09.md)
+records current install, consumer and release limits.
 
 Adding or retiring a skill updates its catalog row through the
 [per-skill checklist](CONTRIBUTING.md). During the refresh, reviewed skill PRs

@@ -54,8 +54,8 @@ PR targets and release timing; each skill still has its own review gate.
 - [ ] **Source and provenance**: preserve complete selected upstream files and
       attribution. Migrated imports have UPSTREAM.json for source identity and
       file records, plus PROVENANCE.md for ownership and local adaptations.
-      Historical imports still use [LICENSE](LICENSE) and existing provenance;
-      the inventory names their pending migration. Replace only the source
+      All current imports carry these records; [LICENSE](LICENSE) retains
+      attribution and the inventory links acceptance evidence. Replace only the source
       bundle when re-vendoring, preserving local files. Follow
       [ADR-0008](docs/adr-0008-strict-upstream-boundary.md) and its narrow
       [packaging amendment](docs/adr-0009-plain-upstream-references.md).

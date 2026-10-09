@@ -1,6 +1,6 @@
 # Upstream boundary migration inventory
 
-Status: all retained imports and resolving-merge-conflicts retirement are owner-verified; retirement 2222413 accepted on 2026-10-09. Both review axes GREEN. Combined release and consumer acceptance are now in progress. Claude runtime deferred until the owner reports Claude works.
+Status: all retained imports and resolving-merge-conflicts retirement are owner-verified; retirement 2222413 accepted on 2026-10-09. Combined docs and bounded acceptance checks pass; both independent combined reviews GREEN; owner gate pending. Known UE parser revisions are compatible. Claude runtime stays deferred; remote Git transition, native slash UI and wider consumer scope remain unverified.
 
 The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance.
 [ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision;
@@ -91,8 +91,8 @@ records the accepted replacement for the earlier ZIP workaround.
 | review-and-submit | PR/P4 formatter routing; replace What/Why/Notes and standalone Review Record with verified review evidence; preserve review/authority | Five bounded integration runs and fresh direct/protocol alignment pass after the INFO repair; both review axes GREEN; 39a285f owner-verified on 2026-10-08 ([evidence](review-submit-format-2026-10-08.md)) |
 | p4-description | New local-origin formatter, credited to pr/show-me inspiration; no runtime call to pr | Eight selected cases and package checks pass; three reader failures retained; both reviews GREEN; 0dc4e03 owner-verified on 2026-10-08 ([evidence](p4-description-2026-10-08.md)) |
 | design, changelist-verification | Retain existing behavior | No skill change planned |
-| Consumer format parsers | Check compatibility before formatter rollout | Known P4 preflight/audit copies pass static controls and eleven rendered bodies with line-start axis fields; deployed revisions and other required consumers must be confirmed before exposure ([evidence](review-submit-format-2026-10-08.md)) |
-| Release docs and install fixtures | Validate upgrade and rollback cleanup; remove only confirmed obsolete Myst copies and preserve personal edits | Cleanup guide and disposable project-copy checks complete in retirement candidate; combined release docs, native updater acceptance and consumer rollout remain pending ([evidence](retire-merge-conflicts-2026-10-09.md)) |
+| Consumer format parsers | Check compatibility before formatter rollout | Active UE depot-stored audit #15/CL3648 and preflight #1/CL3697 confirmed; 21 current-head/workspace offline replay cases pass. No live submit or wider consumer inventory claim ([evidence](upstream-release-acceptance-2026-10-09.md#known-consumer-compatibility)) |
+| Release docs and install fixtures | Validate upgrade and rollback cleanup; remove only confirmed obsolete Myst copies and preserve personal edits | Project-copy tests owner-verified with retirement. Global copy and actual offline native local-marketplace install/update/rollback pass; docs and proposed single-bump patch prepared; both combined reviews GREEN; owner gate pending. Remote Git transition, native slash UI, deferred Claude runtime and wider consumer scope remain unverified ([evidence](upstream-release-acceptance-2026-10-09.md)) |
 
 The [plan review](review_upstream_boundary_refresh_2026-10-07.md) records findings
 and the owner's decisions. No installed copies or consumer repositories have

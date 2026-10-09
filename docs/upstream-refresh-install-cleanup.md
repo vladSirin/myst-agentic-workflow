@@ -94,7 +94,10 @@ Start a fresh session and inspect the host's skill list at that scope. Do not
 claim the whole machine is clean from one project fixture or one host list.
 
 Native Claude/Codex plugin users use the normal plugin update/replacement path
-and a fresh session. Do not manually delete their plugin caches with these copy
+and a fresh session. A Codex local-path marketplace needs its plugin add command
+again to select changed content; marketplace upgrade refreshes Git sources.
+The [combined report](upstream-release-acceptance-2026-10-09.md) records the
+actual disposable native checks. Do not manually delete plugin caches with these copy
 steps. A disposable directory-replacement test does not prove the native updater
 or menu. `retire-legacy.ps1` handles v4 state and is not this cleanup process.
 
