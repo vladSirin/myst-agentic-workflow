@@ -27,3 +27,4 @@ plugins/myst-dev-kit/skills/wizard/references/upstream/** -text
 plugins/myst-dev-kit/skills/grill-me/references/upstream/** -text
 plugins/myst-dev-kit/skills/grilling/references/upstream/** -text
 plugins/myst-dev-kit/skills/teach/references/upstream/** -text
+plugins/myst-dev-kit/skills/to-questionnaire/references/upstream/** -text
