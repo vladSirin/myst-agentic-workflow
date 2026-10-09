@@ -1,7 +1,7 @@
 # Teach source and wrapper - 2026-10-09
 
 Status: implementation and alignment checks passed; both independent reviews
-GREEN. Owner verification pending.
+GREEN. Owner verified 6dc2168 on 2026-10-09 after alignment artifact recheck.
 Review base: 8a5f222. This changeset migrates teach alone.
 
 The former Myst entry and all four format companions exactly match the approved
@@ -169,7 +169,7 @@ not checked. Source equality does not prove identical future lesson results.
 
 Independent Standards and Spec reviews assessed this same working-tree scope
 against 8a5f222, including complete added files and relocated companions. Owner
-verification remains pending for teach. The earlier conditional approval verified
+verification was pending for teach at review time. The earlier conditional approval verified
 grilling 51a07f5 after its artifact recheck; it does not close this new gate.
 
 ## Standards review
@@ -217,7 +217,18 @@ loading and make no writes. Browser receipts and saved images support the
 reported artifact behavior.
 
 All 20 pinned actions, current hashes, deleted base blobs, and saved diff matched
-at the final check. Owner verification remains pending, along with the stated
+at the final check. Owner verification was pending at review time, along with the stated
 runtime and teaching limits.
 
 Spec summary: GREEN; worst severity: none.
+
+## Owner verification
+
+The owner authorized verification if alignment passed, then the next skill.
+On 2026-10-09, verify.py rechecked all eight saved turns against committed
+package 6dc2168. Source and package identity, equal paired inputs, actual
+continued sessions, mission pause, lesson/reference authoring, demonstrated
+learning, retained history, scoped vocabulary, guards, and protected state still
+pass. Saved browser receipts also passed. This was an artifact recheck, not a
+new model run. Both review axes were GREEN. Teach is verified OK for this scope;
+the stated runtime and learning limits remain.

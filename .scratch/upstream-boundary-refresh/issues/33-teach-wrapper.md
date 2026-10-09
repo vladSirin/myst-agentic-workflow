@@ -1,7 +1,7 @@
 # Restore Teach source and local teaching-workspace routing
 
 Type: task
-Status: implemented and alignment-tested; both independent reviews GREEN; owner verification pending
+Status: done; owner verified 6dc2168 on 2026-10-09 after alignment artifact recheck
 Review base: 8a5f222
 Spec: [complete Matt imports](../../../docs/plan_upstream_boundary_refresh.md#changesets-4-onward-restore-and-refresh-each-imported-skill)
 and [strict source boundary](../../../docs/adr-0008-strict-upstream-boundary.md).
@@ -16,4 +16,4 @@ Keep one skill in this changeset. No live P4, consumer update, publication, host
 configuration change, or Claude model runtime.
 
 Evidence: [report](../../../docs/teach-wrapper-2026-10-09.md).
-Owner verification remains the gate before another skill changeset.
+Owner verification passed under the explicit conditional instruction. To-questionnaire is next.
