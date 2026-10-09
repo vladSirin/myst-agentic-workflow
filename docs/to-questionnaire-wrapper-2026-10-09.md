@@ -1,7 +1,7 @@
 # To-questionnaire source and wrapper - 2026-10-09
 
 Status: implementation and alignment checks passed; both independent reviews
-GREEN. Owner verification pending.
+GREEN. Owner verified on 2026-10-09 after the conditional alignment artifact recheck.
 Review base: 6f36b30. This changeset migrates to-questionnaire alone.
 
 The former Myst entry exactly matches the approved Matt source. There is no
@@ -209,3 +209,13 @@ untested paths and pending owner gate remain. The reviewer made no file edit
 or fresh model run.
 
 Spec summary: GREEN; worst severity: none.
+
+## Owner verification
+
+The owner authorized verification if alignment passed and then the next skill.
+On 2026-10-09, verify.py rechecked all ten unchanged saved turns against
+committed candidate ebb2717. All checks passed, including exact package/source
+bytes, paired inputs, actual interview continuation, question coverage/order,
+blank stubs, local/default paths, guards, and protected state. This was an
+artifact recheck; no fresh model turn was run. Candidate ebb2717 is verified OK.
+Earlier pending statements describe the pre-acceptance review state.

@@ -1,7 +1,7 @@
 # Restore To-questionnaire source and local draft routing
 
 Type: task
-Status: implemented and alignment-tested; both independent reviews GREEN; owner verification pending
+Status: owner-verified on 2026-10-09 after alignment artifact recheck; candidate ebb2717; both independent reviews GREEN
 Review base: 6f36b30
 Spec: [complete Matt imports](../../../docs/plan_upstream_boundary_refresh.md#changesets-4-onward-restore-and-refresh-each-imported-skill)
 and [strict source boundary](../../../docs/adr-0008-strict-upstream-boundary.md).
@@ -16,4 +16,5 @@ and discovery. Keep one skill in this changeset. No sending to recipients, live
 P4, consumer update, publication, host change, or Claude model runtime.
 
 Evidence: [report](../../../docs/to-questionnaire-wrapper-2026-10-09.md).
-Owner verification remains the gate before another skill changeset.
+Owner condition satisfied: all ten unchanged saved turns pass against ebb2717.
+The next authorized skill is writing-for-agents.
