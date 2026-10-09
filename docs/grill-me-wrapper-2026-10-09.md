@@ -1,7 +1,7 @@
 # Grill-me source and wrapper - 2026-10-09
 
 Status: implementation, alignment checks, and both independent reviews passed;
-owner verification pending.
+owner verified 1d481a5 on 2026-10-09 after the alignment artifact recheck.
 Review base: fd1f4c0. This changeset migrates grill-me alone.
 
 The former Myst alias exactly matches the approved Matt source pin. There is no
@@ -135,6 +135,10 @@ Missing dependencies and automatic requests stop before the interview. Protected
 state remains unchanged. The report states its runtime limits and owner gate.
 
 Standards findings: 0; worst issue: none. Spec findings: 0; worst issue: none.
-Owner verification remains pending for this changeset. Wizard 5b86625 was
-conditionally verified after its successful alignment artifact recheck; that
-approval does not close this new skill's gate.
+Owner verified grill-me 1d481a5 under the later instruction to test alignment,
+verify it if it passes, and move to the next skill. verify.py rechecked the exact
+committed candidate and all four saved case artifacts. It confirmed matching
+prompts/project/dependency inputs, actual alias/engine loading, fact-finding child
+receipts, the same frontier questions and recommendations, both routing guards,
+and unchanged files/HEAD/branches. No new model sessions were needed. The stated
+limits still apply. This closes this per-skill owner gate.

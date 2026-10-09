@@ -1,7 +1,7 @@
 # Restore Grill-me source and explicit Myst dependency routing
 
 Type: task
-Status: implementation and alignment checks complete; both reviews GREEN; owner verification pending
+Status: done; both reviews GREEN; owner verified 1d481a5 on 2026-10-09 after alignment artifact recheck
 Review base: fd1f4c0
 Spec: [complete Matt imports](../../../docs/plan_upstream_boundary_refresh.md#changesets-4-onward-restore-and-refresh-each-imported-skill)
 and [strict source boundary](../../../docs/adr-0008-strict-upstream-boundary.md).
@@ -17,4 +17,5 @@ No live P4 action, implementation, consumer update, publication, host configurat
 change, or Claude model runtime.
 
 Evidence: [report](../../../docs/grill-me-wrapper-2026-10-09.md).
-Owner verification remains the gate before another skill changeset.
+Owner verification closed this gate after the successful alignment artifact
+recheck against the committed package. The next skill can now start.
