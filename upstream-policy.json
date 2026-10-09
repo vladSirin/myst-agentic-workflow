@@ -8,7 +8,6 @@
   ],
   "pendingImports": [
     "resolving-merge-conflicts",
-    "roundtable",
-    "writing-for-agents"
+    "roundtable"
   ]
 }

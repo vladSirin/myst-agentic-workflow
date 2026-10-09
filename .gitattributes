@@ -28,3 +28,4 @@ plugins/myst-dev-kit/skills/grill-me/references/upstream/** -text
 plugins/myst-dev-kit/skills/grilling/references/upstream/** -text
 plugins/myst-dev-kit/skills/teach/references/upstream/** -text
 plugins/myst-dev-kit/skills/to-questionnaire/references/upstream/** -text
+plugins/myst-dev-kit/skills/writing-for-agents/references/upstream/** -text
