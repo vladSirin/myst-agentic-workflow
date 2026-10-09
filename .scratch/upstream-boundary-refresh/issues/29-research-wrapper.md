@@ -1,7 +1,7 @@
 # Restore Research source and local note routing
 
 Type: task
-Status: done; both review axes GREEN; owner verification pending
+Status: done; owner verified 7a8dc27 on 2026-10-09 after fresh alignment recheck
 Review base: 95a8722
 Spec: [complete Matt imports](../../../docs/plan_upstream_boundary_refresh.md#changesets-4-onward-restore-and-refresh-each-imported-skill)
 and [strict source boundary](../../../docs/adr-0008-strict-upstream-boundary.md).
@@ -15,7 +15,7 @@ scope, conflicting destination handling, package integrity, and discovery.
 No new research method, live consumer edits, shared publication, or Claude runtime.
 
 Evidence: [report](../../../docs/research-wrapper-2026-10-09.md).
-Owner verification remains the gate before another skill changeset.
+Owner verification passed under the user's conditional alignment authorization.
 
 Both source files, metadata, license, package/copy checks, discovery, and source
 verification pass. Four grounded runs pass: direct/wrapped factual alignment,

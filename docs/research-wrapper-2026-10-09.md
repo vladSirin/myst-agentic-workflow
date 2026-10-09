@@ -1,7 +1,7 @@
 # Research source and wrapper - 2026-10-09
 
 Status: implemented, alignment tested, and independently reviewed; both axes
-GREEN. Owner verification pending.
+GREEN. Owner verification complete for 7a8dc27.
 Review base: 95a8722. This changeset migrates research alone.
 
 The former Myst entry exactly matches the approved Matt source pin. The complete
@@ -149,7 +149,29 @@ relevant behavior, and attribution requirement. Owner verification remains the
 next-skill gate. Internet, fallback, P4, native slash UI, OpenCode model, and Claude
 runtime limits are stated accurately; the plan permits Claude's deferral.
 
-Owner verification remains pending.
+Owner verification is complete under the conditional authorization below.
 No consumer upgrade, live project mutation, push, PR, merge, release, or version
 bump occurred. Claude runtime stays deferred. These bounded fixtures do not
 replace later consumer acceptance or a real research question's evidence check.
+
+## Owner-authorized alignment recheck - 2026-10-09
+
+The owner requested an alignment test and authorized verification if it passed.
+Fresh fixtures use committed 7a8dc27, identical prompts, and identical inputs
+outside the selected research package. The original direct run took 498.865
+seconds; wrapped took 205.463 seconds. The direct run had a long pause after
+shell-helper startup failures. An unchanged retry was started while it was
+pending; both eventually completed, and retry took 227.640 seconds. All three
+runs are retained as grounded successful results; none is excluded or claimed
+as a performance comparison.
+
+Each result uses an actual background agent and one successful in-memory probe,
+writes only the single research note, and agrees on the requested cancellation,
+error, input-preservation, shallow-copy, and contract findings. Every citation
+target resolves: direct has 24 links, wrapped 30, and retry 22. Layout and wording
+differ; the shallow-copy limit is traced to code inspection rather than an
+unperformed nested-data runtime test. Real code, domain docs, tracker, packages,
+HEADs, and branches stay unchanged. Candidate and paired-input equality passed.
+The earlier P4/conflict and untested Internet/fallback limits remain as recorded.
+Owner verification is recorded under the user's conditional authorization.
+Evidence: %TEMP%/myst-research-alignment-20261009/alignment-checks.json.
