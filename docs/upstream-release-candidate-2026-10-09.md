@@ -2,14 +2,16 @@
 
 Status at this dated check: candidate prepared; both independent review axes
 GREEN. Draft [PR #107](https://github.com/vladSirin/myst-agentic-workflow/pull/107)
-is published. Candidate manifests are 5.5.0; main remains v5.4.0. No merge, tag,
-release or real consumer update.
+is published. Candidate manifests are 5.5.0; main remains v5.4.0. No merge, tag
+or release. The owner later selected the existing PC installation for the local
+5.4-to-5.5 update recorded below. No UE project file was changed.
 
 Owner authorization after the [full review and proposal](review_upstream_refresh_final_2026-10-09.md):
 "Good, go ahead." This authorizes candidate and PR preparation, not merging or
 tagging. The [tracker](../.scratch/upstream-boundary-refresh/issues/40-release-integration.md)
-records the scope. The known consumer remains UE_Blank_Proto; wider required
-scope is unconfirmed. Claude model runtime remains owner-deferred.
+records the scope. The owner's selected first examples are UE_Blank_Proto for
+Perforce and myst-agentic-workflow for Git. Other projects are outside this
+example scope. Claude model runtime remains owner-deferred.
 
 ## Candidate contents
 
@@ -33,10 +35,11 @@ Actual candidate PR/push CI: all six checks passed at f34add6.
 Native HTTPS candidate ref replacement and copy upgrade/rollback: passed.
 Ordinary main-branch version transition: untested before main merge.
 OpenCode slash-menu alias: displayed in a typing-only check; no execution.
-Codex authenticated slash menu: unverified; disposable profile stops at login.
-Further required consumer scope: unconfirmed.
+Codex console menu: pending the owner's check in a fresh normal session.
+Required first examples: UE_Blank_Proto (Perforce), myst-agentic-workflow (Git).
+Existing PC local-marketplace 5.4-to-5.5 update: passed; native catalogs checked.
 Claude model runtime: deferred by the owner.
-Merge, tag, release and real consumer update: pending explicit decisions.
+Merge, tag, release and further consumer changes: pending explicit decisions.
 
 The earlier [combined report](upstream-release-acceptance-2026-10-09.md) retains
 project/global copy, local-marketplace upgrade/rollback and deployed UE parser
@@ -206,3 +209,87 @@ Verdict: GREEN
 Independent docs preflight: "Aligned within the four-document scope."
 This clears the evidence/menu guide update. It does not grant main merge or
 tagging authority. Rendering these verified reports adds no behavior or approval.
+
+## Existing PC update and selected examples
+
+The owner selected UE_Blank_Proto as the first Perforce example and this repo as
+the Git example. They offered to inspect the console's Skill command after
+installation and selected the existing PC installation for the 5.5 update:
+"We have the 5.4 installation on this Codex and PC, I think. You can check, and we can use it to update to 5.5."
+This changes the earlier disposable-only scope for the local PC plugin update;
+it does not authorize main merge, tagging or a Perforce submit.
+
+Preflight found myst-dev-kit@myst enabled at 5.4.0, installed from this local
+repo. Its complete 55-file package matches the v5.4.0 Git snapshot exactly and
+has 29 skills. A complete byte-verified backup was preserved outside discovery
+roots. No authentication file or credential was copied.
+
+The normal console command codex plugin add myst-dev-kit@myst --json selected
+5.5.0 from reviewed candidate 8225cbeab6210196eb7cff5cae776690d1e88d74. The complete
+188-file installed package equals the source byte for byte, and all 69 imported
+files match their recorded upstream hashes. The plugin stays enabled. No
+installed clone was edited by hand.
+
+Fresh native skills/list calls on console CLI 0.154.0 and desktop CLI
+0.162.0-alpha.2 return exactly 31 unique active Myst entries for each of the two
+example project directories. All point at the selected 5.5.0 cache; the retired
+Myst resolving-merge-conflicts entry is absent. These are four catalog checks,
+not visible-menu or project-runtime acceptance. The Git-only skills may appear
+in the Perforce project's catalog; their target restrictions still apply.
+
+The three protected normal-host configuration hashes remain unchanged. No login
+request, credential copy, model prompt, Perforce write, main merge or tag occurred.
+The Git example already has the actual three-section PR #107, independent review
+reports and CI evidence. UE's description-parser checks are in the combined
+report; its workflow docs still use the old Review Record term. Align that wording
+before rolling out new Perforce descriptions. No UE doc update is claimed here.
+
+The owner will check the visible console menu in a fresh session using /skills.
+Official [OpenAI command documentation](https://learn.chatgpt.com/docs/developer-commands?surface=cli)
+describes this picker. Record the owner's result when they provide it. Keep this
+check pending, rather than claiming that catalog success proves menu display.
+
+Evidence root: %TEMP%/myst-existing-install-20261009. preflight-checks.json records
+the exact old package and verified backup. post-update-checks.json, native plugin
+lists and both scoped catalog receipts record the actual new installation.
+This tests an existing local-path installation. The normal Git main-ref version
+transition remains a separate check after an approved main merge.
+
+## Existing PC evidence review
+
+Both independent reviewers checked the two-document delta against 8225cbe.
+Its fixed SHA-256 was
+a9a352c7ce0c27b3d8c32e8973fdc1930ae73034698c252dbf583fbd0ed7ef94.
+HEAD, branch, scope, both document hashes and the regenerated diff matched
+before and after. All 188 plugin files remain unchanged.
+
+### Standards
+
+Reviewer: final_migration_standards.
+BLOCKING 0; WARNING 0; INFO 0. Worst Standards issue: none.
+
+No documented-standard breach or actionable smell across the twelve heuristics.
+Saved receipts support the verified backup, installed package, raw-source hashes
+and four native catalogs. The docs distinguish local-path installation from the
+pending main-ref update, menu display and model execution. Issue 40 retains the
+owner's manual check, publication decisions and UE wording follow-up.
+
+Verdict: GREEN
+
+### Spec
+
+Reviewer: final_migration_spec.
+BLOCKING 0; WARNING 0; INFO 0. Worst Spec issue: none.
+
+No missing requirement, scope creep or incorrect claim. The reviewer independently
+checked the complete 55-file backup and 188-file installation. All four scoped
+catalogs contain the expected 31 unique entries. The later owner instruction
+authorizes the local PC update and selects the two examples. It does not approve
+main merge, tagging or Perforce submission. Manual menu acceptance, UE wording,
+the main-ref transition and deferred Claude runtime remain explicit.
+
+Verdict: GREEN
+
+Independent docs preflight: "Aligned within the two-document scope."
+This clears the installation-evidence update. Rendering these verified reports
+adds no behavior, human acceptance or publication authority.
