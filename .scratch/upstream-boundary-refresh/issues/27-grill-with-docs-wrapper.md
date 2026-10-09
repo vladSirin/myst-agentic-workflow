@@ -1,7 +1,7 @@
 # Restore Grill with Docs source and local composition
 
 Type: task
-Status: done; owner verification pending
+Status: done; owner verified 9da7632 on 2026-10-09 after fresh alignment recheck
 Review base: cd83250
 Spec: [complete Matt imports](../../../docs/plan_upstream_boundary_refresh.md#changesets-4-onward-restore-and-refresh-each-imported-skill)
 and [strict source boundary](../../../docs/adr-0008-strict-upstream-boundary.md).
@@ -20,4 +20,5 @@ Complete two-file source verified; no method delta. Nine grounded runtime runs
 retain the initial ADR-location failure and demonstrate the local repair. Final
 legacy alignment and both negative guards pass. All source/unit/package/CI checks
 pass; independent Standards and Spec reviews GREEN. No consumer update or
-publication. Owner acceptance is the gate before another skill changeset.
+publication. Fresh direct/wrapped comparison passed on 2026-10-09; conditional
+owner verification is recorded in the evidence. The next skill is prototype.

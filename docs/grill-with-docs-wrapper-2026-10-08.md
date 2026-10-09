@@ -2,7 +2,7 @@
 
 Status: implemented, alignment tested, and independently reviewed; both axes
 GREEN. Work started on 2026-10-08 and continued on
-2026-10-09. Owner verification remains a separate gate.
+2026-10-09. Owner verified 9da7632 on 2026-10-09 after a fresh alignment recheck.
 Review base: cd83250. This changeset migrates grill-with-docs alone.
 
 ## Source and local integration
@@ -135,7 +135,22 @@ the direct baseline's docs, frontier, and user authority. Candidate identity,
 inventories, and HEAD checks support the report. Verdict: GREEN.
 
 Final six CI scripts, both offline manifest checks, copy installation/hash checks,
-and git diff --check passed after the guard repair. Owner verification is pending.
+and git diff --check passed after the guard repair. Owner verification is complete.
 No deployed consumer or installed plugin was upgraded; no push, PR, merge,
 release, or version bump occurred. Package/discovery evidence cannot replace
 later consumer acceptance or the deferred Claude runtime checks.
+
+## Owner-authorized alignment recheck - 2026-10-09
+
+The owner asked for an alignment test and authorized verification if it passed.
+Two fresh fixtures used committed 9da7632 and identical prompts/project inputs
+outside the selected skill. Direct completed in 113.961 seconds; wrapped in
+115.472 seconds. Both added the exact same Reservation definition and captured
+the same approved future store, trade-off, migration cost, and unimplemented
+status in Records/Decisions/0005. Both asked for each mode's explicit capacity
+limit without inventing numbers, left borrowing for the next round, and paused.
+Only the two intended docs changed. Code, PLAN.md, packages, and HEADs stayed
+unchanged. Candidate equality and input equality passed. The saved outputs and
+ADRs support semantic alignment; phrasing differs. Owner verification is recorded
+under that conditional authorization. Evidence:
+%TEMP%/myst-grill-with-docs-alignment-20261009/alignment-checks.json.
