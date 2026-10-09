@@ -1,7 +1,7 @@
 # Writing-for-agents source and wrapper - 2026-10-09
 
 Status: implementation and six alignment/guard runs passed. Package checks passed.
-Both independent reviews GREEN; owner verification pending.
+Both independent reviews GREEN. Owner verified on 2026-10-09 after the conditional alignment artifact recheck.
 Review base: b13081d. This changeset migrates writing-for-agents alone.
 
 The former entry and SKILL-MECHANICS companion match the approved Matt source.
@@ -232,3 +232,13 @@ claim. OpenCode and Claude model runtime remain unverified, as disclosed.
 Owner verification remains pending before another skill changeset.
 
 Spec summary: GREEN; total findings: 0; worst severity: none.
+
+## Owner verification
+
+The owner authorized verification if alignment passed, then the next skill.
+On 2026-10-09, verify.py rechecked all six unchanged saved turns against
+committed candidate f40945e. Every check passed: exact source/package bytes,
+paired inputs, complete returned method/companion, draft scope/content/links,
+invocation modes, automatic catalog, dependency guard, and protected state.
+This was an artifact recheck, not a fresh model run. Candidate f40945e is verified
+OK. Earlier pending statements record the pre-acceptance review state.
