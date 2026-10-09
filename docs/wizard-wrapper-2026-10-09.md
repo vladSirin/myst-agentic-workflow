@@ -1,7 +1,7 @@
 # Wizard source and wrapper - 2026-10-09
 
 Status: implementation, alignment checks, and both independent reviews passed;
-owner verification pending.
+owner verified 5b86625 on 2026-10-09 after the alignment artifact recheck.
 Review base: 26b7743. This changeset migrates wizard alone.
 
 The former Myst entry and template exactly match the approved Matt source pin.
@@ -127,5 +127,10 @@ unchanged. The plan's source, companion, live-loading, behavior, and attribution
 requirements are met within the stated test scope.
 
 Standards findings: 0; worst issue: none. Spec findings: 0; worst issue: none.
-Owner verification remains pending for this wizard changeset. The prior
-conditional approval verified research 7a8dc27; it does not close this new gate.
+Owner verified wizard 5b86625 under the later instruction to test alignment,
+verify it if it passes, and move to the next skill. The recheck used verify.py
+against the committed package and all four saved case artifacts. It confirmed
+the same alignment prompt/project/dependency inputs, exact candidate files,
+protected state, stage/value/destination/gate behavior, and Bash syntax. No new
+model sessions or full wizard execution were needed. The output differences and
+test limits above still apply. This closes this per-skill owner gate.

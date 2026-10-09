@@ -1,7 +1,7 @@
 # Restore Wizard source and local setup/capture routing
 
 Type: task
-Status: implementation and alignment checks complete; both reviews GREEN; owner verification pending
+Status: done; both reviews GREEN; owner verified 5b86625 on 2026-10-09 after alignment artifact recheck
 Review base: 26b7743
 Spec: [complete Matt imports](../../../docs/plan_upstream_boundary_refresh.md#changesets-4-onward-restore-and-refresh-each-imported-skill)
 and [strict source boundary](../../../docs/adr-0008-strict-upstream-boundary.md).
@@ -18,4 +18,5 @@ No full wizard execution, actual secrets, shared service writes, live P4,
 consumer update, publication, or Claude runtime.
 
 Evidence: [report](../../../docs/wizard-wrapper-2026-10-09.md).
-Owner verification remains the gate before another skill changeset.
+Owner verification closed this gate after the successful alignment artifact
+recheck against the committed package. The next skill can now start.
