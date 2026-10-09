@@ -1,6 +1,6 @@
 # Upstream boundary migration inventory
 
-Status: grilling owner-verified on 2026-10-09 after alignment artifact recheck. Further imports remain pending. Claude runtime deferred until they report Claude works.
+Status: grilling owner-verified on 2026-10-09 after alignment artifact recheck. Teach implementation and alignment checks complete; both reviews GREEN; owner verification pending. Further imports remain pending. Claude runtime deferred until they report Claude works.
 
 The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance.
 [ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision;
@@ -29,9 +29,9 @@ and commands.
 
 Destination for every retained or added import:
 `plugins/myst-dev-kit/skills/<skill>/`, with local entry/provenance and a complete
-source bundle. All twenty-one packaged imports use plain references with the single
-mapped entry filename. TDD completed the earlier ZIP conversions. Grilling
-is the latest prepared import; the other five declared imports remain pending. The [plain-source pilot](plain-source-pilot-2026-10-08.md)
+source bundle. All twenty-two packaged imports use plain references with the single
+mapped entry filename. TDD completed the earlier ZIP conversions. Teach
+is the latest prepared import; the other four declared imports remain pending. The [plain-source pilot](plain-source-pilot-2026-10-08.md)
 records the accepted replacement for the earlier ZIP workaround.
 
 | Skill | Source subtree | Required migration | Status |
@@ -55,7 +55,7 @@ records the accepted replacement for the earlier ZIP workaround.
 | wizard | skills/engineering/wizard | Complete source bundle, metadata, provenance, and loading proof | Complete source and local setup/CI/capture routing implemented; direct/wrapped authoring alignment, P4 repeatable capture, scope pause, and package/loading checks pass; both reviews GREEN; 5b86625 owner-verified on 2026-10-09 after alignment artifact recheck ([evidence](wizard-wrapper-2026-10-09.md)) |
 | grill-me | skills/productivity/grill-me | Complete source bundle, metadata, provenance, and loading proof | Complete source alias and local Myst dependency routing implemented; direct/wrapped first rounds align; user-only, missing-dependency, and package/loading checks pass; both reviews GREEN; 1d481a5 owner-verified on 2026-10-09 after alignment artifact recheck ([evidence](grill-me-wrapper-2026-10-09.md)) |
 | grilling | skills/productivity/grilling | Complete source bundle, metadata, provenance, and loading proof | Complete source and local routing implemented; direct/wrapped three-round interviews align with actual fact delegation and unchanged state; package/loading checks pass; both reviews GREEN; 51a07f5 owner-verified on 2026-10-09 after alignment artifact recheck ([evidence](grilling-wrapper-2026-10-09.md)) |
-| teach | skills/productivity/teach | Complete source bundle, metadata, provenance, and loading proof | Pending |
+| teach | skills/productivity/teach | Complete source bundle, metadata, provenance, and loading proof | Complete source and local routing implemented; eight turns pass with mission, lesson, continued-learning, and guard alignment; package/browser/loading checks pass; both reviews GREEN; owner verification pending ([evidence](teach-wrapper-2026-10-09.md)) |
 | to-questionnaire | skills/productivity/to-questionnaire | Complete source bundle, metadata, provenance, and loading proof | Pending |
 | writing-for-agents | skills/productivity/writing-for-agents | Complete source bundle, metadata, provenance, and loading proof | Pending |
 | deep-dive | Hammer: deep-dive | Preserve original Chinese frontmatter; English local trigger and user-only invocation | Changeset 5 verified by owner (58509c2). Plain-reference conversion c64c236 owner-verified on 2026-10-08 after both-step direct-upstream alignment check; reviews GREEN ([evidence](deep-dive-plain-source-2026-10-08.md)) |
