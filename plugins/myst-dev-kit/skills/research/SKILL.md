@@ -1,12 +1,19 @@
 ---
 name: research
-description: Investigate a question against high-trust primary sources and capture the findings as a Markdown file in the repo. Use when the user wants a topic researched, docs or API facts gathered, or reading legwork delegated to a background agent.
+description: "Use when the user wants a topic researched, docs or API facts gathered, or reading legwork delegated to a background agent, with findings saved in the repo."
 ---
 
-Spin up a **background agent** to do the research, so you keep working while it reads.
+Read [Myst's local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md)
+first. Required copy dependency: agentic-workflow. Check its local entry and
+contract, then resolve the target project and the docs needed for the question.
 
-Its job:
+Read the [complete upstream instructions](references/upstream/UPSTREAM.md) and
+follow their background-agent research method. Pass the applicable project
+pointers, research-note convention, and authorized write scope to that agent.
+Use the upstream location fallback when no note convention exists; resolve
+conflicting explicit destinations before dependent writes.
 
-1. Investigate the question against **primary sources** (official docs, source code, specs, first-party APIs), not a secondary write-up of them. Follow every claim back to the source that owns it.
-2. Write the findings to a single Markdown file, citing each claim's source.
-3. Save it where the repo already keeps such notes; match the existing convention, and if there is none, put it somewhere sensible and say where.
+Research findings are evidence, not design acceptance, implementation completion,
+or publication approval. Tracker changes and VCS actions retain the project's
+workflow and authority. The original source bytes remain unchanged; only the
+packaged entry filename differs.
