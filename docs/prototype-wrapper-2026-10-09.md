@@ -1,7 +1,7 @@
 # Prototype source and wrapper - 2026-10-09
 
 Status: implemented, alignment tested, and independently reviewed; both axes
-GREEN. Owner verification pending. Review base: f783dd4. This changeset migrates
+GREEN. Owner verification complete for 0b8105f. Review base: f783dd4. This changeset migrates
 prototype alone.
 
 ## Source and local integration
@@ -141,7 +141,30 @@ archive is unchanged, and implementation/publication remain pending. Design
 equality is not claimed; untested branches and owner verification remain visible.
 Verdict: GREEN.
 
-Owner verification is pending. No consumer update, installed skill edit, live
+Owner verification is complete. No consumer update, installed skill edit, live
 consumer project mutation, push, PR, merge, release, or version bump occurred.
 Claude runtime stays deferred. This bounded test set does not replace later
 consumer acceptance or an owner's actual prototype evaluation.
+
+## Owner-authorized alignment recheck - 2026-10-09
+
+The owner requested an alignment test and authorized verification if it passed.
+Two fresh logic fixtures used committed 0b8105f, identical prompts, and identical
+project/dependency inputs outside prototype. Direct completed in 154.649 seconds;
+wrapped in 197.127 seconds. Both produced a self-contained HTML beside the real
+module, a pure state model, free play, and three actual guided walkthroughs.
+External checks ran both models without DOM APIs: eight normalized transitions
+and accepted/rejected outcomes match; inputs are unchanged. Actual browser clicks
+completed all six walkthroughs and reset, with no page errors. Both screenshots
+were inspected. Direct uses fixed named claims; wrapped allocates numeric IDs.
+This confirms the requested outcomes, not every unrequested lifecycle behavior.
+
+Only the HTML changed in direct; wrapped also added a draft tracker pointer and
+open evaluation question. Neither result records acceptance or changes real code.
+Packages, domain docs, HEADs, and branches remain unchanged. Exact candidate and
+paired-input equality passed. A fresh browser recheck of the saved UI artifacts
+also passed A/B/C rendering, navigation, input guard, URL/reload, and production
+baseline checks; this was not a new UI model run. Earlier P4 and untested capture
+limits remain as recorded above. Owner verification is recorded under the user's
+conditional authorization. Evidence:
+%TEMP%/myst-prototype-alignment-20261009/alignment-checks.json and artifact-checks.json.
