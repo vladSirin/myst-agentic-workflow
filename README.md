@@ -10,9 +10,13 @@ Skills for the delivery loop (discussion → spec → tickets → triage → imp
 |---|---|
 | **Claude Code** | `/plugin marketplace add vladSirin/myst-agentic-workflow` then `/plugin install myst-dev-kit@myst`, restart the session. (Myst team projects pre-register the marketplace — skip the first command there.) |
 | **Codex** | Paste both, then start a new session:<br>`codex plugin marketplace add vladSirin/myst-agentic-workflow`<br>`codex plugin add myst-dev-kit@myst` |
-| **OpenCode** — or any tool that scans `~/.claude/skills` / `~/.agents/skills` | `npx skills add vladSirin/myst-agentic-workflow` — per-skill selection, installed at personal scope (Node ≥ 22.20; add `--copy` on Windows). |
+| **OpenCode** — or any tool that scans `~/.claude/skills` / `~/.agents/skills` | `npx skills add vladSirin/myst-agentic-workflow --global` — per-skill selection at personal scope (Node ≥ 22.20; add `--copy` on Windows). Omit `--global` for project scope. |
 
 **Updating** — Claude Code: `claude plugin marketplace update myst` then `claude plugin update myst-dev-kit@myst`, restart (the marketplace refresh alone moves nothing you have installed). Codex: `codex plugin marketplace upgrade` (there is no separate plugin-update subcommand). npx consumers: re-run the add command.
+
+Copy installs also need the [refresh cleanup steps](docs/upstream-refresh-install-cleanup.md)
+when crossing this migration boundary. Re-running add can leave retired skill
+folders. Check ownership and preserve personal edits before replacement or removal.
 
 ## Migrating from v4
 
@@ -44,7 +48,6 @@ Model-invoked:
 - **[pr](plugins/myst-dev-kit/skills/pr/SKILL.md)** — Git-only PR bodies using intact Matt Pocock source and show-me credits; Myst adds project vocabulary, ticket pointers, and verified review evidence. Never used for P4 targets. Copy installs need agentic-workflow ([evidence](docs/pr-wrapper-2026-10-08.md)).
 - **[p4-description](plugins/myst-dev-kit/skills/p4-description/SKILL.md)** — local Perforce-only descriptions with established title tags, ASCII text, factual review evidence, and Submit Risk. Inspired by pr/show-me; never invokes Git-only pr. Copy installs need agentic-workflow ([evidence](docs/p4-description-2026-10-08.md)).
 - **[changelist-verification](plugins/myst-dev-kit/skills/changelist-verification/SKILL.md)** — hard rule for multi-changeset tasks: execute one at a time with a stop-and-verify gate between each, never batched.
-- **[resolving-merge-conflicts](plugins/myst-dev-kit/skills/resolving-merge-conflicts/SKILL.md)** — work through an in-progress git merge/rebase conflict.
 
 User-invoked:
 
@@ -97,16 +100,16 @@ and the Hammer app's advanced-capability bundle
 Older Matt imports use the attribution pin in [LICENSE](LICENSE); later imports
 also carry per-skill provenance notes.
 
-**Upstream-boundary migration is pending.** Current imports include local inline
-adaptations, intentionally omitted upstream metadata, and local Hammer
-frontmatter. The approved target is complete unchanged source bundles with
-separate Myst entry points. That source guarantee does not imply identical
-runtime behavior: the local entries own Myst integration. The
+**Source restoration is complete in this migration checkout.** All twenty-six
+retained or added imports have complete unchanged source bundles and separate
+Myst entry points. The source guarantee does not imply identical runtime
+behavior: the local entries own Myst integration. The
 [plain-reference packaging decision](docs/adr-0009-plain-upstream-references.md)
 permits one entry filename mapping while preserving every upstream byte. The
 [migration inventory](docs/migration-upstream-boundary.md) tracks each skill and
-its acceptance evidence. The catalog above describes the current package;
-planned additions and removals are not yet shipped.
+its acceptance evidence. The catalog above describes this checkout. Combined
+release and consumer acceptance remain pending; the published release has not
+changed. Claude runtime tests remain deferred.
 
 Adding or retiring a skill updates its catalog row through the
 [per-skill checklist](CONTRIBUTING.md). During the refresh, reviewed skill PRs

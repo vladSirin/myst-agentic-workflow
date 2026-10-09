@@ -1,6 +1,6 @@
 # Upstream boundary migration inventory
 
-Status: writing-for-agents f40945e, roundtable e44e253 and implement-spec c2b0688 owner-verified on 2026-10-09 after alignment artifact rechecks; both review axes GREEN. All retained imports are verified; resolving-merge-conflicts removal and combined release acceptance remain pending. Claude runtime deferred until the owner reports Claude works.
+Status: all retained imports are owner-verified, most recently implement-spec c2b0688 on 2026-10-09 after alignment artifact recheck. Resolving-merge-conflicts retirement and disposable cleanup checks pass; both independent reviews GREEN; its owner gate remains pending. Combined release acceptance remains pending. Claude runtime deferred until the owner reports Claude works.
 
 The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance.
 [ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision;
@@ -31,7 +31,8 @@ Destination for every retained or added import:
 `plugins/myst-dev-kit/skills/<skill>/`, with local entry/provenance and a complete
 source bundle. All twenty-six packaged imports use plain references with the single
 mapped entry filename. TDD completed the earlier ZIP conversions. Implement-spec
-is the latest prepared import; the last declared import remains pending removal. The [plain-source pilot](plain-source-pilot-2026-10-08.md)
+is the latest verified import. Resolving-merge-conflicts is removed in this
+candidate; no pending source waivers remain. The [plain-source pilot](plain-source-pilot-2026-10-08.md)
 records the accepted replacement for the earlier ZIP workaround.
 
 | Skill | Source subtree | Required migration | Status |
@@ -62,7 +63,7 @@ records the accepted replacement for the earlier ZIP workaround.
 | roundtable | Hammer: roundtable | Preserve original Chinese frontmatter; local discovery metadata; method behavior checks | Complete source and metadata implemented; ten actual turns align for opening, continuation, stop, no-topic pause and guards; package/loading checks pass; both reviews GREEN; e44e253 owner-verified on 2026-10-09 after alignment artifact recheck ([evidence](roundtable-wrapper-2026-10-09.md)) |
 | pr | skills/engineering/pr | Add unchanged source and credits; Git-only wrapper and concise actual review evidence | Three-file source adopted; seven selected runtime checks pass, one environment failure retained; both reviews GREEN; d8c2c53 owner-verified on 2026-10-08 ([evidence](pr-wrapper-2026-10-08.md)) |
 | implement-spec | skills/engineering/implement-spec | Add unchanged source; Git-only entry and bounded pilot; no speculative orchestration | Nine runtime cases and actual Git graph/results align; package/loading checks pass; both reviews GREEN; c2b0688 owner-verified on 2026-10-09 after alignment artifact recheck ([evidence](implement-spec-wrapper-2026-10-09.md)) |
-| resolving-merge-conflicts | Removed upstream | Remove package/catalog references; document obsolete copy cleanup | Pending removal |
+| resolving-merge-conflicts | Removed upstream | Remove package/catalog references; document obsolete copy cleanup | Removed in candidate; disposable upgrade/rollback and catalog checks pass; both reviews GREEN; owner gate pending ([evidence](retire-merge-conflicts-2026-10-09.md)) |
 
 ## Exceptions and exclusions
 
@@ -91,7 +92,7 @@ records the accepted replacement for the earlier ZIP workaround.
 | p4-description | New local-origin formatter, credited to pr/show-me inspiration; no runtime call to pr | Eight selected cases and package checks pass; three reader failures retained; both reviews GREEN; 0dc4e03 owner-verified on 2026-10-08 ([evidence](p4-description-2026-10-08.md)) |
 | design, changelist-verification | Retain existing behavior | No skill change planned |
 | Consumer format parsers | Check compatibility before formatter rollout | Known P4 preflight/audit copies pass static controls and eleven rendered bodies with line-start axis fields; deployed revisions and other required consumers must be confirmed before exposure ([evidence](review-submit-format-2026-10-08.md)) |
-| Release docs and install fixtures | Validate upgrade and rollback cleanup; remove only confirmed obsolete Myst copies and preserve personal edits | Pending |
+| Release docs and install fixtures | Validate upgrade and rollback cleanup; remove only confirmed obsolete Myst copies and preserve personal edits | Cleanup guide and disposable project-copy checks complete in retirement candidate; combined release docs, native updater acceptance and consumer rollout remain pending ([evidence](retire-merge-conflicts-2026-10-09.md)) |
 
 The [plan review](review_upstream_boundary_refresh_2026-10-07.md) records findings
 and the owner's decisions. No installed copies or consumer repositories have

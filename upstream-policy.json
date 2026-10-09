@@ -6,7 +6,5 @@
     "p4-description",
     "review-and-submit"
   ],
-  "pendingImports": [
-    "resolving-merge-conflicts"
-  ]
+  "pendingImports": []
 }

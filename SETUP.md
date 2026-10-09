@@ -31,8 +31,9 @@ audit reports non-compliant submits to Feishu `#cl-audit` after the fact.
   ```
 
   then a new session. Codex reads `AGENTS.md` natively from the synced project.
-- **OpenCode**: `npx skills add vladSirin/myst-agentic-workflow` — pick the
-  skills you want; they install at personal scope and OpenCode auto-scans them.
+- **OpenCode**: `npx skills add vladSirin/myst-agentic-workflow --global` — pick the
+  skills you want; `--global` selects personal scope. Omit it for project scope.
+  Add `--copy` on Windows. OpenCode auto-scans the installed skills.
   OpenCode also reads the project's `AGENTS.md` natively.
 
 ## Update
@@ -43,7 +44,11 @@ audit reports non-compliant submits to Feishu `#cl-audit` after the fact.
   nothing you have installed.
 - **Codex** — one step: `codex plugin marketplace upgrade`. There is no separate
   plugin-update subcommand; the marketplace refresh replaces the install.
-- **npx consumers** — re-run the add command.
+- **npx consumers** — re-run the add command at the same selected scope.
+  When crossing the upstream refresh boundary, first follow the
+  [copy-install cleanup guide](docs/upstream-refresh-install-cleanup.md).
+  It covers retired folders, rollback and personal edits. Add does not remove
+  every name that disappeared from the selected source.
 
 What "latest" means is authoritative in the [CHANGELOG](CHANGELOG.md) head,
 republished per tag on the
