@@ -4,9 +4,9 @@ The marketplace ships to every teammate's sessions, so content enters it through
 a **per-skill contribution gate**: one skill per PR, reviewed before it lands.
 The unit of review is the unit of installation.
 
-During the upstream-boundary refresh, use the temporary
-[migration exception](#upstream-boundary-migration-exception) below. It changes
-PR targets and release timing; each skill still has its own review gate.
+The final upstream-boundary integration uses the temporary
+[migration exception](#upstream-boundary-migration-exception) below. It ends
+when that PR merges to main; each skill retains its own review evidence.
 
 ## The gate, end to end
 
@@ -80,28 +80,23 @@ PR targets and release timing; each skill still has its own review gate.
 
 ## Upstream-boundary migration exception
 
-This one-time exception implements the owner's approved
-[refresh plan](docs/plan_upstream_boundary_refresh.md).
+This one-time exception covers only the final integration PR from
+`codex/upstream-boundary-refresh` to main for the owner's approved
+[refresh plan](docs/plan_upstream_boundary_refresh.md). The
+[inventory](docs/migration-upstream-boundary.md) links the completed per-skill
+reviews and owner gates. This final PR is the sole multi-skill exception; it
+does not replace those reviews.
 
-- Target `codex/upstream-boundary-refresh` for each skill PR and for related
-  infrastructure/documentation PRs. Keep one skill per PR and obtain user
-  verification before starting the next changeset. Existing CI runs on this
-  branch as well as main.
-- Do not bump versions or tag intermediate migration merges. The normal
-  consumer update path stays on the current main release.
-- After full acceptance, open one final integration PR from the migration
-  branch to main. This final PR is the sole multi-skill exception: link each
-  completed review and check combined compatibility. It does not replace the
-  per-skill reviews.
-- Prepare one version bump across both manifests and the corresponding
-  CHANGELOG section for that final merge. Merge and tagging retain the existing
-  publication protocol and approval requirements. Required consumer parser
-  compatibility must be ready before the new format reaches main.
-- After final integration, close this exception and resume the normal
-  main-target contribution process. Any later migration needs its own decision.
+The candidate prepares one version bump in both manifests and one CHANGELOG
+section. There are no intermediate migration tags. Required consumer parser
+compatibility must be ready before exposure. Candidate review, preflight and
+explicit publication decisions still apply. Deferred tests stay unverified.
 
-The migration inventory lists pending work; a branch merge alone does not prove
-source integrity, runtime loading, or consumer acceptance.
+This exception closes when the final integration PR merges to main. All later
+contributions follow the normal one-skill PR process against main. Do not use
+the migration branch for further contributions. Any later migration needs its
+own decision. Merge alone does not prove runtime or consumer acceptance, and
+tagging remains a separate release decision.
 
 ## Versioning
 

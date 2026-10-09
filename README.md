@@ -111,15 +111,17 @@ behavior: the local entries own Myst integration. The
 [plain-reference packaging decision](docs/adr-0009-plain-upstream-references.md)
 permits one entry filename mapping while preserving every upstream byte. The
 [migration inventory](docs/migration-upstream-boundary.md) tracks each skill and
-its acceptance evidence. The catalog above describes this checkout. Combined
-release and consumer acceptance remain pending; the published release has not
-changed. Claude runtime tests remain deferred.
+its acceptance evidence. The catalog above describes this checkout. Release and
+consumer acceptance are tracked separately from source restoration. Claude
+runtime tests remain deferred.
 The [combined acceptance report](docs/upstream-release-acceptance-2026-10-09.md)
-records current install, consumer and release limits.
+records the bounded install and consumer checks. The
+[candidate report](docs/upstream-release-candidate-2026-10-09.md) tracks current
+release preparation and remaining controls.
 
 Adding or retiring a skill updates its catalog row through the
-[per-skill checklist](CONTRIBUTING.md). During the refresh, reviewed skill PRs
-land on a migration branch before one final integration and release.
+[per-skill checklist](CONTRIBUTING.md). The temporary exception covers only
+the final refresh integration PR and closes when that PR merges to main.
 
 [`reference/`](reference/) holds starter docs to copy into a consuming project: workspace-setup sections for the tool bibles, the human workflow guide, issue-tracker and triage-label templates, and a UE `.p4ignore` fragment.
 

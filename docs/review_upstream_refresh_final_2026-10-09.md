@@ -1,5 +1,10 @@
 # Final upstream refresh review and release proposal - 2026-10-09
 
+Historical review/proposal snapshot at 0714721. The owner subsequently said
+"Good, go ahead" and authorized candidate/PR preparation. Manifest versions and
+publication status below belong to this snapshot. See the
+[candidate report](upstream-release-candidate-2026-10-09.md) for current work.
+
 Status: implementation review GREEN on both axes after documentation fixes.
 Release integration is proposed, not approved or published. Both real manifests
 remain 5.4.0. This report does not claim full cross-host acceptance.

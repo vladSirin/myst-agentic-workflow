@@ -1,5 +1,10 @@
 # Combined upstream refresh acceptance - 2026-10-09
 
+Historical preparation snapshot at edbcf9a. The status, manifest versions and
+pending controls below describe that captured stage. The owner later approved
+continuing with the release proposal. See the
+[candidate report](upstream-release-candidate-2026-10-09.md) for current work.
+
 Status: release documentation and bounded combined checks complete. Both
 independent reviews GREEN; owner verification pending. Review base: 99cd0c8. The installed and
 published version has not changed. This report does not claim full cross-host

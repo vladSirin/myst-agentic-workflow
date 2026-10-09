@@ -1,6 +1,9 @@
 # Upstream boundary migration inventory
 
-Status: all retained imports and resolving-merge-conflicts retirement are owner-verified; retirement 2222413 accepted on 2026-10-09. Combined docs and bounded acceptance checks pass; both independent combined reviews GREEN; owner gate pending. Known UE parser revisions are compatible. Claude runtime stays deferred; remote Git transition, native slash UI and wider consumer scope remain unverified.
+Status: all retained imports and resolving-merge-conflicts retirement are owner-verified. The full migration and proposal passed both review axes; the owner said "Good, go ahead" on 2026-10-09. The 5.5.0 candidate is being prepared for one integration PR. Published main remains v5.4.0. Known UE parser revisions are compatible. Claude runtime stays deferred; remote Git transition, native slash UI and wider consumer scope remain unverified. Merge and tagging are not approved by the preparation instruction.
+
+Current release work: [candidate report](upstream-release-candidate-2026-10-09.md).
+Completed implementation review: [full review](review_upstream_refresh_final_2026-10-09.md).
 
 The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance.
 [ADR-0008](adr-0008-strict-upstream-boundary.md) owns the boundary decision;

@@ -1,7 +1,7 @@
 # Combined upstream refresh acceptance
 
 Type: task
-Status: combined documentation, bounded install/consumer checks and proposed release patch complete; both independent reviews GREEN; owner verification pending
+Status: verified; owner authorized proceeding with release candidate/PR preparation on 2026-10-09
 Review base: 99cd0c8
 Spec: [final integration](../../../docs/plan_upstream_boundary_refresh.md#final-changeset-complete-documentation-and-integrate-the-release)
 and [acceptance evidence](../../../docs/plan_upstream_boundary_refresh.md#acceptance-evidence).
@@ -28,4 +28,6 @@ Do not apply a release bump, change a real installed plugin, rename consumer
 docs, submit, push, create a PR, merge shared state or tag in this changeset.
 
 Evidence: [combined report](../../../docs/upstream-release-acceptance-2026-10-09.md).
-Both review axes and owner verification remain gates before publication work.
+Both review axes passed. Owner response after the full review and proposal:
+"Good, go ahead." The next work is [release candidate preparation](40-release-integration.md).
+That response does not approve merging or tagging the future PR.

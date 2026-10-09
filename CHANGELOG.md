@@ -33,12 +33,11 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 checks this file has the matching section, and tags. (Before v5.0.0 the number lived in five
 places; the other three sites no longer exist.)
 
-## [Unreleased] - Upstream boundary refresh
+## [5.5.0] - 2026-10-09 - Upstream boundary refresh
 
-Draft for final integration. The published version and both plugin manifests
-remain 5.4.0. Proposed bump: MINOR, subject to final consumer and release
-acceptance. Copy cleanup is inherent to the existing copy-install model;
-this refresh requires no consumer glossary rename or install-channel change.
+MINOR: new/retired skills and behavior changes through plugin updates.
+Copy cleanup is inherent to the existing copy-install model. This refresh
+requires no consumer glossary rename or install-channel change.
 
 - Restore complete unchanged source for 24 Matt Pocock imports at
   `6fd947921b935b7e1e69293a200400f0fdd5c15f` and two Hammer imports from v0.30.0
@@ -64,8 +63,8 @@ this refresh requires no consumer glossary rename or install-channel change.
 - All individual skill changes and retirement are owner-verified. Combined
   evidence and pending controls are in the
   [acceptance report](docs/upstream-release-acceptance-2026-10-09.md). Claude model
-  runtime stays deferred by the owner. No release or full cross-host pass is
-  claimed by this draft.
+  runtime stays deferred by the owner. Full cross-host acceptance remains
+  unverified.
 
 ## [5.4.0] - 2026-09-29 - review-and-submit: cite findings by anchor, not line number
 
