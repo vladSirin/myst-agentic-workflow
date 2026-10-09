@@ -65,7 +65,7 @@ Model-invoked:
 - **[codebase-design](plugins/myst-dev-kit/skills/codebase-design/SKILL.md)** — the deep-module vocabulary: interface design, seam placement, testability, AI-navigability. Upstream bytes stay unchanged in plain references; the entry is packaged as UPSTREAM.md. The local wrapper maps project glossary paths. Copy installs also need `agentic-workflow` ([packaging evidence](docs/plain-source-pilot-2026-10-08.md)).
 - **[domain-modeling](plugins/myst-dev-kit/skills/domain-modeling/SKILL.md)** — Matt Pocock source with Myst glossary-path routing; sharpen domain terms and record durable ADRs. Supports legacy, new, and scoped glossary paths; verification tracked in the migration inventory.
 - **[research](plugins/myst-dev-kit/skills/research/SKILL.md)** — intact Matt Pocock background research from primary sources, with Myst project/note routing and authority. Copy installs need agentic-workflow ([evidence](docs/research-wrapper-2026-10-09.md)).
-- **[wizard](plugins/myst-dev-kit/skills/wizard/SKILL.md)** — generate an interactive bash wizard for steps only a human can perform: credentials, dashboards, one-off cutovers.
+- **[wizard](plugins/myst-dev-kit/skills/wizard/SKILL.md)** — intact Matt Pocock human-only Bash wizard method and fixed template, with Myst setup/CI and VCS capture routing. Copy installs need agentic-workflow ([evidence](docs/wizard-wrapper-2026-10-09.md)).
 - **[writing-for-agents](plugins/myst-dev-kit/skills/writing-for-agents/SKILL.md)** — writing documents agents will read: skills, AGENTS.md, CLAUDE.md.
 
 User-invoked:
