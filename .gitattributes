@@ -31,3 +31,5 @@ plugins/myst-dev-kit/skills/to-questionnaire/references/upstream/** -text
 plugins/myst-dev-kit/skills/writing-for-agents/references/upstream/** -text
 plugins/myst-dev-kit/skills/roundtable/references/upstream/** -text
 plugins/myst-dev-kit/skills/implement-spec/references/upstream/** -text
+# Preserve this unapplied patch; its blank context lines are patch syntax.
+.scratch/upstream-boundary-refresh/release-proposal/5.5.0.patch -text whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol

@@ -1,0 +1,114 @@
+{
+  "date": "2026-10-09",
+  "released_base": "b3aeed04e0ea553af7b39f6d793e91f2ff676ff1",
+  "full_review_input": {
+    "base": "b3aeed04e0ea553af7b39f6d793e91f2ff676ff1",
+    "head": "edbcf9a276631e235ff76e90b1839ea4eaf519ce",
+    "command": "git diff --binary --full-index --no-renames b3aeed04e0ea553af7b39f6d793e91f2ff676ff1...edbcf9a276631e235ff76e90b1839ea4eaf519ce",
+    "diff_path": "C:\\Users\\Shado\\AppData\\Local\\Temp\\myst-final-review-20261009\\migration.diff",
+    "diff_sha256": "f585ef5c573824ba57faaf4a23bc3b0c6f5cea260931c6a581a3a4d5b2e018aa",
+    "diff_bytes": 1288198,
+    "file_count": 304,
+    "commit_count": 66,
+    "clean": true,
+    "proposed_release_patch": "C:\\Users\\Shado\\AppData\\Local\\Temp\\myst-release-acceptance-20261009\\proposed-release-5.5.0.patch",
+    "proposed_release_patch_sha256": "dbf43295ea73ffce557b7040d8544f14c3bb664e15cad18d5e2cd3d9b44abfe9",
+    "release_patch_applied": false
+  },
+  "correction": {
+    "correction_commit": "5b75a5b0a98c88e1042a538aeaff21b14c8205ff",
+    "exact_four_reviewed_files": true,
+    "committed_diff_matches_reviewed_capture": true,
+    "worktree_clean": true,
+    "no_publication": true
+  },
+  "fresh_package_exit_codes": {
+    "ps51-gates-0": 0,
+    "ps51-gates-1": 0,
+    "lint-2": 0,
+    "lint-3": 0,
+    "lint-4": 0,
+    "lint-5": 0,
+    "plugin-manifest": 0,
+    "marketplace-manifest": 0,
+    "verifier-acceptance": 0,
+    "complete-source": 0
+  },
+  "corrected_disposable_candidate_exit_codes": {
+    "ps51-gates-0": 0,
+    "ps51-gates-1": 0,
+    "lint-2": 0,
+    "lint-3": 0,
+    "lint-4": 0,
+    "lint-5": 0,
+    "plugin-manifest": 0,
+    "marketplace-manifest": 0,
+    "verifier-acceptance": 0
+  },
+  "proposed_release": {
+    "patch_sha256": "a35a9d0edcd2ff9658ef9743ea09e3a1cc651a9bdaa3047ee5c82106f0fd0535",
+    "patch_bytes": 2824,
+    "apply_check": true,
+    "not_applied_to_real_repo": true,
+    "exact_three_release_files": [
+      {
+        "path": "plugins/myst-dev-kit/.claude-plugin/plugin.json",
+        "old_sha256": "78dbac45cb10b272f06925fe6716c7f3db76d232ab67e9b28a96fd3e2084b65d",
+        "proposed_sha256": "e4a635c746a5b8a724165bb4cfd0bd34f766100e8de689fc4c0ee7b636002fde",
+        "crlf_count_preserved": true
+      },
+      {
+        "path": "plugins/myst-dev-kit/.codex-plugin/plugin.json",
+        "old_sha256": "8c36ce3b12865c5ab5463376201f05702db875a06f523c116b7da16d64f2712a",
+        "proposed_sha256": "945a0606e8332095d19d0a14e225b78c7cfd4babf9dcfa8830d755ed924544ae",
+        "crlf_count_preserved": true
+      },
+      {
+        "path": "CHANGELOG.md",
+        "old_sha256": "4e559802f9fde963ea114a746785ca4f2d3005bc8b62752be89dff2a6a9f25a3",
+        "proposed_sha256": "77299b5a3a884e860505470bd9d6060f1dff604694f162b420cacb9c3edf55ef",
+        "crlf_count_preserved": null
+      }
+    ],
+    "real_versions": [
+      "5.4.0",
+      "5.4.0"
+    ],
+    "candidate_versions": [
+      "5.5.0",
+      "5.5.0"
+    ],
+    "all_other_186_plugin_files_equal": true
+  },
+  "integration_description_sha256": "3a1c09aa996976971d6bf1940eeff8f2d862b221fe9444704b932147a64b17ca",
+  "actual_manifest_versions": [
+    "5.4.0",
+    "5.4.0"
+  ],
+  "deferred_or_unverified": [
+    "owner-deferred Claude model runtime",
+    "native remote Git update",
+    "native slash UI",
+    "broader required consumer scope"
+  ],
+  "published": false,
+  "proposal_artifact_reviews": {
+    "reviewed_base": "5b75a5b0a98c88e1042a538aeaff21b14c8205ff",
+    "reviewed_diff_sha256": "07cb61fee2eed8d03864617cb5dfabad520d65cb4df6a9673dddd970b0dd9233",
+    "Standards": {
+      "verdict": "GREEN",
+      "blocking": 0,
+      "warning": 0,
+      "info": 0
+    },
+    "Spec": {
+      "verdict": "GREEN",
+      "blocking": 0,
+      "warning": 0,
+      "info": 0
+    },
+    "docs_alignment": "Aligned within the five-file proposal scope.",
+    "actual_release_candidate_review": "pending",
+    "publication_approval": "pending"
+  }
+}
