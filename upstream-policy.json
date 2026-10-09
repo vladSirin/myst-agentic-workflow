@@ -7,7 +7,6 @@
     "review-and-submit"
   ],
   "pendingImports": [
-    "grilling",
     "resolving-merge-conflicts",
     "roundtable",
     "teach",
