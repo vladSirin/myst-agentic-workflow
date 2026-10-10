@@ -13,8 +13,8 @@ changes CONTEXT.md and CONTEXT-MAP.md to GLOSSARY.md and GLOSSARY-MAP.md.
 The source metadata is unchanged across pins.
 
 The public entry, public metadata, source record, and this note belong to Myst.
-The trigger and user-only invocation remain unchanged; public metadata matches
-upstream. The wrapper maps project domain documents and scoped links through
+The trigger and user-only invocation remain unchanged; public metadata retains upstream fields except for
+Myst's display-name prefix. The wrapper maps project domain documents and scoped links through
 Myst's shared contract. The re-explanation method is not rewritten.
 
 OpenCode needs its explicit local permission rule to retain user-only invocation;

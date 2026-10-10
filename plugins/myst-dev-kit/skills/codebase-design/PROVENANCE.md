@@ -9,8 +9,8 @@ The original SKILL.md is packaged as UPSTREAM.md; both companions and
 agents/openai.yaml retain their names and relative layout. Myst owns the
 public SKILL.md, public agents/openai.yaml,
 source record, and this provenance note. The public entry retains the existing
-name, trigger, and automatic invocation; the public host metadata matches the
-preserved upstream metadata.
+name, trigger, and automatic invocation; the public host metadata retains upstream fields except for
+Myst's display-name prefix.
 
 The local entry loads agentic-workflow's shared contract to map upstream domain
 vocabulary references to the project's selected files. It also explains how to

@@ -12,7 +12,8 @@ and selects the Myst grilling dependency through the host namespace or full
 installed path. It maps the source Skill call to reading the selected entry
 when that host has no Skill tool. Interview behavior remains owned by grilling.
 Copy installs require agentic-workflow and grilling.
-Public metadata matches the source and retains
+Public metadata retains upstream fields except for
+Myst's display-name prefix and retains
 allow_implicit_invocation: false.
 
 ## Upstream MIT notice

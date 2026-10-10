@@ -16,7 +16,8 @@ guide and its map heading. ADR format and source host metadata are unchanged.
 
 The public entry, public host metadata, source record, and this note belong to
 Myst. The local trigger names legacy and new glossaries and remains model-invoked.
-Public host metadata matches upstream. Myst's shared contract selects authoritative
+Public host metadata retains upstream fields except for
+Myst's display-name prefix. Myst's shared contract selects authoritative
 root/scoped/custom domain paths and handles conflicts or missing ownership. The
 wrapper applies that mapping to the source and companion defaults. Direct links
 expose both companions. No domain modeling, questioning, or ADR method is rewritten.

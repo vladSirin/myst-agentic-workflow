@@ -1,8 +1,14 @@
 # Upstream boundary migration inventory
 
-Status: all retained imports and resolving-merge-conflicts retirement are owner-verified. The full migration and proposal passed both review axes; the owner said "Good, go ahead" on 2026-10-09. The 5.5.0 candidate is being prepared for one integration PR. Published main remains v5.4.0. Known UE parser revisions are compatible. Claude runtime stays deferred; remote Git transition, native slash UI and wider consumer scope remain unverified. Merge and tagging are not approved by the preparation instruction.
+Status as of 2026-10-10: all retained imports and the retirement are
+owner-verified and merged through PR #107. Main carries the 5.5.0 preview;
+the latest published release remains v5.4.0. The migration exception is closed.
+The existing PC packages are updated, and Codex discovers all 31 skills in the
+two selected example projects. UE wording is submitted in CL 4089. Daily-use
+acceptance and a later tag/release instruction remain with the owner. Claude
+model runtime and Codex's ordinary HTTPS main-ref upgrade remain unverified.
 
-Current release work: [candidate report](upstream-release-candidate-2026-10-09.md).
+Current release work: [status and remaining checks](upstream-release-candidate-2026-10-09.md#current-status---2026-10-10).
 Completed implementation review: [full review](review_upstream_refresh_final_2026-10-09.md).
 
 The [approved plan](plan_upstream_boundary_refresh.md) owns scope and acceptance.
@@ -34,8 +40,8 @@ Destination for every retained or added import:
 `plugins/myst-dev-kit/skills/<skill>/`, with local entry/provenance and a complete
 source bundle. All twenty-six packaged imports use plain references with the single
 mapped entry filename. TDD completed the earlier ZIP conversions. Implement-spec
-is the latest verified import. Resolving-merge-conflicts is removed in this
-candidate; no pending source waivers remain. The [plain-source pilot](plain-source-pilot-2026-10-08.md)
+is the final verified import. Resolving-merge-conflicts is removed on main;
+no pending source waivers remain. The [plain-source pilot](plain-source-pilot-2026-10-08.md)
 records the accepted replacement for the earlier ZIP workaround.
 
 | Skill | Source subtree | Required migration | Status |
@@ -95,7 +101,7 @@ records the accepted replacement for the earlier ZIP workaround.
 | p4-description | New local-origin formatter, credited to pr/show-me inspiration; no runtime call to pr | Eight selected cases and package checks pass; three reader failures retained; both reviews GREEN; 0dc4e03 owner-verified on 2026-10-08 ([evidence](p4-description-2026-10-08.md)) |
 | design, changelist-verification | Retain existing behavior | No skill change planned |
 | Consumer format parsers | Check compatibility before formatter rollout | Active UE depot-stored audit #15/CL3648 and preflight #1/CL3697 confirmed; 21 current-head/workspace offline replay cases pass. No live submit or wider consumer inventory claim ([evidence](upstream-release-acceptance-2026-10-09.md#known-consumer-compatibility)) |
-| Release docs and install fixtures | Validate upgrade and rollback cleanup; remove only confirmed obsolete Myst copies and preserve personal edits | Project-copy tests owner-verified with retirement. Global copy and actual offline native local-marketplace install/update/rollback pass; docs and proposed single-bump patch prepared; both combined reviews GREEN; owner gate pending. Remote Git transition, native slash UI, deferred Claude runtime and wider consumer scope remain unverified ([evidence](upstream-release-acceptance-2026-10-09.md)) |
+| Release docs and install fixtures | Validate upgrade and rollback cleanup; remove only confirmed obsolete Myst copies and preserve personal edits | PR #107 merged; final reviews and CI pass. Existing Codex and Claude packages updated from merged main. Four Codex catalogs pass for the two examples; test fixtures retired and verified 5.4 rollback retained. Owner daily-use acceptance and tag/release instruction pending; Claude runtime and Codex HTTPS main-ref upgrade unverified ([current status](upstream-release-candidate-2026-10-09.md#current-status---2026-10-10); [earlier acceptance](upstream-release-acceptance-2026-10-09.md)) |
 
 The [plan review](review_upstream_boundary_refresh_2026-10-07.md) records findings
 and the owner's decisions. No installed copies or consumer repositories have

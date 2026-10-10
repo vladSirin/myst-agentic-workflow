@@ -13,7 +13,8 @@ and repeatable-script capture to the target project's workflow, and retains
 execution/publication authority. Perforce targets do not use Git commits through
 a mirror. The scope-confirmation, fixed-library authoring, static-verification,
 and human-handoff method stays upstream. Copy installs require agentic-workflow.
-Public metadata matches the source and retains model/user reach.
+Public metadata retains upstream fields except for
+Myst's display-name prefix and retains model/user reach.
 
 ## Upstream MIT notice
 

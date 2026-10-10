@@ -54,9 +54,18 @@ audit reports non-compliant submits to Feishu `#cl-audit` after the fact.
   It covers retired folders, rollback and personal edits. Add does not remove
   every name that disappeared from the selected source.
 
-What "latest" means is authoritative in the [CHANGELOG](CHANGELOG.md) head,
-republished per tag on the
-[Releases page](https://github.com/vladSirin/myst-agentic-workflow/releases).
+The [Releases page](https://github.com/vladSirin/myst-agentic-workflow/releases)
+is authoritative for published versions. The CHANGELOG head can describe an
+unreleased preview. As of 2026-10-10, main and the selected PC installation carry
+5.5.0, while the latest published release is v5.4.0. The owner will test daily use
+before requesting the 5.5 tag and release. These repository-based install and
+update commands can select the preview before it is tagged.
+
+The [current release status](docs/upstream-release-candidate-2026-10-09.md#current-status---2026-10-10)
+records the two first examples: UE_Blank_Proto for Perforce and this repository
+for Git. Four fresh Codex console/desktop catalogs find all 31 Myst entries in
+both projects. Claude's package is updated too; its model runtime tests remain
+owner-deferred. Start a fresh session after updating.
 
 ## Migrating from v4
 
@@ -107,6 +116,8 @@ Details: the CHANGELOG's v5.0.0 section. Also check `CLAUDE.local.md` and
    lists dev-kit skills (`tdd`, `grilling`, `review-and-submit`...).
 2. Codex: `codex plugin list` shows `myst-dev-kit@myst` installed.
 3. OpenCode: `opencode debug skill` lists the skills you added.
-4. Optional full check: submit a scratch CL with a tag-less description —
-   expect one Feishu `#cl-audit` message, and the submit succeeds (advisory,
-   never blocks).
+4. For a daily-use check, draft a description through the appropriate skill:
+   `pr` for this Git repository, or `p4-description` for a UE Perforce CL.
+   Check Summary / Evidence / Merge Danger for Git, or Summary / Evidence /
+   Submit Risk for Perforce. Include only actual review results. Discovery and
+   a visible menu entry are separate from a successful skill execution.

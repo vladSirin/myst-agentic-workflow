@@ -1,7 +1,7 @@
 # Prepare upstream refresh release integration
 
 Type: task
-Status: claimed
+Status: resolved
 Spec: [final integration](../../../docs/plan_upstream_boundary_refresh.md#final-changeset-complete-documentation-and-integrate-the-release)
 Proposal: [reviewed release sequence](../../../docs/review_upstream_refresh_final_2026-10-09.md#proposed-release-integration)
 
@@ -39,8 +39,18 @@ hashes and four fresh console/desktop catalogs pass for the two example projects
 UE wording follow-up: completed in a separate submitted CL. See the
 [submitted receipt](../../../docs/upstream-release-candidate-2026-10-09.md#ue-wording-follow-up---2026-10-10).
 
-Outstanding: the owner decides the exact PR merge with its stated runtime limits.
-After an approved main merge, check the ordinary main-ref version transition.
-Tagging and further consumer changes remain separate decisions. Keep this
-preparation task claimed while these gates remain; do not pre-record human
-acceptance or release. The initial example scope is the two named projects.
+Progress on 2026-10-10: the owner approved the exact PR merge, cleanup and local
+PC upgrade. PR #107 is merged at d00f891; all six final PR/push checks and all
+three main CI jobs pass. The contribution exception is closed and its branch
+is removed. Codex and Claude packages are refreshed from merged main; four
+fresh Codex catalogs pass for the two examples. The verified 5.4 rollback is
+retained outside discovery, and completed test fixtures are retired. See the
+[current status](../../../docs/upstream-release-candidate-2026-10-09.md#current-status---2026-10-10).
+
+Outstanding: the owner runs 5.5 in daily use on the two selected example
+projects, reports the result here or in the linked release-status record, and
+then decides whether to request tagging and release. Before a requested release,
+check Codex's ordinary HTTPS main-ref upgrade and record its result there.
+Claude model runtime stays owner-deferred. The merged integration is resolved,
+not closed; do not pre-record daily-use acceptance or a release. Further
+consumer changes remain separate decisions.

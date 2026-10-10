@@ -1,8 +1,11 @@
 # Upstream Boundary and Skill Refresh Plan
 
-**Version**: v2.1 | **Updated**: 2026-10-08
+**Version**: v2.2 | **Updated**: 2026-10-10
 **Reference**: ADR-0002, ADR-0006, ADR-0007; upstream research notes below
-**Status**: APPROVED for implementation, changeset by changeset. Publication remains separately gated.
+**Status**: APPROVED. Implementation merged through PR #107. Owner daily-use
+acceptance and the 5.5 tag/release remain pending. See the
+[current release status](upstream-release-candidate-2026-10-09.md#current-status---2026-10-10).
+The scope and acceptance rules below remain the approved plan.
 
 **Accepted packaging amendment, 2026-10-08:** the owner authorized production
 implementation after the disposable pilot. [ADR-0009](adr-0009-plain-upstream-references.md)
@@ -29,6 +32,7 @@ with answer-quality limits recorded separately and Claude deferred.
 | Draft amendment | 2026-10-08 | Research plain reference-file packaging with a narrow filename exception. Proposal and disposable discovery check only; no production skill changes. |
 | v2.0 | 2026-10-08 | Owner approved production implementation after Codex/OpenCode tests. Adopt ADR-0009, version 2 source records, and codebase-design as the first conversion. Retain per-skill gates. |
 | v2.1 | 2026-10-08 | Owner verified codebase-design's conversion. Confirm the already-required PR/P4 description and review-and-submit update; add an explicit upstream code-review milestone and tracker. Continue plain-file rollout with handoff. |
+| v2.2 | 2026-10-10 | Record the approved PR #107 merge, local 5.5 preview and closed migration exception. Daily-use acceptance and a later owner tag/release instruction remain pending; no scope change. |
 
 ## Overview
 
@@ -73,7 +77,7 @@ bodies match the current Myst bodies after frontmatter removal and line-ending
 normalization. Their original frontmatter differs from Myst's. Do not describe
 this as a new capability or a body rewrite.
 
-Current deviations to resolve:
+Baseline deviations to resolve, as recorded on 2026-10-06:
 
 - Seven inline reference changes across implement, tdd, to-spec, to-tickets,
   triage, and wayfinder. The historical ledger documents their purpose.
@@ -82,8 +86,9 @@ Current deviations to resolve:
 - Hammer frontmatter is local, while its body is upstream-derived.
 
 Changeset 0 corrects the README's blanket verbatim and provenance claims.
-Source and runtime migration remain pending in the
-[inventory](migration-upstream-boundary.md).
+Source and runtime migration were pending at Changeset 0. The
+[inventory](migration-upstream-boundary.md) records their completed per-skill
+gates and the remaining release controls.
 
 Sources: [Matt assessment](research-matt-pocock-updates-2026-10-06.md),
 [Hammer assessment](research-hammer-update-2026-10-06.md),

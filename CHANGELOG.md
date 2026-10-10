@@ -28,17 +28,30 @@ heading dated today, you almost certainly want to extend the first one instead.
 v3.0.0 through v6.0.0 were written into four JSON files and never tagged, which is exactly how
 two spurious majors went unnoticed. Either tag on merge, or leave the number alone.
 
+The owner explicitly approved a **5.5 daily-use preview** before tagging.
+Its manifest bump on main is not a release. Keep its notes marked Unreleased
+and add preview status/docs and display-label follow-ups to the same section. A later owner
+instruction is required to tag and release 5.5; no further bump is needed for
+these follow-ups.
+
 **The number lives in two places** — `plugins/myst-dev-kit/.claude-plugin/plugin.json` and
 `plugins/myst-dev-kit/.codex-plugin/plugin.json`. `./bump.ps1 -Version X.Y.Z` updates both,
 checks this file has the matching section, and tags. (Before v5.0.0 the number lived in five
 places; the other three sites no longer exist.)
 
-## [5.5.0] - 2026-10-09 - Upstream boundary refresh
+## [5.5.0] - Unreleased - Upstream boundary refresh
+
+Prepared on 2026-10-09 and merged in PR #107 on 2026-10-10. The local PC now
+uses the preview. Tagging and release wait for the owner's daily-use checks
+and later instruction. The latest published release remains v5.4.0. See the
+[current status](docs/upstream-release-candidate-2026-10-09.md#current-status---2026-10-10).
 
 MINOR: new/retired skills and behavior changes through plugin updates.
 Copy cleanup is inherent to the existing copy-install model. This refresh
 requires no consumer glossary rename or install-channel change.
 
+- Give all 31 Codex menu entries the **Myst Dev Kit:** prefix in local metadata.
+  Keep command names, triggers, invocation policies, and archived source unchanged.
 - Restore complete unchanged source for 24 Matt Pocock imports at
   `6fd947921b935b7e1e69293a200400f0fdd5c15f` and two Hammer imports from v0.30.0
   Intel asset `614238989`. Keep Myst behavior in local entry points. Plain
@@ -61,8 +74,10 @@ requires no consumer glossary rename or install-channel change.
   setup guidance. Codex local-path marketplaces need plugin add again when their
   plugin changes; Git marketplace upgrade is a separate route.
 - All individual skill changes and retirement are owner-verified. Combined
-  evidence and pending controls are in the
-  [acceptance report](docs/upstream-release-acceptance-2026-10-09.md). Claude model
+  evidence is in the dated
+  [acceptance report](docs/upstream-release-acceptance-2026-10-09.md); the
+  [current release status](docs/upstream-release-candidate-2026-10-09.md#current-status---2026-10-10)
+  records completed integration and remaining checks. Claude model
   runtime stays deferred by the owner. Full cross-host acceptance remains
   unverified.
 

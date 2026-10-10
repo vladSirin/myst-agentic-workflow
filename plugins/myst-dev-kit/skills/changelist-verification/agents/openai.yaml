@@ -1,0 +1,3 @@
+interface:
+  display_name: "Myst Dev Kit: Changelist Verification"
+  short_description: "Verify each changeset separately"

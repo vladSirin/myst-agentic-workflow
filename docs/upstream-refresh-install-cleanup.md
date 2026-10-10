@@ -1,13 +1,16 @@
 # Copy-install cleanup across the upstream refresh
 
 This guide applies when a copy install moves across the upstream-boundary
-refresh. The migration checkout is not a new published release. Use an exact
-approved commit or release as the source. Do not identify its contents by the
-manifest version alone: intermediate migration commits still say 5.4.0.
+refresh. The refresh is merged on main as the 5.5.0 preview, not a published
+release. Use an exact approved commit or published tag as the source. The
+[current release status](upstream-release-candidate-2026-10-09.md#current-status---2026-10-10)
+records the approved merge and remaining checks. Do not identify contents by
+the manifest version alone: historical intermediate migration commits also
+say 5.4.0.
 
 The pre-refresh v5.4.0 tag points to
 `b3aeed04e0ea553af7b39f6d793e91f2ff676ff1`. Its package has 29 skills.
-The candidate package has 31: it removes resolving-merge-conflicts and adds
+The merged 5.5 preview package has 31: it removes resolving-merge-conflicts and adds
 pr, implement-spec and p4-description. Install your selected subset and its
 declared Myst dependency closure. These counts describe full-library installs.
 
