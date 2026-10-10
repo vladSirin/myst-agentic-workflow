@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 2,
+  "provider": "git",
+  "root": "references/upstream",
+  "source": {
+    "url": "https://github.com/mattpocock/skills",
+    "revision": "6fd947921b935b7e1e69293a200400f0fdd5c15f",
+    "subtree": "skills/engineering/improve-codebase-architecture"
+  },
+  "files": {
+    "HTML-REPORT.md": "581e8bb5a521e46bbda8ca7e19b15948bed882187108092ebb90c62513b77528",
+    "SKILL.md": "552240a5ab5cec6b67c15dd1ad6e9f6962b1bca6ce870059a8c2713760c20392",
+    "agents/openai.yaml": "c8cb20f68ebf0edb4e497bc11ae5fcaa196004e661cd189015b04f4109ced7f1"
+  },
+  "dependencies": [
+    "agentic-workflow",
+    "codebase-design",
+    "grilling",
+    "domain-modeling"
+  ],
+  "pathMap": {
+    "SKILL.md": "UPSTREAM.md"
+  }
+}

@@ -4,16 +4,26 @@ The marketplace ships to every teammate's sessions, so content enters it through
 a **per-skill contribution gate**: one skill per PR, reviewed before it lands.
 The unit of review is the unit of installation.
 
+The final upstream-boundary integration uses the temporary
+[migration exception](#upstream-boundary-migration-exception) below. It ends
+when that PR merges to main; each skill retains its own review evidence.
+
 ## The gate, end to end
 
-1. **Author where you'll use it.** Write or improve the skill in your consumer
+1. **Author local behavior where you'll use it.** Write or improve the skill in your consumer
    project first (personal-scope `.claude/skills/...`) and dogfood it in real
    sessions before proposing it.
-2. **Port it into the package tree by hand.** Copy the skill directory into
-   `plugins/myst-dev-kit/skills/<name>/` and strip anything project-specific —
-   the repo ships only project-agnostic content; project specifics live in the
-   consuming project's own committed docs and rules. Stack-specific but
-   reusable (Perforce command forms, UE debugging) counts as agnostic.
+2. **Keep source and local integration separate.** Import the complete selected
+   upstream skill at a recorded revision, unchanged in bytes. The sole packaged
+   filename exception, SKILL.md to UPSTREAM.md, is defined in
+   [ADR-0009](docs/adr-0009-plain-upstream-references.md). Put Myst behavior in its
+   local entry point and references. For local-origin content, remove project
+   specifics; those belong in the consuming project's docs. Stack-specific but
+   reusable content (Perforce command forms, UE debugging) counts as agnostic.
+   If an upstream skill cannot be used within that boundary, record an explicit
+   exclusion instead of stripping or rewriting its source. The packaging pilot
+   and current migration debt are in the
+   [inventory](docs/migration-upstream-boundary.md).
 3. **One skill per PR.** Branch, commit, open a PR against `main`. Multi-skill
    PRs get asked to split — a reviewer must be able to hold the whole change.
 4. **Pass the mechanical bar.** CI (`.github/workflows/tests.yml`) runs the
@@ -34,28 +44,59 @@ The unit of review is the unit of installation.
 
 ## Per-skill review checklist
 
-- [ ] **Frontmatter**: valid YAML (quote any description containing `: `),
+- [ ] **Local entry frontmatter**: valid YAML (quote any description containing `: `),
       kebab-case `name` matching the directory, `description` written as a
       TRIGGER ("use when...", "MANDATORY before...") — it's the only part the
-      model sees before deciding to load the skill.
-- [ ] **Genericity**: no project-specific paths or names; protocols state the
+      model sees before deciding to load the skill. Apply these rules to the
+      Myst entry point; preserve upstream frontmatter and host metadata intact.
+- [ ] **Local genericity**: no project-specific paths or names; protocols state the
       neutral rule and may carry per-VCS command forms (Perforce and git).
-- [ ] **Provenance**: vendored upstream content stays verbatim and keeps its
-      attribution. The upstream pin for the pre-v5 vendored set lives in
-      [LICENSE](LICENSE); skills vendored v5.0.0 onward carry a same-dir
-      PROVENANCE.md. Local additions go in same-dir reference files, never in
-      upstream's files. Re-vendoring replaces the skill wholesale from upstream
-      and updates the note.
-- [ ] **No hidden authority**: skills that touch version control state the
+- [ ] **Source and provenance**: preserve complete selected upstream files and
+      attribution. Migrated imports have UPSTREAM.json for source identity and
+      file records, plus PROVENANCE.md for ownership and local adaptations.
+      All current imports carry these records; [LICENSE](LICENSE) retains
+      attribution and the inventory links acceptance evidence. Replace only the source
+      bundle when re-vendoring, preserving local files. Follow
+      [ADR-0008](docs/adr-0008-strict-upstream-boundary.md) and its narrow
+      [packaging amendment](docs/adr-0009-plain-upstream-references.md).
+- [ ] **Loading and integrity**: provide source comparison evidence and a
+      working entry-to-source/reference path. Run `python tools/verify_upstream.py`
+      using the [source-record contract](docs/upstream-source-verification.md).
+      Remove the skill's pending waiver when adding its source record. A skill's
+      wrapper, bundle, provenance, catalog row, and evidence belong in its PR.
+- [ ] **No hidden authority**: local entry points that touch version control must state or load the
       submission-authority rule (reviewers never submit; agents never publish
-      shared state without the protocol).
+      shared state without the protocol). Keep this rule outside upstream files.
 - [ ] **Advisory posture**: nothing in a skill may hard-block a human.
 - [ ] **Size**: a skill the model loads on demand should earn its tokens —
-      prefer one tight SKILL.md + reference files over a monolith.
+      keep local entries tight and disclose references when needed. Preserve
+      upstream files whole rather than shortening them to meet local style.
 - [ ] **Catalog row**: the README's skills catalog gains (or updates) the
       skill's one-line entry — right category, and under the invocation type
-      matching its frontmatter (`disable-model-invocation: true` ⇒
-      User-invoked). Retiring a skill removes its row in the same PR.
+      matching its public entry's frontmatter (`disable-model-invocation: true` ⇒
+      User-invoked). Retiring a skill removes its row in the same PR. State
+      source ownership, VCS limits, and migration status accurately; source
+      equality alone does not prove identical runtime behavior.
+
+## Upstream-boundary migration exception
+
+This one-time exception covers only the final integration PR from
+`codex/upstream-boundary-refresh` to main for the owner's approved
+[refresh plan](docs/plan_upstream_boundary_refresh.md). The
+[inventory](docs/migration-upstream-boundary.md) links the completed per-skill
+reviews and owner gates. This final PR is the sole multi-skill exception; it
+does not replace those reviews.
+
+The candidate prepares one version bump in both manifests and one CHANGELOG
+section. There are no intermediate migration tags. Required consumer parser
+compatibility must be ready before exposure. Candidate review, preflight and
+explicit publication decisions still apply. Deferred tests stay unverified.
+
+This exception closes when the final integration PR merges to main. All later
+contributions follow the normal one-skill PR process against main. Do not use
+the migration branch for further contributions. Any later migration needs its
+own decision. Merge alone does not prove runtime or consumer acceptance, and
+tagging remains a separate release decision.
 
 ## Versioning
 
@@ -65,6 +106,11 @@ Rules live at the top of [CHANGELOG.md](CHANGELOG.md). The short version:
   **Retiring a skill is MINOR for plugin consumers** — the plugin directory is
   replaced wholesale on update; copy-install (`npx skills add`) consumers
   self-manage removal, which is inherent to the npx model.
+- **Copy-install cleanup**: release instructions identify obsolete Myst-owned
+  folders for both upgrade and rollback. Preserve personal edits outside skill
+  discovery before removal, leave unrelated copies alone, and check the final
+  discoverable catalog. Do not rely on re-running add to remove retired skills.
+  This is documented cleanup, not an automatic deletion service.
 - **One bump per merge to `main`**, not per commit and not per PR in a stack.
 - **Tag it or don't bump it.** An untagged bump is a string in a JSON file.
 - The number lives in **two** places — `plugins/myst-dev-kit/.claude-plugin/plugin.json`

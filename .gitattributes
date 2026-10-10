@@ -4,3 +4,32 @@
 # installer's EOL policy (InstallJournal.ps1) and consumer depot conventions;
 # renormalizing them package-wide would churn every clone.
 *.sh text eol=lf
+# Pilot source archive: preserve the container and original member bytes.
+plugins/myst-dev-kit/skills/handoff/references/upstream/** -text
+plugins/myst-dev-kit/skills/implement/references/upstream/** -text
+plugins/myst-dev-kit/skills/deep-dive/references/upstream/** -text
+plugins/myst-dev-kit/skills/codebase-design/references/upstream/** -text
+plugins/myst-dev-kit/skills/tdd/references/upstream/** -text
+plugins/myst-dev-kit/skills/to-spec/references/upstream/** -text
+plugins/myst-dev-kit/skills/to-tickets/references/upstream/** -text
+plugins/myst-dev-kit/skills/triage/references/upstream/** -text
+plugins/myst-dev-kit/skills/wayfinder/references/upstream/** -text
+plugins/myst-dev-kit/skills/domain-modeling/references/upstream/** -text
+plugins/myst-dev-kit/skills/diagnosing-bugs/references/upstream/** -text
+plugins/myst-dev-kit/skills/improve-codebase-architecture/references/upstream/** -text
+plugins/myst-dev-kit/skills/wait-what/references/upstream/** -text
+plugins/myst-dev-kit/skills/code-review/references/upstream/** -text
+plugins/myst-dev-kit/skills/pr/references/upstream/** -text
+plugins/myst-dev-kit/skills/grill-with-docs/references/upstream/** -text
+plugins/myst-dev-kit/skills/prototype/references/upstream/** -text
+plugins/myst-dev-kit/skills/research/references/upstream/** -text
+plugins/myst-dev-kit/skills/wizard/references/upstream/** -text
+plugins/myst-dev-kit/skills/grill-me/references/upstream/** -text
+plugins/myst-dev-kit/skills/grilling/references/upstream/** -text
+plugins/myst-dev-kit/skills/teach/references/upstream/** -text
+plugins/myst-dev-kit/skills/to-questionnaire/references/upstream/** -text
+plugins/myst-dev-kit/skills/writing-for-agents/references/upstream/** -text
+plugins/myst-dev-kit/skills/roundtable/references/upstream/** -text
+plugins/myst-dev-kit/skills/implement-spec/references/upstream/** -text
+# Preserve this unapplied patch; its blank context lines are patch syntax.
+.scratch/upstream-boundary-refresh/release-proposal/5.5.0.patch -text whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol

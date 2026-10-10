@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 2,
+  "provider": "git",
+  "root": "references/upstream",
+  "source": {
+    "url": "https://github.com/mattpocock/skills",
+    "revision": "6fd947921b935b7e1e69293a200400f0fdd5c15f",
+    "subtree": "skills/engineering/triage"
+  },
+  "files": {
+    "AGENT-BRIEF.md": "7f5f87fed3033df1b06e083c480f3e847b1fbb0647746b8a4c6a50f9f26ef44f",
+    "OUT-OF-SCOPE.md": "1fbf9b432130c6380aa65813b55553cfda150309b27c595e183f8e335b8a190d",
+    "SKILL.md": "917b0baf74be583e74f110857ed45df2766617f75c00baf61fd136d7af515edf",
+    "agents/openai.yaml": "2e683717720cf456d165d0bb1a68bb600d0b6a8ccb61841c172e50d26f95351c"
+  },
+  "dependencies": [
+    "agentic-workflow",
+    "grilling",
+    "domain-modeling"
+  ],
+  "pathMap": {
+    "SKILL.md": "UPSTREAM.md"
+  }
+}

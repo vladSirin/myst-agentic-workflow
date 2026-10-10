@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 2,
+  "provider": "git",
+  "root": "references/upstream",
+  "source": {
+    "url": "https://github.com/mattpocock/skills",
+    "revision": "6fd947921b935b7e1e69293a200400f0fdd5c15f",
+    "subtree": "skills/productivity/writing-for-agents"
+  },
+  "files": {
+    "SKILL-MECHANICS.md": "c768e6307c7c10728c401c213f2c4ba71c542127eeb7ad2956aabd15a0fa0059",
+    "SKILL.md": "551adca942227b44192edba88acd4e8db911f0121ce58ad16944ccf6a896a74a",
+    "agents/openai.yaml": "eacb24b2a618cfb81dacb0416f4fdd75ddf3a8060f8ddb99aae1b1e301907e4b"
+  },
+  "dependencies": [
+    "agentic-workflow"
+  ],
+  "pathMap": {
+    "SKILL.md": "UPSTREAM.md"
+  }
+}

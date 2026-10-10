@@ -24,9 +24,14 @@ SOFTWARE.
 
 ## Third-party content
 
-This package includes content adapted from
+This migration checkout includes complete source from
 [mattpocock/skills](https://github.com/mattpocock/skills) at pinned commit
-`0ab1b63a410a03d3627979a109c8695de27af954`, used under the MIT License:
+`6fd947921b935b7e1e69293a200400f0fdd5c15f`, used under the MIT License.
+Earlier releases used `0ab1b63a410a03d3627979a109c8695de27af954`.
+Per-skill UPSTREAM.json and PROVENANCE.md record current files and ownership.
+The upstream entry is packaged as UPSTREAM.md; source bytes remain unchanged.
+
+The Matt Pocock notice follows:
 
 ```
 MIT License
@@ -52,6 +57,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-Specific upstream-derived files are marked with `upstreamLicense: "MIT"` and
-`sourceTemplate` pointing to the upstream path in the consumer's installed
-manifest.
+Hammer content is separately attributed in the deep-dive and roundtable source
+and provenance notes. The selected bundle is Hammer v0.30.0, Intel asset
+`614238989` from dreamwords/hammer-releases. Hammer ships no public license for
+these files. The existing owner authorization for vendoring and redistribution
+(sxc, 2026-08-27) is preserved in both provenance notes. The MIT notices above do
+not add a license grant for that content.

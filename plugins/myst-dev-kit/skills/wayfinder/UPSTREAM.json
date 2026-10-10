@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 2,
+  "provider": "git",
+  "root": "references/upstream",
+  "source": {
+    "url": "https://github.com/mattpocock/skills",
+    "revision": "6fd947921b935b7e1e69293a200400f0fdd5c15f",
+    "subtree": "skills/engineering/wayfinder"
+  },
+  "files": {
+    "SKILL.md": "fee6e1d0c50f0e736b4ef8a599060c959afae904c9a97d82c97f049fcc3aa0f1",
+    "agents/openai.yaml": "88bc81a11a6d52ac67aeaa76b8b619e387020d47c5133a4dd4927fd15c4ad073"
+  },
+  "dependencies": [
+    "agentic-workflow",
+    "grilling",
+    "domain-modeling",
+    "research",
+    "prototype"
+  ],
+  "pathMap": {
+    "SKILL.md": "UPSTREAM.md"
+  }
+}

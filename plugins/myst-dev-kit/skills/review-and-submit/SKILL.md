@@ -1,6 +1,6 @@
 ---
 name: review-and-submit
-description: "MANDATORY protocol when the user says 'review and submit' (any variant) or before publishing ANY changeset — a Perforce changelist submit, or a git merge/PR against the shared branch. Changeset organization, two-axis review (Standards + Spec) via myst-dev-kit:code-review sub-agents, Review Record, preflight validators, human-gated submit."
+description: "MANDATORY protocol when the user says 'review and submit' (any variant) or before publishing ANY changeset — a Perforce changelist submit, or a git merge/PR against the shared branch. Changeset organization, two-axis review (Standards + Spec), VCS-specific descriptions with review evidence, preflight validators, and human-gated publication."
 ---
 
 # Review and Submit Protocol
@@ -9,6 +9,12 @@ A **changeset** is one named, described, reviewable unit of work: a Perforce cha
 git branch/PR. Rules are here; command forms and traps are in
 [VCS-MECHANICS.md](VCS-MECHANICS.md). Team specifics (audit checks, tag vocabularies, job
 families) live in the project's own docs.
+
+Read [LOCAL-INTEGRATION](../agentic-workflow/LOCAL-INTEGRATION.md) before selecting
+VCS-specific dependencies. Required copy dependencies: agentic-workflow and
+code-review, plus pr for Git targets or p4-description for Perforce targets.
+Check the selected local entries before dependent work. A nested Git mirror does
+not change a Perforce target. Never invoke or load the Git-only pr workflow for P4.
 
 ## Source-control sync (applies at all times)
 
@@ -31,39 +37,27 @@ One named changeset, created at task START (VCS-MECHANICS); use the default chan
 the user asks, and never sweep it wholesale. Verify the file list before review: every
 intended file in, nothing unrelated mixed in.
 
-**Description** (CL description / PR body, same shape either way):
+**Description:** use the target's Myst formatter, with the scope and existing
+source pointer. For Git, select [pr](../pr/SKILL.md); for Perforce, select
+[p4-description](../p4-description/SKILL.md). Use the host's Myst namespace or the
+full installed Myst entry path. Keep its three sections: Summary / Evidence /
+Merge Danger for Git, or Summary / Evidence / Submit Risk for P4.
 
-```
-Title - brief, specific summary (follow the project's title-tag convention; unsure: ASK)
+Supply [DESCRIPTION-EVIDENCE.md](DESCRIPTION-EVIDENCE.md) with the formatter brief.
+It owns this protocol's evidence handoff and compatibility checks. Initial drafts
+state which reviews and checks have not run. After review, Step 7 supplies the
+actual final results; a formatter never supplies review or publication authority.
 
-## What
-
-- Concrete changes: which files, systems, config
-
-## Why
-
-- The problem solved or the plan step advanced; link the design doc if one exists
-- Ticket: .scratch/<slug>/issues/<NN>-<slug>.md   (what the Spec axis reviews against)
-  or, if the user skipped the workflow: Workflow: skipped (<reason>)   (agent changesets only)
-
-## Notes (optional)
-
-- Migration steps, known limitations, dependencies, what needs testing
-```
-
-- **Point, never restate.** Explain the change so a teammate understands it without reading
-  every file, but never copy a fact one of the files owns: counts, tallies, "all N",
-  "both", version strings, CL numbers, quoted snippets, "verified by diff", what a file
-  "now says". Name the file instead.
-- **Owner reports verbatim.** A user's one-word verdict ("works", "5 yes") is quoted, never
-  expanded into mechanism, values, or scope. Record its limits alongside.
-- **Claims of work done carry their evidence.** "Swept", "verified", "no X exists" appear
-  only next to the command and result; otherwise leave the sentence out.
-- **Cap: the body before the Review Record fits in about 150 words**, one line per bullet.
-  Over the cap means the description is restating what the files own, or the changeset is
-  too big; fix whichever it is, never the cap.
-- Perforce: English/ASCII only, typographic punctuation and the Review Record included (ASCII
-  `-` in Verdict lines). Bullets over paragraphs; name classes and files.
+- Explain the change, its reason, evidence, and risk briefly. Use the smallest
+  useful visual or ASCII sketch the formatter permits; link details rather than
+  duplicating long histories. Keep essential findings and verification limits
+  even when a longer description is needed. There is no separate narrative cap.
+- **Owner reports verbatim.** Quote the user's verdict without expanding its
+  mechanism, values, or scope. Record its limits alongside.
+- **Claims of work done carry evidence.** State an observed result with its source;
+  otherwise label it unverified. Do not turn planned checks into completed work.
+- Perforce: retain the related submitted-history title tags and English/ASCII
+  text throughout. Do not infer tags from the current tool account.
 
 ---
 
@@ -72,7 +66,10 @@ Title - brief, specific summary (follow the project's title-tag convention; unsu
 Resolve the changeset before spawning anything: a bad ID, a published changeset, or an
 empty diff stops here, in front of the user. Produce the file list and the actual diff the
 reviewers read (VCS-MECHANICS: a pending Perforce CL has no diff body in `p4 describe`; an
-added file has no diff at all).
+added file has no base diff). Pin the requested workspace, shelf, or submitted
+version; include complete added and removed content. Reuse supplied immutable
+captures only as those captures. Stale, incomplete, or uncheckable evidence stops
+dispatch; a filename list is not a reviewed diff.
 
 ---
 
@@ -86,9 +83,10 @@ skipped`: the Spec axis is skipped and the report says so, never silently.
 
 ## 4. Spawn both axes in parallel
 
-The engine is **`myst-dev-kit:code-review`** (always namespaced; the bare name is a
-different plugin). It defines the two axes, the standards sources, the smell baseline, and
-the briefs. Deltas:
+Read the local **`myst-dev-kit:code-review`** entry (or its full installed path in
+copy hosts), then follow its source and local input mapping. Do not use an
+ambiguous bare engine name or bypass the wrapper. It defines the two axes,
+standards sources, smell baseline, and briefs. Deltas:
 
 - The diff is Step 2's; the spec is Step 3's; paste the smell baseline into the Standards
   brief.
@@ -105,7 +103,7 @@ the briefs. Deltas:
   cannot run) as observed values in the brief; mark which you inferred.
 - Full model and effort; never downgrade reviewers to save tokens.
 
-Two axes, always. Prose is not a third axis: what a document proposes is not reviewed;
+Keep both axis results visible, including a confirmed Spec skip. Prose is not a third axis: what a document proposes is not reviewed;
 whether it contradicts what shipped is the Docs-alignment preflight (Submission step).
 
 **Re-review:** brief only what changed (findings fixed, findings declined and why, whether
@@ -149,7 +147,8 @@ those by the same ladder.
 
 ### Fixes that never cost a re-review
 
-At any severity: a missing Review Record block; a missing or wrong project title tag; an
+At any severity: rendering already verified review results into Evidence without
+changing their meaning; a missing or wrong project title tag; an
 EOL flip; non-ASCII in the description; a missing `Ticket:` / `Workflow: skipped` line whose
 ticket or decision already exists; deleting a sentence from the description. The list is
 closed: nothing on it can change behaviour or add reviewable content. Off it: creating the
@@ -204,34 +203,26 @@ standing instruction covers a publish.
 
 ---
 
-## 7. Record the review in the description
+## 7. Put verified results in Evidence
 
-After approval and before any preflight or submit, append to every changeset
-(VCS-MECHANICS):
+After the Step 6 decision, give the selected formatter the pinned scope, final
+axis reports (or confirmed skip), finding dispositions, existing detail references,
+owner acceptance and its limits, and actual preflight results available so far.
+Follow [DESCRIPTION-EVIDENCE.md](DESCRIPTION-EVIDENCE.md). Keep results inside
+Evidence and remaining risks inside Merge Danger / Submit Risk. Do not append a
+separate Review heading or pass-count record.
 
-```
-## Review
+Keep detailed reviewer identity, pass history, artifact/revision anchors, and
+finding dispositions in the actual review evidence. Link existing durable detail
+when useful; if it is unavailable, preserve essential unresolved findings briefly
+in the body. Never manufacture a new report or review verdict just for formatting.
+A missing review is not a formatting repair and cannot become GREEN.
 
-Standards: myst-dev-kit:code-review sub-agent - Verdict: WARNING (2 passes)
-Spec:      sub-agent vs .scratch/foo/issues/03-bar.md - Verdict: GREEN
-Docs-alignment: aligned
-Findings:
-- [FIXED] BLOCKING Standards SomeFile.cpp Tick() - one-line description
-- [ACCEPTED] WARNING Standards - magic number in threshold
-- [DEFERRED] INFO Spec - criterion 4 deferred to ticket 06
-```
-
-- One line per axis, always both, each with who ran it, its final-pass verdict, and the pass
-  count. Skipped axis: `Spec: skipped (no linked source)`. Inline run (no Agent tool):
-  `Standards: self (inline, myst-dev-kit:code-review brief) - Verdict: ...`; if the axes
-  did not actually run, say `(quick review)`.
-- `Docs-alignment:` when the changeset has prose: `aligned`, or what contradicted and how
-  it was fixed. A preflight result: no verdict, no pass count.
-- `Findings:` one-liners with disposition, severity, and axis; cap at ~6, overflow as
-  `- ...and N more INFO items (see review transcript)`.
-- **Generate pass counts and verdicts from a list of the passes, do not type them, and
-  regenerate immediately before publishing.** Same for any other assertion about the
-  changeset's own content: re-derive at submit time or leave it out.
+Re-derive final results from the actual reports immediately before publication.
+Checks not yet run remain explicitly unverified. Preflight can change readiness;
+update Evidence from its real results and follow the existing re-approval rules
+if a warning, failure, fix, or scope change occurs. Apply the final description
+through VCS-MECHANICS only within the user's authorized scope.
 
 ---
 
@@ -266,9 +257,17 @@ Findings:
    review round.
 3. **EOL flips** (Perforce on Windows): an absurdly large diff is usually a wholesale LF
    flip; fix per VCS-MECHANICS, re-diff, review that.
-4. **Publish** (VCS-MECHANICS) and report the final submitted number or merge SHA. A quiet
-   submit is not evidence any audit passed.
-5. Note any post-submit verification needed.
+4. **Refresh and validate the final description.** Update Evidence with actual final
+   review and preflight results. Run the project description validator against that
+   final text; repeat it if the description changes. Confirm compatibility with
+   required consumers as described in DESCRIPTION-EVIDENCE. A validator warning
+   or failure follows the existing report/fix/re-run and Step 6 approval rules.
+   If preflight changed reviewed content, re-pin it and follow Step 5 for the
+   affected review axis before publication.
+5. **Publish** (VCS-MECHANICS) only with the required decision and passing preflight;
+   report the final submitted number or merge SHA. A quiet submit is not evidence
+   any audit passed.
+6. Note any post-submit verification needed.
 
 The user has final authority on submit, fix, or defer. Always wait for explicit approval
 before publishing.

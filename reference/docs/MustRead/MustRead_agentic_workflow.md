@@ -135,7 +135,7 @@ review and submit {changelist name or ID}
 submit {CL}
 ```
 
-The agent then follows the project review protocol, scaled to the changelist: docs-only changelists (documentation trees only — rules/hooks/workflow files review as code) take a lightweight self-check (tags, file list, EOLs, a one-line review record), while code and asset changelists get the full routing — organize the changelist, check related docs, route reviewers, summarize blocking/warning/info items. Either way the agent waits for a human decision before submitting: the review scales, the human gate does not.
+The agent then follows the project review protocol, scaled to the changelist: docs-only changelists (documentation trees only — rules/hooks/workflow files review as code) take a lightweight self-check (tags, file list, EOLs, actual review evidence), while code and asset changelists get the full routing — organize the changelist, check related docs, route reviewers, summarize blocking/warning/info items. Record actual final review results inside Evidence in the description. Either way the agent waits for a human decision before submitting: the review scales, the human gate does not.
 
 ## Supporting docs
 
@@ -143,4 +143,7 @@ The agent then follows the project review protocol, scaled to the changelist: do
 - `Docs/agents/triage-labels.md` defines allowed status values and lane rules.
 - `Docs/agents/domain.md` defines how agents should consume context and ADRs.
 
-Create `CONTEXT.md` or ADRs lazily when stable project language or durable architecture decisions emerge.
+Resolve the project's domain paths through `Docs/agents/domain.md` before writing
+vocabulary. Keep existing selected glossary/context files. Create vocabulary or
+ADRs lazily when stable language or durable architecture decisions emerge;
+the refresh does not require a consumer file rename or a second glossary.

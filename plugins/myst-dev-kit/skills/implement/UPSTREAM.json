@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "provider": "git",
+  "root": "references/upstream",
+  "source": {
+    "url": "https://github.com/mattpocock/skills",
+    "revision": "6fd947921b935b7e1e69293a200400f0fdd5c15f",
+    "subtree": "skills/engineering/implement"
+  },
+  "files": {
+    "SKILL.md": "f28bed1a2a7dcf604c802a99869bae9d577b6bfc2061fe655c8b0dbb1ee16cfd",
+    "agents/openai.yaml": "8970a8596ade0c28ab427f41a4ea242d6bdf6186c59ebf55e1238dbecaab79dc"
+  },
+  "dependencies": [
+    "agentic-workflow",
+    "tdd",
+    "review-and-submit",
+    "code-review"
+  ],
+  "pathMap": {
+    "SKILL.md": "UPSTREAM.md"
+  }
+}

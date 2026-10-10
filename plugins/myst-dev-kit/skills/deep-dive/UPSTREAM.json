@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 2,
+  "provider": "github-release-zip",
+  "root": "references/upstream",
+  "source": {
+    "url": "https://github.com/dreamwords/hammer-releases",
+    "revision": "v0.30.0",
+    "subtree": "Hammer.app/Contents/Resources/advanced-capabilities/deep-dive",
+    "assetId": 614238989,
+    "archiveSha256": "1532f24e8ae95f9606a9ad4bb2916acfcb6fa0dff9f1496cca216c93c26f72be"
+  },
+  "files": {
+    "SKILL.md": "bbb960312b72e2bf1c3b6a98f2dba96bf62dbb0e7dcc9ad382fd91a9659fb9ff"
+  },
+  "dependencies": [],
+  "pathMap": {
+    "SKILL.md": "UPSTREAM.md"
+  }
+}

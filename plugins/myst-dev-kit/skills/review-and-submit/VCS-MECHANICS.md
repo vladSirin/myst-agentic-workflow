@@ -41,16 +41,29 @@ and you re-submit the old description.
 
 ### Pin the change
 
+For a pending workspace version, pin the target server/client, CL, and exact
+file actions before collecting evidence:
+
 ```bash
-p4 opened -c {CL}          # must list files; empty means not pending: stop and ask
-p4 describe -s {CL}        # description + file list; NO diff body for a pending CL
-p4 diff -c {CL} //...      # the diff the reviewers read
+p4 info
+p4 opened -c {CL}
+p4 describe -s {CL}
+p4 diff -du {explicit edited files from that CL}
 ```
 
-`p4 describe` alone hands a reviewer filenames and nothing to review, and the pass comes
-back clean because there was nothing in it. An ADDED file has no diff: brief the reviewer
-to read the whole file. Name instead of number: `p4 changes -s pending -u <user>`, confirm
-with the user.
+An empty opened-file list is not a pending workspace review; resolve the requested
+version before proceeding. p4 diff has no -c filter. Never widen the diff to every
+open file or use a nested Git mirror as the P4 target. Record each edited file's
+base revision and depot/local mapping. Read added files in full; obtain deleted
+base content with p4 print -q <depot-file>#<recorded-base-revision>. Include both
+paths/actions for moves. Identify binary or unavailable evidence and its limits.
+A pending p4 describe contains metadata and filenames, not a diff body.
+
+For shelf or submitted versions, obtain matching diffs and full content through
+the project's read-only VCS tools. Workspace content is not shelf evidence.
+Reuse the code-review wrapper's input mapping and keep the same pinned evidence
+for both axes. Name instead of number: p4 changes -s pending -u <user>, then
+confirm the intended CL with the user.
 
 ### EOL flips (Windows)
 
@@ -72,7 +85,12 @@ and not `p4 revert` (discards the edit). Re-diff, then review that.
   description as its body.
 - Pin: `git rev-parse {base}` must resolve; `git diff {base}...HEAD` (three-dot, against
   the merge-base); `git log {base}..HEAD --oneline`. An empty diff stops in front of the user.
-- Review Record: `gh pr edit {PR} --body-file {scratch}/body.md`; with no PR, amend the
-  block into the final commit message before pushing.
+- Description: keep the complete approved body in a UTF-8 file with real newlines.
+  For an existing PR, use `gh pr edit {PR} --body-file {scratch}/body.md` only when
+  that shared update is authorized. With no PR, retain the body for the authorized
+  PR-creation step; do not create a PR or rewrite commits merely to store evidence.
+  If the project's authorized publication flow uses a commit message instead,
+  supply the complete body through Git's message-file option; history rewriting
+  still requires its own authority. No review block is appended.
 - Park: leave the work on its branch; no merge, no PR.
 - Publish: push and open or merge the PR per the project's flow; report the URL or SHA.

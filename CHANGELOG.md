@@ -17,7 +17,7 @@ in the entry, and record what was lost — but the plugin update handles it with
 a file. Copy-install (`npx skills add`) consumers self-manage removals; that is inherent to the
 npx model, not a reason to call the release MAJOR. When a MAJOR example seems to collide with
 this rule, the MAJOR **criterion** controls, not the example: a retirement is MAJOR only when it
-breaks an existing install or forces manual migration (as this release does), and MINOR when
+breaks an existing install or forces manual migration, and MINOR when
 consumers simply receive the removal.
 
 **One bump per merge to `main`.** Not per commit, and not once per PR in a stack: three PRs that
@@ -32,6 +32,39 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 `plugins/myst-dev-kit/.codex-plugin/plugin.json`. `./bump.ps1 -Version X.Y.Z` updates both,
 checks this file has the matching section, and tags. (Before v5.0.0 the number lived in five
 places; the other three sites no longer exist.)
+
+## [5.5.0] - 2026-10-09 - Upstream boundary refresh
+
+MINOR: new/retired skills and behavior changes through plugin updates.
+Copy cleanup is inherent to the existing copy-install model. This refresh
+requires no consumer glossary rename or install-channel change.
+
+- Restore complete unchanged source for 24 Matt Pocock imports at
+  `6fd947921b935b7e1e69293a200400f0fdd5c15f` and two Hammer imports from v0.30.0
+  Intel asset `614238989`. Keep Myst behavior in local entry points. Plain
+  references preserve bytes; only the source entry filename maps to UPSTREAM.md.
+- Add Git-only pr and user-only implement-spec. Perforce targets cannot invoke
+  either, including direct, automatic and cross-skill routes with a Git mirror.
+  Add local p4-description, inspired by pr/show-me, without calling Git pr.
+- Refresh imported methods, companions, discovery metadata and declared copy
+  dependencies. Preserve user-only entry contracts and legacy/new project
+  vocabulary paths. Source equality does not promise identical model results.
+- Replace the standalone Review Record with actual review results inside
+  Evidence. Git uses Summary / Evidence / Merge Danger; Perforce uses Summary /
+  Evidence / Submit Risk. Existing review, findings and publication authority
+  remain in the protocol. The known UE parser versions accept this layout.
+- Remove resolving-merge-conflicts, which the selected upstream catalog retired.
+  It has no replacement skill in this release. Copy users follow the
+  [upgrade/rollback cleanup guide](docs/upstream-refresh-install-cleanup.md),
+  preserving personal edits and leaving uncertain or unrelated copies intact.
+- Restore contribution/catalog standards and correct source attribution and
+  setup guidance. Codex local-path marketplaces need plugin add again when their
+  plugin changes; Git marketplace upgrade is a separate route.
+- All individual skill changes and retirement are owner-verified. Combined
+  evidence and pending controls are in the
+  [acceptance report](docs/upstream-release-acceptance-2026-10-09.md). Claude model
+  runtime stays deferred by the owner. Full cross-host acceptance remains
+  unverified.
 
 ## [5.4.0] - 2026-09-29 - review-and-submit: cite findings by anchor, not line number
 

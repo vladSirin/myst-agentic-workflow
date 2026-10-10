@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 2,
+  "provider": "github-release-zip",
+  "root": "references/upstream",
+  "source": {
+    "url": "https://github.com/dreamwords/hammer-releases",
+    "revision": "v0.30.0",
+    "subtree": "Hammer.app/Contents/Resources/advanced-capabilities/roundtable",
+    "assetId": 614238989,
+    "archiveSha256": "1532f24e8ae95f9606a9ad4bb2916acfcb6fa0dff9f1496cca216c93c26f72be"
+  },
+  "files": {
+    "SKILL.md": "44531a16d1662a831562de8d5e58f27e2821bea5c541c3a56c94e1507681a358"
+  },
+  "dependencies": [],
+  "pathMap": {
+    "SKILL.md": "UPSTREAM.md"
+  }
+}

@@ -1,3 +1,13 @@
+# Legacy context-format example
+
+Myst local use: read [domain.md](domain.md) before applying this example.
+Use the project's selected vocabulary paths for both reads and writes. Treat
+the filenames below as legacy examples, not a new-project default. For the
+current format, load the installed Myst domain-modeling entry and its complete
+upstream format reference. The original legacy example below stays intact.
+
+---
+
 # CONTEXT.md Format
 
 ## Structure

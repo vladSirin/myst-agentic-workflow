@@ -16,3 +16,10 @@ reusing.
 
 These templates are snapshots, frozen at release time; where your project's live
 copies have moved on, the live copies win.
+
+Wrappers that load agentic-workflow's
+[local integration contract](../plugins/myst-dev-kit/skills/agentic-workflow/LOCAL-INTEGRATION.md)
+need that skill's whole directory plus their declared skill dependencies in a
+copy install. Missing dependencies must be reported, not replaced by a same-name
+skill from another package. Project domain templates require explicit local
+pointers before use; they do not rename existing vocabulary files.

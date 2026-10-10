@@ -10,9 +10,16 @@ Skills for the delivery loop (discussion → spec → tickets → triage → imp
 |---|---|
 | **Claude Code** | `/plugin marketplace add vladSirin/myst-agentic-workflow` then `/plugin install myst-dev-kit@myst`, restart the session. (Myst team projects pre-register the marketplace — skip the first command there.) |
 | **Codex** | Paste both, then start a new session:<br>`codex plugin marketplace add vladSirin/myst-agentic-workflow`<br>`codex plugin add myst-dev-kit@myst` |
-| **OpenCode** — or any tool that scans `~/.claude/skills` / `~/.agents/skills` | `npx skills add vladSirin/myst-agentic-workflow` — per-skill selection, installed at personal scope (Node ≥ 22.20; add `--copy` on Windows). |
+| **OpenCode** — or any tool that scans `~/.claude/skills` / `~/.agents/skills` | `npx skills add vladSirin/myst-agentic-workflow --global` — per-skill selection at personal scope (Node ≥ 22.20; add `--copy` on Windows). Omit `--global` for project scope. |
 
 **Updating** — Claude Code: `claude plugin marketplace update myst` then `claude plugin update myst-dev-kit@myst`, restart (the marketplace refresh alone moves nothing you have installed). Codex: `codex plugin marketplace upgrade` (there is no separate plugin-update subcommand). npx consumers: re-run the add command.
+
+Copy installs also need the [refresh cleanup steps](docs/upstream-refresh-install-cleanup.md)
+when crossing this migration boundary. Re-running add can leave retired skill
+folders. Check ownership and preserve personal edits before replacement or removal.
+For a Codex marketplace registered from a local path, re-run
+`codex plugin add myst-dev-kit@myst`, then start a new session. Marketplace
+upgrade refreshes Git sources; see [SETUP](SETUP.md#update) for the local-path case.
 
 ## Migrating from v4
 
@@ -29,8 +36,13 @@ Also check personal instruction files (`CLAUDE.local.md`, `~/.claude/CLAUDE.md`)
 
 Two kinds of skill, split by how they start:
 
-- **User-invoked** — inert until you call them: type `/name` in Claude Code, or ask for the skill by name in Codex/OpenCode. The model never fires them on its own (`disable-model-invocation: true` in frontmatter).
+- **User-invoked** — intended to start only on your request. Claude uses `disable-model-invocation: true`; migrated Codex entries also carry native invocation metadata. OpenCode needs a permission rule and an explicit `/name` command; see the [tested handoff setup](docs/handoff-pilot-2026-10-07.md#opencode-invocation-configuration). The frontmatter flag alone does not enforce this in every host.
 - **Model-invoked** — the agent loads them itself whenever the task matches the description. You can also call any of them explicitly; the marker only removes the automatic path, never the manual one.
+
+OpenCode 1.18.35 hides skill commands from slash-menu suggestions. A custom
+command alias can show a skill in that menu; it must load the public Myst wrapper.
+See the [tested menu setup](docs/handoff-pilot-2026-10-07.md#slash-menu-suggestions-11835).
+Skill discovery, menu display and model execution are separate checks.
 
 ### Delivery & publishing
 
@@ -38,56 +50,83 @@ The pipeline: discussion → spec → tickets → triage → implement → verif
 
 Model-invoked:
 
-- **[agentic-workflow](plugins/myst-dev-kit/skills/agentic-workflow/SKILL.md)** — the stage map: which process stage you are in and what comes next. Fires on any non-trivial feature work.
-- **[review-and-submit](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md)** — the mandatory pre-publish protocol: changeset organization, two-axis review, Review Record, human-gated submit (Perforce and git forms).
-- **[code-review](plugins/myst-dev-kit/skills/code-review/SKILL.md)** — the review engine: Standards and Spec axes in parallel sub-agents, reported side by side. Cite it namespaced as `myst-dev-kit:code-review` — the bare name resolves to the official git-diff review plugin.
+- **[agentic-workflow](plugins/myst-dev-kit/skills/agentic-workflow/SKILL.md)** — the stage map and shared local integration: project pointers, dependency routing, and legacy/new glossary paths. Fires on non-trivial feature work.
+- **[review-and-submit](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md)** — the mandatory pre-publish protocol: two-axis review, verified results inside Evidence, VCS-specific formatter routing, preflight, and human-gated publication. Copy installs need agentic-workflow, code-review, and the target formatter (pr for Git; p4-description for Perforce).
+- **[code-review](plugins/myst-dev-kit/skills/code-review/SKILL.md)** — unchanged Matt Pocock two-axis review method with Myst engine selection, project spec lookup, and Git/Perforce evidence mapping. Invoke `myst-dev-kit:code-review`, or its full Myst path in copy hosts ([evidence](docs/code-review-wrapper-2026-10-08.md)).
+- **[pr](plugins/myst-dev-kit/skills/pr/SKILL.md)** — Git-only PR bodies using intact Matt Pocock source and show-me credits; Myst adds project vocabulary, ticket pointers, and verified review evidence. Never used for P4 targets. Copy installs need agentic-workflow ([evidence](docs/pr-wrapper-2026-10-08.md)).
+- **[p4-description](plugins/myst-dev-kit/skills/p4-description/SKILL.md)** — local Perforce-only descriptions with established title tags, ASCII text, factual review evidence, and Submit Risk. Inspired by pr/show-me; never invokes Git-only pr. Copy installs need agentic-workflow ([evidence](docs/p4-description-2026-10-08.md)).
 - **[changelist-verification](plugins/myst-dev-kit/skills/changelist-verification/SKILL.md)** — hard rule for multi-changeset tasks: execute one at a time with a stop-and-verify gate between each, never batched.
-- **[resolving-merge-conflicts](plugins/myst-dev-kit/skills/resolving-merge-conflicts/SKILL.md)** — work through an in-progress git merge/rebase conflict.
 
 User-invoked:
 
-- **[to-spec](plugins/myst-dev-kit/skills/to-spec/SKILL.md)** — turn the current conversation into a spec on the project tracker: no interview, just synthesis of what was discussed.
-- **[to-tickets](plugins/myst-dev-kit/skills/to-tickets/SKILL.md)** — break a spec or plan into tracer-bullet tickets, each declaring its blocking edges.
-- **[triage](plugins/myst-dev-kit/skills/triage/SKILL.md)** — move issues and external PRs through triage roles: categorise, verify, grill if needed, write agent-ready briefs.
-- **[implement](plugins/myst-dev-kit/skills/implement/SKILL.md)** — implement a piece of work from a spec or set of tickets.
-- **[wayfinder](plugins/myst-dev-kit/skills/wayfinder/SKILL.md)** — plan work too big for one session as a shared map of decision tickets, resolved one at a time until the way is clear.
+- **[to-spec](plugins/myst-dev-kit/skills/to-spec/SKILL.md)** — synthesize the conversation into a spec through unchanged upstream instructions and local tracker, glossary, and state rules. Copy installs need agentic-workflow ([migration evidence](docs/to-spec-wrapper-2026-10-08.md)).
+- **[to-tickets](plugins/myst-dev-kit/skills/to-tickets/SKILL.md)** — Matt Pocock source with Myst tracker routing; split approved work into tracer-bullet tickets with blockers and parent links. Plain-source migration; verification tracked in the migration inventory.
+- **[triage](plugins/myst-dev-kit/skills/triage/SKILL.md)** — Matt Pocock source with Myst tracker and glossary routing; categorise, verify, grill, and write agent briefs. Plain-source migration; verification tracked in the migration inventory.
+- **[implement](plugins/myst-dev-kit/skills/implement/SKILL.md)** — implement a spec or tickets through unchanged plain upstream references and Myst dependency/review routing; supports Git and Perforce targets. Copy installs need agentic-workflow, tdd, review-and-submit, code-review, and the target formatter required by review-and-submit.
+- **[implement-spec](plugins/myst-dev-kit/skills/implement-spec/SKILL.md)** -- intact Matt Pocock task-graph/worktree orchestration for an approved Git spec. User-only; never for Perforce. Myst retains project, dependency, review and publication rules. Copy installs need the declared dependencies and their closure ([evidence](docs/implement-spec-wrapper-2026-10-09.md)).
+- **[wayfinder](plugins/myst-dev-kit/skills/wayfinder/SKILL.md)** — Matt Pocock source with Myst tracker and glossary routing; plan large work as a map of decision tickets. Plain-source migration; verification tracked in the migration inventory.
 
 ### Engineering
 
 Model-invoked:
 
-- **[tdd](plugins/myst-dev-kit/skills/tdd/SKILL.md)** — test-driven development: red-green-refactor, features and bug fixes built test-first.
-- **[diagnosing-bugs](plugins/myst-dev-kit/skills/diagnosing-bugs/SKILL.md)** — a diagnosis loop for hard bugs and performance regressions.
+- **[tdd](plugins/myst-dev-kit/skills/tdd/SKILL.md)** — test-first development through unchanged plain upstream references and red-green cycles, with local glossary and review routing. Copy installs also need agentic-workflow, codebase-design, review-and-submit, code-review, and its target formatter ([conversion evidence](docs/tdd-plain-source-2026-10-08.md)).
+- **[diagnosing-bugs](plugins/myst-dev-kit/skills/diagnosing-bugs/SKILL.md)** — Matt Pocock source with Myst glossary and VCS routing; diagnose hard bugs and performance regressions. Verification tracked in the migration inventory.
 - **[design](plugins/myst-dev-kit/skills/design/SKILL.md)** — design and plan documents: correct name, correct location, standard template, WIP-to-final lifecycle.
-- **[prototype](plugins/myst-dev-kit/skills/prototype/SKILL.md)** — build a throwaway prototype to answer a design question before committing to it.
-- **[codebase-design](plugins/myst-dev-kit/skills/codebase-design/SKILL.md)** — the deep-module vocabulary: interface design, seam placement, testability, AI-navigability.
-- **[domain-modeling](plugins/myst-dev-kit/skills/domain-modeling/SKILL.md)** — build and sharpen the project's domain model: terminology, CONTEXT.md, ADRs.
-- **[research](plugins/myst-dev-kit/skills/research/SKILL.md)** — investigate a question against high-trust primary sources; findings land as a Markdown file in the repo.
-- **[wizard](plugins/myst-dev-kit/skills/wizard/SKILL.md)** — generate an interactive bash wizard for steps only a human can perform: credentials, dashboards, one-off cutovers.
-- **[writing-for-agents](plugins/myst-dev-kit/skills/writing-for-agents/SKILL.md)** — writing documents agents will read: skills, AGENTS.md, CLAUDE.md.
+- **[prototype](plugins/myst-dev-kit/skills/prototype/SKILL.md)** — intact Matt Pocock logic demos and contrasting UI variants, with Myst project/VCS capture and validation routing. Copy installs need agentic-workflow ([evidence](docs/prototype-wrapper-2026-10-09.md)).
+- **[codebase-design](plugins/myst-dev-kit/skills/codebase-design/SKILL.md)** — the deep-module vocabulary: interface design, seam placement, testability, AI-navigability. Upstream bytes stay unchanged in plain references; the entry is packaged as UPSTREAM.md. The local wrapper maps project glossary paths. Copy installs also need `agentic-workflow` ([packaging evidence](docs/plain-source-pilot-2026-10-08.md)).
+- **[domain-modeling](plugins/myst-dev-kit/skills/domain-modeling/SKILL.md)** — Matt Pocock source with Myst glossary-path routing; sharpen domain terms and record durable ADRs. Supports legacy, new, and scoped glossary paths; verification tracked in the migration inventory.
+- **[research](plugins/myst-dev-kit/skills/research/SKILL.md)** — intact Matt Pocock background research from primary sources, with Myst project/note routing and authority. Copy installs need agentic-workflow ([evidence](docs/research-wrapper-2026-10-09.md)).
+- **[wizard](plugins/myst-dev-kit/skills/wizard/SKILL.md)** — intact Matt Pocock human-only Bash wizard method and fixed template, with Myst setup/CI and VCS capture routing. Copy installs need agentic-workflow ([evidence](docs/wizard-wrapper-2026-10-09.md)).
+- **[writing-for-agents](plugins/myst-dev-kit/skills/writing-for-agents/SKILL.md)** — intact upstream writing reference and skill mechanics; Myst resolves project/document scope and authority. Copy installs also need agentic-workflow. [Migration evidence](docs/writing-for-agents-wrapper-2026-10-09.md).
 
 User-invoked:
 
-- **[improve-codebase-architecture](plugins/myst-dev-kit/skills/improve-codebase-architecture/SKILL.md)** — scan a codebase for deepening opportunities, presented as a visual HTML report, then grill through whichever you pick.
+- **[improve-codebase-architecture](plugins/myst-dev-kit/skills/improve-codebase-architecture/SKILL.md)** — Matt Pocock source with Myst domain, VCS, and dependency routing; visual deepening report, then a user-selected design interview. User-only; OpenCode needs its local invocation rule ([evidence](docs/improve-codebase-architecture-wrapper-2026-10-08.md)).
 
 ### Thinking & productivity
 
 Model-invoked:
 
-- **[grilling](plugins/myst-dev-kit/skills/grilling/SKILL.md)** — relentless questioning to stress-test a plan, decision, or idea.
-- **[roundtable](plugins/myst-dev-kit/skills/roundtable/SKILL.md)** — a moderated, truth-seeking discussion of a contested topic across 3–5 representative thinkers, with an ASCII framework chart each round and user-steered pacing. For decisions with no single right answer, when you want differing roles' or disciplines' views, or want the disagreements on the table before picking a direction.
+- **[grilling](plugins/myst-dev-kit/skills/grilling/SKILL.md)** — intact Matt Pocock design-tree interview and fact-finding method, with Myst project/scope/authority routing. Model and user invoked; copy installs need agentic-workflow ([evidence](docs/grilling-wrapper-2026-10-09.md)).
+- **[roundtable](plugins/myst-dev-kit/skills/roundtable/SKILL.md)** — intact Hammer dialogue method, round controls, and ASCII frames; Myst retains English discovery and local display metadata. [Migration evidence](docs/roundtable-wrapper-2026-10-09.md).
 
 User-invoked:
 
-- **[grill-me](plugins/myst-dev-kit/skills/grill-me/SKILL.md)** — get interviewed about a plan or design until every branch of the decision tree is resolved.
-- **[grill-with-docs](plugins/myst-dev-kit/skills/grill-with-docs/SKILL.md)** — the same interview, writing ADRs and glossary entries as it goes.
-- **[deep-dive](plugins/myst-dev-kit/skills/deep-dive/SKILL.md)** — bring it a decision you keep circling: it steel-mans *both* sides to their strongest versions, surfaces the real crux, asks you one decisive question, and only after your answer gives a verdict with boundary conditions and next actions. For questions still tangled, answers that feel plausible but shaky, or premises you suspect you're not seeing.
-- **[teach](plugins/myst-dev-kit/skills/teach/SKILL.md)** — learn a skill or concept, taught inside this workspace.
-- **[to-questionnaire](plugins/myst-dev-kit/skills/to-questionnaire/SKILL.md)** — turn a decision you can't fully answer into a questionnaire for the person who can.
-- **[handoff](plugins/myst-dev-kit/skills/handoff/SKILL.md)** — compact the current conversation into a handoff document for the next session to pick up.
-- **[wait-what](plugins/myst-dev-kit/skills/wait-what/SKILL.md)** — stop: that last message did not land — re-pitch it.
+- **[grill-me](plugins/myst-dev-kit/skills/grill-me/SKILL.md)** — intact Matt Pocock user-only alias, routed to Myst's grilling engine. Copy installs need agentic-workflow and grilling ([evidence](docs/grill-me-wrapper-2026-10-09.md)).
+- **[grill-with-docs](plugins/myst-dev-kit/skills/grill-with-docs/SKILL.md)** — intact Matt Pocock composition of grilling and domain-modeling, with Myst dependency identity and project-doc mapping. User-only; copy installs need agentic-workflow, grilling, and domain-modeling ([evidence](docs/grill-with-docs-wrapper-2026-10-08.md)).
+- **[deep-dive](plugins/myst-dev-kit/skills/deep-dive/SKILL.md)** — bring it a decision you keep circling: it steel-mans *both* sides to their strongest versions, surfaces the real crux, asks you one decisive question, and only after your answer gives a verdict with boundary conditions and next actions. For questions still tangled, answers that feel plausible but shaky, or premises you suspect you're not seeing. Original Hammer source is preserved as plain references; English discovery and user-only metadata stay local ([conversion evidence](docs/deep-dive-plain-source-2026-10-08.md)).
+- **[teach](plugins/myst-dev-kit/skills/teach/SKILL.md)** — intact Matt Pocock stateful teaching method and formats, with Myst workspace/vocabulary/authority routing. User-only; copy installs need agentic-workflow ([evidence](docs/teach-wrapper-2026-10-09.md)).
+- **[to-questionnaire](plugins/myst-dev-kit/skills/to-questionnaire/SKILL.md)** — intact Matt Pocock send interview and discovery-questionnaire method, with Myst project/destination/authority routing. User-only; copy installs need agentic-workflow ([evidence](docs/to-questionnaire-wrapper-2026-10-09.md)).
+- **[handoff](plugins/myst-dev-kit/skills/handoff/SKILL.md)** — compact the conversation into an OS-temporary handoff file. Unchanged upstream bytes in plain references, read through a user-invoked local entry; [conversion evidence and host limits](docs/handoff-plain-source-2026-10-08.md).
+- **[wait-what](plugins/myst-dev-kit/skills/wait-what/SKILL.md)** — Matt Pocock source with Myst glossary routing; re-explain with context and simple project terms. User-only; OpenCode needs its local invocation rule ([evidence](docs/wait-what-wrapper-2026-10-08.md)).
 
-Vendored content comes verbatim from [mattpocock/skills](https://github.com/mattpocock/skills) and from the Hammer app's advanced-capability bundle ([dreamwords/hammer-releases](https://github.com/dreamwords/hammer-releases); `deep-dive` by 卡兹克, `roundtable` by 李继刚), each with a per-skill provenance note; the rest is local-origin. Adding a skill is one directory plus its one catalog line above — the [per-skill checklist](CONTRIBUTING.md) keeps the two in step.
+Imported content comes from [mattpocock/skills](https://github.com/mattpocock/skills)
+and the Hammer app's advanced-capability bundle
+([dreamwords/hammer-releases](https://github.com/dreamwords/hammer-releases);
+`deep-dive` by 卡兹克, `roundtable` by 李继刚); the remaining skills are local-origin.
+All twenty-four Matt imports use the recorded refresh pin. Both Hammer imports
+record their selected release and existing permission. [LICENSE](LICENSE) and
+per-skill provenance notes preserve their respective attribution.
+
+**Source restoration is complete in this migration checkout.** All twenty-six
+retained or added imports have complete unchanged source bundles and separate
+Myst entry points. The source guarantee does not imply identical runtime
+behavior: the local entries own Myst integration. The
+[plain-reference packaging decision](docs/adr-0009-plain-upstream-references.md)
+permits one entry filename mapping while preserving every upstream byte. The
+[migration inventory](docs/migration-upstream-boundary.md) tracks each skill and
+its acceptance evidence. The catalog above describes this checkout. Release and
+consumer acceptance are tracked separately from source restoration. Claude
+runtime tests remain deferred.
+The [combined acceptance report](docs/upstream-release-acceptance-2026-10-09.md)
+records the bounded install and consumer checks. The
+[candidate report](docs/upstream-release-candidate-2026-10-09.md) tracks current
+release preparation and remaining controls.
+
+Adding or retiring a skill updates its catalog row through the
+[per-skill checklist](CONTRIBUTING.md). The temporary exception covers only
+the final refresh integration PR and closes when that PR merges to main.
 
 [`reference/`](reference/) holds starter docs to copy into a consuming project: workspace-setup sections for the tool bibles, the human workflow guide, issue-tracker and triage-label templates, and a UE `.p4ignore` fragment.
 
@@ -103,6 +142,8 @@ myst-agentic-workflow/
 ├── bump.ps1                          # release helper: 2 manifest versions + CHANGELOG check + tag
 ├── retire-legacy.ps1                 # transitional v4-state cleanup (dies with the stub in a later MINOR)
 ├── .github/workflows/tests.yml       # CI: PS 5.1 parse gate, ASCII/BOM gate, lint
+├── tools/verify_upstream.py          # repository-only pinned-source verifier
+├── upstream-policy.json             # local skills and explicit migration debt
 ├── .github/workflows/release.yml     # tag push v* -> GitHub Release from the CHANGELOG section
 ├── .claude-plugin/marketplace.json   # plugin marketplace (Claude Code native)
 ├── .agents/plugins/marketplace.json  # plugin marketplace (Codex native)

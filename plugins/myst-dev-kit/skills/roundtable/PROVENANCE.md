@@ -1,29 +1,33 @@
-# Provenance
+# Roundtable provenance
 
-Vendored from the Hammer desktop app: github.com/dreamwords/hammer-releases,
-release v0.19.0 (2026-08-27). Author: 李继刚, revision dated 2025-11-12
-(credited and dated in the body). The app's source repo is private; the
-releases repo ships binaries only, so the pin is the release tag plus the
-bundle path:
+The complete source comes from [Hammer](https://github.com/dreamwords/hammer-releases).
+[UPSTREAM.json](UPSTREAM.json) owns the current approved release, asset identity,
+archive hash, subtree, and complete source inventory. The single original file
+stays byte-for-byte intact under references/upstream; only SKILL.md maps to
+UPSTREAM.md under ADR-0009. The author credit and revision date remain in it.
 
-`Hammer-0.19.0-mac.zip :: Hammer.app/Contents/Resources/advanced-capabilities/roundtable/SKILL.md`
+Myst owns this note, the source record, public English frontmatter, and display
+metadata. Model invocation and argument hint remain as before. The entry only
+loads the complete source; no method rule or workflow dependency is added.
+The Chinese upstream description is preserved. Display metadata is local because
+Hammer has no agents/openai.yaml in this skill subtree.
 
-VERBATIM: everything below the frontmatter. LOCAL: the frontmatter block only —
-this repo's pre-existing trigger-grade English description and `argument-hint`,
-kept model-invoked as before. Upstream's own frontmatter carried a Chinese
-summary description and no invocation marker.
+## History and ownership
 
-Lineage: this replaces the repo's previous `roundtable`, a local-origin English
-adaptation of the same 李继刚 design that carried no credit. An earlier revision
-of the original circulates in his public prompt collections (e.g. the ljg skill
-library); the 2025-11-12 revision vendored here adds honesty guardrails (figures
-simulate public thought, never fabricate real quotes; MBTI as style hint only),
-accepts free-form user input beyond the fixed pace commands, and drops the
-org-file archiving step.
+The prior import came from Hammer v0.19.0 on 2026-08-27. It credited Li Jigang
+and the 2025-11-12 revision in the body. The original roundtable files at v0.19.0
+and the approved v0.30.0 release are byte-identical. The former Myst body matches
+after removing frontmatter and normalizing line endings. There is no method delta.
+The previous public entry combined Myst frontmatter with the body; that split is
+now explicit. An earlier Myst English adaptation lacked the credit. The imported
+revision restored it and retained simulated-speech honesty, lightweight MBTI,
+free-form input, and no org-file archiving. All of these remain upstream.
 
-Re-vendoring = download the newest release zip, extract the same bundle path,
-replace everything below the frontmatter wholesale, update this note. Keep the
-local frontmatter unless upstream's gains trigger semantics.
+Re-vendoring replaces only the complete source subtree and source record after
+source comparison. Preserve the local entry, metadata, this permission record,
+and credits. Follow ADR-0008/0009; never splice local rules into the source.
+
+## Existing authorization
 
 License note: upstream ships no public license for this content. Vendoring and
 redistribution here are authorized by the project owner (sxc, 2026-08-27), who
