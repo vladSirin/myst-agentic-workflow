@@ -326,3 +326,28 @@ Verdict: GREEN
 
 Independent docs preflight: "Aligned within the two-document scope."
 Rendering these verified reports adds no behavior or publication authority.
+
+## UE wording follow-up - 2026-10-10
+
+The owner said: "good submit 4089 and do a final review on PR 107".
+CL 4089 was submitted separately to `//UEPrototype/main`. Its description
+keeps separate Standards and Spec results inside Evidence. `p4 describe -s 4089`
+confirms the exact three-file scope:
+
+- `Docs/MustRead/MustRead_agentic_workflow.md#8`: the landed-changelist statement
+  now requires review results in Evidence.
+- `Docs/agents/issue-tracker.md#11`: "Where everything else goes" now places
+  review results in Evidence.
+- `.scratch/myst-review-evidence/spec.md#1`: the scoped contract and closed ticket.
+
+`p4 print -q <depot-file>@=4089` readback matched each reviewed workspace file
+after normal P4 line-end translation. Both CL review axes were GREEN with no
+findings; docs alignment passed. The actual final description checker passed.
+The two exact guide replacements preserve all surrounding bytes, CRLF and the
+45-line seam guide. Unrelated open files were unchanged after submission.
+
+This closes the UE wording gate. Earlier PC-install and candidate statements
+retain their dated scope; this follow-up does not add UE files to the Git PR.
+The owner authorized PR #107 review only. Main merge, the ordinary main-ref
+update check, tagging and further consumer changes remain separate steps.
+Claude model runtime remains owner-deferred.

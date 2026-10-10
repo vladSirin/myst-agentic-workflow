@@ -36,9 +36,10 @@ typing-only menu check. The existing PC plugin has now moved from verified 5.4.0
 to the reviewed local 5.5 candidate through the normal installer. Full package
 hashes and four fresh console/desktop catalogs pass for the two example projects.
 
+UE wording follow-up: completed in a separate submitted CL. See the
+[submitted receipt](../../../docs/upstream-release-candidate-2026-10-09.md#ue-wording-follow-up---2026-10-10).
+
 Outstanding: the owner decides the exact PR merge with its stated runtime limits.
-Before new Perforce descriptions roll out, align the UE workflow docs' old
-Review Record wording.
 After an approved main merge, check the ordinary main-ref version transition.
 Tagging and further consumer changes remain separate decisions. Keep this
 preparation task claimed while these gates remain; do not pre-record human
