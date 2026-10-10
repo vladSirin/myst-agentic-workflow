@@ -140,6 +140,19 @@ jobs:
           if ($bad -gt 0) { throw "$bad frontmatter problem(s)" }
           "All skill frontmatter valid."
 
+      - name: Public Codex labels use host defaults
+        shell: pwsh
+        run: |
+          $overrides = Get-ChildItem plugins/myst-dev-kit/skills -Directory | ForEach-Object {
+              $metadata = Join-Path $_.FullName 'agents/openai.yaml'
+              if ((Test-Path -LiteralPath $metadata) -and
+                  (Get-Content -Raw -LiteralPath $metadata) -match '(?m)(?:^|[ 	{,])(?:display_name|''display_name''|"display_name")[ 	]*:') {
+                  $metadata
+              }
+          }
+          if ($overrides) { throw "Public display_name overrides: $($overrides -join ', ')" }
+          "Public Codex metadata uses host default labels."
+
       - name: The two plugin manifests agree on the version
         shell: pwsh
         run: |

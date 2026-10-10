@@ -50,8 +50,9 @@ MINOR: new/retired skills and behavior changes through plugin updates.
 Copy cleanup is inherent to the existing copy-install model. This refresh
 requires no consumer glossary rename or install-channel change.
 
-- Give all 31 Codex menu entries the **Myst Dev Kit:** prefix in local metadata.
-  Keep command names, triggers, invocation policies, and archived source unchanged.
+- Restore default Codex menu naming by omitting local display_name overrides.
+  Keep invocation metadata and archived source unchanged. A public-metadata CI
+  gate prevents label overrides from returning; OpenCode skill names stay unchanged.
 - Restore complete unchanged source for 24 Matt Pocock imports at
   `6fd947921b935b7e1e69293a200400f0fdd5c15f` and two Hammer imports from v0.30.0
   Intel asset `614238989`. Keep Myst behavior in local entry points. Plain

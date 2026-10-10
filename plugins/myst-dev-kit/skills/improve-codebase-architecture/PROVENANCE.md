@@ -14,8 +14,8 @@ only replaces CONTEXT.md references with GLOSSARY.md. The report guide and
 source host metadata are unchanged across pins.
 
 The public entry, public host metadata, source record, and this note belong to
-Myst. The trigger and user-only invocation remain unchanged; public metadata retains upstream fields except for
-Myst's display-name prefix. The wrapper selects project domain and ADR paths, target VCS
+Myst. The trigger and user-only invocation remain unchanged; public metadata omits display_name to use
+Codex default labels; its other upstream fields are unchanged. The wrapper selects project domain and ADR paths, target VCS
 history, and Myst dependency entries. It links the report guide directly. The
 exploration, visual report, and grilling methods are not rewritten.
 

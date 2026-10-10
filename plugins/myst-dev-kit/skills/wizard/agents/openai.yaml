@@ -1,3 +1,2 @@
 interface:
-  display_name: "Myst Dev Kit: Wizard"
   short_description: "Generate an interactive setup wizard"

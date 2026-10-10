@@ -14,8 +14,8 @@ changes only the CONTEXT.md reference to GLOSSARY.md. The six diagnosis phases,
 HITL template, and source host metadata are unchanged across the approved pins.
 
 The public entry, public host metadata, source record, and this note belong to
-Myst. The trigger and automatic invocation remain unchanged; public metadata retains upstream fields except for
-Myst's display-name prefix. Myst's shared contract selects domain paths, ADR location,
+Myst. The trigger and automatic invocation remain unchanged; public metadata omits display_name to use
+Codex default labels; its other upstream fields are unchanged. Myst's shared contract selects domain paths, ADR location,
 target VCS, and publication authority. The wrapper links the source and HITL
 companion directly. No diagnosis method or script behavior is rewritten.
 

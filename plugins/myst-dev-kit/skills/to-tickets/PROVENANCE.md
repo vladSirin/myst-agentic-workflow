@@ -8,8 +8,8 @@ references/upstream preserves both original files byte-for-byte. SKILL.md is
 packaged as UPSTREAM.md; agents/openai.yaml keeps its original relative path.
 The public SKILL.md, public agents/openai.yaml, source record, and this note
 belong to Myst. Public frontmatter retains its name, description, and user-only
-invocation. Public host metadata retains upstream fields except for
-Myst's display-name prefix and disables implicit use.
+invocation. Public host metadata omits display_name to use
+Codex default labels; its other upstream fields are unchanged and disables implicit use.
 
 Two former inline setup-reference changes now use agentic-workflow's shared
 contract. Myst owns project tracker/triage/glossary lookup, missing configuration,

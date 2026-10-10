@@ -1,5 +1,4 @@
 interface:
-  display_name: "Myst Dev Kit: Wait What"
   short_description: "Re-pitch that: simpler, with the context I'm missing"
 policy:
   allow_implicit_invocation: false

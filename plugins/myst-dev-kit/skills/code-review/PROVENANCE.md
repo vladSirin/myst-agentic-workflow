@@ -15,8 +15,8 @@ UPSTREAM.md under ADR-0009; agents/openai.yaml keeps its original path.
 
 The public entry, REVIEW-INPUTS.md, public metadata, source record, and this note
 belong to Myst. The local trigger names Git and Perforce scopes and retains model
-invocation. Public metadata retains upstream fields except for
-Myst's display-name prefix. Local routing owns engine identity,
+invocation. Public metadata omits display_name to use
+Codex default labels; its other upstream fields are unchanged. Local routing owns engine identity,
 project tracker/spec lookup, and VCS evidence mapping. It keeps the source's
 two-axis method and full smell baseline intact. Review-and-submit continues to
 own publication and description formatting.

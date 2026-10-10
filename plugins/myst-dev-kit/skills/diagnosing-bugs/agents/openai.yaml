@@ -1,3 +1,2 @@
 interface:
-  display_name: "Myst Dev Kit: Diagnosing Bugs"
   short_description: "Diagnose hard bugs and regressions"

@@ -31,7 +31,8 @@ contributions use the normal one-skill PR gate, except for the bounded
 4. **Pass the mechanical bar.** CI (`.github/workflows/tests.yml`) runs the
    PowerShell 5.1 parse gate, the ASCII/BOM gate, and the lint job (SKILL.md
    frontmatter validity, version agreement across the two manifests, README
-   install one-liners present, dead-reference grep). The upstream-source job
+   install one-liners present, default Codex display naming, dead-reference grep).
+   The upstream-source job
    also runs source-verifier acceptance tests and independent pinned-source
    verification; PRs targeting main require complete source records. Run
    `claude plugin validate ./plugins/myst-dev-kit` and
@@ -54,10 +55,10 @@ contributions use the normal one-skill PR gate, except for the bounded
       TRIGGER ("use when...", "MANDATORY before...") — it's the only part the
       model sees before deciding to load the skill. Apply these rules to the
       Myst entry point; preserve upstream frontmatter and host metadata intact.
-- [ ] **Codex menu label**: each public agents/openai.yaml uses
-      `Myst Dev Kit: <skill title>` as interface.display_name. Keep command names
-      and invocation policies separate from this display label. Archived upstream
-      metadata stays unchanged.
+- [ ] **Codex menu label**: omit interface.display_name from public
+      agents/openai.yaml so Codex formats the namespaced skill name. Retain
+      invocation policy, short descriptions, and other needed host metadata. The
+      CI gate checks public metadata only; archived upstream metadata stays intact.
 - [ ] **Local genericity**: no project-specific paths or names; protocols state the
       neutral rule and may carry per-VCS command forms (Perforce and git).
 - [ ] **Source and provenance**: preserve complete selected upstream files and
@@ -114,10 +115,12 @@ tagging remains a separate release decision.
 ## Codex display-label follow-up
 
 On 2026-10-10, the owner requested consistent Myst labels and a repository push.
-This one follow-up may update display metadata across the 31 public entries and
-correct its provenance and preview documentation. It changes no skill method,
-command name, trigger, or invocation policy and does not reopen the migration
-exception. Later skill changes still use one skill per PR. Scope and checks:
+On 2026-10-11, the owner rejected duplicated prefixes and requested the host
+default. This one follow-up may omit public display_name overrides, remove the
+four display-only files, correct provenance and preview docs, and add the CI
+gate for that policy. It changes no skill method, command name, trigger, or
+invocation policy and does not reopen the migration exception. Later skill
+changes still use one skill per PR. Scope and checks:
 [follow-up task](.scratch/upstream-boundary-refresh/issues/41-preview-docs-menu-labels.md).
 
 ## Versioning

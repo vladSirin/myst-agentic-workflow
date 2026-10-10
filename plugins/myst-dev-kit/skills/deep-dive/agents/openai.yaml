@@ -1,5 +1,4 @@
 interface:
-  display_name: "Myst Dev Kit: Deep Dive"
   short_description: "Examine both sides of a decision"
 policy:
   allow_implicit_invocation: false

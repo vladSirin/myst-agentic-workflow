@@ -1,3 +1,2 @@
 interface:
-  display_name: "Myst Dev Kit: TDD"
   short_description: "Test-driven red-green-refactor"

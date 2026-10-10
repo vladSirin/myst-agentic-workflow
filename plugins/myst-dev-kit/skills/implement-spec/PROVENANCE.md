@@ -4,8 +4,8 @@ The complete skill comes from [Matt Pocock's skills](https://github.com/mattpoco
 [UPSTREAM.json](UPSTREAM.json) records the approved pin, original paths, hashes,
 and Myst copy dependencies. This is a new import; no earlier Myst method exists.
 Both selected files remain intact under references/upstream. Only SKILL.md maps
-to UPSTREAM.md under ADR-0009. Public host metadata retains upstream fields except for
-Myst's display-name prefix.
+to UPSTREAM.md under ADR-0009. Public host metadata omits display_name to use
+Codex default labels; its other upstream fields are unchanged.
 
 Myst owns the public entry, local description, source record, and this note.
 The entry adds target-VCS eligibility, project/tracker/vocabulary selection,

@@ -45,9 +45,11 @@ Also check personal instruction files (`CLAUDE.local.md`, `~/.claude/CLAUDE.md`)
 
 [`plugins/myst-dev-kit/skills/`](plugins/myst-dev-kit/skills/) is the library — one directory per skill, one shared source for every tool. Browse it directly: each `SKILL.md`'s frontmatter description is its trigger ("use when…"), which is exactly what your agent reads when deciding to load it.
 
-Codex menu labels use **Myst Dev Kit: <skill title>** for every skill. These
-labels identify the package; command names and invocation rules stay unchanged.
-**Personal** in the menu is the installation scope.
+Codex generates menu labels from namespaced skill names, such as
+`myst-dev-kit:handoff` becoming **Myst Dev Kit: Handoff**. Public metadata leaves
+`display_name` unset so this host default applies. Invocation policies and short
+descriptions stay in local metadata. **Personal** is the installation scope.
+OpenCode uses the names in SKILL.md; it does not inherit the Codex display prefix.
 
 Two kinds of skill, split by how they start:
 
