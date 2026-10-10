@@ -1,3 +1,2 @@
 interface:
-  display_name: "Writing for Agents"
   short_description: "Write documents agents consume"

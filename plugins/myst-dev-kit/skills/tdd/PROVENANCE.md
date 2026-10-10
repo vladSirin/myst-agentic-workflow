@@ -8,7 +8,8 @@ references/upstream preserves all four original files byte-for-byte. SKILL.md is
 packaged as UPSTREAM.md; tests.md, mocking.md, and agents/openai.yaml retain
 their original names. Myst owns the public entry, public host metadata, source record,
 and this provenance note. The public name, trigger, and automatic invocation
-are retained. Public host metadata matches the bundled original.
+are retained. Public host metadata omits display_name to use
+Codex default labels; its other upstream fields are unchanged.
 
 The local entry loads agentic-workflow's shared contract for project glossary
 and workflow mapping. It resolves the codebase-design reference to Myst's

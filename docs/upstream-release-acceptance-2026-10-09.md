@@ -3,7 +3,9 @@
 Historical preparation snapshot at edbcf9a. The status, manifest versions and
 pending controls below describe that captured stage. The owner later approved
 continuing with the release proposal. See the
-[candidate report](upstream-release-candidate-2026-10-09.md) for current work.
+[current release status](upstream-release-candidate-2026-10-09.md#current-status---2026-10-10)
+for the merged preview and remaining controls. Completed temporary fixtures
+were retired after merge; their paths below describe this historical snapshot.
 
 Status: release documentation and bounded combined checks complete. Both
 independent reviews GREEN; owner verification pending. Review base: 99cd0c8. The installed and

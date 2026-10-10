@@ -10,8 +10,8 @@ within that source directory. The former root companion copies are removed;
 the raw entry's relative links resolve to the preserved source companions.
 
 The public SKILL.md, public agents/openai.yaml, source record, and this note
-belong to Myst. Public frontmatter is unchanged; public host metadata matches
-upstream and disables implicit invocation. The former inline setup-reference
+belong to Myst. Public frontmatter is unchanged; public host metadata omits display_name to use
+Codex default labels; its other upstream fields are unchanged and disables implicit invocation. The former inline setup-reference
 change moves into the shared integration contract. Myst maps tracker labels,
 glossary reads/writes, dependency routing, and authority. It retains the upstream
 state machine, recommendation pause, verification, grilling, briefs, disclaimer,

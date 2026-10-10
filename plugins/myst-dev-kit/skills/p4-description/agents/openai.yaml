@@ -1,3 +1,2 @@
 interface:
-  display_name: "P4 Description"
   short_description: "Draft Perforce changelist descriptions"

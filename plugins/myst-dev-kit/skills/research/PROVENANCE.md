@@ -10,7 +10,8 @@ Myst owns the public entry, public metadata, source record, and this note. The
 entry loads the shared project contract, passes project/note context and write
 scope into the background agent, and retains tracker/publication authority.
 The upstream background-agent, primary-source, cited-note method is unchanged.
-Copy installs require agentic-workflow. Public metadata matches the source and
+Copy installs require agentic-workflow. Public metadata omits display_name to use
+Codex default labels; its other upstream fields are unchanged and
 retains model/user reach.
 
 ## Upstream MIT notice

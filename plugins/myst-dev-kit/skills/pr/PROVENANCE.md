@@ -6,7 +6,8 @@ and agentic-workflow copy dependency. This is a new import, not an update of an
 existing Myst pr implementation. There is no prior local pr method to compare.
 
 All three selected files remain intact under references/upstream. SKILL.md alone
-maps to UPSTREAM.md under ADR-0009. Public host metadata matches upstream.
+maps to UPSTREAM.md under ADR-0009. Public host metadata omits display_name to use
+Codex default labels; its other upstream fields are unchanged.
 The source's [credits](references/upstream/CREDITS.md) attribute Summary visuals
 and placement guidance to Dex Horthy / Humanlayer's show-me skill. The source
 copies those instructions and does not require a show-me runtime dependency.

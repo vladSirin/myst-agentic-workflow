@@ -1,4 +1,53 @@
-# Upstream refresh release candidate - 2026-10-09
+# Upstream refresh release status and candidate history
+
+## Current status - 2026-10-10
+
+**Main is on the 5.5.0 preview. The latest published release is v5.4.0.**
+[PR #107](https://github.com/vladSirin/myst-agentic-workflow/pull/107) merged at
+2026-10-10 09:58:44 China time (01:58:44 UTC). Its merge commit is
+`d00f8914811e863df0b1a91d4511207980ba8970`, with the same tree as reviewed head
+`b5755014ff17403f5025b6a75ba1bdcdb424b670`. The migration contribution exception
+is closed, and its local and remote branch is removed.
+
+The owner authorized: "OK merge it now, and then clean up and upgrade local PC to 5.5".
+They then set the release gate: "then I will run 5.5 on this PC and if all checks out after a few time of daily use, I will ask u to tag and release 5.5".
+No v5.5.0 tag or release exists. Daily-use acceptance is pending, not a pass.
+
+| Check | Result and scope |
+| --- | --- |
+| Final integration review | Both axes GREEN after correcting the stale UE wording gate; dated per-skill evidence remains linked in the inventory |
+| Final PR and main CI | All six PR/push checks pass at b575501; all three [main CI jobs](https://github.com/vladSirin/myst-agentic-workflow/actions/runs/38015240886) pass at d00f891 |
+| Codex local-path installation | Native plugin add refreshed 5.5.0 from merged main; all 188 files match source and all 69 imported files match raw source hashes |
+| Codex discovery | Four fresh console/desktop catalogs return 31 unique Myst entries for UE_Blank_Proto and this Git repo; the retired entry is absent; no model requests |
+| Claude native Git-main update | Marketplace update and user-scope plugin update move 5.4.0 to 5.5.0 at d00f891; 188 files match after normal line-end conversion and all 69 upstream files match raw hashes; other plugin records and settings unchanged |
+| UE documentation | The exact three-file wording follow-up is submitted separately as CL 4089; see the [submitted receipt](#ue-wording-follow-up---2026-10-10) |
+| Cleanup and rollback | Completed task fixtures and the merged branch removed; the exact 55-file 5.4 backup is retained outside discovery roots; one unreadable temporary handoff fixture is retained without changing Windows permissions |
+
+Start a fresh Codex chat or restart the Claude session to load the selected
+package. Catalog checks prove discovery; they do not prove daily-use results.
+The earlier owner report confirms visible pr and p4-description menu entries,
+not all 31 entries. Prior per-skill comparisons remain the runtime evidence.
+
+Remaining controls: the owner tests daily use in the two selected example
+projects and decides whether to request the 5.5 tag/release. Codex's ordinary
+HTTPS update on an unchanged main ref still needs a pre-release check; its local
+update and earlier HTTPS ref replacement do not establish that route. Claude
+model tests remain deferred until the owner reports Claude works. The Claude
+Git-main package update is install evidence only. Wider projects and full
+cross-host acceptance are not claimed.
+
+Compact final review, merge, install, cleanup and rollback receipts are retained
+locally under `%USERPROFILE%/Documents/Codex/Artifacts/myst-5.5-preview-20261010`.
+The repository retains per-skill reports and source records. Temporary fixture
+paths below are historical; those completed test roots have been retired.
+Commands naming the removed migration branch describe earlier checks, not a
+current installation source. Use an exact retained commit or published tag.
+
+## Historical candidate checks - 2026-10-09
+
+The remaining sections preserve their dated checks and decisions. Later merge
+and installation results are recorded above; earlier pending statements do not
+reopen completed gates.
 
 Status at this dated check: candidate prepared; both independent review axes
 GREEN. Draft [PR #107](https://github.com/vladSirin/myst-agentic-workflow/pull/107)

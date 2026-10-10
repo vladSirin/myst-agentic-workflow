@@ -2,7 +2,18 @@
 
 **A lean agentic skills library for [Claude Code](https://github.com/anthropics/claude-code), [Codex](https://github.com/openai/codex), and [OpenCode](https://opencode.ai) — one shared source, per-tool one-line install.**
 
-Skills for the delivery loop (discussion → spec → tickets → triage → implement → verify → review/publish), engineering discipline (TDD, debugging, design, grilling), and a vendored two-axis code-review engine. Protocols are VCS-agnostic, with Perforce and git command forms. The plugin ships skills only — no agents, commands, hooks, or scripts.
+Skills for the delivery loop (discussion → spec → tickets → triage → implement → verify → review/publish), engineering discipline (TDD, debugging, design, grilling), and a vendored two-axis code-review engine. Protocols are VCS-agnostic, with Perforce and git command forms. The plugin supplies skills and their reference files; it registers no agents, commands, or hooks.
+
+## Version status
+
+`main` contains the **5.5.0 preview**, merged through
+[PR #107](https://github.com/vladSirin/myst-agentic-workflow/pull/107).
+**The latest published release is v5.4.0.** The owner will test 5.5 in daily use
+before a separate tag and release decision. Install commands that follow the
+repository can select the preview before it is released. Use a published tag
+when you need a released version.
+
+See the [current status and remaining checks](docs/upstream-release-candidate-2026-10-09.md#current-status---2026-10-10).
 
 ## Install
 
@@ -33,6 +44,12 @@ Also check personal instruction files (`CLAUDE.local.md`, `~/.claude/CLAUDE.md`)
 ## What you get
 
 [`plugins/myst-dev-kit/skills/`](plugins/myst-dev-kit/skills/) is the library — one directory per skill, one shared source for every tool. Browse it directly: each `SKILL.md`'s frontmatter description is its trigger ("use when…"), which is exactly what your agent reads when deciding to load it.
+
+Codex generates menu labels from namespaced skill names, such as
+`myst-dev-kit:handoff` becoming **Myst Dev Kit: Handoff**. Public metadata leaves
+`display_name` unset so this host default applies. Invocation policies and short
+descriptions stay in local metadata. **Personal** is the installation scope.
+OpenCode uses the names in SKILL.md; it does not inherit the Codex display prefix.
 
 Two kinds of skill, split by how they start:
 
@@ -109,7 +126,7 @@ All twenty-four Matt imports use the recorded refresh pin. Both Hammer imports
 record their selected release and existing permission. [LICENSE](LICENSE) and
 per-skill provenance notes preserve their respective attribution.
 
-**Source restoration is complete in this migration checkout.** All twenty-six
+**Source restoration is complete on main.** All twenty-six
 retained or added imports have complete unchanged source bundles and separate
 Myst entry points. The source guarantee does not imply identical runtime
 behavior: the local entries own Myst integration. The
@@ -121,12 +138,16 @@ consumer acceptance are tracked separately from source restoration. Claude
 runtime tests remain deferred.
 The [combined acceptance report](docs/upstream-release-acceptance-2026-10-09.md)
 records the bounded install and consumer checks. The
-[candidate report](docs/upstream-release-candidate-2026-10-09.md) tracks current
-release preparation and remaining controls.
+[release status](docs/upstream-release-candidate-2026-10-09.md#current-status---2026-10-10)
+records the merge, local 5.5 update, and remaining checks. Its dated candidate
+sections preserve the earlier evidence.
 
 Adding or retiring a skill updates its catalog row through the
-[per-skill checklist](CONTRIBUTING.md). The temporary exception covers only
-the final refresh integration PR and closes when that PR merges to main.
+[per-skill checklist](CONTRIBUTING.md). The temporary migration exception closed
+when PR #107 merged on 2026-10-10. Later skill contributions use the normal
+one-skill PR process. The owner-approved
+[display-label follow-up](CONTRIBUTING.md#codex-display-label-follow-up) is a
+bounded cosmetic exception.
 
 [`reference/`](reference/) holds starter docs to copy into a consuming project: workspace-setup sections for the tool bibles, the human workflow guide, issue-tracker and triage-label templates, and a UE `.p4ignore` fragment.
 
@@ -141,7 +162,7 @@ myst-agentic-workflow/
 ├── README.md / CHANGELOG.md / CONTRIBUTING.md / SETUP.md / LICENSE
 ├── bump.ps1                          # release helper: 2 manifest versions + CHANGELOG check + tag
 ├── retire-legacy.ps1                 # transitional v4-state cleanup (dies with the stub in a later MINOR)
-├── .github/workflows/tests.yml       # CI: PS 5.1 parse gate, ASCII/BOM gate, lint
+├── .github/workflows/tests.yml       # CI: PS 5.1 parse, ASCII/BOM, lint, pinned-source verification
 ├── tools/verify_upstream.py          # repository-only pinned-source verifier
 ├── upstream-policy.json             # local skills and explicit migration debt
 ├── .github/workflows/release.yml     # tag push v* -> GitHub Release from the CHANGELOG section
@@ -157,7 +178,7 @@ myst-agentic-workflow/
 
 ## Releases
 
-Every `v*` tag auto-publishes a GitHub Release with that version's CHANGELOG section as the body — the [CHANGELOG](CHANGELOG.md) is the release history. Architecture decisions live in the ADRs under [`docs/`](docs/); [ADR-0007](docs/adr-0007-lean-library-supersedes-vendor-render-model.md) is the v5 "lean library" restructure and records what it superseded and gave up.
+Every `v*` tag auto-publishes a GitHub Release with that version's CHANGELOG section as the body. The [Releases page](https://github.com/vladSirin/myst-agentic-workflow/releases) lists published versions; the [CHANGELOG](CHANGELOG.md) also carries the unreleased 5.5 preview notes. Tagging 5.5 waits for the owner's daily-use verdict and separate instruction. Architecture decisions live in the ADRs under [`docs/`](docs/); [ADR-0007](docs/adr-0007-lean-library-supersedes-vendor-render-model.md) is the v5 "lean library" restructure and records what it superseded and gave up.
 
 ## License
 
