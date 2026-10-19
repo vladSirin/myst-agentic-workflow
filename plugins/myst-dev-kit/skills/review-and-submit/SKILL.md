@@ -71,6 +71,18 @@ version; include complete added and removed content. Reuse supplied immutable
 captures only as those captures. Stale, incomplete, or uncheckable evidence stops
 dispatch; a filename list is not a reviewed diff.
 
+### Live links and evidence pins
+
+Normal docs and comments use live file and symbol/heading links, without revision
+stamps. They refer to current content. Update them when a target or the meaning of
+a claim changes; editing a document does not require updating every reference.
+
+Revision/hash pins belong only to review evidence. Store the shared input pin once in
+the review record. Each finding uses a stable file and symbol/heading anchor within
+that pinned input; name a separate pin only when it refers to another version.
+New reviews get fresh pins. Keep old reports unchanged as historical evidence.
+This distinction does not weaken the evidence or re-review gates.
+
 ---
 
 ## 3. Identify the spec source
@@ -90,10 +102,16 @@ standards sources, smell baseline, and briefs. Deltas:
 
 - The diff is Step 2's; the spec is Step 3's; paste the smell baseline into the Standards
   brief.
-- Each brief: cite by anchor (file plus a symbol, heading or short quoted phrase; a line
-  number only as a trailing `~:NNN` hint), naming the artifact and revision each finding
-  was read from; categorize BLOCKING / WARNING / INFO; under 400 words; end with one line
-  `Verdict: GREEN | WARNING | BLOCKING`.
+- Each brief: cite the affected file plus a symbol, heading, or short quoted phrase
+  within the review record's shared pin; identify another version separately when
+  needed. Use these stable anchors in findings and re-review briefs; keep line numbers
+  out of durable references. If an inline-comment
+  tool requires a line position, derive it from the pinned content for that UI
+  attachment and keep the stable anchor in its body. Categorize BLOCKING / WARNING /
+  INFO; under 400 words; end with one line `Verdict: GREEN | WARNING | BLOCKING`.
+- Each BLOCKING finding must meet the evidence gate in Step 5. Include the
+  artifact/revision, trigger or violated contract, failure path, and consequence,
+  backed by observed command output or a checkable source trace.
 - Each brief states: a reviewer reports only; it never submits, shelves, pushes, merges, or
   edits files. Publication happens in the main session through Steps 6-7, nowhere else.
 - Each brief states the prose-fix rule (Step 5): for a false or unverifiable claim in the
@@ -106,9 +124,10 @@ standards sources, smell baseline, and briefs. Deltas:
 Keep both axis results visible, including a confirmed Spec skip. Prose is not a third axis: what a document proposes is not reviewed;
 whether it contradicts what shipped is the Docs-alignment preflight (Submission step).
 
-**Re-review:** brief only what changed (findings fixed, findings declined and why, whether
-you adopted the reviewer's prescription) and re-run only the axis whose BLOCKING findings
-you addressed.
+**Re-review:** brief only what changed (findings fixed, findings declined and why, evidence
+requested, whether you adopted the reviewer's prescription). Re-run only the affected
+axis, including the axis asked to support or reassess a blocker. Apply Step 5's round
+budget before dispatch.
 
 ---
 
@@ -118,15 +137,61 @@ Present both reports under `## Standards` and `## Spec`. Never merge or re-rank 
 across axes and never name a single winner; end with findings per axis and the worst issue
 within each. The gate verdict for Steps 6-7 is the worst of the two; both stay recorded.
 
-**BLOCKING on either axis:** fix it now, by the rules below, and re-run the affected axis
-without waiting for the user; a finding you decline goes in the re-review brief with the
-reason, and that axis re-runs on it; a BLOCKING re-raised on a finding you declined goes to
-the user as a Step 6 decision, with your reason and the reviewer's, never another re-run.
-Report what was fixed, declined, and why when the round ends. **GREEN on the first pass, no fix applied, and the user named this changeset by ID:**
+**BLOCKING on either axis:** apply the evidence gate and round budget below before an
+edit or another dispatch. Within that budget, fix supported blockers and re-run the
+affected axis without waiting for the user. A finding you decline goes in the re-review
+brief with the reason, and that axis re-runs on it; a BLOCKING re-raised on a finding you
+declined goes to the user as a Step 6 decision, with your reason and the reviewer's,
+never another automatic re-run. Report what was fixed, declined, and why when the round
+ends. **GREEN on the first pass, no fix applied, and the user named this changeset by ID:**
 that is the Step 6 approval; go to Step 7 (a preflight warning in the Submission step still
 re-asks). **Otherwise, WARNING or GREEN alike, any fix applied included:** stop and offer
 the options: submit now; fix and re-review the affected axis; fix named findings only and
 re-review the affected axis; defer. Recommend one and say why.
+
+### Evidence before blocker-driven edits
+
+Check each BLOCKING finding against the pinned content before editing:
+
+- **Artifact/revision:** the affected file and symbol/heading within the shared
+  pinned review input, or a separate pin when another version was read.
+- **Trigger or contract:** a concrete input, condition, or cited rule that is violated.
+- **Failure path:** how that condition reaches the fault in this content.
+- **Consequence:** the incorrect result or broken requirement that follows.
+
+Support the chain with a command and its observed output, or a source trace another
+reader can check. An inherently static finding can use source evidence alone; a runnable
+reproduction is not required. A severity label, smell name, proposed fix, or unsupported
+claim is not evidence. Check that the cited content and result support the claimed fault,
+not just that all four fields exist.
+
+If support is missing, stale, or does not establish the fault, request evidence or
+reassessment from the originating reviewer. Keep the finding BLOCKING and record the
+gap; make no blocker-driven edit and no silent downgrade. Evidence supplied by the main
+session does not clear the finding. Only that reviewer's new verdict can clear it.
+
+### Automatic review budget
+
+Default to **three rounds for the same changeset**, counting the initial review. A round
+is one review cycle: parallel Standards and Spec reports count together as round 1;
+each later affected-axis cycle counts once, even if both axes run together. A request
+for blocker evidence or reassessment is a review cycle too. Preflight checks and the
+docs-alignment check are not review rounds; content changes they cause still follow
+the affected-axis review rule.
+
+Before each dispatch, record the changeset identity, pinned revision/content, round
+number, participating axes and reviewers, and finding dispositions in the actual
+review evidence. Preserve this record through a handoff, resumed session, branch rename,
+or re-pin after a repair. These do not start a new budget. If prior round history is
+missing, recover it or ask the user; do not assume round 1.
+
+Existing early stops still apply: a repeated declined blocker goes to Step 6 at once;
+a round with no blockers is the last round. If blockers remain at the end of round 3,
+stop automatic edits and review dispatches. Present both axis results, unresolved
+finding IDs and evidence gaps, repair/decline history, and the used budget. Ask the user
+to decide the approach, defer, or authorize a bounded continuation. Record an explicit
+number of extra rounds and scope before continuing; the counter continues from 3.
+Exhaustion or continuation approval neither clears blockers nor authorizes publication.
 
 ### Fixing a false claim: strip, downgrade, derive
 
@@ -167,13 +232,14 @@ with no BLOCKING finding is the last round: record remaining WARNING and INFO it
 
 ## 6. Wait for the user's decision
 
-Reached with a GREEN or WARNING aggregate (Step 5 fixes BLOCKING first), or with a BLOCKING
-re-raised on a finding you declined (submit is then not an option). Unless the
+Reached with a GREEN or WARNING aggregate, a repeated declined BLOCKING, or unresolved
+blockers at the round limit (submit is not an option while blockers remain). Unless the
 Step 5 first-pass approval applies, do not act until the user chooses: submit, fix (Step 5,
 re-run the affected axis), named findings only, or defer.
 
 **No direct submit after fixing a BLOCKER.** Re-run the axis that raised it and present the
-new aggregate here first, except for the closed list in Step 5. Only the reviewer's own
+new aggregate here first. Step 5's closed repair list never clears a BLOCKING finding.
+Only the originating reviewer's own
 re-verdict clears its BLOCKING, and the user still decides on the result.
 
 **A changeset implementing a `ready-for-human` ticket is never published**, in any mode.

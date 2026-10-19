@@ -1,0 +1,774 @@
+{
+  "changeset": "codex/review-evidence-budget",
+  "base": "89a5dc1743ce4fa852b488f64e84f4257ced3508",
+  "scope": "uncommitted working tree including complete added content",
+  "round": 1,
+  "axes": [
+    "Standards",
+    "Spec"
+  ],
+  "reviewers": [
+    "standards_review",
+    "spec_review"
+  ],
+  "files": [
+    {
+      "path": ".github/workflows/tests.yml",
+      "sha256": "3df824d6f51e6ee16b508db7b510123377a036b9a38f3386cf3861268af4cabc"
+    },
+    {
+      "path": ".scratch/review-evidence-budget/issues/01-review-protocol.md",
+      "sha256": "0421e008db7506175c04e1ef71384943c2831f7b5d2aa2d65ee9d8a2dbd7da23"
+    },
+    {
+      "path": ".scratch/review-evidence-budget/process-probe.json",
+      "sha256": "87facf9fc3abad329ff947c877c5c2531ff3b150eb2eb31d00ab9d8f98c4ae39"
+    },
+    {
+      "path": ".scratch/review-evidence-budget/spec.md",
+      "sha256": "6a2c83c166cd648317ce764a319f2d38b0436c3d97efc6fddcffc400097fdb7a"
+    },
+    {
+      "path": "docs/review-protocol-2026-10-18.md",
+      "sha256": "07cdb913ea06bcd3bbd7add564d6053171cedefcb1ac4b8f03c91543a1193b99"
+    },
+    {
+      "path": "fixtures/review-protocol/README.md",
+      "sha256": "409bf33cfcae37397fe241adbbdbd6f6dfd79df8118ca3a7fa87ff67c906520e"
+    },
+    {
+      "path": "fixtures/review-protocol/clean/queue_api.py",
+      "sha256": "280501f53ce4da2e272b8bde139e09b2358368adad6d7b96d8fa2cac22f9fd11"
+    },
+    {
+      "path": "fixtures/review-protocol/contract.md",
+      "sha256": "fc0633b2225e1e9f89856562f059d74de1f5e90a711a218454162dce1695b52d"
+    },
+    {
+      "path": "fixtures/review-protocol/probe-cases.json",
+      "sha256": "22447999047cfd036eac533836edda6dd81ec77ff5cf9da07c2d1454912f4689"
+    },
+    {
+      "path": "fixtures/review-protocol/seeded/queue_api.py",
+      "sha256": "ff7644c2f746a78ea595f96f25bf35e4cfbf3ee2d23ce681c7c1963d75d2485a"
+    },
+    {
+      "path": "plugins/myst-dev-kit/skills/review-and-submit/SKILL.md",
+      "sha256": "ee57ad65f44dea904c153a14d755d0deed884dbe7e907b4faa8307fe234efe64"
+    },
+    {
+      "path": "tests/test_review_protocol.py",
+      "sha256": "306e6f6fcfcce958ebfbbbd00db8e9297c9268914f325779a9ce4f5de53c12d1"
+    },
+    {
+      "path": "tools/check_review_probes.py",
+      "sha256": "172d631c43dce9e324fe2193f1860dedaeefbdf22b405830c86649f884aa176e"
+    }
+  ],
+  "snapshot": "C:\\_LocalDev\\myst-agentic-workflow\\fixtures\\_tmp\\review-evidence-budget-round1",
+  "diff_sha256": "9d847db6f5679152d1d39a67af8322a5289660af80158a9aefdfdcfaf3ed98b1",
+  "findings": [],
+  "reports": {
+    "Standards": {
+      "reviewer": "standards_review",
+      "verdict": "GREEN",
+      "blocking": 0,
+      "warning": 0,
+      "report": "BLOCKING: None. WARNING: None. INFO: Reviewed the round-1 snapshot against base 89a5dc1743ce4fa852b488f64e84f4257ced3508. The complete diff and all 13 captured files match the supplied SHA256 values. The change meets CONTRIBUTING.md: one local-origin skill changes, supporting tests stay in repository tooling, upstream unchanged. Reviewer and publication authority stay explicit. Fixture duplication serves the required defective/clean comparison. Tests check observable API and protocol decisions. No baseline smell warrants a finding. Uses parent check results; no new runtime or consumer acceptance claim. Verdict: GREEN."
+    },
+    "Spec": {
+      "reviewer": "spec_review",
+      "verdict": "GREEN",
+      "blocking": 0,
+      "warning": 0,
+      "report": "BLOCKING: None. WARNING: None. INFO: Complete round-1 capture reviewed against spec and ticket01. Diff pin and all 13 file hashes match. Required evidence gate, static-source evidence, originating-reviewer clearance, affected-axis dispatch, three-cycle budget, history continuity, early stops and bounded continuation are implemented. Budget preserves blockers and publication gates. Fixtures/checks cover real defect, clean behavior, harmful fixes, unsupported evidence, reviewer clearance, round boundaries and approval limits. Evidence separates deterministic checks from bounded model probes. No missing requirement, incorrect implementation or scope expansion. Verdict: GREEN."
+    }
+  },
+  "info_disposition": "[ACCEPTED] Scope/verification-limit notes only; no actionable INFO findings.",
+  "docs_alignment": {
+    "agent": "docs_alignment",
+    "result": "aligned"
+  },
+  "final_rendering": "After review, only this receipt, actual review results in docs, ticket verification status, and EOL normalization of evidence JSON changed. Process decisions are semantically identical; skill/test/fixture/scorer/CI content remains pinned.",
+  "publication": "not authorized; awaiting user review",
+  "latest_completed_round": 6,
+  "subsequent_audits": [
+    {
+      "round": 2,
+      "date": "2026-10-19 Asia/Shanghai",
+      "authorization": "User asked to apply the new process to this change and compare it with the original. Read-only model runs; implementation stayed unchanged.",
+      "Standards": "GREEN",
+      "Spec": "GREEN",
+      "blocking": 0,
+      "warning": 0,
+      "finding_disposition": "[ACCEPTED] Model review scope limits. [DEFERRED] Independent measurement finding: add a positive scorer acceptance control; demonstrated only in disposable copies, not implemented in candidate.",
+      "input_diff_sha256": "577f09eb032eeb4c7763aaecda6b4781aaf7734c1e766bfb900c52db6bfca46f",
+      "comparison": {
+        "actual_change": {
+          "Standards": {
+            "A": "GREEN",
+            "B": "GREEN"
+          },
+          "Spec": {
+            "A": "GREEN",
+            "B": "GREEN"
+          },
+          "new_blockers": 0,
+          "candidate_changed": false,
+          "B_candidate_round": 2
+        },
+        "fixed_reports": {
+          "cases_per_arm": 12,
+          "all_blockers_preserved_pending_originating_reviewer": true,
+          "publication_allowed_count": 0,
+          "differences": [
+            {
+              "case": "unsupported",
+              "differences": {
+                "action": {
+                  "A": "re_review",
+                  "B": "request_evidence"
+                }
+              },
+              "A_reason": "Decline the unsupported naming request: the public keyword names are part of the contract. Step 5 requires Standards to review that decline. N1 remains BLOCKING pending its owner's verdict.",
+              "B_reason": "A naming preference supplies no violated rule or failure path, and renaming public keyword parameters breaks the contract. Request evidence or reassessment from standards-owner. Make no blocker-driven edit and retain N1 as BLOCKING."
+            },
+            {
+              "case": "false-alarm",
+              "differences": {
+                "action": {
+                  "A": "re_review",
+                  "B": "request_evidence"
+                }
+              },
+              "A_reason": "Decline the false allegation: the function accepts the stated keyword names, and the requested rename would break them. Re-run Standards with that reason; N1 remains BLOCKING.",
+              "B_reason": "The cited clean signature accepts both required keyword names, so the trace does not support the alleged crash. Request standards-owner's reassessment without changing the API. Only that reviewer's new verdict can clear N1."
+            },
+            {
+              "case": "round-three",
+              "differences": {
+                "action": {
+                  "A": "fix",
+                  "B": "human_decision"
+                },
+                "next_axes": {
+                  "A": [
+                    "Spec"
+                  ],
+                  "B": []
+                },
+                "next_round": {
+                  "A": 4,
+                  "B": null
+                }
+              },
+              "A_reason": "The remaining blocker was not declined, so Step 5 directs another fix and Spec re-review. The active protocol has no third-round stop rule.",
+              "B_reason": "Q2 remains after all three default rounds. Stop automatic edits and review dispatches, report the unresolved finding and history, and seek a human approach, deferral, or bounded continuation."
+            },
+            {
+              "case": "resumed",
+              "differences": {
+                "action": {
+                  "A": "fix",
+                  "B": "human_decision"
+                },
+                "next_axes": {
+                  "A": [
+                    "Standards"
+                  ],
+                  "B": []
+                },
+                "next_round": {
+                  "A": 4,
+                  "B": null
+                }
+              },
+              "A_reason": "A supported blocker remains, so fix it and re-run Standards. The active protocol has no automatic budget; use cycle 4 for this replay rather than the author's proposed reset.",
+              "B_reason": "The recorded three rounds follow the same changeset through chat and branch changes. Do not reset the counter. Stop automatic repair and review and seek a bounded human decision with N3 unresolved."
+            }
+          ]
+        },
+        "limits": [
+          "One independent sample per arm/axis, inherited model settings; exact provider/effort IDs unavailable.",
+          "Actual self-review exposes candidate instructions as reviewed content in both arms; no causal defect-detection conclusion.",
+          "Fixed-state replay isolates protocol actions, not model review recall or full repair execution.",
+          "Original policy has no cap; applying the new-policy scorer to it measures intended policy differences, not old-process error rates."
+        ],
+        "recommendation": "Keep actual self-review as a smoke test. Use fixed-report replay plus a positive scorer control and mutation test. Add the demonstrated small positive control before publication.",
+        "candidate_integrity": "All14files byte-identical to initial current snapshot; upstream intact.",
+        "publication": "not authorized; no candidate fix, commit, push, PR, merge, tag, release, or consumer update."
+      },
+      "evidence_root": "C:\\_LocalDev\\myst-agentic-workflow\\fixtures\\_tmp\\review-process-comparison-20261019",
+      "next_action": "No blockers: stop automatic review. Human chooses any further work or publication."
+    },
+    {
+      "round": 3,
+      "date": "2026-10-19 Asia/Shanghai",
+      "authorization": "User explicitly requested the positive acceptance test, all tests, re-review, and local-only work.",
+      "scope": "Focused positive-control delta with complete15file capture available.",
+      "axes": [
+        "Standards",
+        "Spec"
+      ],
+      "reviewers": [
+        "audit_b_standards",
+        "audit_b_spec"
+      ],
+      "snapshot": "C:\\_LocalDev\\myst-agentic-workflow\\fixtures\\_tmp\\review-positive-acceptance-20261019\\round3",
+      "files": [
+        {
+          "path": ".github/workflows/tests.yml",
+          "sha256": "3df824d6f51e6ee16b508db7b510123377a036b9a38f3386cf3861268af4cabc"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/issues/01-review-protocol.md",
+          "sha256": "1d93312b96f2a9020873d16564275f4c870dfe1a69ecfe864e7608235a804fca"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/process-probe.json",
+          "sha256": "e5c6132424b15d2c07f1a291cc9307de3daef79d658902cf9fda9721ac8f9e98"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/review-round-1.json",
+          "sha256": "a3cb11b9d97ab920beb9d298a65f57cf3f3536e189e6f200bb9e92c447392d05"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/spec.md",
+          "sha256": "25940082ec70397af33768fb5ad4e3bee9035b640dba03db42ef8a17814286b0"
+        },
+        {
+          "path": "docs/review-protocol-2026-10-18.md",
+          "sha256": "bd339e07f6e33c787782bd16de7f61b03b94da8cf21918fa91d6f9aac33b1728"
+        },
+        {
+          "path": "fixtures/review-protocol/README.md",
+          "sha256": "d56f4648d92bdef05e24b97b69aaee3b2b74edb2be7c5c55b46681fe1aa913d2"
+        },
+        {
+          "path": "fixtures/review-protocol/clean/queue_api.py",
+          "sha256": "280501f53ce4da2e272b8bde139e09b2358368adad6d7b96d8fa2cac22f9fd11"
+        },
+        {
+          "path": "fixtures/review-protocol/contract.md",
+          "sha256": "fc0633b2225e1e9f89856562f059d74de1f5e90a711a218454162dce1695b52d"
+        },
+        {
+          "path": "fixtures/review-protocol/probe-cases.json",
+          "sha256": "22447999047cfd036eac533836edda6dd81ec77ff5cf9da07c2d1454912f4689"
+        },
+        {
+          "path": "fixtures/review-protocol/seeded/queue_api.py",
+          "sha256": "ff7644c2f746a78ea595f96f25bf35e4cfbf3ee2d23ce681c7c1963d75d2485a"
+        },
+        {
+          "path": "fixtures/review-protocol/valid-decisions.json",
+          "sha256": "17b82244c86b9c475dc13d06848655b3fd2874c3c8f563a658747befac120563"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/review-and-submit/SKILL.md",
+          "sha256": "ee57ad65f44dea904c153a14d755d0deed884dbe7e907b4faa8307fe234efe64"
+        },
+        {
+          "path": "tests/test_review_protocol.py",
+          "sha256": "b6f5476909055ebe654b6aa1ba971c0ef352b7ed3c8ea0e55cc1aa2888249023"
+        },
+        {
+          "path": "tools/check_review_probes.py",
+          "sha256": "172d631c43dce9e324fe2193f1860dedaeefbdf22b405830c86649f884aa176e"
+        }
+      ],
+      "delta_sha256": "75af95b41ab2c48df07e72e49bf149147c6cc8e3b927e5f36160d5dc83e4e055",
+      "full_diff_sha256": "c9e2d2d625f70ab67944894458c7e303f06560d1ab110ac61daa4572384169aa",
+      "reports": {
+        "Standards": {
+          "verdict": "GREEN",
+          "blocking": 0,
+          "warning": 0,
+          "report": "BLOCKING: None. WARNING: None. INFO: Round3 reviewed pinned delta only. Positive CLI test checks exit0 and PASS for a separate literal receipt. Small overlap with rejection test does not warrant duplication. No CONTRIBUTING breach or baseline smell. One skill test support only. All15file hashes and bothdiff hashes match. Own21tests pass. Full47tests, reject-all mutation, source checks and validators remain parent observations. Same changeset roundcount retained. No edits, VCSwrites, publication or furtherdispatch. Model and consumer behavior outside deterministic proof. Verdict: GREEN."
+        },
+        "Spec": {
+          "verdict": "GREEN",
+          "blocking": 0,
+          "warning": 0,
+          "report": "BLOCKING: None. WARNING: None. INFO: Authorized round3 delta implements CLI acceptance of separate literal valid receipt and failure against disposable reject-all scorer. RealCLI positive test requires exit0/PASS; independent literal decisions match captured case contracts; no EXPECTED derivation. Existing negativeCLI test remains exit1 and unsafe-decision errors. CI discovers newtest. All15file hashes and bothdiff hashes match. Own21tests pass. Parent47tests and reject-all20pass/1positivefail are labeled observations. No scorer, skillpolicy, upstreaminput or publicationrule changes. No missing, wrong or extra requirement. Verdict: GREEN."
+        }
+      },
+      "checks": {
+        "full_unittest": {
+          "passed": 47,
+          "failed": 0
+        },
+        "fixture_scorer_suite": {
+          "passed": 21,
+          "failed": 0
+        },
+        "reject_all_mutant": {
+          "passed": 20,
+          "failed": 1,
+          "expected_failure": "test_cli_accepts_valid_decisions",
+          "test_bytes_identical": true
+        },
+        "upstream_verifier": "26 bundles;0pending;5local",
+        "upstream_integrity": "69files+26records matchbase/recordedSHA;sourcepolicy unchanged",
+        "ci_blocks": 7,
+        "plugin_validators": 2,
+        "docs_alignment": "aligned"
+      },
+      "dispositions": {
+        "INFO": "[ACCEPTED] Scope and verification limits.",
+        "measurement_gap": "Addressed with demonstrated positive CLI test and independent literal receipt; this was not an axis BLOCKING finding."
+      },
+      "final_rendering": "After review, only ledger, actual report results and ticket state changed. Implementation/test/fixture bytes remain pinned.",
+      "publication": "not authorized; local and uncommitted",
+      "budget": "3of3 default rounds used; no more automatic review dispatches; no blockers remain."
+    },
+    {
+      "round": 4,
+      "date": "2026-10-19 Asia/Shanghai",
+      "authorization": "User explicitly requested a fresh clean-context Astra max-effort review. This authorizes one additional read-only review cycle, not edits, automatic further cycles, or publication.",
+      "model": "gpt-6-astra",
+      "reasoning_effort": "max",
+      "fork_turns": "none",
+      "axes": [
+        "Standards",
+        "Spec"
+      ],
+      "reviewers": [
+        "astra_max_standards",
+        "astra_max_spec"
+      ],
+      "snapshot": "C:\\_LocalDev\\myst-agentic-workflow\\fixtures\\_tmp\\review-astra-max-20261019\\snapshot",
+      "diff_sha256": "5da4198373a5202c4c743c515e6cd88b31299bdb2a25ca96b0bf720af1b2be47",
+      "files": [
+        {
+          "path": ".github/workflows/tests.yml",
+          "sha256": "3df824d6f51e6ee16b508db7b510123377a036b9a38f3386cf3861268af4cabc"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/issues/01-review-protocol.md",
+          "sha256": "a796f805fe0539f7e1fece3e741d4945f195a29808bdd3845ac577b85d34b8dd"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/process-probe.json",
+          "sha256": "e5c6132424b15d2c07f1a291cc9307de3daef79d658902cf9fda9721ac8f9e98"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/review-round-1.json",
+          "sha256": "f79d68c9e5d9ddd648d0e00b33a4c8496dabd4075aa31cedc5cfc318d5eb031b"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/spec.md",
+          "sha256": "25940082ec70397af33768fb5ad4e3bee9035b640dba03db42ef8a17814286b0"
+        },
+        {
+          "path": "docs/review-protocol-2026-10-18.md",
+          "sha256": "48b33ae89de539b9a40272dd6f4c816312be2ccebaaa1db0b4b124d8b44a08cf"
+        },
+        {
+          "path": "fixtures/review-protocol/README.md",
+          "sha256": "d56f4648d92bdef05e24b97b69aaee3b2b74edb2be7c5c55b46681fe1aa913d2"
+        },
+        {
+          "path": "fixtures/review-protocol/clean/queue_api.py",
+          "sha256": "280501f53ce4da2e272b8bde139e09b2358368adad6d7b96d8fa2cac22f9fd11"
+        },
+        {
+          "path": "fixtures/review-protocol/contract.md",
+          "sha256": "fc0633b2225e1e9f89856562f059d74de1f5e90a711a218454162dce1695b52d"
+        },
+        {
+          "path": "fixtures/review-protocol/probe-cases.json",
+          "sha256": "22447999047cfd036eac533836edda6dd81ec77ff5cf9da07c2d1454912f4689"
+        },
+        {
+          "path": "fixtures/review-protocol/seeded/queue_api.py",
+          "sha256": "ff7644c2f746a78ea595f96f25bf35e4cfbf3ee2d23ce681c7c1963d75d2485a"
+        },
+        {
+          "path": "fixtures/review-protocol/valid-decisions.json",
+          "sha256": "17b82244c86b9c475dc13d06848655b3fd2874c3c8f563a658747befac120563"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/review-and-submit/SKILL.md",
+          "sha256": "ee57ad65f44dea904c153a14d755d0deed884dbe7e907b4faa8307fe234efe64"
+        },
+        {
+          "path": "tests/test_review_protocol.py",
+          "sha256": "b6f5476909055ebe654b6aa1ba971c0ef352b7ed3c8ea0e55cc1aa2888249023"
+        },
+        {
+          "path": "tools/check_review_probes.py",
+          "sha256": "172d631c43dce9e324fe2193f1860dedaeefbdf22b405830c86649f884aa176e"
+        }
+      ],
+      "reports": {
+        "Standards": {
+          "verdict": "WARNING",
+          "blocking": 0,
+          "warning": 1,
+          "report": "BLOCKING:None. WARNING W1:Duplicate-result rejection lacks an effective regression test. Existing duplicate case also lacks fields and other cases, so assertTrue(errors) passes for other faults. Removing only duplicate detection leaves all21tests passing; a complete valid receipt plus repeated runtime exits0; unchanged scorer exits1 with duplicate case:runtime. Add duplicate-only control. Current scorer handles duplicates correctly. All15hashes and diff reconstruction match; baseline21suite passes. No other actionable Standards breach or smell. No candidate edits/VCSwrites. Verdict:WARNING."
+        },
+        "Spec": {
+          "verdict": "GREEN",
+          "blocking": 0,
+          "warning": 0,
+          "report": "BLOCKING:None. WARNING:None. INFO:Full15filecapture meets capturedSpec/ticket. Allhashes remain unchanged. Policy has supported faultchain, originating-reviewer clearance, boundedpersistentrounds, earlystops and separatepublicationauthority. Positive CLI test meets literalreceipt/reject-all requirements. Own21tests pass; identicaltestbytes reject-all yields20pass/1positivefail; both literal and recorded receipts pass12decisions. APItests cover defect/repair/clean/harmfulrename. No actionable Spec gap or scope expansion. No historical model/source suite/publication rechecks. Verdict:GREEN."
+        }
+      },
+      "findings": [
+        {
+          "id": "W1",
+          "severity": "WARNING",
+          "artifact": "tests/test_review_protocol.py",
+          "anchor": "ProbeScorerTests.test_missing_duplicate_unknown_and_malformed_results_fail",
+          "lines": [
+            102,
+            106
+          ],
+          "trigger": "Duplicate entries omit required fields and other cases.",
+          "failure_path": "Removing duplicate detection still produces other validation errors, so assertTrue(errors) continues to pass.",
+          "consequence": "The unit suite cannot detect a regression that accepts a duplicate in an otherwise complete valid receipt. Current scorer rejects such receipts correctly.",
+          "observed": "All21tests pass without duplicate detection; complete valid receipt plus repeated runtime =>mutant exit0, baseline exit1 with duplicate case:runtime.",
+          "recommendation": "Add a valid complete receipt with one valid duplicate; assert the duplicate-specific error and nonzero CLI exit.",
+          "disposition": "[DEFERRED] User decision; no automatic fix or further review."
+        }
+      ],
+      "info_disposition": "[ACCEPTED] Review scope/verification limits.",
+      "next_action": "No blockers; stop. Recommend adding isolated duplicate control if user chooses further work.",
+      "publication": "not authorized; keep local",
+      "implementation_mutations": 0
+    },
+    {
+      "round": 5,
+      "date": "2026-10-19 Asia/Shanghai",
+      "authorization": "User chose the named W1 fix and stable-reference audit; one necessary affected-axis re-review follows these scoped edits. No further automatic cycles or publication.",
+      "scope": "Only authorized duplicate-only control, stable-reference policy and supporting docs; full15file capture available.",
+      "model": "gpt-6-astra",
+      "reasoning_effort": "max",
+      "reviewers": [
+        "astra_max_standards",
+        "astra_max_spec"
+      ],
+      "snapshot": "C:\\_LocalDev\\myst-agentic-workflow\\fixtures\\_tmp\\review-duplicate-anchor-20261019\\round5",
+      "full_diff_sha256": "89023a710cf5ac565cdaf6bef28696bbfa98b0c6fa1d56284842901cd168567e",
+      "delta_sha256": "70c51beff72ac27496d7bac3e637979c7acfff416ee2deaee5d3673d41487e60",
+      "files": [
+        {
+          "path": ".github/workflows/tests.yml",
+          "sha256": "3df824d6f51e6ee16b508db7b510123377a036b9a38f3386cf3861268af4cabc"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/issues/01-review-protocol.md",
+          "sha256": "0cf016e164289e99e375fe4bf93ab3b59bcb8f5b3ebd544f113ac230786baed3"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/process-probe.json",
+          "sha256": "e5c6132424b15d2c07f1a291cc9307de3daef79d658902cf9fda9721ac8f9e98"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/review-round-1.json",
+          "sha256": "99575eb05b3d65f1cfa659d8763146996769cc3f63f8d9766b15fe35e9fbff92"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/spec.md",
+          "sha256": "e857f6077682a3fcf7143ac16ad0e1ef3e454e8ffb8bbd19ad15623fef97174f"
+        },
+        {
+          "path": "docs/review-protocol-2026-10-18.md",
+          "sha256": "42e7c72129c7ea5d589d90bf52dc35e9dbdd0c8b5e59ea198e3b8fe30e60ca36"
+        },
+        {
+          "path": "fixtures/review-protocol/README.md",
+          "sha256": "b855b837e88fb4fcb38e06048d27fa3bad3b37ca566acc810439f66dbae60ac9"
+        },
+        {
+          "path": "fixtures/review-protocol/clean/queue_api.py",
+          "sha256": "280501f53ce4da2e272b8bde139e09b2358368adad6d7b96d8fa2cac22f9fd11"
+        },
+        {
+          "path": "fixtures/review-protocol/contract.md",
+          "sha256": "fc0633b2225e1e9f89856562f059d74de1f5e90a711a218454162dce1695b52d"
+        },
+        {
+          "path": "fixtures/review-protocol/probe-cases.json",
+          "sha256": "22447999047cfd036eac533836edda6dd81ec77ff5cf9da07c2d1454912f4689"
+        },
+        {
+          "path": "fixtures/review-protocol/seeded/queue_api.py",
+          "sha256": "ff7644c2f746a78ea595f96f25bf35e4cfbf3ee2d23ce681c7c1963d75d2485a"
+        },
+        {
+          "path": "fixtures/review-protocol/valid-decisions.json",
+          "sha256": "17b82244c86b9c475dc13d06848655b3fd2874c3c8f563a658747befac120563"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/review-and-submit/SKILL.md",
+          "sha256": "0f4af2fb758c6ad8dc48a2b7504daf93a3a5033b520acf58c6c115022b880284"
+        },
+        {
+          "path": "tests/test_review_protocol.py",
+          "sha256": "34f75e4408e693a8d139b6e8deb1fc66954e557f458252b99a24110e181bb5e5"
+        },
+        {
+          "path": "tools/check_review_probes.py",
+          "sha256": "172d631c43dce9e324fe2193f1860dedaeefbdf22b405830c86649f884aa176e"
+        }
+      ],
+      "reports": {
+        "Standards": {
+          "verdict": "GREEN",
+          "blocking": 0,
+          "warning": 0,
+          "report": "BLOCKING:None. WARNING:None. W1 clears. New complete-valid-receipt duplicate control selects runtime byID, requires duplicate error alone and realCLI rejection. Own22suite passes. Removing duplicate detection bysyntax gives21pass/onlynewtestfail; testbytesidentical. All15hashes and bothdiffhashes match;captureunchanged. Stable file/symbol/heading/revision anchors replace optionallinehint convention; UIpositions derivefrompin. No new standards breach/smell. Full48/source/validator/shift checks remain parent observations. Verdict:GREEN."
+        },
+        "Spec": {
+          "verdict": "GREEN",
+          "blocking": 0,
+          "warning": 0,
+          "report": "BLOCKING:None. WARNING:None. Round5delta meets completevalidreceipt+duplicate selectedbyID, duplicateerroralone/realCLIexit1, and stablefile/symbol-or-heading/revision references. No Markdown-position or instruction-wording tests. Own22suite passes; duplicate-detection mutant21pass/onlynewfail; testbytesidentical. ShiftedPythonpositions22pass. Priorround4capture unchanged. All15currentcapturehashes and bothdiffhashes match. No authority change or budgetreset. W1disposition belongs originatingStandardsreviewer. Full48/upstream/link/CI/package results are parent observations. Verdict:GREEN."
+        }
+      },
+      "findings": {
+        "W1": {
+          "disposition": "[RESOLVED] Originating Standards reviewer explicitly cleared W1 in round5.",
+          "artifact": "tests/test_review_protocol.py",
+          "anchor": "ProbeScorerTests.test_cli_rejects_duplicate_in_complete_valid_receipt",
+          "revision": "70c51beff72ac27496d7bac3e637979c7acfff416ee2deaee5d3673d41487e60"
+        }
+      },
+      "checks": {
+        "unittest": {
+          "passed": 48,
+          "failed": 0
+        },
+        "fixture_scorer_suite": {
+          "passed": 22,
+          "failed": 0
+        },
+        "duplicate_mutant": {
+          "passed": 21,
+          "failed": 1,
+          "expected_failure": "test_cli_rejects_duplicate_in_complete_valid_receipt"
+        },
+        "shifted_source": {
+          "passed": 22,
+          "failed": 0
+        },
+        "reference_audit": {
+          "local_markdown_links_checked": 12,
+          "broken_file_targets": [],
+          "numeric_line_links": [],
+          "historical_line_metadata": "Old captured review metadata only; preserved with its pinned revision and stable symbol anchor. No production control consumes it.",
+          "upstream_files_unchanged": 69,
+          "source_records_unchanged": 26,
+          "source_policy": "unchanged",
+          "tests": "Use case IDs, public error identifiers, and exit codes; no Markdown positions or instruction wording assertions.",
+          "procedure_steps": {
+            "1": "Organize the changeset",
+            "2": "Pin the change",
+            "3": "Identify the spec source",
+            "4": "Spawn both axes in parallel",
+            "5": "Aggregate, then fix",
+            "6": "Wait for the user's decision",
+            "7": "Put verified results in Evidence"
+          },
+          "unresolved_step_references": [],
+          "runtime_policy_numeric_line_citations": []
+        },
+        "upstream_verifier": "26bundles;0pending;5local",
+        "ci_blocks": 7,
+        "plugin_validators": 2,
+        "docs_alignment": "aligned after removing stale duplicated disposition and rendering completed results"
+      },
+      "info_disposition": "[ACCEPTED] Verification and model/runtime limits.",
+      "citation_rule": "Durable file+symbol/heading/shortquote+revision; no durable numericline references. Historical captures untouched.",
+      "final_rendering": "Only actual review evidence and tracker state changed after pin. No implementation/test/policy edits after review.",
+      "publication": "not authorized; keep local and uncommitted",
+      "next_action": "No blockers or warnings remain; stop automatic review."
+    },
+    {
+      "round": 6,
+      "date": "2026-10-19 Asia/Shanghai",
+      "authorization": "User requested one final full local review with clean-context Astra at max effort, including the latest live-link clarification.",
+      "scope": "Full 15-file working-tree change against the recorded base, including latest live-link clarification. One explicit extra review cycle; no automatic budget reset.",
+      "base": "89a5dc1743ce4fa852b488f64e84f4257ced3508",
+      "reviewers": {
+        "Standards": "final_astra_standards",
+        "Spec": "final_astra_spec",
+        "model": "gpt-6-astra",
+        "reasoning_effort": "max",
+        "fork_turns": "none"
+      },
+      "shared_input_pin": "ffaed77839a67d1ba3075fc031d7585c5d1ea74ce1adac5b32bcf9909e0a3b1a",
+      "diff_sha256": "6bd7e70affd161992e1c00559bc3a7784e687cb7c035555985e97fb4de5df550",
+      "snapshot": "fixtures/_tmp/review-final-astra-max-20261019/snapshot",
+      "files": [
+        {
+          "path": ".github/workflows/tests.yml",
+          "sha256": "3df824d6f51e6ee16b508db7b510123377a036b9a38f3386cf3861268af4cabc"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/issues/01-review-protocol.md",
+          "sha256": "b4e0a760b012438cffc8454bdfd71a8f56d2c5912fbbf774f938be582886eac1"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/process-probe.json",
+          "sha256": "e5c6132424b15d2c07f1a291cc9307de3daef79d658902cf9fda9721ac8f9e98"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/review-round-1.json",
+          "sha256": "6142538bf23c9fd51b1c8a75b1e99f165fbe8ae841c9abf6f58d16b6d7b7e216"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/spec.md",
+          "sha256": "4b063eb162a292de31e9a407f430675cf911184595f2a5f616691e23118dd723"
+        },
+        {
+          "path": "docs/review-protocol-2026-10-18.md",
+          "sha256": "1e633f173086fd903ce8ff5a45ef93d6a4963e5abe59db348b8a18da50a17e62"
+        },
+        {
+          "path": "fixtures/review-protocol/README.md",
+          "sha256": "b855b837e88fb4fcb38e06048d27fa3bad3b37ca566acc810439f66dbae60ac9"
+        },
+        {
+          "path": "fixtures/review-protocol/clean/queue_api.py",
+          "sha256": "280501f53ce4da2e272b8bde139e09b2358368adad6d7b96d8fa2cac22f9fd11"
+        },
+        {
+          "path": "fixtures/review-protocol/contract.md",
+          "sha256": "fc0633b2225e1e9f89856562f059d74de1f5e90a711a218454162dce1695b52d"
+        },
+        {
+          "path": "fixtures/review-protocol/probe-cases.json",
+          "sha256": "22447999047cfd036eac533836edda6dd81ec77ff5cf9da07c2d1454912f4689"
+        },
+        {
+          "path": "fixtures/review-protocol/seeded/queue_api.py",
+          "sha256": "ff7644c2f746a78ea595f96f25bf35e4cfbf3ee2d23ce681c7c1963d75d2485a"
+        },
+        {
+          "path": "fixtures/review-protocol/valid-decisions.json",
+          "sha256": "17b82244c86b9c475dc13d06848655b3fd2874c3c8f563a658747befac120563"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/review-and-submit/SKILL.md",
+          "sha256": "c782c9d310ec48a89cf91a83b41b28e063e20e87bdfaf159ac36b93d7ce1ba52"
+        },
+        {
+          "path": "tests/test_review_protocol.py",
+          "sha256": "34f75e4408e693a8d139b6e8deb1fc66954e557f458252b99a24110e181bb5e5"
+        },
+        {
+          "path": "tools/check_review_probes.py",
+          "sha256": "172d631c43dce9e324fe2193f1860dedaeefbdf22b405830c86649f884aa176e"
+        }
+      ],
+      "reports": {
+        "Standards": {
+          "verdict": "GREEN",
+          "blocking": 0,
+          "warning": 0,
+          "report": "BLOCKING: None.\n\nWARNING: None.\n\nINFO: Reviewed all 15 changed files against base 89a5dc1743ce4fa852b488f64e84f4257ced3508, using the shared input in the [round-6 manifest](../manifest.json). All snapshot hashes and the complete diff hash match. The live candidate still matches after checks.\n\nNo actionable breach of CONTRIBUTING.md or the smell baseline was found. The scorer has a small, clear responsibility and rejects incorrect decision values and types. The separate literal receipt and the defective/clean API pair are useful independent controls. The added tests check observable results without tying behavior to instruction wording or source positions.\n\nThe local policy keeps reviewer and publication authority explicit. Its live-link guidance separates normal navigation from pinned review evidence. Stable file and symbol/heading anchors support findings without forcing updates to every link after a document edit. Earlier captured reports remain historical records.\n\nFresh checks I ran from the pinned snapshot: all 22 fixture/scorer tests pass; both the literal and recorded process receipts pass all 12 decisions. With identical test bytes in disposable copies, removing duplicate detection causes exactly one failure in ProbeScorerTests.test_cli_rejects_duplicate_in_complete_valid_receipt. A reject-all control that preserves existing rejection diagnostics causes exactly one failure in ProbeScorerTests.test_cli_accepts_valid_decisions. Logs and commands are in [checks.json](checks.json).\n\nEarlier verdicts and recorded checks were not treated as current proof. The root session's fresh full 48-test pass and source verification remain its observations, not checks I ran. These deterministic controls do not establish model recall, full orchestration, or consumer acceptance. No candidate edits, VCS writes, further agent dispatch, or publication occurred in this review.\n\nVerdict: GREEN",
+          "artifact": "fixtures/_tmp/review-final-astra-max-20261019/standards/report.md"
+        },
+        "Spec": {
+          "verdict": "GREEN",
+          "blocking": 0,
+          "warning": 0,
+          "report": "BLOCKING: None.\n\nWARNING: None.\n\nINFO: Reviewed the full 15-file uncommitted change against the captured spec and ticket, including the live-link clarification. This is the user-authorized round 6. The shared input pin is in `../manifest.json::shared_input_pin`. All snapshot hashes match. The live files and rebuilt diff match the capture and its stated base.\n\n`review-and-submit/SKILL.md::Evidence before blocker-driven edits` implements the required fault chain, accepts checkable static evidence, and returns unsupported blockers to their originator without edits or clearance. `Automatic review budget` preserves the counter, affected-axis cycles, early stops, and bounded continuation. Human approval and preflight remain separate gates.\n\n`Live links and evidence pins` distinguishes live navigation from captured review evidence. Findings use stable anchors within the shared input; another version needs its own pin. New reviews refresh pins, while old reports remain historical. A normal document edit does not require all navigation links to change. No missing requirement, incorrect behavior, or scope expansion found.\n\nOwn checks in `checks.json`:\n\n- All 22 fixture/scorer tests pass. Both the literal receipt and recorded probe receipt pass all 12 decisions.\n- With identical test bytes, the reject-all mutant fails only `test_cli_accepts_valid_decisions`. Removing duplicate detection fails only `test_cli_rejects_duplicate_in_complete_valid_receipt`.\n- Shifting Python source and test positions leaves all 22 tests passing.\n- All 69 imported files and 26 source records match base bytes and recorded hashes. Source policy is unchanged.\n\nEarlier reports and model probes remain historical evidence. I did not repeat their model runs, package validators, or the full source-verifier suite. Deterministic checks do not establish model recall, consumer acceptance, or publication readiness. Candidate files remain unchanged.\n\nVerdict: GREEN",
+          "artifact": "fixtures/_tmp/review-final-astra-max-20261019/spec/report.md"
+        }
+      },
+      "findings": {
+        "blocking": [],
+        "warning": []
+      },
+      "checks": {
+        "root": {
+          "unittest_passed": 48,
+          "unittest_failed": 0,
+          "upstream_verifier": "26 bundles; 0 pending; 5 local",
+          "source_files_unchanged": 69,
+          "source_records_unchanged": 26,
+          "source_policy": "unchanged",
+          "git_diff_check": "passed",
+          "environment_retry": "Initial sandbox run hit Git helper process and network restrictions. The same full suite and verifier passed with approved process/network access. Initial and retry logs are retained in root-checks."
+        },
+        "Standards": {
+          "fixture_scorer_passed": 22,
+          "literal_receipt": "12/12",
+          "process_receipt": "12/12",
+          "duplicate_mutant": "21 pass; only duplicate-only test fails",
+          "reject_all_mutant": "21 pass; only positive acceptance test fails"
+        },
+        "Spec": {
+          "fixture_scorer_passed": 22,
+          "literal_receipt": "12/12",
+          "process_receipt": "12/12",
+          "duplicate_mutant": "21 pass; only duplicate-only test fails",
+          "reject_all_mutant": "21 pass; only positive acceptance test fails",
+          "shifted_positions": "22/22 pass",
+          "source_files_unchanged": 69,
+          "source_records_unchanged": 26,
+          "source_policy": "unchanged"
+        }
+      },
+      "info_disposition": "[ACCEPTED] Deterministic controls and this bounded review do not establish broad model recall, consumer acceptance, or publication readiness.",
+      "final_rendering": "All 15 live and captured hashes matched before recording results. Only actual review evidence and tracker state were rendered afterward in this ledger, docs evidence, and the ticket. No implementation, test, fixture, or policy bytes changed after review. Captured inputs remain unchanged.",
+      "publication": "Not authorized; keep local and uncommitted.",
+      "next_action": "No blockers or warnings; stop. Owner acceptance remains open."
+    }
+  ],
+  "next_review": {
+    "round": 6,
+    "authorization": "User requested one final full local review with clean-context Astra at max effort, including the latest live-link clarification.",
+    "axes": [
+      "Standards",
+      "Spec"
+    ],
+    "reviewers": [
+      "final_astra_standards",
+      "final_astra_spec"
+    ],
+    "status": "completed; both axes GREEN; no blockers or warnings; stop",
+    "citation_policy": "Live links for normal docs/comments. Shared input pin and stable anchors for review evidence; no durable numeric line references.",
+    "finding_disposition_source": "Completed round 6 in subsequent_audits; no duplicate live disposition field."
+  },
+  "reviewed_followups": [
+    {
+      "date": "2026-10-19 Asia/Shanghai",
+      "request": "Make live links for normal docs/comments and revision pins only for review evidence explicit; run all tests; keep local.",
+      "scope": "Local review-and-submit reference guidance and supporting scoped spec/docs only. No test or scorer code change.",
+      "rule_owner": "plugins/myst-dev-kit/skills/review-and-submit/SKILL.md",
+      "anchor": "Live links and evidence pins",
+      "checks": {
+        "unittest_passed": 48,
+        "unittest_failed": 0,
+        "ci_blocks_passed": 7,
+        "plugin_validators_passed": 2,
+        "upstream_verifier": "26bundles;0pending;5local",
+        "reference_integrity": {
+          "relative_markdown_file_links_checked": 12,
+          "broken_targets": 0,
+          "upstream_files_unchanged": 69,
+          "source_records_unchanged": 26,
+          "upstream_policy": "unchanged"
+        }
+      },
+      "publication": "not authorized; local and uncommitted",
+      "files": [
+        {
+          "path": "plugins/myst-dev-kit/skills/review-and-submit/SKILL.md",
+          "sha256": "c782c9d310ec48a89cf91a83b41b28e063e20e87bdfaf159ac36b93d7ce1ba52"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/spec.md",
+          "sha256": "4b063eb162a292de31e9a407f430675cf911184595f2a5f616691e23118dd723"
+        }
+      ],
+      "review_scope_at_creation": "No new model review requested or run. Earlier verdicts remain attached to their original pinned inputs.",
+      "covered_by_round": 6
+    }
+  ]
+}
