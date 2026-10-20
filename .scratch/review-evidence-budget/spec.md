@@ -60,6 +60,12 @@ claims whose meaning changed.
 ## Completion
 
 Show the concrete diff, actual test results, source-integrity evidence, and limits.
-Keep this changeset local for user review. No push, PR, merge, tag, release, or
-consumer update is authorized. Maintained evidence belongs in docs/; this tracker
-records state and links to that evidence. The old migration tracker is history.
+The later user instructions authorized the local commit, PR #109, and local
+installation. The user then released v5.5.0 from main while keeping PR #109 out.
+On 2026-10-20, the user authorized bumping PR #109 to a 5.6.0 preview, running all
+tests, updating the PR, and refreshing the local install. Keep both manifests at
+5.6.0 and its notes Unreleased. Keep the PR unmerged; no 5.6 tag or release is
+authorized. This preview is an explicit exception to the normal tag-on-bump rule.
+Keep policy/test behavior and all upstream content unchanged in this version step.
+Maintained evidence belongs in docs/; this tracker records state and links to
+that evidence. The old migration tracker is history.

@@ -2,7 +2,7 @@
 
 Type: task
 Status: resolved
-Outstanding: User reviews and accepts the local candidate; record that result here before closing.
+Outstanding: Daily use of the 5.6.0 preview; merge and release decisions remain open.
 Spec: [scope and acceptance](../spec.md)
 
 Implement the agreed local review policy and isolated observable-decision tests.
@@ -39,3 +39,17 @@ and Spec both returned GREEN, with no blockers or warnings. All 48 tests pass;
 pinned-source verification passes. The existing ledger owns the input pin,
 reports, check evidence, and current dispositions. Owner acceptance remains open.
 The changes stay local and uncommitted.
+
+
+## 5.6.0 preview follow-up - 2026-10-20
+
+The user authorized the 5.6.0 preview bump, full tests, PR update, and local
+install. PR #109 remains unmerged; no tag or release is authorized. This step
+changes version and status records only. The existing review ledger owns the
+follow-up review and verification state; earlier dated reports remain history.
+
+
+Preview preparation checks and the native local install pass. The originating
+reviewers cleared the two status references in round 8; Standards and Spec are
+GREEN and docs alignment is aligned. The ledger owns the full results. The
+5.6.0 preview is ready for local daily use; PR #109 stays open and unmerged.

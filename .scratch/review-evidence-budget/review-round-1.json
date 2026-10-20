@@ -91,7 +91,7 @@
   },
   "final_rendering": "After review, only this receipt, actual review results in docs, ticket verification status, and EOL normalization of evidence JSON changed. Process decisions are semantically identical; skill/test/fixture/scorer/CI content remains pinned.",
   "publication": "not authorized; awaiting user review",
-  "latest_completed_round": 6,
+  "latest_completed_round": 8,
   "subsequent_audits": [
     {
       "round": 2,
@@ -718,22 +718,279 @@
       "final_rendering": "All 15 live and captured hashes matched before recording results. Only actual review evidence and tracker state were rendered afterward in this ledger, docs evidence, and the ticket. No implementation, test, fixture, or policy bytes changed after review. Captured inputs remain unchanged.",
       "publication": "Not authorized; keep local and uncommitted.",
       "next_action": "No blockers or warnings; stop. Owner acceptance remains open."
+    },
+    {
+      "round": 7,
+      "date": "2026-10-20 Asia/Shanghai",
+      "authorization": "Good, bump PR #109 to a 5.6.0 preview, run all tests, and update the local install. Keep it unmerged and do not tag or release it yet.",
+      "scope": "Affected-scope version/status follow-up:5.6.0 preview, full tests, PR update and local install. No behavior/upstream changes; no merge/tag/release.",
+      "base": "d1b996fa6210162a584ff089f99617f373d50369",
+      "shared_input_pin": "347aa40fcbcaab755e30b197d1aad3056e5585da491220712a1d405052b3df6c",
+      "delta_sha256": "72dd6dd44c7f2d39e94fbd0f3240febae0ec2806556e472e542fae7366cb6067",
+      "files": [
+        {
+          "path": ".github/workflows/tests.yml",
+          "sha256": "3df824d6f51e6ee16b508db7b510123377a036b9a38f3386cf3861268af4cabc"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/issues/01-review-protocol.md",
+          "sha256": "4e77c79ee8b5be254ded1aa11766d1ade17cc7c2a75f6dcc500b4cb3d8acd8bf"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/process-probe.json",
+          "sha256": "e5c6132424b15d2c07f1a291cc9307de3daef79d658902cf9fda9721ac8f9e98"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/review-round-1.json",
+          "sha256": "e2553f7166cd2edf4473cd392d4dcefd7e2db9f6aaed9ae4aed7a91cc2394a19"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/spec.md",
+          "sha256": "e8196d1056e138dd3caf3b74b8f15a6fbd26eeab5f6fc4fdc2371d2d76508652"
+        },
+        {
+          "path": "CHANGELOG.md",
+          "sha256": "e807a7f3b066cd787bb4d1bd5a7ed3d1e1a73bae4594378fc32119015183ed11"
+        },
+        {
+          "path": "CONTRIBUTING.md",
+          "sha256": "f9184841a6815661735ab8b7db5ee9350a806728df51a04b22cd6f5789500a8f"
+        },
+        {
+          "path": "README.md",
+          "sha256": "dc5a6a90fee016b6b3e76d16e42a481266c13eaf2d6e5c281333feb6acfd9c0b"
+        },
+        {
+          "path": "docs/review-protocol-2026-10-18.md",
+          "sha256": "785822e6b23a6a92a7deda2b79aa08d536691e6b33c992e7c4310b506de985b9"
+        },
+        {
+          "path": "docs/upstream-release-candidate-2026-10-09.md",
+          "sha256": "4ce09f3bef844affcdc92ffcd1835d6b2d212731e2540f52203414be523487d5"
+        },
+        {
+          "path": "fixtures/review-protocol/README.md",
+          "sha256": "b855b837e88fb4fcb38e06048d27fa3bad3b37ca566acc810439f66dbae60ac9"
+        },
+        {
+          "path": "fixtures/review-protocol/clean/queue_api.py",
+          "sha256": "280501f53ce4da2e272b8bde139e09b2358368adad6d7b96d8fa2cac22f9fd11"
+        },
+        {
+          "path": "fixtures/review-protocol/contract.md",
+          "sha256": "fc0633b2225e1e9f89856562f059d74de1f5e90a711a218454162dce1695b52d"
+        },
+        {
+          "path": "fixtures/review-protocol/probe-cases.json",
+          "sha256": "22447999047cfd036eac533836edda6dd81ec77ff5cf9da07c2d1454912f4689"
+        },
+        {
+          "path": "fixtures/review-protocol/seeded/queue_api.py",
+          "sha256": "ff7644c2f746a78ea595f96f25bf35e4cfbf3ee2d23ce681c7c1963d75d2485a"
+        },
+        {
+          "path": "fixtures/review-protocol/valid-decisions.json",
+          "sha256": "17b82244c86b9c475dc13d06848655b3fd2874c3c8f563a658747befac120563"
+        },
+        {
+          "path": "plugins/myst-dev-kit/.claude-plugin/plugin.json",
+          "sha256": "0ddc055177cd2a6e4da7d1c30c9ef3cc2981f5b7225abcfeef2ff544530d4455"
+        },
+        {
+          "path": "plugins/myst-dev-kit/.codex-plugin/plugin.json",
+          "sha256": "70f76149c9cda96f9bbbab363f69b5f306d06bd61238f36c0304281b2f2029ed"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/review-and-submit/SKILL.md",
+          "sha256": "c782c9d310ec48a89cf91a83b41b28e063e20e87bdfaf159ac36b93d7ce1ba52"
+        },
+        {
+          "path": "tests/test_review_protocol.py",
+          "sha256": "34f75e4408e693a8d139b6e8deb1fc66954e557f458252b99a24110e181bb5e5"
+        },
+        {
+          "path": "tools/check_review_probes.py",
+          "sha256": "172d631c43dce9e324fe2193f1860dedaeefbdf22b405830c86649f884aa176e"
+        }
+      ],
+      "reports": {
+        "Standards": {
+          "verdict": "BLOCKING",
+          "blocking": 1,
+          "warning": 0,
+          "report": "BLOCKING B1: Current release guidance contradicts itself. In the shared input identified by manifest.json::shared_input_pin, README.md::Version status still calls v5.4.0 the latest published release and says 5.5 awaits daily-use acceptance and a tag decision. The changed README.md::Releases and docs/upstream-release-candidate-2026-10-09.md::Current status instead record published v5.5.0 and the separate 5.6.0 preview. CHANGELOG.md::[5.5.0] also labels a link \"current release status\" while targeting the explicitly historical 2026-10-10 section.\n\nTrigger: a reader uses the current version summary or current-status link. The retained assertions and old anchor lead to obsolete release and approval instructions despite the new status owner. This breaks review-and-submit/SKILL.md::Live links and evidence pins, which requires updates when a claim's meaning changes, and its false-claim rule to re-read dependent summaries after a correction. Static source comparison establishes the fault. Strip the duplicate stale README assertions and keep the current owner link. Retarget the live CHANGELOG status link; preserve the dated historical sections.\n\nWARNING: None.\n\nINFO: Reviewed the complete 10-file delta against d1b996fa6210162a584ff089f99617f373d50369. All 21 captured/live file hashes and both diff hashes match. Both manifests change only version, from 5.5.0 to 5.6.0. The Unreleased section, explicit preview exception, separate merge/tag/release authority, and continued round counter are consistent. No further actionable standards breach or baseline smell was found.\n\nOwn checks are recorded in checks.json. The root session's 48-test pass, source verification, two validators, and seven CI checks remain root observations. Earlier functional reviews remain historical; this review adds no model, consumer-install, or publication proof. No candidate or VCS writes occurred.\n\nVerdict: BLOCKING"
+        },
+        "Spec": {
+          "verdict": "BLOCKING",
+          "blocking": 1,
+          "warning": 0,
+          "report": "BLOCKING B1: The preview-status update leaves the README's current overview false.\n\nThe shared input is `../manifest.json::shared_input_pin`. The spec's `Completion` records that \"The user then released v5.5.0 from main while keeping PR #109 out.\" However, `README.md::Version status` still calls 5.5.0 a preview, states \"The latest published release is v5.4.0,\" and describes its tag decision as pending. In the same pinned file, `Releases` names published v5.5.0 and the separate unmerged 5.6.0 preview. `docs/upstream-release-candidate-2026-10-09.md::Current status` confirms that distinction.\n\nA reader entering through the README receives conflicting release and approval state before the install instructions. The requested current-status update is therefore incomplete. Strip the stale duplicate status paragraph and use the existing link to its current owner. Preserve the dated historical evidence.\n\nWARNING: None.\n\nINFO: This is affected-scope round 7, covering the ten-file delta. Own checks confirm all 21 snapshot/live hashes, both diff hashes, and both rebuilt diffs. Both manifests contain 5.6.0. The Unreleased notes and explicit preview exception preserve the no-merge/tag/release boundary. The stable `Current status` anchor resolves. Local main and the v5.5.0 tag both resolve to the recorded released base. The review engine, policy, tests, scorer, and source policy are unchanged against the delta base. Historical ledger reports are unchanged; its next review advances from 6 to 7.\n\nThe root session reports 48 tests, 26 source bundles, seven CI checks, and both validators passing; these are not my runs. Live GitHub reads failed on network access. I made no candidate, install, or VCS changes. Earlier round 6 remains historical evidence.\n\nVerdict: BLOCKING"
+        }
+      },
+      "findings": {
+        "Standards B1": {
+          "artifact": "README.md; CHANGELOG.md",
+          "anchor": "Version status; [5.5.0] current release status link",
+          "disposition": "[RESOLVED] The originating Standards reviewer explicitly cleared B1 in round 8."
+        },
+        "Spec B1": {
+          "artifact": "README.md",
+          "anchor": "Version status",
+          "disposition": "[RESOLVED] The originating Spec reviewer explicitly cleared B1 in round 8."
+        }
+      },
+      "checks": {
+        "unittest": "48 pass",
+        "upstream": "26 bundles; 0 pending; 5 local",
+        "plugin_validators": 2,
+        "mechanical_ci_blocks": 7
+      },
+      "next_action": "Strip stale duplicate README status and point live changelog link at current owner; obtain originating-axis clearance."
+    },
+    {
+      "round": 8,
+      "date": "2026-10-20 Asia/Shanghai",
+      "authorization": "Necessary focused repair/clearance cycle for the supported README and CHANGELOG status contradictions within the user-authorized 5.6.0 preview update. This continues the same changeset history; no budget reset or unrelated review loop.",
+      "scope": "Only strip README stale duplicate status, retarget CHANGELOG current-status link, and record actual review evidence. Package/code/test/preview policy bytes unchanged.",
+      "base": "d1b996fa6210162a584ff089f99617f373d50369",
+      "shared_input_pin": "176e188e22e1b5862da6972c817f462fac7100d533725a4a3f1688cd6b722519",
+      "delta_sha256": "83bbcbe17f963be6a8f1548ab0b2f1737051908f63222e09c8e0408aa6228a04",
+      "files": [
+        {
+          "path": ".github/workflows/tests.yml",
+          "sha256": "3df824d6f51e6ee16b508db7b510123377a036b9a38f3386cf3861268af4cabc"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/issues/01-review-protocol.md",
+          "sha256": "4e77c79ee8b5be254ded1aa11766d1ade17cc7c2a75f6dcc500b4cb3d8acd8bf"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/process-probe.json",
+          "sha256": "e5c6132424b15d2c07f1a291cc9307de3daef79d658902cf9fda9721ac8f9e98"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/review-round-1.json",
+          "sha256": "65164c3396228b2fb7eb115a8a03a5310aba087323d5021d90e5a8db622a7e12"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/spec.md",
+          "sha256": "e8196d1056e138dd3caf3b74b8f15a6fbd26eeab5f6fc4fdc2371d2d76508652"
+        },
+        {
+          "path": "CHANGELOG.md",
+          "sha256": "4e14736ab696e1d20824f1b0d25e3aa5c5425dc1ef064fe20e4815f52d311557"
+        },
+        {
+          "path": "CONTRIBUTING.md",
+          "sha256": "f9184841a6815661735ab8b7db5ee9350a806728df51a04b22cd6f5789500a8f"
+        },
+        {
+          "path": "README.md",
+          "sha256": "9f98db12446f1b2b465804010564ca4f6453c5066220b9c15ba8e1d42aecdf33"
+        },
+        {
+          "path": "docs/review-protocol-2026-10-18.md",
+          "sha256": "785822e6b23a6a92a7deda2b79aa08d536691e6b33c992e7c4310b506de985b9"
+        },
+        {
+          "path": "docs/upstream-release-candidate-2026-10-09.md",
+          "sha256": "4ce09f3bef844affcdc92ffcd1835d6b2d212731e2540f52203414be523487d5"
+        },
+        {
+          "path": "fixtures/review-protocol/README.md",
+          "sha256": "b855b837e88fb4fcb38e06048d27fa3bad3b37ca566acc810439f66dbae60ac9"
+        },
+        {
+          "path": "fixtures/review-protocol/clean/queue_api.py",
+          "sha256": "280501f53ce4da2e272b8bde139e09b2358368adad6d7b96d8fa2cac22f9fd11"
+        },
+        {
+          "path": "fixtures/review-protocol/contract.md",
+          "sha256": "fc0633b2225e1e9f89856562f059d74de1f5e90a711a218454162dce1695b52d"
+        },
+        {
+          "path": "fixtures/review-protocol/probe-cases.json",
+          "sha256": "22447999047cfd036eac533836edda6dd81ec77ff5cf9da07c2d1454912f4689"
+        },
+        {
+          "path": "fixtures/review-protocol/seeded/queue_api.py",
+          "sha256": "ff7644c2f746a78ea595f96f25bf35e4cfbf3ee2d23ce681c7c1963d75d2485a"
+        },
+        {
+          "path": "fixtures/review-protocol/valid-decisions.json",
+          "sha256": "17b82244c86b9c475dc13d06848655b3fd2874c3c8f563a658747befac120563"
+        },
+        {
+          "path": "plugins/myst-dev-kit/.claude-plugin/plugin.json",
+          "sha256": "0ddc055177cd2a6e4da7d1c30c9ef3cc2981f5b7225abcfeef2ff544530d4455"
+        },
+        {
+          "path": "plugins/myst-dev-kit/.codex-plugin/plugin.json",
+          "sha256": "70f76149c9cda96f9bbbab363f69b5f306d06bd61238f36c0304281b2f2029ed"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/review-and-submit/SKILL.md",
+          "sha256": "c782c9d310ec48a89cf91a83b41b28e063e20e87bdfaf159ac36b93d7ce1ba52"
+        },
+        {
+          "path": "tests/test_review_protocol.py",
+          "sha256": "34f75e4408e693a8d139b6e8deb1fc66954e557f458252b99a24110e181bb5e5"
+        },
+        {
+          "path": "tools/check_review_probes.py",
+          "sha256": "172d631c43dce9e324fe2193f1860dedaeefbdf22b405830c86649f884aa176e"
+        }
+      ],
+      "reports": {
+        "Standards": {
+          "verdict": "GREEN",
+          "blocking": 0,
+          "warning": 0,
+          "report": "BLOCKING: None.\n\nWARNING: None.\n\nINFO: [RESOLVED] Standards B1. As the originating reviewer, I clear B1 on the round-8 input identified by manifest.json::shared_input_pin.\n\nREADME.md::Version status now removes the stale duplicate claims and links to the maintained Current status owner. CHANGELOG.md::[5.5.0] now sends its \"current release status\" link to that same live heading. The target distinguishes published v5.5.0 from the unmerged 5.6.0 preview. The repair follows the strip-first prescription and removes both failure paths.\n\nOwn checks: all 21 round-8 snapshot/live hashes match; the round-8 delta hash matches. All 21 round-7 captured files and its delta retain their original hashes. Only README.md, CHANGELOG.md, and the actual review ledger differ between captures. Both repaired links resolve to the single Current status heading. The status document, its dated history, earlier ledger audits, and the original round-7 Standards report remain unchanged. The ledger keeps B1 BLOCKING pending this originating-reviewer verdict and continues with round 8.\n\nNo other finding arose within this focused repair. I did not repeat broad tests: the root session's earlier 48-test pass, source verification, validators, and CI results remain root observations. This verdict adds no consumer-install or publication proof. No candidate or VCS writes occurred.\n\nVerdict: GREEN"
+        },
+        "Spec": {
+          "verdict": "GREEN",
+          "blocking": 0,
+          "warning": 0,
+          "report": "BLOCKING: None. As the originating Spec reviewer, I clear round-7 Spec B1.\n\nWARNING: None.\n\nINFO: This focused round-8 review uses `../manifest.json::shared_input_pin`. `README.md::Version status` now removes the stale release and approval claims and links to `docs/upstream-release-candidate-2026-10-09.md::Current status`. That owner clearly separates published v5.5.0 from the unmerged 5.6.0 preview. The README's `Releases` section agrees. The related `CHANGELOG.md::[5.5.0]` current-status link also resolves to the current owner. Standards finding disposition remains with its originating reviewer.\n\nOwn checks confirm both captured inputs match their 21-file manifests, all live files match round 8, and the delta hash and rebuilt diff match. Only README, CHANGELOG, and ledger evidence differ from round 7. The status owner and its dated historical sections remain byte-identical. Earlier ledger reports are unchanged, and the recorded round-7 Spec report matches my saved report exactly. The ledger preserves BLOCKING until this new verdict and continues from round 7 to round 8.\n\nThe root's 48-test pass, 26-bundle verification, two validators, and seven CI checks remain root observations. I did not repeat broad tests for this documentation repair. Package, policy, code, and test content remain unchanged. No candidate, install, or VCS edits were made by this reviewer. This clearance grants no merge, tag, release, or further review authority.\n\nVerdict: GREEN"
+        }
+      },
+      "findings": {
+        "blocking": [],
+        "warning": [],
+        "prior_B1": "Both originating reviewers explicitly clear their round-7 B1 findings."
+      },
+      "checks": {
+        "unittest_passed": 48,
+        "unittest_failed": 0,
+        "upstream": "26 bundles; 0 pending; 5 local",
+        "plugin_validators_passed": 2,
+        "mechanical_ci_blocks_passed": 7,
+        "docs_alignment": "aligned",
+        "added_relative_links_checked": 9,
+        "source_files_unchanged": 69,
+        "source_records_unchanged": 26,
+        "repair_limit": "Broad tests passed before the prose repair. Policy/test/package content is unchanged; affected link and source checks pass after repair."
+      },
+      "local_install": {
+        "version": "5.6.0",
+        "method": "codex plugin add myst-dev-kit@myst --json",
+        "package_files_matched": 188,
+        "imported_files_hash_verified": 69,
+        "other_installed_plugins_unchanged": 26,
+        "new_chat_required": true
+      },
+      "info_disposition": "[ACCEPTED] Bounded checks do not establish broad model recall, consumer daily-use acceptance, or full cross-host behavior.",
+      "final_rendering": "Only actual review/test/install results and tracker state rendered after the pin. Package, policy, tests, fixtures, and captured inputs remain unchanged.",
+      "publication": "PR #109 update and local preview installation authorized. Keep unmerged; no 5.6 tag or release.",
+      "next_action": "Stop review; commit/push the preview update and check PR CI."
     }
   ],
   "next_review": {
-    "round": 6,
-    "authorization": "User requested one final full local review with clean-context Astra at max effort, including the latest live-link clarification.",
-    "axes": [
-      "Standards",
-      "Spec"
-    ],
-    "reviewers": [
-      "final_astra_standards",
-      "final_astra_spec"
-    ],
-    "status": "completed; both axes GREEN; no blockers or warnings; stop",
-    "citation_policy": "Live links for normal docs/comments. Shared input pin and stable anchors for review evidence; no durable numeric line references.",
-    "finding_disposition_source": "Completed round 6 in subsequent_audits; no duplicate live disposition field."
+    "round": 8,
+    "status": "completed; Standards GREEN; Spec GREEN; both B1 findings cleared by their originators; stop",
+    "finding_disposition_source": "Completed round 8 in subsequent_audits. Earlier reports retain their pinned input.",
+    "publication": "PR update and local install only; no merge, tag or release."
   },
   "reviewed_followups": [
     {

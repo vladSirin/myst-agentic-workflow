@@ -265,3 +265,31 @@ implementation, tests, fixtures, and historical captures remain unchanged.
 These checks do not prove broad model recall, consumer acceptance, or publication
 readiness. No further automatic review is needed. Owner acceptance remains open;
 the work stays local and uncommitted.
+
+
+## 5.6.0 preview - 2026-10-20
+
+The owner authorized bumping PR #109 to a 5.6.0 preview, running all tests, and
+updating the local install. Both manifests now use 5.6.0; its changelog stays
+Unreleased. The preview exception is explicit in the version policy. The PR
+stays unmerged, and no 5.6 tag or release is authorized.
+
+The published v5.5.0 baseline remains main commit
+89a5dc1743ce4fa852b488f64e84f4257ced3508 and excludes this process change. This
+follow-up changes version/status metadata only. The existing ledger owns its
+review and check results. It continues the same changeset history and budget.
+
+
+The preview follow-up passed all 48 tests, independent source verification,
+both package validators, and all seven mechanical CI checks. Round 7 found a
+stale duplicate README status and a live changelog link to historical status.
+The stale claim was stripped and the link now reaches the current owner. Both
+originating reviewers cleared their findings in focused round 8. Standards and
+Spec are GREEN; the docs-alignment preflight is aligned. Earlier captures remain
+unchanged. Policy, test, scorer, and imported-source bytes did not change.
+
+Native Codex plugin add installed the 5.6.0 preview. The complete installed
+package matches this checkout, imported hashes match, and other installed plugin
+records are unchanged. Start a new chat to load it. The existing ledger owns
+the detailed check results and input pins. PR CI will rerun when this update is
+pushed. Preview daily use remains open; no merge, tag, or release is authorized.

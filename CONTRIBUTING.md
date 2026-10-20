@@ -139,11 +139,11 @@ Rules live at the top of [CHANGELOG.md](CHANGELOG.md). The short version:
 - **One bump per merge to `main`**, not per commit and not per PR in a stack.
 - **Tag it or don't bump it** is the normal release rule. A manifest bump
   alone is not a published release.
-- **Owner-approved 5.5 preview exception**: main carries 5.5.0 for daily-use
-  testing. The owner will give a separate instruction to tag and release it.
-  Keep its notes marked Unreleased. Status, documentation, and display-label follow-ups extend
-  that preview; do not add another bump or tag for them. See the
-  [current release gate](docs/upstream-release-candidate-2026-10-09.md#current-status---2026-10-10).
+- **Owner-approved 5.6 preview exception**: PR #109 carries 5.6.0 for local
+  testing after the v5.5.0 release. Keep its notes marked Unreleased. The owner
+  authorized the preview bump, PR update, tests, and local install on 2026-10-20.
+  Merge, tag, and release still require separate instructions. See the
+  [current release gate](docs/upstream-release-candidate-2026-10-09.md#current-status).
 - The number lives in **two** places — `plugins/myst-dev-kit/.claude-plugin/plugin.json`
   and `plugins/myst-dev-kit/.codex-plugin/plugin.json`. `./bump.ps1` updates
   both, checks the CHANGELOG section exists, and tags.
