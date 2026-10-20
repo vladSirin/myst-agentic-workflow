@@ -57,6 +57,32 @@ a document does not require changing every reference. Refresh pins for new revie
 input and preserve old evidence. Update live links only for changed targets or
 claims whose meaning changed.
 
+## VCS-specific loading follow-up
+
+On 2026-10-20, the user authorized explicit Perforce-only rules and conditional
+loading of Git/Perforce details in PR #109. This scoped follow-up covers the
+shared review protocol, its VCS mechanics, the local code-review input mapping,
+and the shared integration pointer. It is an explicit extension of this PR's
+normal one-skill scope; public triggers and invocation policies stay unchanged.
+
+Resolve the target VCS before loading its local details. Git work reads only
+the Git mechanics/input reference and selects pr; Perforce work reads only the
+Perforce mechanics/input reference and selects p4-description. An unclear target
+does not load either detail branch or invoke a formatter. Preserve the explicit
+project's VCS when a nested mirror or another installed VCS is present.
+
+Keep shared evidence, review-round, finding-clearance, and publication rules in
+their existing owners. Mark remaining Perforce-only rules explicitly. Preserve
+the complete selected upstream source, source records, pins, hashes, and review
+method. Archived upstream text can retain its original Git wording; the local
+mapping selects its meaning for the target rather than rewriting that source.
+
+Run the full existing tests, CI gates, plugin validators, and source verification.
+Check reference targets and review both VCS paths without tests of exact Markdown
+wording or line positions. Review the scoped delta on both axes and keep the
+existing round ledger. Update PR #109 only; keep it unmerged and do not tag or
+release. Local plugin refresh is outside this follow-up's requested actions.
+
 ## Completion
 
 Show the concrete diff, actual test results, source-integrity evidence, and limits.

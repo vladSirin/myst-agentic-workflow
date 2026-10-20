@@ -1035,13 +1035,173 @@
       "info_disposition": "[ACCEPTED] Static documentation alignment does not add model/runtime/consumer acceptance evidence.",
       "final_rendering": "Only this actual review/check record rendered after pin. README and all captured inputs remain unchanged.",
       "publication": "Update PR #109 only. Keep it unmerged; no tag or release. No installation change needed."
+    },
+    {
+      "round": 10,
+      "date": "2026-10-20 Asia/Shanghai",
+      "authorization": "User requested explicit P4-only rules, conditional Git/P4 details, unchanged upstream, full tests, review and update PR #109. This records the one requested review cycle for that follow-up; the existing counter does not reset.",
+      "scope": "Delta since 6087deaecb9d546e1963beb06203e3a78f5b680c; local reference routing, explicit VCS scope, catalog/changelog, scoped tracker and actual review evidence.",
+      "base": "6087deaecb9d546e1963beb06203e3a78f5b680c",
+      "shared_input_pin": "30dc72a12d2c406641112ac541b0907d31ae4b21adcc3f6a962540ed063d0667",
+      "delta_sha256": "b32a83ab058f3dd5181983932ed11036cee1873c76b94d226205cea6306c71a8",
+      "files": [
+        {
+          "path": ".scratch/review-evidence-budget/issues/02-vcs-specific-loading.md",
+          "sha256": "9338ed94001b50928847b84a1b9255214fecbfd0331d491b229c6da8e7277569",
+          "role": "changed"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/review-round-1.json",
+          "sha256": "700e33a04df6f26ab4bfeb588fa667a172eefeb2b9cec38391f2aa85df58ce7e",
+          "role": "changed"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/spec.md",
+          "sha256": "fdc9a473a0d56e16637eaa1daed848bda5566e63e313538e664918e088e24cb1",
+          "role": "changed"
+        },
+        {
+          "path": "CHANGELOG.md",
+          "sha256": "f17107e6023fe1827de6559a1aeff7410bcf91addc1a5c4f4ba9a8990dd0e261",
+          "role": "changed"
+        },
+        {
+          "path": "CONTRIBUTING.md",
+          "sha256": "f9184841a6815661735ab8b7db5ee9350a806728df51a04b22cd6f5789500a8f",
+          "role": "context"
+        },
+        {
+          "path": "README.md",
+          "sha256": "685dd746e6bfd0e07a3484b80d2e915804397809d6b4e0aca3cefed76a1dbd2d",
+          "role": "changed"
+        },
+        {
+          "path": "docs/vcs-review-routing-2026-10-20.md",
+          "sha256": "0ec2e0d5c97d1c182b0171d9d52f6c2a5edd4bfa4ef00701128beb66660df67f",
+          "role": "changed"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/agentic-workflow/LOCAL-INTEGRATION.md",
+          "sha256": "0cbb8dc7e24255063952a00a03c3128dd1f66467901669f6c4f46e017a39a39b",
+          "role": "changed"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/code-review/GIT-INPUTS.md",
+          "sha256": "24ef3a5f36a1457f3b4083b9a3909ee1b50f2477b1e89eeaf1312db8cac67ba2",
+          "role": "changed"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/code-review/PERFORCE-INPUTS.md",
+          "sha256": "8f3d652434cda53316c391949e8bc8df048b2df58d7c28da5697e4c48a4b8b85",
+          "role": "changed"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/code-review/PROVENANCE.md",
+          "sha256": "f239ad81b850f5aca1c3c5da54f00b954dac28b28f9cec9091bd09a59e3ffecb",
+          "role": "changed"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/code-review/REVIEW-INPUTS.md",
+          "sha256": "0359b8bbf3f6803b1f6a84c86c77ad8d7642627d1a038bdb3434e2979ce1d557",
+          "role": "changed"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/code-review/SKILL.md",
+          "sha256": "fe6958c4dfae336aca7f91f302b41da7a20665cb1acb431d5d8de7796a645a5b",
+          "role": "changed"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/code-review/references/upstream/UPSTREAM.md",
+          "sha256": "47f4e52c21694def9c7c11cbfbf891ca35eac7a93e395797515be3c8a409ae50",
+          "role": "context"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/p4-description/SKILL.md",
+          "sha256": "8bc83f0f445f4e9fabf2660cb718130fe590b7cdefcbfd2207c4825694da983a",
+          "role": "context"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/pr/SKILL.md",
+          "sha256": "a95268e3ddbe832c103629d2addaf3ebb747bd120096b12ece86beb0c826718f",
+          "role": "context"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/review-and-submit/DESCRIPTION-EVIDENCE.md",
+          "sha256": "32976e0ab6c7af4b06f4b06d212c15310fb285f8edc1c73127e8055addf6b759",
+          "role": "context"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/review-and-submit/GIT.md",
+          "sha256": "3e307639e195396ce178364f2d0374b05e07cbde4bae8894b24f8da6a7ed9fa3",
+          "role": "changed"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/review-and-submit/PERFORCE.md",
+          "sha256": "51c0c119acc28020bca74ff9b4e5ce0e6080f1017470dd6c4c577886cd6c84da",
+          "role": "changed"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/review-and-submit/SKILL.md",
+          "sha256": "7237989c5fdfaa6370827781ec88f7f98e168ef13f5741d0661123e2d6ab2e9a",
+          "role": "changed"
+        },
+        {
+          "path": "plugins/myst-dev-kit/skills/review-and-submit/VCS-MECHANICS.md",
+          "sha256": "6b662a370cd623558f9f050eecdfd38dfbfc0ac9888f1f71bccf67bd9ae3fad4",
+          "role": "changed"
+        }
+      ],
+      "reviewers": {
+        "Standards": "vcs_standards_review; clean-context Astra/max",
+        "Spec": "vcs_spec_review; clean-context Astra/max"
+      },
+      "reports": {
+        "Standards": {
+          "verdict": "GREEN",
+          "blocking": 0,
+          "warning": 0,
+          "report": "BLOCKING: None.\n\nWARNING: None.\n\nINFO:\n\n- Independently verified all 21 snapshot hashes, the diff hash, and shared input pin `30dc72a12d2c406641112ac541b0907d31ae4b21adcc3f6a962540ed063d0667`. The base commit resolves.\n- Static traces through `LOCAL-INTEGRATION.md`, `VCS-MECHANICS.md`, and `REVIEW-INPUTS.md` select one local detail branch after target resolution. An unclear target selects neither. Formatter guards retain Git-only `pr` and Perforce-only `p4-description`.\n- Compared the moved Perforce mechanics and input bullets against the base: both retain their previous text. Git inputs retain the explicit working-tree scope exception. The two public entry frontmatters and captured upstream review bytes also match the base.\n- The split follows writing-for-agents guidance on conditional references. Existing index paths still resolve; no references to removed index anchors were found. The change preserves the two-axis method, smell baseline, review budget, reviewer limits, and publication rules. No new actionable smell was found.\n- The root reports 48 passing tests, seven mechanical checks, two passing plugin validators, and verification of all 26 source bundles. I did not rerun those checks. This review establishes static routing and preservation; it does not establish live model routing.\n\nVerdict: GREEN\n"
+        },
+        "Spec": {
+          "verdict": "GREEN",
+          "blocking": 0,
+          "warning": 0,
+          "report": "BLOCKING: None.\n\nWARNING: None.\n\nINFO: Reviewed the 16-file delta against `6087deaecb9d546e1963beb06203e3a78f5b680c`, using the round-10 manifest's shared input pin.\n\nThe routing meets the scoped spec:\n\n- Git selects `GIT-INPUTS.md`; publication selects `GIT.md` and `pr`.\n- Perforce selects `PERFORCE-INPUTS.md`; publication selects `PERFORCE.md` and `p4-description`. An explicit Perforce target remains Perforce when a Git mirror is present.\n- An unresolved target loads neither detail branch and selects no formatter.\n- Standalone review does not require publication mechanics or a formatter. The upstream Git wording remains mapped through the local input reference.\n\nPerforce checkout, default-changelist, and Windows EOL rules are explicit. The selected branches retain the previous mechanics. The shared evidence gate, separate axes, finding clearance, review budget, approval rules, and live-link/pin distinction stay with their existing owners.\n\nOwn checks confirm all 21 captured file hashes, the shared input pin, and the delta hash. The moved Perforce mechanics match the base text. Shared protocol sections, public frontmatter, captured context files, and earlier ledger records match the base. Sixteen linked dependency targets are readable. The ledger continues to round 10.\n\nThe reported 48 passing tests, seven CI checks, two validators, and broader 69-file/26-record source verification remain root-session evidence; I did not rerun them. This static review establishes no runtime routing or consumer acceptance. No files or VCS state were changed.\n\nVerdict: GREEN\n"
+        }
+      },
+      "findings": {
+        "blocking": [],
+        "warning": []
+      },
+      "checks": {
+        "tests_passed": 48,
+        "mechanical_ci_checks_passed": 7,
+        "plugin_validators_passed": 2,
+        "independent_source_bundles_passed": 26,
+        "limits": "No live model routing, consumer update, merge, tag or release proof.",
+        "upstream_files_unchanged": 69,
+        "source_records_unchanged": 26,
+        "relative_links_resolved": 107,
+        "protected_policy_paths": [
+          "upstream-policy.json"
+        ],
+        "markdown_fences": "balanced",
+        "docs_alignment": "aligned; independent subagent checked the pinned prose",
+        "docs_alignment_own_checks": "All 21 captured file hashes and the delta hash match.",
+        "sandbox_attempts": "Initial temp/Git helper/PS5.1/path-skipping failures retained; successful required reruns recorded separately.",
+        "git_diff_check": "passed before review; final staged check required before commit"
+      },
+      "info_disposition": "[ACCEPTED] Tests and static source traces do not establish live model routing, broad model recall, runtime enforcement, full orchestration, or consumer daily-use acceptance.",
+      "final_rendering": "Only actual report/check evidence and ticket completion are rendered after the pin. Routing files and all other captured inputs remain unchanged.",
+      "publication": "Update PR #109 only; keep unmerged; no tag, release, or local install.",
+      "next_action": "Stop review; commit/push the requested update and check PR CI."
     }
   ],
   "next_review": {
-    "round": 9,
+    "round": 10,
     "status": "completed; Standards GREEN; Spec GREEN; no blockers or warnings; stop",
-    "finding_disposition_source": "Completed round9 in subsequent_audits",
-    "publication": "PR update only; no merge, tag or release."
+    "finding_disposition_source": "Completed round10 in subsequent_audits",
+    "publication": "Update PR #109 only; keep unmerged; no tag, release, or local install."
   },
   "reviewed_followups": [
     {

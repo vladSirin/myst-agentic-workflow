@@ -48,6 +48,9 @@ The PR remains unmerged; no v5.6.0 tag or release is authorized.
 
 MINOR: behavior changes to the local review-and-submit process.
 
+- Select local Git or Perforce command and review-input references only after
+  resolving the target VCS. Mark Perforce-only file and changelist rules explicitly;
+  keep upstream source and review methods unchanged.
 - Require a checkable evidence chain before blocker-driven edits. Unsupported
   blockers remain open until their originating reviewer reassesses them.
 - Bound automatic review to three persistent cycles, with existing early stops

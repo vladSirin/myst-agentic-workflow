@@ -6,9 +6,10 @@ description: "MANDATORY protocol when the user says 'review and submit' (any var
 # Review and Submit Protocol
 
 A **changeset** is one named, described, reviewable unit of work: a Perforce changelist or a
-git branch/PR. Rules are here; command forms and traps are in
-[VCS-MECHANICS.md](VCS-MECHANICS.md). Team specifics (audit checks, tag vocabularies, job
-families) live in the project's own docs.
+git branch/PR. Shared rules are here. After resolving the target VCS, use
+[VCS-MECHANICS.md](VCS-MECHANICS.md) to load only that VCS's command reference.
+Team specifics (audit checks, tag vocabularies, job families) live in the
+project's own docs.
 
 Read [LOCAL-INTEGRATION](../agentic-workflow/LOCAL-INTEGRATION.md) before selecting
 VCS-specific dependencies. Required copy dependencies: agentic-workflow and
@@ -18,11 +19,15 @@ not change a Perforce target. Never invoke or load the Git-only pr workflow for 
 
 ## Source-control sync (applies at all times)
 
-After modifying, creating, or deleting any tracked file, open it in version control
-(`p4 edit` / `p4 add` / `p4 delete`) BEFORE presenting results; never batch checkouts to
-the end of a session. git: work on a named branch created at task start, never on the
-default branch. During an active review, a file the changeset did not already contain goes
-in a NEW changeset unless the fix itself requires it.
+Use the selected VCS mechanics for file actions and task setup:
+
+- **Perforce only:** open each modified, added, or deleted file in the named CL
+  before presenting results; never batch checkouts to the end of a session.
+- **Git only:** work on a named branch created at task start, never on the
+  default branch.
+
+During an active review, a file the changeset did not already contain goes in a
+NEW changeset unless the fix itself requires it.
 
 ## Trigger
 
@@ -33,9 +38,10 @@ Any explicit submit instruction naming a changeset ("review and submit {ID}", "s
 
 ## 1. Organize the changeset
 
-One named changeset, created at task START (VCS-MECHANICS); use the default change only if
-the user asks, and never sweep it wholesale. Verify the file list before review: every
-intended file in, nothing unrelated mixed in.
+One named changeset, created at task START using the selected VCS mechanics.
+**Perforce only:** use the default changelist only if the user asks, and never
+sweep it wholesale. Verify the file list before review: every intended file in,
+nothing unrelated mixed in.
 
 **Description:** use the target's Myst formatter, with the scope and existing
 source pointer. For Git, select [pr](../pr/SKILL.md); for Perforce, select
@@ -65,8 +71,8 @@ actual final results; a formatter never supplies review or publication authority
 
 Resolve the changeset before spawning anything: a bad ID, a published changeset, or an
 empty diff stops here, in front of the user. Produce the file list and the actual diff the
-reviewers read (VCS-MECHANICS: a pending Perforce CL has no diff body in `p4 describe`; an
-added file has no base diff). Pin the requested workspace, shelf, or submitted
+reviewers read, using the selected VCS mechanics; include added files in full.
+Pin the requested Git scope or Perforce workspace, shelf, or submitted
 version; include complete added and removed content. Reuse supplied immutable
 captures only as those captures. Stale, incomplete, or uncheckable evidence stops
 dispatch; a filename list is not a reviewed diff.
@@ -321,8 +327,8 @@ through VCS-MECHANICS only within the user's authorized scope.
 
    Fix each contradiction by the Step 5 ladder and re-run. No severity, no verdict, never a
    review round.
-3. **EOL flips** (Perforce on Windows): an absurdly large diff is usually a wholesale LF
-   flip; fix per VCS-MECHANICS, re-diff, review that.
+3. **Perforce on Windows only:** check for whole-file EOL flips using the selected
+   mechanics. Re-diff and review any repair.
 4. **Refresh and validate the final description.** Update Evidence with actual final
    review and preflight results. Run the project description validator against that
    final text; repeat it if the description changes. Confirm compatibility with

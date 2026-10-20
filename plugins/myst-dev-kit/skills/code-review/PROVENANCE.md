@@ -17,7 +17,9 @@ The public entry, REVIEW-INPUTS.md, public metadata, source record, and this not
 belong to Myst. The local trigger names Git and Perforce scopes and retains model
 invocation. Public metadata omits display_name to use
 Codex default labels; its other upstream fields are unchanged. Local routing owns engine identity,
-project tracker/spec lookup, and VCS evidence mapping. It keeps the source's
+project tracker/spec lookup, and VCS evidence mapping. REVIEW-INPUTS.md selects
+GIT-INPUTS.md or PERFORCE-INPUTS.md only after the target VCS is known. These
+local references keep command details off the other VCS's path. It keeps the source's
 two-axis method and full smell baseline intact. Review-and-submit continues to
 own publication and description formatting.
 
