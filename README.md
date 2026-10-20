@@ -4,16 +4,38 @@
 
 Skills for the delivery loop (discussion → spec → tickets → triage → implement → verify → review/publish), engineering discipline (TDD, debugging, design, grilling), and a vendored two-axis code-review engine. Protocols are VCS-agnostic, with Perforce and git command forms. The plugin supplies skills and their reference files; it registers no agents, commands, or hooks.
 
+## Highlighted skills
+
+Use these skills to explore a question or work through a decision.
+
+### [Deep dive](plugins/myst-dev-kit/skills/deep-dive/SKILL.md)
+
+Work through a hard decision. Deep dive makes the strongest case for both sides,
+asks one key question, and waits for your answer before giving a recommendation.
+Invoke `myst-dev-kit:deep-dive` with the decision you want to examine.
+
+Example request:
+
+```text
+Use myst-dev-kit:deep-dive to help me decide whether to improve our current tool or replace it.
+```
+
+### [Roundtable](plugins/myst-dev-kit/skills/roundtable/SKILL.md)
+
+Explore a topic through a simulated discussion with 3-5 thinkers. A moderator
+compares their arguments and draws out the main disagreements and conclusions.
+Invoke `myst-dev-kit:roundtable` with the topic you want to explore.
+
+Example request:
+
+```text
+Use myst-dev-kit:roundtable to examine the tradeoffs of adding AI agents to our development process.
+```
+
 ## Version status
 
-`main` contains the **5.5.0 preview**, merged through
-[PR #107](https://github.com/vladSirin/myst-agentic-workflow/pull/107).
-**The latest published release is v5.4.0.** The owner will test 5.5 in daily use
-before a separate tag and release decision. Install commands that follow the
-repository can select the preview before it is released. Use a published tag
-when you need a released version.
-
-See the [current status and remaining checks](docs/upstream-release-candidate-2026-10-09.md#current-status---2026-10-10).
+See the [current version and preview status](docs/upstream-release-candidate-2026-10-09.md#current-status)
+for the published baseline and the separate preview.
 
 ## Install
 
@@ -68,8 +90,8 @@ The pipeline: discussion → spec → tickets → triage → implement → verif
 Model-invoked:
 
 - **[agentic-workflow](plugins/myst-dev-kit/skills/agentic-workflow/SKILL.md)** — the stage map and shared local integration: project pointers, dependency routing, and legacy/new glossary paths. Fires on non-trivial feature work.
-- **[review-and-submit](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md)** — the mandatory pre-publish protocol: two-axis review, verified results inside Evidence, VCS-specific formatter routing, preflight, and human-gated publication. Copy installs need agentic-workflow, code-review, and the target formatter (pr for Git; p4-description for Perforce).
-- **[code-review](plugins/myst-dev-kit/skills/code-review/SKILL.md)** — unchanged Matt Pocock two-axis review method with Myst engine selection, project spec lookup, and Git/Perforce evidence mapping. Invoke `myst-dev-kit:code-review`, or its full Myst path in copy hosts ([evidence](docs/code-review-wrapper-2026-10-08.md)).
+- **[review-and-submit](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md)** — the mandatory pre-publish protocol: two-axis review, verified results inside Evidence, target-specific command and formatter loading, preflight, and human-gated publication. Copy installs need agentic-workflow, code-review, and the target formatter (pr for Git; p4-description for Perforce).
+- **[code-review](plugins/myst-dev-kit/skills/code-review/SKILL.md)** — unchanged Matt Pocock two-axis review method with Myst engine selection, project spec lookup, and target-specific Git/Perforce input loading. Invoke `myst-dev-kit:code-review`, or its full Myst path in copy hosts ([method evidence](docs/code-review-wrapper-2026-10-08.md), [VCS routing](docs/vcs-review-routing-2026-10-20.md)).
 - **[pr](plugins/myst-dev-kit/skills/pr/SKILL.md)** — Git-only PR bodies using intact Matt Pocock source and show-me credits; Myst adds project vocabulary, ticket pointers, and verified review evidence. Never used for P4 targets. Copy installs need agentic-workflow ([evidence](docs/pr-wrapper-2026-10-08.md)).
 - **[p4-description](plugins/myst-dev-kit/skills/p4-description/SKILL.md)** — local Perforce-only descriptions with established title tags, ASCII text, factual review evidence, and Submit Risk. Inspired by pr/show-me; never invokes Git-only pr. Copy installs need agentic-workflow ([evidence](docs/p4-description-2026-10-08.md)).
 - **[changelist-verification](plugins/myst-dev-kit/skills/changelist-verification/SKILL.md)** — hard rule for multi-changeset tasks: execute one at a time with a stop-and-verify gate between each, never batched.
@@ -138,8 +160,8 @@ consumer acceptance are tracked separately from source restoration. Claude
 runtime tests remain deferred.
 The [combined acceptance report](docs/upstream-release-acceptance-2026-10-09.md)
 records the bounded install and consumer checks. The
-[release status](docs/upstream-release-candidate-2026-10-09.md#current-status---2026-10-10)
-records the merge, local 5.5 update, and remaining checks. Its dated candidate
+[release status](docs/upstream-release-candidate-2026-10-09.md#current-status)
+records the published 5.5 baseline and separate 5.6 preview. Its dated candidate
 sections preserve the earlier evidence.
 
 Adding or retiring a skill updates its catalog row through the
@@ -178,7 +200,14 @@ myst-agentic-workflow/
 
 ## Releases
 
-Every `v*` tag auto-publishes a GitHub Release with that version's CHANGELOG section as the body. The [Releases page](https://github.com/vladSirin/myst-agentic-workflow/releases) lists published versions; the [CHANGELOG](CHANGELOG.md) also carries the unreleased 5.5 preview notes. Tagging 5.5 waits for the owner's daily-use verdict and separate instruction. Architecture decisions live in the ADRs under [`docs/`](docs/); [ADR-0007](docs/adr-0007-lean-library-supersedes-vendor-render-model.md) is the v5 "lean library" restructure and records what it superseded and gave up.
+Every `v*` tag auto-publishes a GitHub Release with that version's CHANGELOG
+section as the body. The latest published version is
+[v5.5.0](https://github.com/vladSirin/myst-agentic-workflow/releases/tag/v5.5.0).
+The [CHANGELOG](CHANGELOG.md) also carries the unreleased 5.6.0 preview in PR #109.
+That PR stays unmerged; tagging and release require a later owner instruction.
+Architecture decisions live in the ADRs under [`docs/`](docs/);
+[ADR-0007](docs/adr-0007-lean-library-supersedes-vendor-render-model.md) records the
+v5 restructure and its tradeoffs.
 
 ## License
 

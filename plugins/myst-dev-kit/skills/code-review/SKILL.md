@@ -9,8 +9,10 @@ select another vendor's engine. Use the same identity in dependent review briefs
 
 Read [Myst's local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md)
 and [review input mapping](REVIEW-INPUTS.md) before the upstream workflow. Resolve
-the target VCS and project tracker/spec pointers there. Required Myst dependency
-for copy installs: agentic-workflow; check its local entry and shared contract.
+the target VCS and project tracker/spec pointers there, then load only the input
+reference selected for that VCS. An unresolved target loads neither detail
+branch. Required Myst dependency for copy installs: agentic-workflow; check its
+local entry and shared contract.
 
 Read the [upstream instructions](references/upstream/UPSTREAM.md), then apply their
 two-axis method to the selected evidence. Map the upstream Git-specific input

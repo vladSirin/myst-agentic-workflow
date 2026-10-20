@@ -1,0 +1,14 @@
+[
+  {"id":"runtime","action":"fix","next_axes":["Spec"],"next_round":2,"blockers":["Q1"],"publish":false},
+  {"id":"static","action":"fix","next_axes":["Spec"],"next_round":2,"blockers":["Q1"],"publish":false},
+  {"id":"unsupported","action":"request_evidence","next_axes":["Standards"],"next_round":2,"blockers":["N1"],"publish":false},
+  {"id":"false-alarm","action":"request_evidence","next_axes":["Standards"],"next_round":2,"blockers":["N1"],"publish":false},
+  {"id":"fixed","action":"re_review","next_axes":["Spec"],"next_round":2,"blockers":["Q1"],"publish":false},
+  {"id":"round-two","action":"fix","next_axes":["Spec"],"next_round":3,"blockers":["Q2"],"publish":false},
+  {"id":"round-three","action":"human_decision","next_axes":[],"next_round":null,"blockers":["Q2"],"publish":false},
+  {"id":"last-round","action":"stop_for_approval","next_axes":[],"next_round":null,"blockers":[],"publish":false},
+  {"id":"declined","action":"human_decision","next_axes":[],"next_round":null,"blockers":["N2"],"publish":false},
+  {"id":"resumed","action":"human_decision","next_axes":[],"next_round":null,"blockers":["N3"],"publish":false},
+  {"id":"after-fix-green","action":"stop_for_approval","next_axes":[],"next_round":null,"blockers":[],"publish":false},
+  {"id":"continuation","action":"fix","next_axes":["Spec"],"next_round":4,"blockers":["Q2"],"publish":false}
+]

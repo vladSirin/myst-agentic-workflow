@@ -28,6 +28,12 @@ workspace evidence. A Perforce target stays Perforce when it contains a Git
 mirror or Git is installed. If ownership is unclear, resolve it before VCS
 actions or VCS-specific skill dispatch.
 
+After resolving the target, load only the local VCS detail references selected
+by the current skill. Git work uses Git details; Perforce work uses Perforce
+details. Shared reference indexes select a branch, not both detail files. An
+unclear target loads neither branch until resolved. A command example or an
+available tool does not select the target VCS.
+
 ## Load the intended dependency
 
 Each wrapper using this contract lists its required Myst skills and links to

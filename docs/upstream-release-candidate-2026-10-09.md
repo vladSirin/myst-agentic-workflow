@@ -1,5 +1,23 @@
 # Upstream refresh release status and candidate history
 
+## Current status
+
+As of 2026-10-20, **v5.5.0 is published** from main commit
+89a5dc1743ce4fa852b488f64e84f4257ced3508. Its
+[release workflow](https://github.com/vladSirin/myst-agentic-workflow/actions/runs/39287074782)
+passed. The [release notes](https://github.com/vladSirin/myst-agentic-workflow/releases/tag/v5.5.0)
+record the completed publication. The tagged commit keeps its historical preview wording.
+
+The owner approved a **5.6.0 preview in PR #109** for local testing. That PR
+contains the new review process and remains unmerged. Both manifests use 5.6.0;
+its changelog stays Unreleased. Preview verification and install results belong
+in the existing [process evidence](review-protocol-2026-10-18.md) and review ledger.
+No 5.6.0 tag or release is authorized. The published 5.5 baseline excludes PR #109.
+
+The dated sections below retain their original scope and evidence. Their old
+pending decisions do not reopen completed release steps. Claude model runtime
+and full cross-host acceptance remain unverified.
+
 ## Current status - 2026-10-10
 
 **Main is on the 5.5.0 preview. The latest published release is v5.4.0.**
