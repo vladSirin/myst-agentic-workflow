@@ -4,6 +4,34 @@
 
 Skills for the delivery loop (discussion → spec → tickets → triage → implement → verify → review/publish), engineering discipline (TDD, debugging, design, grilling), and a vendored two-axis code-review engine. Protocols are VCS-agnostic, with Perforce and git command forms. The plugin supplies skills and their reference files; it registers no agents, commands, or hooks.
 
+## Highlighted skills
+
+Use these skills to explore a question or work through a decision.
+
+### [Deep dive](plugins/myst-dev-kit/skills/deep-dive/SKILL.md)
+
+Work through a hard decision. Deep dive makes the strongest case for both sides,
+asks one key question, and waits for your answer before giving a recommendation.
+Invoke `myst-dev-kit:deep-dive` with the decision you want to examine.
+
+Example request:
+
+```text
+Use myst-dev-kit:deep-dive to help me decide whether to improve our current tool or replace it.
+```
+
+### [Roundtable](plugins/myst-dev-kit/skills/roundtable/SKILL.md)
+
+Explore a topic through a simulated discussion with 3-5 thinkers. A moderator
+compares their arguments and draws out the main disagreements and conclusions.
+Invoke `myst-dev-kit:roundtable` with the topic you want to explore.
+
+Example request:
+
+```text
+Use myst-dev-kit:roundtable to examine the tradeoffs of adding AI agents to our development process.
+```
+
 ## Version status
 
 See the [current version and preview status](docs/upstream-release-candidate-2026-10-09.md#current-status)

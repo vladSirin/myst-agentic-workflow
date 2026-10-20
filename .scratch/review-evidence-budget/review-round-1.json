@@ -91,7 +91,7 @@
   },
   "final_rendering": "After review, only this receipt, actual review results in docs, ticket verification status, and EOL normalization of evidence JSON changed. Process decisions are semantically identical; skill/test/fixture/scorer/CI content remains pinned.",
   "publication": "not authorized; awaiting user review",
-  "latest_completed_round": 8,
+  "latest_completed_round": 9,
   "subsequent_audits": [
     {
       "round": 2,
@@ -984,13 +984,64 @@
       "final_rendering": "Only actual review/test/install results and tracker state rendered after the pin. Package, policy, tests, fixtures, and captured inputs remain unchanged.",
       "publication": "PR #109 update and local preview installation authorized. Keep unmerged; no 5.6 tag or release.",
       "next_action": "Stop review; commit/push the preview update and check PR CI."
+    },
+    {
+      "round": 9,
+      "date": "2026-10-20 Asia/Shanghai",
+      "authorization": "User requested a Highlighted skills section near the top of README for Deep dive and Roundtable, with simple descriptions and usage; update PR #109; keep unmerged; no tag or release.",
+      "scope": "README highlight section and actual review evidence only; no skill, package, test, version or installation changes. One necessary affected-scope review cycle before PR update; no budget reset.",
+      "base": "874e7555477bf57e1572f4f521b8065ab05afb07",
+      "shared_input_pin": "6ff72cbe717a36f5e26ffc2d8ea36091b2bee4b6af9a5d26fb6fd5befd68396b",
+      "delta_sha256": "d5fbc1d48f3e8fbeb0be686541970e703266c637ad922c9137669f3ed08f7eb3",
+      "files": [
+        {
+          "path": ".scratch/review-evidence-budget/review-round-1.json",
+          "sha256": "c21f65018ab454d9ca29a9dfc1da409c76be50497f8d11a9e6b8a9ca42c933bf"
+        },
+        {
+          "path": "README.md",
+          "sha256": "65047c14425d9cd2267d4f6d68eadf3a9d18a282a2dd76733c7f6f40bc929e3f"
+        }
+      ],
+      "reports": {
+        "Standards": {
+          "verdict": "GREEN",
+          "blocking": 0,
+          "warning": 0,
+          "report": "BLOCKING: None.\n\nWARNING: None.\n\nINFO: Reviewed the round-9 two-file delta against 874e7555477bf57e1572f4f521b8065ab05afb07, using manifest.json::shared_input_pin. No actionable Standards breach or baseline smell was found.\n\nREADME.md::Highlighted skills sits near the top and uses short, clear descriptions. Deep dive accurately describes strengthening both sides and waiting for the user's answer before a recommendation. Its example explicitly requests the user-only skill. Roundtable accurately describes a simulated discussion with 3-5 thinkers and a moderator. Both examples supply a concrete decision or topic. The summaries match the public SKILL.md contracts and packaged source at the base revision; they make no new runtime or acceptance claim.\n\nOwn checks: both snapshot/live hashes and the delta hash match. Only README.md and the review ledger differ from the base. Removing the new section reproduces the base README exactly. Both links resolve to the intended public skills; the four skill/source context files match base bytes. All prior ledger records remain unchanged, with round 8 completed and round 9 pending.\n\nNo tests were added or run for this prose-only change. Root checks and later remote CI are separate evidence. Host execution, installation, and publication were not tested or performed. This review does not reset the budget or grant merge, tag, or release authority.\n\nVerdict: GREEN"
+        },
+        "Spec": {
+          "verdict": "GREEN",
+          "blocking": 0,
+          "warning": 0,
+          "report": "BLOCKING: None.\n\nWARNING: None.\n\nINFO: Reviewed the two-file round-9 delta using `../manifest.json::shared_input_pin` and the user's explicit README request as the spec extension.\n\n`README.md::Highlighted skills` appears directly after the introduction, before Version status and Install. It includes both requested skills, simple descriptions, links to their public entries, and explicit `myst-dev-kit:deep-dive` and `myst-dev-kit:roundtable` example requests.\n\nDeep dive's description matches its public metadata and bundled method: make the strongest case for both sides, ask one key question, wait for the user's answer, then recommend an action. Roundtable's description matches its public 3-5 participant guidance and bundled simulated discussion, moderator, disagreements, and conclusions. The examples fit their topic/decision inputs and preserve Deep dive's explicit invocation requirement. Neither skill was invoked during this review.\n\nOwn checks confirm both snapshot/live hashes, the delta hash, and the rebuilt diff. Only README and the review ledger change. Both linked public entries exist and match the base. The ledger changes only `next_review`; earlier reports remain unchanged, and the count continues from 8 to 9. Both manifests remain 5.6.0. The README's version, release, and no-merge/tag/release guidance is unchanged.\n\nNo missing requirement, incorrect description, or scope expansion was found. I did not repeat broad tests or claim the root's checks as mine. This report does not establish runtime skill behavior, remote CI, or publication readiness. No candidate, installation, or VCS changes were made by this reviewer.\n\nVerdict: GREEN"
+        }
+      },
+      "findings": {
+        "blocking": [],
+        "warning": []
+      },
+      "checks": {
+        "relative_readme_links_checked": 74,
+        "broken_targets": 0,
+        "markdown_fences": "balanced",
+        "readme_install_check": "passed",
+        "dead_reference_check": "passed",
+        "plugin_validators": "both passed outside sandbox after initial execution-policy denial; attempts retained locally",
+        "git_diff_check": "passed",
+        "docs_alignment": "Aligned. No contradictions found between the pinned README Highlighted skills section and the current Deep dive and Roundtable public entries, bundled source instructions, or relevant current docs.",
+        "test_scope": "No new tests or broad local rerun for the README-only change. Package, skill, test, and version content are unchanged; PR CI reruns after push."
+      },
+      "info_disposition": "[ACCEPTED] Static documentation alignment does not add model/runtime/consumer acceptance evidence.",
+      "final_rendering": "Only this actual review/check record rendered after pin. README and all captured inputs remain unchanged.",
+      "publication": "Update PR #109 only. Keep it unmerged; no tag or release. No installation change needed."
     }
   ],
   "next_review": {
-    "round": 8,
-    "status": "completed; Standards GREEN; Spec GREEN; both B1 findings cleared by their originators; stop",
-    "finding_disposition_source": "Completed round 8 in subsequent_audits. Earlier reports retain their pinned input.",
-    "publication": "PR update and local install only; no merge, tag or release."
+    "round": 9,
+    "status": "completed; Standards GREEN; Spec GREEN; no blockers or warnings; stop",
+    "finding_disposition_source": "Completed round9 in subsequent_audits",
+    "publication": "PR update only; no merge, tag or release."
   },
   "reviewed_followups": [
     {
