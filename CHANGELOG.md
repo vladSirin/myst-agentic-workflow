@@ -28,23 +28,46 @@ heading dated today, you almost certainly want to extend the first one instead.
 v3.0.0 through v6.0.0 were written into four JSON files and never tagged, which is exactly how
 two spurious majors went unnoticed. Either tag on merge, or leave the number alone.
 
-The owner explicitly approved a **5.5 daily-use preview** before tagging.
-Its manifest bump on main is not a release. Keep its notes marked Unreleased
-and add preview status/docs and display-label follow-ups to the same section. A later owner
-instruction is required to tag and release 5.5; no further bump is needed for
-these follow-ups.
+The owner-approved 5.5 preview ended with the v5.5.0 release on 2026-10-20.
+
+The owner approved a **5.6.0 preview in PR #109** on 2026-10-20, as an
+exception to the normal tag-on-bump rule. On 2026-10-29, the owner reported
+positive use on this PC and authorized release finalization, the PR merge,
+and the 5.6.0 tag/release. Future changes use the normal versioning rules.
 
 **The number lives in two places** — `plugins/myst-dev-kit/.claude-plugin/plugin.json` and
 `plugins/myst-dev-kit/.codex-plugin/plugin.json`. `./bump.ps1 -Version X.Y.Z` updates both,
 checks this file has the matching section, and tags. (Before v5.0.0 the number lived in five
 places; the other three sites no longer exist.)
 
-## [5.5.0] - Unreleased - Upstream boundary refresh
+## [5.6.0] - 2026-10-29 - Review evidence and bounded review
 
-Prepared on 2026-10-09 and merged in PR #107 on 2026-10-10. The local PC now
-uses the preview. Tagging and release wait for the owner's daily-use checks
-and later instruction. The latest published release remains v5.4.0. See the
-[current status](docs/upstream-release-candidate-2026-10-09.md#current-status---2026-10-10).
+Prepared after local PC preview use in
+[PR #109](https://github.com/vladSirin/myst-agentic-workflow/pull/109).
+Recorded Perforce review-flow tests used offline captures. Live Perforce
+operations and other machines remain outside that verified scope.
+
+MINOR: behavior changes to the local review-and-submit process.
+
+- Select local Git or Perforce command and review-input references only after
+  resolving the target VCS. Mark Perforce-only file and changelist rules explicitly;
+  keep upstream source and review methods unchanged.
+- Require a checkable evidence chain before blocker-driven edits. Unsupported
+  blockers remain open until their originating reviewer reassesses them.
+- Bound automatic review to three persistent cycles, with existing early stops
+  and a human decision for further work. Keep publication approval separate.
+- Use live links for normal docs/comments and shared input pins for review
+  evidence. Findings use stable file and symbol/heading anchors.
+- Add real defective/clean API fixtures, process decision probes, and positive
+  acceptance and duplicate-only rejection controls. Run both Python suites in CI.
+- Preserve imported upstream files, source records, methods, and approval gates.
+
+## [5.5.0] - 2026-10-20 - Upstream boundary refresh
+
+Released from main at 89a5dc1743ce4fa852b488f64e84f4257ced3508 after local
+preview acceptance. PR #109 is excluded. See the
+[published release](https://github.com/vladSirin/myst-agentic-workflow/releases/tag/v5.5.0)
+and [current status](docs/upstream-release-candidate-2026-10-09.md#current-status).
 
 MINOR: new/retired skills and behavior changes through plugin updates.
 Copy cleanup is inherent to the existing copy-install model. This refresh
@@ -77,7 +100,7 @@ requires no consumer glossary rename or install-channel change.
 - All individual skill changes and retirement are owner-verified. Combined
   evidence is in the dated
   [acceptance report](docs/upstream-release-acceptance-2026-10-09.md); the
-  [current release status](docs/upstream-release-candidate-2026-10-09.md#current-status---2026-10-10)
+  [current release status](docs/upstream-release-candidate-2026-10-09.md#current-status)
   records completed integration and remaining checks. Claude model
   runtime stays deferred by the owner. Full cross-host acceptance remains
   unverified.

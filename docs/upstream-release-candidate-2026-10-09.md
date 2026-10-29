@@ -1,5 +1,39 @@
 # Upstream refresh release status and candidate history
 
+## Current status
+
+Use [GitHub Releases](https://github.com/vladSirin/myst-agentic-workflow/releases)
+for published versions and artifacts. Use the
+[tag list](https://github.com/vladSirin/myst-agentic-workflow/tags) and release
+records to check publication of v5.6.0. These live records own publication state.
+
+On 2026-10-29, the owner reported: "5.6.0 on this PC works pretty well".
+The owner then approved release finalization: finalize the release notes and
+status docs, review that change, merge PR #109, verify main CI, and publish
+v5.6.0 from the exact merged commit. Both plugin manifests use 5.6.0.
+
+The preview package matches the reviewed skill content. Git and offline Perforce
+fixtures exercised both review axes and the stop before publication. A separate
+fixture retained a supported Spec blocker despite passing tests. The
+[process evidence](review-protocol-2026-10-18.md) and
+[review ledger](../.scratch/review-evidence-budget/review-round-1.json) retain
+their scoped inputs, reports, and review history. The release-document follow-up
+continues that ledger; it does not change installed skill content or upstream bytes.
+
+The owner report covers use on this PC only. It does not expand the recorded
+offline Perforce tests into live server/client acceptance. Other machines,
+deployed consumer compatibility, and Claude model runtime remain outside the
+verified scope. The merge, main CI, tag, and release-workflow results are separate
+publication checks. Use the [main CI workflow](https://github.com/vladSirin/myst-agentic-workflow/actions/workflows/tests.yml)
+and [release workflow](https://github.com/vladSirin/myst-agentic-workflow/actions/workflows/release.yml)
+for those records.
+
+The dated sections below retain their original scope and evidence. Their old
+pending decisions do not reopen completed steps. The v5.5.0 release remains the
+earlier baseline and excludes PR #109; its
+[release record](https://github.com/vladSirin/myst-agentic-workflow/releases/tag/v5.5.0)
+retains the publication receipt.
+
 ## Current status - 2026-10-10
 
 **Main is on the 5.5.0 preview. The latest published release is v5.4.0.**
