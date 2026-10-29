@@ -2,21 +2,37 @@
 
 ## Current status
 
-As of 2026-10-20, **v5.5.0 is published** from main commit
-89a5dc1743ce4fa852b488f64e84f4257ced3508. Its
-[release workflow](https://github.com/vladSirin/myst-agentic-workflow/actions/runs/39287074782)
-passed. The [release notes](https://github.com/vladSirin/myst-agentic-workflow/releases/tag/v5.5.0)
-record the completed publication. The tagged commit keeps its historical preview wording.
+Use [GitHub Releases](https://github.com/vladSirin/myst-agentic-workflow/releases)
+for published versions and artifacts. Use the
+[tag list](https://github.com/vladSirin/myst-agentic-workflow/tags) and release
+records to check publication of v5.6.0. These live records own publication state.
 
-The owner approved a **5.6.0 preview in PR #109** for local testing. That PR
-contains the new review process and remains unmerged. Both manifests use 5.6.0;
-its changelog stays Unreleased. Preview verification and install results belong
-in the existing [process evidence](review-protocol-2026-10-18.md) and review ledger.
-No 5.6.0 tag or release is authorized. The published 5.5 baseline excludes PR #109.
+On 2026-10-29, the owner reported: "5.6.0 on this PC works pretty well".
+The owner then approved release finalization: finalize the release notes and
+status docs, review that change, merge PR #109, verify main CI, and publish
+v5.6.0 from the exact merged commit. Both plugin manifests use 5.6.0.
+
+The preview package matches the reviewed skill content. Git and offline Perforce
+fixtures exercised both review axes and the stop before publication. A separate
+fixture retained a supported Spec blocker despite passing tests. The
+[process evidence](review-protocol-2026-10-18.md) and
+[review ledger](../.scratch/review-evidence-budget/review-round-1.json) retain
+their scoped inputs, reports, and review history. The release-document follow-up
+continues that ledger; it does not change installed skill content or upstream bytes.
+
+The owner report covers use on this PC only. It does not expand the recorded
+offline Perforce tests into live server/client acceptance. Other machines,
+deployed consumer compatibility, and Claude model runtime remain outside the
+verified scope. The merge, main CI, tag, and release-workflow results are separate
+publication checks. Use the [main CI workflow](https://github.com/vladSirin/myst-agentic-workflow/actions/workflows/tests.yml)
+and [release workflow](https://github.com/vladSirin/myst-agentic-workflow/actions/workflows/release.yml)
+for those records.
 
 The dated sections below retain their original scope and evidence. Their old
-pending decisions do not reopen completed release steps. Claude model runtime
-and full cross-host acceptance remain unverified.
+pending decisions do not reopen completed steps. The v5.5.0 release remains the
+earlier baseline and excludes PR #109; its
+[release record](https://github.com/vladSirin/myst-agentic-workflow/releases/tag/v5.5.0)
+retains the publication receipt.
 
 ## Current status - 2026-10-10
 

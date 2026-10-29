@@ -30,21 +30,22 @@ two spurious majors went unnoticed. Either tag on merge, or leave the number alo
 
 The owner-approved 5.5 preview ended with the v5.5.0 release on 2026-10-20.
 
-The owner explicitly approved a **5.6.0 preview in PR #109** on 2026-10-20.
-Both manifests use 5.6.0 for local testing; keep its notes marked Unreleased.
-This preview is an exception to the normal tag-on-bump rule. The PR stays
-unmerged. A later owner instruction is required to merge, tag, or release it.
+The owner approved a **5.6.0 preview in PR #109** on 2026-10-20, as an
+exception to the normal tag-on-bump rule. On 2026-10-29, the owner reported
+positive use on this PC and authorized release finalization, the PR merge,
+and the 5.6.0 tag/release. Future changes use the normal versioning rules.
 
 **The number lives in two places** — `plugins/myst-dev-kit/.claude-plugin/plugin.json` and
 `plugins/myst-dev-kit/.codex-plugin/plugin.json`. `./bump.ps1 -Version X.Y.Z` updates both,
 checks this file has the matching section, and tags. (Before v5.0.0 the number lived in five
 places; the other three sites no longer exist.)
 
-## [5.6.0] - Unreleased - Review evidence and bounded review
+## [5.6.0] - 2026-10-29 - Review evidence and bounded review
 
-Owner-approved preview in [PR #109](https://github.com/vladSirin/myst-agentic-workflow/pull/109),
-prepared on 2026-10-20 for local use. The latest published release is v5.5.0.
-The PR remains unmerged; no v5.6.0 tag or release is authorized.
+Prepared after local PC preview use in
+[PR #109](https://github.com/vladSirin/myst-agentic-workflow/pull/109).
+Recorded Perforce review-flow tests used offline captures. Live Perforce
+operations and other machines remain outside that verified scope.
 
 MINOR: behavior changes to the local review-and-submit process.
 

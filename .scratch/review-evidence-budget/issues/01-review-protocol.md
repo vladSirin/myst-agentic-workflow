@@ -2,7 +2,7 @@
 
 Type: task
 Status: resolved
-Outstanding: Daily use of the 5.6.0 preview; merge and release decisions remain open.
+Current release decision and publication records: [release status](../../../docs/upstream-release-candidate-2026-10-09.md#current-status).
 Spec: [scope and acceptance](../spec.md)
 
 Implement the agreed local review policy and isolated observable-decision tests.
@@ -13,6 +13,10 @@ Verify real seeded-defect detection and a clean case with a harmful proposed fix
 Check static and command evidence, unsupported blockers, affected-axis dispatch,
 the third/fourth-round boundary, session continuity, and approval limits.
 Record actual results and remaining limits before user review.
+
+The named review rounds and preview sections below are historical records.
+Their old publication limits apply to those recorded steps. Current release
+authority and publication evidence belong to the release-status owner above.
 
 Evidence: [local verification and review](../../../docs/review-protocol-2026-10-18.md).
 Implementation and local tests pass. Candidate round 1: Standards GREEN; Spec GREEN.
@@ -53,3 +57,12 @@ Preview preparation checks and the native local install pass. The originating
 reviewers cleared the two status references in round 8; Standards and Spec are
 GREEN and docs alignment is aligned. The ledger owns the full results. The
 5.6.0 preview is ready for local daily use; PR #109 stays open and unmerged.
+
+## Release finalization - 2026-10-29
+
+The owner reported: "5.6.0 on this PC works pretty well" and approved the proposed
+release finalization, PR #109 merge, main-CI verification, and v5.6.0 tag/release.
+The report is limited to this PC. The separate live Perforce and wider-host
+limits remain in the release-status owner. The release-document review continues
+the existing ledger at round 11. Skill, test, and imported-source content stay
+unchanged in this follow-up.

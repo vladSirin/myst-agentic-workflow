@@ -95,3 +95,25 @@ authorized. This preview is an explicit exception to the normal tag-on-bump rule
 Keep policy/test behavior and all upstream content unchanged in this version step.
 Maintained evidence belongs in docs/; this tracker records state and links to
 that evidence. The old migration tracker is history.
+
+## Release finalization - 2026-10-29
+
+After reporting "5.6.0 on this PC works pretty well", the owner approved the
+proposal to finalize release notes/status wording, review that small change,
+merge PR #109, verify main CI, and tag v5.6.0 from the exact merged commit.
+This release authorization supersedes the earlier preview-only publication
+limits for this release step; preserve those earlier records as history.
+
+Keep both plugin manifests at 5.6.0. Change release documentation and its existing
+review/tracker records only. Keep all installed skill content, tests, upstream
+files, source records, source pins, and source policy unchanged. Record the owner
+report verbatim and limit it to this PC; do not claim live Perforce or wider-host
+acceptance from offline fixtures. Use live release links for publication state.
+Do not claim a merge, CI pass, tag, or release before its observed result.
+
+Continue the existing review ledger with one scoped review cycle, round 11.
+Run Standards and Spec on the same pinned documentation delta and run the
+independent docs-alignment preflight. Preserve earlier reports and dispositions.
+After the approved merge and passing main CI, use the existing tag-triggered
+release workflow. Refresh the local package through the configured native
+marketplace route and verify that its skill bytes still match the released tree.

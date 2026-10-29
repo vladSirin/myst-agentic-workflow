@@ -91,7 +91,7 @@
   },
   "final_rendering": "After review, only this receipt, actual review results in docs, ticket verification status, and EOL normalization of evidence JSON changed. Process decisions are semantically identical; skill/test/fixture/scorer/CI content remains pinned.",
   "publication": "not authorized; awaiting user review",
-  "latest_completed_round": 9,
+  "latest_completed_round": 11,
   "subsequent_audits": [
     {
       "round": 2,
@@ -1195,13 +1195,130 @@
       "final_rendering": "Only actual report/check evidence and ticket completion are rendered after the pin. Routing files and all other captured inputs remain unchanged.",
       "publication": "Update PR #109 only; keep unmerged; no tag, release, or local install.",
       "next_action": "Stop review; commit/push the requested update and check PR CI."
+    },
+    {
+      "round": 11,
+      "date": "2026-10-29 Asia/Shanghai",
+      "authorization": "One scoped review cycle for the owner-approved release-document finalization. Prior rounds remain recorded; no budget reset.",
+      "scope": "Release notes, live release-status links, preview-history wording, scoped spec/tracker, and actual review evidence only.",
+      "base": "030acd5df7d88d4623b1978d98508976ef65cab4",
+      "shared_input_pin": "12335c6b00f56b4d3c3434fd4436b717042e26625f197bac690ae6f0ba1a8ad4",
+      "reviewers": {
+        "Standards": "/root/release56_standards",
+        "Spec": "/root/release56_spec"
+      },
+      "reports": {
+        "Standards": {
+          "verdict": "GREEN",
+          "blocking": 0,
+          "warning": 0,
+          "report": "BLOCKING: None.\n\nWARNING: None.\n\nINFO: Reviewed the seven-file documentation delta against `030acd5df7d88d4623b1978d98508976ef65cab4`, using `manifest.json::shared_input_pin`.\n\nNo documented-standard breach or actionable baseline smell was found. The change follows `CONTRIBUTING.md::The gate, end to end`, `.gitattributes`, and `review-and-submit::Live links and evidence pins`.\n\nThe exact owner report remains limited to this PC. Live GitHub records own publication state. The docs treat merge, main CI, tag, and release results as separate checks. They assert no completed publication.\n\nThe ledger preserves earlier reports and dispositions. Correcting `latest_completed_round` to 10 and appending round 11 continues the existing history.\n\nOwn checks confirm:\n\n- The base resolves and the commit list is empty.\n- All seven snapshot hashes, the delta hash, and the independently derived shared pin match.\n- All six live prose files match the capture. The live ledger contains only the disclosed evidence rendering.\n- All 192 package hashes match the manifest.\n- Package, tests, fixtures, tools, and source policy match the base.\n- Earlier ledger audits and other historical fields remain semantically unchanged.\n\nThese checks establish document scope and byte preservation. They add no runtime, live Perforce, wider-host, installation, or publication acceptance. No files were edited.\n\nVerdict: GREEN",
+          "reviewer": "/root/release56_standards",
+          "context": "fresh; report-only; inherited model and effort"
+        },
+        "Spec": {
+          "verdict": "GREEN",
+          "blocking": 0,
+          "warning": 0,
+          "report": "BLOCKING: None.\n\nWARNING: None.\n\nINFO: Reviewed the seven-file delta at shared pin `12335c6b00f56b4d3c3434fd4436b717042e26625f197bac690ae6f0ba1a8ad4`, against base `030acd5df7d88d4623b1978d98508976ef65cab4`.\n\nNo missing requirement, scope creep, or wrong implementation was found against `.scratch/review-evidence-budget/spec.md::Release finalization - 2026-10-29` and the matching issue follow-up.\n\n`README.md::Version status/Releases` and `docs/upstream-release-candidate-2026-10-09.md::Current status` assign publication state to live release/tag records. They retain the exact PC report and release decision without inventing publication results. Live Perforce, other machines, deployed consumers, and Claude runtime remain outside acceptance. Retained receipts support the bounded fixture summary.\n\nThe ledger corrects `latest_completed_round` to 10 and appends round 11. Earlier reports, dispositions, and follow-ups remain unchanged. Both manifests remain 5.6.0. All 192 source and installed package hashes match the captured package. Source policy matches. Git reports no changes to package, test, tool, or CI paths.\n\nAll seven snapshot hashes and the delta hash still match. This is a static documentation review. I inspected prior runtime receipts but did not rerun those tests or establish new runtime or publication results. No files or VCS state were changed.\n\nVerdict: GREEN",
+          "reviewer": "/root/release56_spec",
+          "context": "fresh; report-only; inherited model and effort"
+        }
+      },
+      "finding_dispositions": [
+        {
+          "id": "SCOPE-INFO",
+          "severity": "INFO",
+          "axes": [
+            "Standards",
+            "Spec"
+          ],
+          "disposition": "[ACCEPTED]",
+          "meaning": "Static release-doc review; existing bounded runtime evidence and PC report do not establish live P4, wider-host, consumer, or Claude runtime acceptance."
+        }
+      ],
+      "checks": {
+        "tests_passed": 48,
+        "plugin_validators_passed": 2,
+        "preflight": {
+          "passed": true,
+          "package_files_unchanged": 192,
+          "installed_package_still_matches": true,
+          "source_policy_unchanged": true,
+          "source_and_test_changes": false,
+          "historical_ledger_records_preserved": true,
+          "old_release_sections_preserved_byte_for_byte": true,
+          "historical_candidate_sections_preserved_byte_for_byte": true,
+          "relative_file_links_resolved": 105,
+          "markdown_fences_balanced": true,
+          "git_diff_check": "PASS",
+          "release_note_extraction": "PASS",
+          "tag": "v5.6.0",
+          "publication_authorized": true,
+          "publication_performed": false
+        },
+        "prior_installed_fixture_evidence": {
+          "date": "2026-10-20",
+          "source_commit": "030acd5df7d88d4623b1978d98508976ef65cab4",
+          "receipt_sha256": "af05538476872fda5713506ee910d28e29ebc5429e04019fac8a483be32688f4",
+          "raw_evidence_location": "Retained locally under fixtures/_tmp/installed-full-review-green-20261020 and installed-full-review-20261020; not published raw logs.",
+          "Git": "Both independent axes GREEN; six preflight tests pass; Git-only details; no publication.",
+          "Perforce": "Both independent axes GREEN; six preflight tests pass; P4-only details despite Git mirror; no live server or publication.",
+          "negative_control": "Supported Spec BLOCKING retained despite Standards GREEN and six passing tests; original fixture unchanged.",
+          "reviewer_runtime": "gpt-6.1-sol / ultra; separate from these source-document reviews.",
+          "limit": "Bounded offline fixtures only; no source repairs, re-review cycles, round exhaustion, deployed consumer or wider-host acceptance."
+        }
+      },
+      "docs_alignment": {
+        "result": "aligned",
+        "reviewer": "/root/release56_alignment",
+        "scope": "Same seven-file pinned delta; independent contradiction check; not a review round."
+      },
+      "publication": "Owner authorized PR #109 merge and v5.6.0 tag/release after passing main CI. This review record predates publication; live GitHub records own publication results.",
+      "next_action": "Commit/push the reviewed release docs, pass PR CI, merge the exact head, pass main CI, then tag that exact merged commit.",
+      "delta_sha256": "5028f6bcb717a77749d8abd01d5b9782e14b93e28301b8e1bdb41c23d45c1b08",
+      "files": [
+        {
+          "path": "CHANGELOG.md",
+          "sha256": "71163ed35198e5bcccf9f8587c88874979b79c8e97582291b3547e7eba0b866f"
+        },
+        {
+          "path": "CONTRIBUTING.md",
+          "sha256": "c2f0d9b3b383cab944d2243e93afdeb65e82e5b2b5622fd09f4118fa0faae2a3"
+        },
+        {
+          "path": "README.md",
+          "sha256": "2d75b18123f8b04ecca850bfc5de97482265e826f607d85666467a8bdcd8031c"
+        },
+        {
+          "path": "docs/upstream-release-candidate-2026-10-09.md",
+          "sha256": "3e755210566fcdf924c47ce9d48079c152712248310b238cde3bfacdd649c417"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/review-round-1.json",
+          "sha256": "c81ac79ca21844111559ef3d4c48f1e7e9cffd90c742bc3880cb7a4169df746f"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/spec.md",
+          "sha256": "e62d60721c18df3a85c2a4b8b7f333edd468ebb186e6b91536b6ead6c143ff40"
+        },
+        {
+          "path": ".scratch/review-evidence-budget/issues/01-review-protocol.md",
+          "sha256": "c09e443391fcbe28fd1fa86bd8d6341285f89d45a8246152c3de73b867f34a98"
+        }
+      ],
+      "final_rendering": {
+        "source_repairs": [],
+        "closed_rendering_only": "Fill actual reports, pins, known check results, and dispositions without changing reviewed prose.",
+        "historical_reports_preserved": true
+      }
     }
   ],
   "next_review": {
-    "round": 10,
+    "round": 11,
     "status": "completed; Standards GREEN; Spec GREEN; no blockers or warnings; stop",
-    "finding_disposition_source": "Completed round10 in subsequent_audits",
-    "publication": "Update PR #109 only; keep unmerged; no tag, release, or local install."
+    "finding_disposition_source": "Completed round11 in subsequent_audits",
+    "publication": "Release authorized; live GitHub merge, CI, tag and release records own actual results."
   },
   "reviewed_followups": [
     {
@@ -1238,5 +1355,13 @@
       "review_scope_at_creation": "No new model review requested or run. Earlier verdicts remain attached to their original pinned inputs.",
       "covered_by_round": 6
     }
-  ]
+  ],
+  "release_authorization": {
+    "date": "2026-10-29 Asia/Shanghai",
+    "owner_report": "5.6.0 on this PC works pretty well",
+    "reply": "Yes, go ahead.",
+    "approved_proposal": "Finalize the release notes and preview-status wording, review the small documentation change, merge PR #109, verify main CI, then tag v5.6.0 from the exact merged commit.",
+    "scope": "PR #109 release-document finalization, merge, 5.6.0 tag/release, and the previously requested normal local install refresh.",
+    "acceptance_limit": "Owner report covers this PC only; offline P4 fixtures do not establish live P4 server/client behavior or wider-host acceptance."
+  }
 }

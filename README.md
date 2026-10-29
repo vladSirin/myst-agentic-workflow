@@ -34,8 +34,9 @@ Use myst-dev-kit:roundtable to examine the tradeoffs of adding AI agents to our 
 
 ## Version status
 
-See the [current version and preview status](docs/upstream-release-candidate-2026-10-09.md#current-status)
-for the published baseline and the separate preview.
+See [GitHub Releases](https://github.com/vladSirin/myst-agentic-workflow/releases)
+for published versions and artifacts. The [release status](docs/upstream-release-candidate-2026-10-09.md#current-status)
+records the owner decision and verification limits.
 
 ## Install
 
@@ -161,7 +162,7 @@ runtime tests remain deferred.
 The [combined acceptance report](docs/upstream-release-acceptance-2026-10-09.md)
 records the bounded install and consumer checks. The
 [release status](docs/upstream-release-candidate-2026-10-09.md#current-status)
-records the published 5.5 baseline and separate 5.6 preview. Its dated candidate
+records release decisions and publication evidence. Its dated candidate
 sections preserve the earlier evidence.
 
 Adding or retiring a skill updates its catalog row through the
@@ -201,10 +202,10 @@ myst-agentic-workflow/
 ## Releases
 
 Every `v*` tag auto-publishes a GitHub Release with that version's CHANGELOG
-section as the body. The latest published version is
-[v5.5.0](https://github.com/vladSirin/myst-agentic-workflow/releases/tag/v5.5.0).
-The [CHANGELOG](CHANGELOG.md) also carries the unreleased 5.6.0 preview in PR #109.
-That PR stays unmerged; tagging and release require a later owner instruction.
+section as the body. [GitHub Releases](https://github.com/vladSirin/myst-agentic-workflow/releases)
+owns the published version and artifacts. The [CHANGELOG](CHANGELOG.md) describes
+5.6.0, and the [release status](docs/upstream-release-candidate-2026-10-09.md#current-status)
+records its owner decision and verification limits.
 Architecture decisions live in the ADRs under [`docs/`](docs/);
 [ADR-0007](docs/adr-0007-lean-library-supersedes-vendor-render-model.md) records the
 v5 restructure and its tradeoffs.
