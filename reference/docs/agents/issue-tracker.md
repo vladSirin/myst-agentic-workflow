@@ -38,42 +38,75 @@ Read the file at the referenced path. The user will normally pass the path or th
 
 ## Retire an accepted Markdown spec
 
-Keep the spec until the whole feature is accepted and all required checks have
-passed. A ticket at `resolved` still has a human check pending. Carry lasting
-decisions into the project's maintained docs. Retire only the effort's
-`spec.md`. Keep its tickets and Wayfinder maps in place.
+This starter includes retirement by default. An existing project adopts it once
+in its own tracker. Apply it as each feature reaches closeout. Cleanup of older
+specs needs a separate request.
+
+- **Acceptance.** Apply the project's feature acceptance rule. If none exists,
+  ask the feature owner once. All required checks for the accepted scope must
+  pass, including any human check on a `resolved` ticket. If the owner accepts
+  a smaller scope, record what shipped and link the open ticket for deferred work.
+- **Planning record.** Preserve the spec as it stood. Record differences between
+  the plan and the accepted result in the acceptance evidence. Put lasting rules
+  in the maintained design or test docs.
+- **Active links.** Before deletion, check active tickets and maintained docs
+  for references to this spec. Move instructions still in use to a maintained
+  home and update their links. For historical references in active material,
+  link to the exact revision verified below. Pause while an active dependency
+  remains unresolved. Retire only this effort's `spec.md`. Keep its tickets
+  and Wayfinder maps, and leave closed tickets as historical records.
 
 ### Git
 
-1. Identify the project's remote and its default branch, then fetch that branch.
-   Choose a full commit SHA containing the accepted spec at its repo-relative
-   path. Run `git merge-base --is-ancestor <sha> <fetched-default-ref>` and
-   require exit code 0. Read `git show "<sha>:<path>"` and verify it contains
-   the exact accepted version. Keep the file if either check fails.
-2. If the accepted version exists only on the feature branch, merge it with
-   the file present. For a squash merge, use the resulting default-branch
-   commit as the candidate SHA. Fetch and repeat both checks before preparing
-   a follow-up deletion. Adding and removing the spec in the same squash would
-   leave its contents out of that commit.
-3. Confirm the file being retired still matches the accepted version, including
-   any staged or working-tree edits. If it has changed, resolve those edits
-   before proceeding. Stage the deletion with `git rm -- <path>` and follow
-   the normal review process. Record the accepted SHA, path, and acceptance
-   evidence in the closeout PR/MR or deletion commit. To recover the spec,
-   run `git show "<sha>:<path>"` with that recorded SHA and path.
+1. **Preserve.** Fetch the project's remote default branch. Choose a full commit
+   SHA and repo-relative path for the planning text. Require exit code 0 from
+   `git merge-base --is-ancestor <sha> <fetched-default-ref>`. Verify that
+   `git show "<sha>:<path>"` returns the exact text to preserve. If it exists
+   only on the feature branch, merge with the file present. After a squash,
+   fetch and verify the resulting default-branch commit before preparing a
+   follow-up deletion. Keep the file until both checks pass.
+2. **Prepare.** Check the staged and working-tree copies for pending edits.
+   Once the file matches the preserved revision, stage `git rm -- <path>` for
+   normal review. Include the full SHA and path in both the closeout PR/MR (if
+   used) and the deletion commit message. Include them in the final squash
+   message when merging. Link the acceptance evidence in the closeout record.
+3. **Recheck.** Immediately before merging, fetch the target branch again and
+   compare the spec at that path with the preserved version. Check for pending
+   edits to the spec. If the file changed, pause deletion and resolve ownership.
+   Changes to other paths can proceed.
+4. **Verify.** The merger checks the deletion commit that landed for the full
+   preserved SHA and path, then reads that revision with `git show "<sha>:<path>"`.
+   If the assignment ends at opening the PR/MR, put this handoff in its body.
+   If the pointer is missing after merge, closeout stays incomplete until a
+   follow-up commit lands with the preserved SHA, path, and this exact line
+   (substitute the full SHA of the landed deletion commit):
+
+   ```text
+   Spec closeout repair for <full-deletion-SHA>
+   ```
+
+To recover from the old path, use `git log --diff-filter=D -- <path>` on the
+default branch to find the deletion message. For a repaired pointer, search
+that branch with `git log --fixed-strings --grep="Spec closeout repair for <full-deletion-SHA>"`
+without a path filter. Read the spec at the preserved SHA and path.
 
 ### Perforce
 
-1. Confirm the accepted text matches the current submitted depot revision and
-   check for pending edits to the spec. If another edit is in progress, keep
-   the spec active until its owner resolves it. If the final
-   text exists only in a workspace or shelf, preserve it in a submitted revision
-   through the normal review process before retiring it.
-2. Record the accepted spec's full depot path and revision (`//.../spec.md#N`)
-   in the CL description for the deletion, along with the acceptance evidence
-   or a link to it. Verify the recorded revision with `p4 print`.
-3. Open only that effort's `spec.md` for deletion with `p4 delete` and follow
-   the normal review and submit process.
+1. **Preserve.** Verify the exact planning text with `p4 print` at its full
+   depot path and submitted revision (`//.../spec.md#N`). If it exists only in
+   a workspace or shelf, submit that version through normal review first.
+2. **Prepare.** Check the workspace copy against the preserved text and check
+   for pending edits. Resolve local or competing edits before opening the
+   file for deletion. Record the preserved path and revision
+   and the acceptance evidence (or a link) in the deletion CL description.
+   Open only this spec for deletion with `p4 delete` in that CL.
+3. **Recheck.** Immediately before submit, compare the depot head for this
+   path to the preserved revision and check for competing pending edits.
+   If the spec changed or has another owner working on it, pause deletion
+   and resolve ownership. Changes to other files can proceed.
+4. **Verify.** After normal review and submit, the submitter checks that the
+   submitted CL description contains the verified path, revision, and
+   acceptance evidence. Use `p4 print` on that path and revision to read it.
 
 To read a retired spec, use `p4 filelog -l` on its exact depot path to find the
 deletion CL, then `p4 print` the revision recorded in its description.
@@ -92,7 +125,7 @@ Used by `/wayfinder`. The **map** is a file with one **child** file per ticket.
 **Identify the effort.** Wayfinder uses `map.md` and its decision tickets.
 Active implementation uses `spec.md` and its implementation tickets. After
 retirement, confirm the implementation effort from its recorded acceptance
-and recovery reference in the PR/MR, Git commit, or Perforce CL. A missing
+and recovery reference in Git history or the submitted Perforce CL. A missing
 spec alone does not establish acceptance. For Wayfinder,
 `resolved` means the question was answered. For implementation, it means a
 required human check remains (`Docs/agents/triage-labels.md`).

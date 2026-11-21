@@ -109,12 +109,18 @@ Lifecycle states say how far the work has got:
 
 For publication (Perforce submit, or git merge/PR), follow the `review-and-submit` skill. Never publish without explicit user approval.
 
-Keep the spec active through feature acceptance and all required checks. If
-the spec is a GitHub or GitLab issue, close it through the configured tracker
-or its linked PR/MR. For a Markdown spec, follow the project's retirement
-policy. In Git, verify the accepted file is recoverable from the remote
-default branch's history before staging deletion. In Perforce, verify the
-accepted depot revision. Record the recovery reference with the deletion.
+Use the project's feature acceptance rule. If it has none, ask the feature
+owner to confirm acceptance. Keep the spec active through the required checks
+for the accepted scope. If the owner accepts a smaller scope, record what
+shipped and link the ticket for deferred work.
+
+Close a GitHub or GitLab spec issue through its tracker or linked PR/MR.
+If a required check follows merge, leave the parent issue open until it passes.
+Retire a Markdown spec only if the project has adopted retirement in its
+tracker. Follow that tracker's steps to preserve the planning text, resolve
+active links, and verify the deletion record. The merger or submitter owns
+the final check. If the assignment ends at opening a PR, hand off that check
+in the PR body.
 
 ## Guardrails
 
