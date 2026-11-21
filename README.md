@@ -90,7 +90,7 @@ The pipeline: discussion → spec → tickets → triage → implement → verif
 
 Model-invoked:
 
-- **[agentic-workflow](plugins/myst-dev-kit/skills/agentic-workflow/SKILL.md)** — the stage map and shared local integration: project pointers, dependency routing, and legacy/new glossary paths. Fires on non-trivial feature work.
+- **[agentic-workflow](plugins/myst-dev-kit/skills/agentic-workflow/SKILL.md)** — guides non-trivial feature work through acceptance and spec closeout. Covers project pointers, dependency routing, and glossary paths.
 - **[review-and-submit](plugins/myst-dev-kit/skills/review-and-submit/SKILL.md)** — the mandatory pre-publish protocol: two-axis review, verified results inside Evidence, target-specific command and formatter loading, preflight, and human-gated publication. Copy installs need agentic-workflow, code-review, and the target formatter (pr for Git; p4-description for Perforce).
 - **[code-review](plugins/myst-dev-kit/skills/code-review/SKILL.md)** — unchanged Matt Pocock two-axis review method with Myst engine selection, project spec lookup, and target-specific Git/Perforce input loading. Invoke `myst-dev-kit:code-review`, or its full Myst path in copy hosts ([method evidence](docs/code-review-wrapper-2026-10-08.md), [VCS routing](docs/vcs-review-routing-2026-10-20.md)).
 - **[pr](plugins/myst-dev-kit/skills/pr/SKILL.md)** — Git-only PR bodies using intact Matt Pocock source and show-me credits; Myst adds project vocabulary, ticket pointers, and verified review evidence. Never used for P4 targets. Copy installs need agentic-workflow ([evidence](docs/pr-wrapper-2026-10-08.md)).
