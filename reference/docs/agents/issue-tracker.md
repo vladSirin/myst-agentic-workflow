@@ -70,15 +70,20 @@ specs needs a separate request.
    normal review. Include the full SHA and path in both the closeout PR/MR (if
    used) and the deletion commit message. Include them in the final squash
    message when merging. Link the acceptance evidence in the closeout record.
-3. **Recheck.** Immediately before merging, fetch the target branch again and
-   compare the spec at that path with the preserved version. Check for pending
-   edits to the spec. If the file changed, pause deletion and resolve ownership.
-   Changes to other paths can proceed.
-4. **Verify.** The merger checks the deletion commit that landed for the full
-   preserved SHA and path, then reads that revision with `git show "<sha>:<path>"`.
+3. **Recheck.** Immediately before merging, fetch the default branch again and
+   repeat both Preserve checks. If history changed, use a reachable SHA with
+   the same planning text and update both recovery pointers before proceeding.
+   Keep the file if either check still fails. Compare the spec on the freshly
+   fetched merge target with the preserved version and check for pending edits.
+   If the file changed, pause deletion and resolve ownership. Changes to other
+   paths can proceed.
+4. **Verify.** The merger reads the full SHA and path from the landed deletion
+   message, fetches the default branch, and repeats both Preserve checks using
+   that pointer. Closeout stays incomplete if the pointer fails either check.
    If the assignment ends at opening the PR/MR, put this handoff in its body.
-   If the pointer is missing after merge, closeout stays incomplete until a
-   follow-up commit lands with the preserved SHA, path, and this exact line
+   If the pointer is missing or invalid after merge, verify a reachable copy
+   of the planning text. Closeout stays incomplete until a follow-up commit
+   lands with its verified SHA, path, and this exact line
    (substitute the full SHA of the landed deletion commit):
 
    ```text
