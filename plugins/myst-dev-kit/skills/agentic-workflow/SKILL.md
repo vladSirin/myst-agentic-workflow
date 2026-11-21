@@ -109,9 +109,22 @@ Lifecycle states say how far the work has got:
 
 For publication (Perforce submit, or git merge/PR), follow the `review-and-submit` skill. Never publish without explicit user approval.
 
+Use the project's feature acceptance rule. If it has none, ask the feature
+owner to confirm acceptance. Keep the spec active through the required checks
+for the accepted scope. If the owner accepts a smaller scope, record what
+shipped and link the ticket for deferred work.
+
+Close a GitHub or GitLab spec issue through its tracker or linked PR/MR.
+If a required check follows merge, leave the parent issue open until it passes.
+Retire a Markdown spec only if the project has adopted retirement in its
+tracker. Follow that tracker's steps to preserve the planning text, resolve
+active links, and verify the deletion record. The merger or submitter owns
+the final check. If the assignment ends at opening a PR, hand off that check
+in the PR body.
+
 ## Guardrails
 
-- Search before creating a planning artifact: Glob `plan_*.md` and `design_*.md` under the design-docs directory identified by the project's instructions, plus specs in the resolved tracker, for the feature/system/phase name. If one exists, extend it rather than opening a second — duplicates don't error, they split the source of truth.
+- Before creating a planning artifact, search the project's `plan_*.md` and `design_*.md` files and active tracker specs for the same scope. Extend an existing active record. Use retired specs as history when investigating earlier decisions.
 - Do not batch multiple changesets without explicit user approval; follow the `changelist-verification` skill.
 - Do not modify the game Docs dir's `_Raw/` (where the project defines a protected raw-material area) without the protected-material approval flow.
 - Keep ticket state changes explicit in the issue file's `Status:` line.

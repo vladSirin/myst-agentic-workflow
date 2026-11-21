@@ -139,7 +139,7 @@ The agent then follows the project review protocol, scaled to the changelist: do
 
 ## Supporting docs
 
-- `Docs/agents/issue-tracker.md` defines where specs and tickets live.
+- [Issue tracker](../agents/issue-tracker.md) defines where specs and tickets live and how to retire and recover an accepted Markdown spec in Git or Perforce.
 - `Docs/agents/triage-labels.md` defines allowed status values and lane rules.
 - `Docs/agents/domain.md` defines how agents should consume context and ADRs.
 
