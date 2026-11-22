@@ -24,7 +24,8 @@ and commands.
 
 ## Source targets
 
-- Matt: commit `6fd947921b935b7e1e69293a200400f0fdd5c15f`.
+- Matt: the migration used commit `6fd947921b935b7e1e69293a200400f0fdd5c15f`.
+  Later refreshes use the pin in each skill's UPSTREAM.json.
   Paths below are relative to that repository. The older imports are attributed
   through LICENSE; code-review also has its own provenance pin. See the
   [file comparison](research-matt-pocock-updates-2026-10-06.md).

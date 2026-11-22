@@ -24,11 +24,11 @@ SOFTWARE.
 
 ## Third-party content
 
-This migration checkout includes complete source from
-[mattpocock/skills](https://github.com/mattpocock/skills) at pinned commit
-`6fd947921b935b7e1e69293a200400f0fdd5c15f`, used under the MIT License.
+This checkout includes complete source from
+[mattpocock/skills](https://github.com/mattpocock/skills), used under the MIT
+License.
 Earlier releases used `0ab1b63a410a03d3627979a109c8695de27af954`.
-Per-skill UPSTREAM.json and PROVENANCE.md record current files and ownership.
+Per-skill UPSTREAM.json and PROVENANCE.md record the revision, files, and ownership.
 The upstream entry is packaged as UPSTREAM.md; source bytes remain unchanged.
 
 The Matt Pocock notice follows:
