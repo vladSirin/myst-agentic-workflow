@@ -14,8 +14,8 @@ The local entry loads agentic-workflow's shared contract. It maps upstream TDD
 and review calls to Myst's entries, retains review-and-submit as coordinator,
 and applies the target project's tracker, Git/Perforce, and publication rules.
 The v1.3.2 source fetches the ticket and states its title before starting.
-Myst resolves feature-local IDs and supplies ticket changes missing from
-the committed Git range or the selected Perforce CL as the review input.
+Myst resolves feature-local IDs. For Git, it adds ticket changes missing
+from the committed range. For Perforce, it supplies the selected CL version.
 The source still says to commit; the local entry limits that instruction to
 Git target work within user authorization. No TDD or orchestration rewrite is
 part of this migration. Copy installs need all declared sibling dependencies.
