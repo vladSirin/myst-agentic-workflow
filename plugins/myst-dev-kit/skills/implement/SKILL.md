@@ -28,8 +28,10 @@ Apply these mappings while following the source:
   [review-and-submit](../review-and-submit/SKILL.md) as the local coordinator.
   Its review engine is [myst-dev-kit:code-review](../code-review/SKILL.md).
   Pass both reviewers the same pinned ticket changes through that protocol,
-  keeping the upstream brief for each axis. Select the inputs below for the
-  target VCS.
+  keeping the upstream brief for each axis. Include a separate observation
+  only when the reviewer needs it, with its source and test conditions.
+  Leave code interpretation, expected findings, and verdicts to the reviewers.
+  Select the inputs below for the target VCS.
 - The upstream commit instruction applies only to Git-managed target work and
   within the user's authorization. Perforce work follows the project's named
   changelist workflow. Review completion does not authorize publication or
@@ -42,8 +44,9 @@ diffs and the full contents of new ticket files. Keep unrelated commits and
 hunks outside the ticket verdict. If all ticket work is
 uncommitted, pin it directly. An empty committed diff alone does not end review.
 Identify unrelated edits outside the ticket scope. Where edits overlap, supply
-the actual current file and flag the overlap. Review the combined behavior.
-If the overlap prevents a ticket verdict, name the gap and ask for clarification.
+the actual current file and flag the overlap. Ask the reviewers to assess the
+combined behavior. If the overlap prevents a ticket verdict, name the gap
+and ask for clarification.
 Preserve the user's edits.
 
 For Perforce, supply the [complete named CL input](../code-review/PERFORCE-INPUTS.md)
