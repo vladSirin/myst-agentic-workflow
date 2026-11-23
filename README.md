@@ -128,7 +128,7 @@ User-invoked:
 
 Model-invoked:
 
-- **[grilling](plugins/myst-dev-kit/skills/grilling/SKILL.md)** — intact Matt Pocock design-tree interview and fact-finding method, with Myst project/scope/authority routing. Model and user invoked; copy installs need agentic-workflow ([evidence](docs/grilling-wrapper-2026-10-09.md)).
+- **[grilling](plugins/myst-dev-kit/skills/grilling/SKILL.md)** — Matt Pocock's design interview asks independent questions while a fresh agent checks project facts. Copy installs need agentic-workflow ([October pilot](docs/grilling-wrapper-2026-10-09.md)).
 - **[roundtable](plugins/myst-dev-kit/skills/roundtable/SKILL.md)** — intact Hammer dialogue method, round controls, and ASCII frames; Myst retains English discovery and local display metadata. [Migration evidence](docs/roundtable-wrapper-2026-10-09.md).
 
 User-invoked:
