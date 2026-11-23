@@ -16,8 +16,7 @@ local entry and shared contract.
 
 Read the [upstream instructions](references/upstream/UPSTREAM.md), then apply their
 two-axis method to the selected evidence. Map the upstream Git-specific input
-steps and tracker lookup through REVIEW-INPUTS.md. Preserve the separate
-Standards and Spec briefs, complete smell baseline, and separate final reports.
+steps and tracker lookup through REVIEW-INPUTS.md.
 Reviewers report only; they never edit, submit, shelve, push, or merge.
 Publication and description formatting remain owned by review-and-submit.
 

@@ -5,7 +5,7 @@ Apply this mapping to the upstream input steps. The review method stays upstream
 ## Project and spec
 
 Use the target project's tracker workflow and explicit spec pointers selected by
-LOCAL-INTEGRATION. Use that workflow for upstream's tracker lookup.
+LOCAL-INTEGRATION.
 The excluded setup-matt-pocock-skills is not a fallback: report the missing pointer
 and establish the project contract. Honor a caller's verified spec, including a
 Ticket: pointer supplied by review-and-submit. Otherwise use upstream's ordered
@@ -28,15 +28,9 @@ resolved through LOCAL-INTEGRATION:
 - **Perforce:** read [Perforce review inputs](PERFORCE-INPUTS.md).
 - **Unclear target:** resolve it before reading either detail reference or dispatching.
 
-Use the upstream brief and questions for each axis. Both get the same pinned
-change. When the committed Git range covers the request, use upstream Step 4's
-diff command, commit list, axis references and review questions. Keep the
-coordinator's pin checks, file inventory and context record in its own ledger.
-Supplement the briefs only with ticket changes inside the requested scope
-that the range misses.
-For Perforce, supply the selected CL evidence. Standards gets the standards
-paths and full smell baseline.
-Spec gets the original spec path or its fetched contents.
+Keep the coordinator's pin checks, file inventory and context record in its
+own ledger. Add any in-scope ticket changes missing from the Git range to
+the shared review evidence. For Perforce, supply the selected CL evidence.
 
 If an axis needs an observation it cannot obtain from the change, quote it
 exactly and identify the source and test conditions. Mark any missing condition
