@@ -4,8 +4,6 @@ description: Shared vocabulary for designing deep modules. Use when the user wan
 ---
 
 Read the [local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md)
-(copy dependency: agentic-workflow). Apply its project glossary mapping while
-following [upstream codebase design](references/upstream/UPSTREAM.md). For seam questions, read
-[Deepening](references/upstream/DEEPENING.md). For alternative interfaces, read
-[Design It Twice](references/upstream/DESIGN-IT-TWICE.md). Map companion back-links
-from SKILL.md to UPSTREAM.md.
+(copy dependency: agentic-workflow), then follow [upstream codebase design](references/upstream/UPSTREAM.md).
+The packaged companions are [Deepening](references/upstream/DEEPENING.md) and
+[Design It Twice](references/upstream/DESIGN-IT-TWICE.md). Their SKILL.md links resolve to UPSTREAM.md.
