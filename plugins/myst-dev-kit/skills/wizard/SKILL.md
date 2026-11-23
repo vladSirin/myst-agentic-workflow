@@ -9,9 +9,8 @@ contract, then resolve the target project, VCS, and actual setup/CI destinations
 
 Read the [complete upstream instructions](references/upstream/UPSTREAM.md) and
 use the [bundled template](references/upstream/template.sh). Resolve the source's
-template link from that source directory; copy this template's full path and
-preserve its library while authoring the stages. The source files remain unchanged;
-only the packaged entry filename differs.
+template link from that source directory. Use the project's configured `ENV_FILE`
+for both the template's value prompts and `write_env`.
 
 Map the saved wizard and repeatable-script capture to the project's workflow.
 For Perforce, preserve repeatable work through that workflow rather than Git
