@@ -3,8 +3,8 @@
 The complete interview method is from [Matt Pocock's skills](https://github.com/mattpocock/skills)
 at the approved pin in [UPSTREAM.json](UPSTREAM.json). Both source files remain
 byte-for-byte intact under references/upstream. Only SKILL.md maps to UPSTREAM.md
-under ADR-0009. The former Myst entry exactly matches the pinned source; there
-is no method delta. Previously omitted Codex metadata is included.
+under ADR-0009. Matt's v1.3.2 starts fact-finders with fresh context and phrases
+questions so that yes accepts the recommendation.
 
 Myst owns the public entry, public metadata, source record, and this note.
 The local entry loads the shared contract and maps project context, fact-helper
