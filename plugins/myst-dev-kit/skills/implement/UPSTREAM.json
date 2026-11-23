@@ -4,11 +4,11 @@
   "root": "references/upstream",
   "source": {
     "url": "https://github.com/mattpocock/skills",
-    "revision": "6fd947921b935b7e1e69293a200400f0fdd5c15f",
+    "revision": "d1478fcb140db0b93c0c8df17bcfd311844749d0",
     "subtree": "skills/engineering/implement"
   },
   "files": {
-    "SKILL.md": "f28bed1a2a7dcf604c802a99869bae9d577b6bfc2061fe655c8b0dbb1ee16cfd",
+    "SKILL.md": "483bdc4ccf4ac31d86ac7beeaa0d0db80313e71e120bb8c59b3196ae5decd53d",
     "agents/openai.yaml": "8970a8596ade0c28ab427f41a4ea242d6bdf6186c59ebf55e1238dbecaab79dc"
   },
   "dependencies": [

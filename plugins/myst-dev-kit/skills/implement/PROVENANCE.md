@@ -8,11 +8,14 @@ references/upstream preserves both original files byte-for-byte. SKILL.md is
 packaged as UPSTREAM.md; agents/openai.yaml keeps its original name. Myst owns
 this directory's public SKILL.md, public agents/openai.yaml, source record, and
 this provenance note. The public metadata retains the implement name and explicit
-user invocation; its current values match the bundled upstream metadata.
+user invocation. Myst omits the upstream display name so Codex can supply it.
 
 The local entry loads agentic-workflow's shared contract. It maps upstream TDD
 and review calls to Myst's entries, retains review-and-submit as coordinator,
 and applies the target project's tracker, Git/Perforce, and publication rules.
+The v1.3.2 source fetches the ticket and states its title before starting.
+Myst resolves feature-local IDs. For Git, it adds ticket changes missing
+from the committed range. For Perforce, it supplies the selected CL version.
 The source still says to commit; the local entry limits that instruction to
 Git target work within user authorization. No TDD or orchestration rewrite is
 part of this migration. Copy installs need all declared sibling dependencies.
