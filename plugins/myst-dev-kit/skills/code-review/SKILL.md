@@ -5,8 +5,8 @@ description: "Review a Git changeset or Perforce changelist on separate Standard
 
 Read the [local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md)
 (copy dependency: agentic-workflow) and [review input mapping](REVIEW-INPUTS.md),
-then follow [upstream code-review](references/upstream/UPSTREAM.md). Reviewers
-report only. Review-and-submit owns publication and description formatting.
+then follow [upstream code-review](references/upstream/UPSTREAM.md). Resolve upstream
+`SKILL.md` links to `UPSTREAM.md`. Reviewers report only. Review-and-submit owns publication and description formatting.
 
 Select fresh context explicitly. Record identity, context, verdict and completion
 per axis. Only a confirmed fresh report completes an initial review. Retain

@@ -10,8 +10,8 @@ otherwise follow upstream lookup. Report a Spec skip only after user confirmatio
 Load only the target's [Git](GIT-INPUTS.md) or [Perforce](PERFORCE-INPUTS.md)
 inputs. Give both axes the same scope, revisions, file actions and diff. Verify
 caller evidence before dispatch. Stop on stale, incomplete, empty or unverifiable
-input. For an explicitly requested snapshot, identify its source, age, limits
-and available hashes.
+input. Include available hashes for immutable evidence. For an explicitly
+requested snapshot, report its source, age and limits.
 
 Keep pin checks, inventory and context in the coordinator's ledger. Add in-scope
 ticket changes missing from the Git range. If a reviewer needs an observation
