@@ -16,9 +16,8 @@ the explicit sibling paths below; do not substitute a same-name third-party skil
 
 Apply these mappings while following the source:
 
-- Resolve feature-local ticket IDs within the named feature. Include the feature
-  (when used) and ID with the title. If lookup fails or the title conflicts
-  with the request, ask before editing.
+- Use the ticket ID and feature (when applicable) for lookup and title reporting.
+  Treat a failed lookup or a conflicting title as an ambiguous reference.
 - Before editing, note existing changes in the files the ticket touches so
   review can distinguish the user's work and flag edits to the same lines.
 - `tdd` means Myst [tdd](../tdd/SKILL.md), at the user's pre-agreed seams.
