@@ -3,16 +3,14 @@
 The complete skill comes from [Matt Pocock's skills](https://github.com/mattpocock/skills)
 at the approved pin in [UPSTREAM.json](UPSTREAM.json). Both selected source files
 remain byte-for-byte intact under references/upstream; only SKILL.md maps to
-UPSTREAM.md under ADR-0009. The former Myst entry matches the pinned source,
-so there is no method delta. Previously omitted Codex metadata is included.
+UPSTREAM.md under ADR-0009. Matt's v1.3.2 source starts the background
+researcher with a fresh context window.
 
 Myst owns the public entry, public metadata, source record, and this note. The
-entry loads the shared project contract, passes project/note context and write
-scope into the background agent, and retains tracker/publication authority.
-The upstream background-agent, primary-source, cited-note method is unchanged.
-Copy installs require agentic-workflow. Public metadata omits display_name to use
-Codex default labels; its other upstream fields are unchanged and
-retains model/user reach.
+entry passes project pointers, the note convention and write scope to the
+researcher. The shared contract governs tracker changes and publication.
+Copy installs require agentic-workflow. Myst omits display_name so Codex supplies
+the label. All other upstream host metadata fields match.
 
 ## Upstream MIT notice
 
