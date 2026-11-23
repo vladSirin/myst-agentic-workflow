@@ -5,10 +5,9 @@ disable-model-invocation: true
 ---
 
 Read the [local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md).
-Use the project's domain documents, ADRs and target VCS history. Use this
-entry only on explicit user invocation.
+Use the target VCS for history-based scoping. Explicit user invocation only.
 
-Follow [upstream architecture review](references/upstream/UPSTREAM.md) and its
-[HTML report guide](references/upstream/HTML-REPORT.md). Copy installs require
+Follow [upstream architecture review](references/upstream/UPSTREAM.md)
+([HTML report guide](references/upstream/HTML-REPORT.md)). Copy dependencies:
 agentic-workflow, [codebase-design](../codebase-design/SKILL.md),
 [grilling](../grilling/SKILL.md) and [domain-modeling](../domain-modeling/SKILL.md).
