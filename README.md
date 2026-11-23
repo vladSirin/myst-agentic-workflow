@@ -122,7 +122,7 @@ Model-invoked:
 
 User-invoked:
 
-- **[improve-codebase-architecture](plugins/myst-dev-kit/skills/improve-codebase-architecture/SKILL.md)** — Matt Pocock source with Myst domain, VCS, and dependency routing; visual deepening report, then a user-selected design interview. User-only; OpenCode needs its local invocation rule ([evidence](docs/improve-codebase-architecture-wrapper-2026-10-08.md)).
+- **[improve-codebase-architecture](plugins/myst-dev-kit/skills/improve-codebase-architecture/SKILL.md)** — Matt Pocock's fresh explorer finds deepening opportunities for an HTML report. Myst maps the glossary, ADRs, history and skill dependencies. User-invoked. OpenCode needs its local invocation rule ([October pilot](docs/improve-codebase-architecture-wrapper-2026-10-08.md)).
 
 ### Thinking & productivity
 
