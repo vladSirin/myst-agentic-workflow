@@ -2,8 +2,9 @@
 
 The method is from [Matt Pocock's skills](https://github.com/mattpocock/skills).
 [UPSTREAM.json](UPSTREAM.json) owns the pin, complete inventory, hashes, and
-required local dependencies. Both original files are unchanged between the
-historical and approved revisions.
+required local dependencies. Matt's v1.3.2 starts fresh research agents, routes
+by ticket label, wires cross-references after IDs exist and specifies how to
+publish disposable Git research branches. Project VCS authority still applies.
 
 references/upstream preserves both source files byte-for-byte. Only SKILL.md
 is packaged as UPSTREAM.md under ADR-0009. Metadata keeps its relative path.

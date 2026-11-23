@@ -4,20 +4,11 @@ description: Plan a huge chunk of work (more than one agent session can hold) as
 disable-model-invocation: true
 ---
 
-Read [Myst's local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md)
-before the upstream workflow. Use its project-pointer rules for tracker,
-wayfinding operations, triage, glossary reads and writes, and missing configuration.
-The upstream setup and local-tracker fallback follow that contract; establish
-missing tracker operations before dependent writes.
+Read the [local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md).
+Resolve the project's tracker and wayfinding operations before writing. Use its
+VCS rules for research branches, publication and ticket-to-artifact links.
 
-Required Myst dependencies for copy installs: agentic-workflow, grilling,
-domain-modeling, research, and prototype. Check the relevant local entry and
-references before each dependent step. Resolve them through the Myst namespace
-or these sibling paths and preserve their invocation rules. Map glossary
-references in dependencies to the project's authoritative domain files.
-
-Read the bundled [upstream instructions](references/upstream/UPSTREAM.md), then
-follow them with those mappings. Project rules govern claims, state changes,
-closure, and publication. Resolve research-branch and artifact instructions
-against the target project's VCS rules before dispatch. The original source
-bytes are unchanged; only the packaged entry filename differs.
+Follow [upstream wayfinder](references/upstream/UPSTREAM.md). Copy installs
+require agentic-workflow, [grilling](../grilling/SKILL.md),
+[domain-modeling](../domain-modeling/SKILL.md), [research](../research/SKILL.md)
+and [prototype](../prototype/SKILL.md). Use this entry only on explicit user invocation.
