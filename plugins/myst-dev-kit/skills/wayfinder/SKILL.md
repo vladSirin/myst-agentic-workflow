@@ -5,14 +5,11 @@ disable-model-invocation: true
 ---
 
 Read the [local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md).
-Resolve the project's tracker and wayfinding operations before writing. Use its
-VCS rules for research branches, publication and ticket-to-artifact links.
-For each new or resumed research ticket, brief a fresh ticket agent to invoke
-the sibling research skill and have its fresh background researcher write the cited note.
+Use the project's wayfinding operations and its VCS rules for research branches
+and artifact links. Use this entry only on explicit user invocation.
 
 Follow [upstream wayfinder](references/upstream/UPSTREAM.md). Copy installs
 require agentic-workflow, [grilling](../grilling/SKILL.md),
 [domain-modeling](../domain-modeling/SKILL.md), [research](../research/SKILL.md)
-and [prototype](../prototype/SKILL.md).
-For shared publication, include [review-and-submit](../review-and-submit/SKILL.md)
-and its target VCS dependencies. Use this entry only on explicit user invocation.
+and [prototype](../prototype/SKILL.md). For shared publication, include
+[review-and-submit](../review-and-submit/SKILL.md) and its target VCS dependencies.
