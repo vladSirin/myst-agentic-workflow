@@ -21,9 +21,8 @@ lifecycle state.
 | `ready-for-human` | Needs **human implementation** — an agent does not pick it up |
 | `wontfix` | Will not be actioned |
 
-**Triage is only for issues you did not create.** Bug reports, incoming requests, anything that
-arrives raw. Tickets produced by `/to-spec` or `/to-tickets` are already specified and self-label
-`ready-for-agent` — do not send them back through triage.
+Use intake triage for incoming bug reports and requests. Tickets created from an agreed spec
+skip intake triage and default to `ready-for-agent` unless the maintainer chooses another role.
 
 ## Lifecycle states
 
@@ -54,12 +53,9 @@ waiting for a human and moves on.
 > Otherwise the label is self-granting — an agent that can award itself a workable state can then
 > submit under a goal-mode authorization in the same run.
 
-**`ready-for-agent` is a verification label, not a submit authorization.** It answers "can the
-agent verify every required test case", nothing more. Publishing the resulting change is still
-human-gated outside a `/goal` run — see the submit gate hard rule in `CLAUDE.md` and the
-submit-authority rule in the `review-and-submit` skill. An agent may take a `ready-for-agent`
-ticket all the way to a reviewed, shelved changelist unattended; publishing it is a separate
-decision with a separate gate.
+Use `ready-for-agent` when the expected behavior is agreed and an agent can implement the
+ticket without another human decision. Record any later human acceptance check in the ticket.
+Publication requires separate authorization under the project's rules and `review-and-submit`.
 
 ## Normal flows
 
