@@ -5,8 +5,9 @@ disable-model-invocation: true
 ---
 
 Read the [local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md),
-then follow [upstream implement](references/upstream/UPSTREAM.md). Copy installs
-require agentic-workflow, [tdd](../tdd/SKILL.md), [review-and-submit](../review-and-submit/SKILL.md)
+then follow [upstream implement](references/upstream/UPSTREAM.md). Resolve upstream
+`SKILL.md` links to `UPSTREAM.md`. Before implementation, verify the copy
+dependencies: agentic-workflow, [tdd](../tdd/SKILL.md), [review-and-submit](../review-and-submit/SKILL.md)
 and [myst-dev-kit:code-review](../code-review/SKILL.md).
 
 Use the feature (when applicable) and ticket ID for lookup and title reporting.
