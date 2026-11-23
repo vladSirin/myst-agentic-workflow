@@ -16,19 +16,17 @@ the explicit sibling paths below; do not substitute a same-name third-party skil
 
 Apply these mappings while following the source:
 
-- When the user names a ticket, fetch it through the project's tracker. Resolve
-  feature-local IDs within the named feature. State the feature (when the tracker
-  uses one), ticket ID, and fetched title, then proceed. If several tickets
-  match, the lookup fails, or the title conflicts with the request, ask which
-  ticket the user means before editing. A spec supplied on its own is sufficient.
+- Resolve feature-local ticket IDs within the named feature. Include the feature
+  (when used) and ID with the title. If lookup fails or the title conflicts
+  with the request, ask before editing.
 - Before editing, note existing changes in the files the ticket touches so
   review can distinguish the user's work and flag edits to the same lines.
 - `tdd` means Myst [tdd](../tdd/SKILL.md), at the user's pre-agreed seams.
 - At the upstream `code-review` step, load Myst
   [review-and-submit](../review-and-submit/SKILL.md) as the local coordinator.
   Its review engine is [myst-dev-kit:code-review](../code-review/SKILL.md).
-  Pass both reviewers the same pinned ticket changes through that protocol,
-  keeping the upstream brief for each axis. Include a separate observation
+  Give each reviewer the same pinned ticket changes and only its own axis brief.
+  Include a separate observation
   only when the reviewer needs it, with its source and test conditions.
   Leave code interpretation, expected findings, and verdicts to the reviewers.
   Select the inputs below for the target VCS.
@@ -49,10 +47,7 @@ combined behavior. If the overlap prevents a ticket verdict, name the gap
 and ask for clarification.
 Preserve the user's edits.
 
-For Perforce, supply the [complete named CL input](../code-review/PERFORCE-INPUTS.md)
-in place of the Git range. Pin the requested workspace, shelf, or submitted
-version, its file actions and diffs, and the full contents required by those
-actions. Identify any content the reviewers cannot inspect.
+For Perforce, use the [named CL input](../code-review/PERFORCE-INPUTS.md).
 
 Read the bundled [upstream instructions](references/upstream/UPSTREAM.md), then
 follow them with those local mappings. The original source bytes are unchanged;
