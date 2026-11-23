@@ -11,4 +11,6 @@ VCS rules for research branches, publication and ticket-to-artifact links.
 Follow [upstream wayfinder](references/upstream/UPSTREAM.md). Copy installs
 require agentic-workflow, [grilling](../grilling/SKILL.md),
 [domain-modeling](../domain-modeling/SKILL.md), [research](../research/SKILL.md)
-and [prototype](../prototype/SKILL.md). Use this entry only on explicit user invocation.
+and [prototype](../prototype/SKILL.md).
+For shared publication, include [review-and-submit](../review-and-submit/SKILL.md)
+and its target VCS dependencies. Use this entry only on explicit user invocation.

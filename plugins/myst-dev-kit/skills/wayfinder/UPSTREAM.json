@@ -16,7 +16,8 @@
     "grilling",
     "domain-modeling",
     "research",
-    "prototype"
+    "prototype",
+    "review-and-submit"
   ],
   "pathMap": {
     "SKILL.md": "UPSTREAM.md"
