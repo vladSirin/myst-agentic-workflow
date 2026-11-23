@@ -29,10 +29,13 @@ resolved through LOCAL-INTEGRATION:
 - **Unclear target:** resolve it before reading either detail reference or dispatching.
 
 Use the upstream brief and questions for each axis. Both get the same pinned
-change. For committed Git work the diff command and commit list suffice when
-they cover the requested scope. Supplement them only with ticket changes inside
-that scope. In a committed-only review, report required work absent from the pin
-as a gap, even if it exists in the working tree. Flag
+change. When the committed Git range covers the request, send the upstream
+Step 4 briefs as written. Include the diff command and commit list, each
+axis's references, and its review questions. Keep the coordinator's pin checks, file
+inventory and context record in its own ledger. Supplement the briefs only
+with ticket changes inside the requested scope that the range misses.
+In a committed-only review, report required work absent from the pin as a gap,
+even if it exists in the working tree. Flag
 overlap with user edits and show the actual file. For Perforce, supply the
 selected CL evidence. Standards gets the standards paths and full smell baseline.
 Spec gets the original spec path or its fetched contents.
