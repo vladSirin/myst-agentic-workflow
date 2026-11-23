@@ -3,6 +3,7 @@
 The upstream method is from [Matt Pocock's skills](https://github.com/mattpocock/skills).
 [UPSTREAM.json](UPSTREAM.json) records the exact revision, complete subtree,
 original file hashes, packaged filename mapping, and required local dependencies.
+Matt's v1.3.2 starts each Design It Twice designer with fresh context.
 
 The references/upstream directory preserves all four source files byte-for-byte.
 The original SKILL.md is packaged as UPSTREAM.md; both companions and
