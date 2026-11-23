@@ -9,9 +9,8 @@ SKILL.md alone is packaged as UPSTREAM.md under ADR-0009. HTML-REPORT.md and
 agents/openai.yaml retain their original relative names. The old root report
 guide moves beside the raw source after a byte comparison.
 
-Both previous local files match the historical source. The upstream update
-only replaces CONTEXT.md references with GLOSSARY.md. The report guide and
-source host metadata are unchanged across pins.
+Matt's v1.3.2 starts the architecture explorer with fresh context. The
+report guide and source host metadata match the previous pin.
 
 The public entry, public host metadata, source record, and this note belong to
 Myst. The trigger and user-only invocation remain unchanged; public metadata omits display_name to use

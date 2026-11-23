@@ -4,12 +4,12 @@
   "root": "references/upstream",
   "source": {
     "url": "https://github.com/mattpocock/skills",
-    "revision": "6fd947921b935b7e1e69293a200400f0fdd5c15f",
+    "revision": "d1478fcb140db0b93c0c8df17bcfd311844749d0",
     "subtree": "skills/engineering/improve-codebase-architecture"
   },
   "files": {
     "HTML-REPORT.md": "581e8bb5a521e46bbda8ca7e19b15948bed882187108092ebb90c62513b77528",
-    "SKILL.md": "552240a5ab5cec6b67c15dd1ad6e9f6962b1bca6ce870059a8c2713760c20392",
+    "SKILL.md": "35b03a3db61e0f5aa333ea59b54963e45a3d2ace6649b2ef4f9576603e2582a6",
     "agents/openai.yaml": "c8cb20f68ebf0edb4e497bc11ae5fcaa196004e661cd189015b04f4109ced7f1"
   },
   "dependencies": [
