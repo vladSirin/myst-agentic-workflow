@@ -4,7 +4,7 @@ The complete skill is from [Matt Pocock's skills](https://github.com/mattpocock/
 at the approved pin in [UPSTREAM.json](UPSTREAM.json). All three selected source
 files remain byte-for-byte intact under references/upstream. Only SKILL.md maps
 to UPSTREAM.md under ADR-0009. In v1.3.2, pressing Enter keeps the value saved
-by `write_env`. The input helpers return failure if stdin closes before input.
+by `write_env`. Both `ask` and `ask_secret` return failure on EOF before input.
 
 Myst owns the public entry, public metadata, source record, and this note. The
 entry loads the shared contract, resolves the bundled template, maps setup/CI
