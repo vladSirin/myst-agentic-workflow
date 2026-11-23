@@ -28,7 +28,9 @@ axis. Count an initial review as complete only after a confirmed fresh reviewer
 returns its report. If a reviewer inherited the parent chat, keep its findings
 and verdict, mark that axis incomplete, and repeat only that axis with a fresh
 reviewer. If a fresh start cannot be obtained or verified, report the limit
-and leave the axis incomplete. Keep a confirmed Spec skip visible.
+and leave the axis incomplete. An incomplete required axis cannot satisfy the
+coordinator's review or publication gate, regardless of its verdict. Keep a
+confirmed Spec skip visible.
 
 For a fix, resume the reviewer that raised the finding with the new pin and
 delta. Preserve its review history and the coordinator's round count. If that

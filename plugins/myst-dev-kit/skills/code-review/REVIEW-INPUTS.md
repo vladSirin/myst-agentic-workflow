@@ -30,7 +30,9 @@ resolved through LOCAL-INTEGRATION:
 
 Use the upstream brief and questions for each axis. Both get the same pinned
 change. For committed Git work the diff command and commit list suffice when
-they cover the ticket. Supplement them only with missing ticket changes. Flag
+they cover the requested scope. Supplement them only with ticket changes inside
+that scope. In a committed-only review, report required work absent from the pin
+as a gap, even if it exists in the working tree. Flag
 overlap with user edits and show the actual file. For Perforce, supply the
 selected CL evidence. Standards gets the standards paths and full smell baseline.
 Spec gets the original spec path or its fetched contents.
