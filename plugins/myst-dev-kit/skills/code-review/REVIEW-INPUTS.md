@@ -29,14 +29,17 @@ resolved through LOCAL-INTEGRATION:
 - **Unclear target:** resolve it before reading either detail reference or dispatching.
 
 Use the upstream brief and questions for each axis. Both get the same pinned
-change. When the committed Git range covers the request, send the upstream
-Step 4 briefs as written. Include the diff command and commit list, each
-axis's references, and its review questions. Keep the coordinator's pin checks, file
+change. When the committed Git range covers the request, use upstream Step 4's
+diff command, commit list, axis references and review questions. When
+[`review-and-submit`](../review-and-submit/SKILL.md#4-spawn-both-axes-in-parallel)
+calls this skill, append its Step 4 reporting and read-only instructions to
+each brief. Keep the coordinator's pin checks, file
 inventory and context record in its own ledger. Supplement the briefs only
 with ticket changes inside the requested scope that the range misses.
 In a committed-only review, report required work absent from the pin as a gap,
-even if it exists in the working tree. Flag
-overlap with user edits and show the actual file. For Perforce, supply the
+even if it exists in the working tree. For overlapping edits, show the file at
+the reviewed revision. Flag the overlap and show the captured working copy
+only when the requested scope includes it. For Perforce, supply the
 selected CL evidence. Standards gets the standards paths and full smell baseline.
 Spec gets the original spec path or its fetched contents.
 
@@ -44,5 +47,4 @@ If an axis needs an observation it cannot obtain from the change, quote it
 exactly and identify the source and test conditions. Mark any missing condition
 unknown. Leave interpretation and the verdict to the reviewer.
 For immutable captured evidence, include its recorded hashes when available.
-Keep any caller-supplied finding categories, read-only constraints, and artifact
-anchors. No VCS action in this adapter authorizes publication or description edits.
+No VCS action in this adapter authorizes publication or description edits.
