@@ -5,7 +5,7 @@ Apply this mapping to the upstream input steps. The review method stays upstream
 ## Project and spec
 
 Use the target project's tracker workflow and explicit spec pointers selected by
-LOCAL-INTEGRATION. Map upstream docs/agents/issue-tracker.md to that workflow.
+LOCAL-INTEGRATION. Use that workflow for upstream's tracker lookup.
 The excluded setup-matt-pocock-skills is not a fallback: report the missing pointer
 and establish the project contract. Honor a caller's verified spec, including a
 Ticket: pointer supplied by review-and-submit. Otherwise use upstream's ordered
@@ -28,8 +28,16 @@ resolved through LOCAL-INTEGRATION:
 - **Perforce:** read [Perforce review inputs](PERFORCE-INPUTS.md).
 - **Unclear target:** resolve it before reading either detail reference or dispatching.
 
-Give both axes the same pinned evidence, file list, revision identity, and command
-or snapshot source. Include the spec and standards references each axis needs.
+Use the upstream brief and questions for each axis. Both get the same pinned
+change. For committed Git work the diff command and commit list suffice when
+they cover the ticket. Supplement them only with missing ticket changes. Flag
+overlap with user edits and show the actual file. For Perforce, supply the
+selected CL evidence. Standards gets the standards paths and full smell baseline.
+Spec gets the original spec path or its fetched contents.
+
+If an axis needs an observation it cannot obtain from the change, quote it
+exactly and identify the source and test conditions. Mark any missing condition
+unknown. Leave interpretation and the verdict to the reviewer.
 For immutable captured evidence, include its recorded hashes when available.
 Keep any caller-supplied finding categories, read-only constraints, and artifact
 anchors. No VCS action in this adapter authorizes publication or description edits.

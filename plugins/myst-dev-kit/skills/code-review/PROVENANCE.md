@@ -4,11 +4,9 @@ The review method is from [Matt Pocock's skills](https://github.com/mattpocock/s
 [UPSTREAM.json](UPSTREAM.json) records the approved pin, complete original names
 and hashes, and agentic-workflow copy dependency.
 
-The complete two-file source is unchanged between its previously recorded pin
-6654f6b60cd9d5be8b54c6fafe44346dabeb3b76 and approved target
-6fd947921b935b7e1e69293a200400f0fdd5c15f. Both previous local files matched the
-historical text with CRLF checkout line endings; they were not byte-identical.
-This migration introduces no upstream method update and restores exact raw bytes.
+Matt's v1.3.2 procedure starts both reviewers together in fresh contexts,
+requires a search for repository standards, and uses the supplied tracker.
+Myst records completion per axis and routes fixes back to the original reviewer.
 
 Both files remain intact in references/upstream. SKILL.md alone is packaged as
 UPSTREAM.md under ADR-0009; agents/openai.yaml keeps its original path.
