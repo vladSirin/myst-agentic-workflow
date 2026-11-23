@@ -7,7 +7,8 @@ disable-model-invocation: true
 Read the [local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md).
 Resolve the project's tracker and wayfinding operations before writing. Use its
 VCS rules for research branches, publication and ticket-to-artifact links.
-On resume, dispatch a fresh ticket agent to invoke research for a `wayfinder:research` ticket.
+For each new or resumed research ticket, brief a fresh ticket agent to invoke
+the sibling research skill and have its fresh background researcher write the cited note.
 
 Follow [upstream wayfinder](references/upstream/UPSTREAM.md). Copy installs
 require agentic-workflow, [grilling](../grilling/SKILL.md),
