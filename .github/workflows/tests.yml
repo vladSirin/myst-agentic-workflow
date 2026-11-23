@@ -24,6 +24,31 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  skill-frontmatter:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: mattpocock/skills
+          ref: 37209058e45b7c60b36218b7392df0ebcceb247a
+          path: frontmatter
+          sparse-checkout: scripts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Parse public SKILL.md files with the pinned installer-compatible check
+        working-directory: plugins/myst-dev-kit/skills
+        run: |
+          checker="$GITHUB_WORKSPACE/frontmatter"
+          mkdir "$checker/skills"
+          cp --parents */SKILL.md "$checker/skills/"
+          cd "$checker"
+          npm ci --ignore-scripts
+          npm run check-frontmatter
+
   upstream-source:
     runs-on: windows-latest
     timeout-minutes: 20
