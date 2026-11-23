@@ -2,7 +2,7 @@
 
 The complete skill comes from [Matt Pocock's skills](https://github.com/mattpocock/skills).
 [UPSTREAM.json](UPSTREAM.json) records the approved pin, original paths, hashes,
-and Myst copy dependencies. This is a new import; no earlier Myst method exists.
+and Myst copy dependencies. Matt's v1.3.2 source adds the fresh-context rule for every subagent.
 Both selected files remain intact under references/upstream. Only SKILL.md maps
 to UPSTREAM.md under ADR-0009. Public host metadata omits display_name to use
 Codex default labels; its other upstream fields are unchanged.
