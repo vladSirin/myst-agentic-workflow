@@ -18,8 +18,7 @@ Read the [upstream instructions](references/upstream/UPSTREAM.md), then apply th
 two-axis method to the selected evidence. Map the upstream Git-specific input
 steps and tracker lookup through REVIEW-INPUTS.md. Preserve the separate
 Standards and Spec briefs, complete smell baseline, and separate final reports.
-If review-and-submit supplied a pinned scope and additional brief requirements,
-retain them. Reviewers report only; they never edit, submit, shelve, push, or merge.
+Reviewers report only; they never edit, submit, shelve, push, or merge.
 Publication and description formatting remain owned by review-and-submit.
 
 For each initial reviewer, explicitly select the host's fresh-context option.

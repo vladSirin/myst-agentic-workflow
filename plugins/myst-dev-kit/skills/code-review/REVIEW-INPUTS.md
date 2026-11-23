@@ -30,17 +30,12 @@ resolved through LOCAL-INTEGRATION:
 
 Use the upstream brief and questions for each axis. Both get the same pinned
 change. When the committed Git range covers the request, use upstream Step 4's
-diff command, commit list, axis references and review questions. When
-[`review-and-submit`](../review-and-submit/SKILL.md#4-spawn-both-axes-in-parallel)
-calls this skill, append its Step 4 reporting and read-only instructions to
-each brief. Keep the coordinator's pin checks, file
-inventory and context record in its own ledger. Supplement the briefs only
-with ticket changes inside the requested scope that the range misses.
-In a committed-only review, report required work absent from the pin as a gap,
-even if it exists in the working tree. For overlapping edits, show the file at
-the reviewed revision. Flag the overlap and show the captured working copy
-only when the requested scope includes it. For Perforce, supply the
-selected CL evidence. Standards gets the standards paths and full smell baseline.
+diff command, commit list, axis references and review questions. Keep the
+coordinator's pin checks, file inventory and context record in its own ledger.
+Supplement the briefs only with ticket changes inside the requested scope
+that the range misses.
+For Perforce, supply the selected CL evidence. Standards gets the standards
+paths and full smell baseline.
 Spec gets the original spec path or its fetched contents.
 
 If an axis needs an observation it cannot obtain from the change, quote it
