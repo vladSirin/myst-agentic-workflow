@@ -22,7 +22,9 @@ lifecycle state.
 | `wontfix` | Will not be actioned |
 
 Use intake triage for incoming bug reports and requests. Tickets created from an agreed spec
-skip intake triage and default to `ready-for-agent` unless the maintainer chooses another role.
+skip intake triage. At creation, default to `ready-for-agent` for work an agent can implement.
+Use `ready-for-human` for human implementation or `needs-info` for missing details.
+The maintainer can choose another role.
 
 ## Lifecycle states
 
