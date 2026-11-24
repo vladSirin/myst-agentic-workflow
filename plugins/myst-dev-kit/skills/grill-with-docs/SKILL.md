@@ -4,7 +4,8 @@ description: "Use when the user asks to interview a plan or design and record re
 disable-model-invocation: true
 ---
 
-On explicit user invocation, read the [local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md)
+For automatic or cross-skill requests, suggest the explicit Myst command.
+On user invocation, read the [local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md)
 and follow the [upstream instructions](references/upstream/UPSTREAM.md) using Myst's
 [grilling](../grilling/SKILL.md) and [domain-modeling](../domain-modeling/SKILL.md).
 Copy dependencies: agentic-workflow, grilling, and domain-modeling. Confirm the project's
