@@ -8,3 +8,4 @@ Read the [local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md),
 the [upstream instructions](references/upstream/UPSTREAM.md). Use Myst's
 [grilling](../grilling/SKILL.md) and [domain-modeling](../domain-modeling/SKILL.md)
 for their respective steps. Copy dependencies: agentic-workflow, grilling, and domain-modeling.
+Use the [agent brief](references/upstream/AGENT-BRIEF.md) and [prior rejection guide](references/upstream/OUT-OF-SCOPE.md) when triage reaches those steps.
