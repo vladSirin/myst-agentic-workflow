@@ -5,3 +5,4 @@ description: Build and sharpen a project's domain model. Use when discussing cod
 
 Read the [local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md)
 (copy dependency: agentic-workflow), then follow the [upstream instructions](references/upstream/UPSTREAM.md).
+Use the upstream formats for [glossary entries](references/upstream/GLOSSARY-FORMAT.md) and [ADRs](references/upstream/ADR-FORMAT.md).
