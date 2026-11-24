@@ -6,3 +6,4 @@ description: Writing documents for agents. Use when creating or editing skills, 
 Read the [local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md)
 (copy dependency: agentic-workflow), then follow the [upstream instructions](references/upstream/UPSTREAM.md).
 Within the source, `SKILL.md` means `UPSTREAM.md`.
+For skill entries, use the [skill mechanics guide](references/upstream/SKILL-MECHANICS.md).
