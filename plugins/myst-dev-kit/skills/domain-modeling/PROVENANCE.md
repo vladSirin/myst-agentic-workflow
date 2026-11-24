@@ -19,8 +19,8 @@ Myst. The local trigger names legacy and new glossaries and remains model-invoke
 Public host metadata omits display_name to use
 Codex default labels; its other upstream fields are unchanged. Myst's shared contract selects authoritative
 root/scoped/custom domain paths and handles conflicts or missing ownership. The
-wrapper applies that mapping to the source and companion defaults. Direct links
-expose both companions. No domain modeling, questioning, or ADR method is rewritten.
+wrapper applies that mapping to the source and companion defaults. The upstream
+method links the glossary and ADR formats.
 
 Source equality is not runtime equivalence. The migration report records the
 path and behavior checks and their limits.
