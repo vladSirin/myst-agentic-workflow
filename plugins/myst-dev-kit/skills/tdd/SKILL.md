@@ -9,3 +9,4 @@ then follow the [upstream instructions](references/upstream/UPSTREAM.md). Use My
 review step, use [review-and-submit](../review-and-submit/SKILL.md), which calls
 [code-review](../code-review/SKILL.md).
 Copy dependencies: agentic-workflow, codebase-design, review-and-submit, and code-review.
+For test examples and doubles, see [tests](references/upstream/tests.md) and [mocking](references/upstream/mocking.md).
