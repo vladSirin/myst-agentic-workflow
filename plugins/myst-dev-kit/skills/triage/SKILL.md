@@ -4,22 +4,8 @@ description: Move issues and external PRs through a state machine of triage role
 disable-model-invocation: true
 ---
 
-Read [Myst's local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md)
-before the upstream workflow. Apply its project-pointer rules for tracker,
-triage labels, glossary reads and writes, missing configuration, and authority.
-The upstream setup reference is handled by that contract. Map glossary references
-in triage and its dependencies to the project's authoritative domain files.
-
-Required Myst dependencies for copy installs: agentic-workflow, grilling, and
-domain-modeling. Check the relevant local entry and references before each
-dependent step. Resolve dependencies through the Myst namespace or these sibling
-paths; preserve their invocation rules.
-
-Read the bundled [upstream instructions](references/upstream/UPSTREAM.md), then
-follow them with those mappings. Resolve its companion links inside the bundled
-source directory. When writing a brief, use [AGENT-BRIEF.md](references/upstream/AGENT-BRIEF.md).
-When checking or recording prior rejections, use
-[OUT-OF-SCOPE.md](references/upstream/OUT-OF-SCOPE.md).
-Project rules govern labels, state changes, and publication;
-upstream close or comment instructions do not grant extra authority. The original
-source bytes are unchanged; only the packaged entry filename differs.
+Read the [local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md), then follow
+the [upstream instructions](references/upstream/UPSTREAM.md). Use Myst's
+[grilling](../grilling/SKILL.md) and [domain-modeling](../domain-modeling/SKILL.md)
+for their respective steps. Copy dependencies: agentic-workflow, grilling, and domain-modeling.
+Use the [agent brief](references/upstream/AGENT-BRIEF.md) and [prior rejection guide](references/upstream/OUT-OF-SCOPE.md) when triage reaches those steps.
