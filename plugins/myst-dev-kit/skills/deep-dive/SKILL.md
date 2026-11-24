@@ -5,6 +5,4 @@ disable-model-invocation: true
 argument-hint: "<the decision or question you keep going back and forth on>"
 ---
 
-Read the bundled [upstream instructions](references/upstream/UPSTREAM.md), then
-follow them for the user's request. The original source bytes are unchanged;
-only the packaged entry filename differs.
+Follow the [upstream instructions](references/upstream/UPSTREAM.md).
