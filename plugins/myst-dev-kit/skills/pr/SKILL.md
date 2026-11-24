@@ -8,3 +8,4 @@ Read the [local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md)
 For Perforce, use the project's changelist description workflow.
 For Git, follow the [upstream instructions](references/upstream/UPSTREAM.md) and
 [Myst's review evidence rules](REVIEW-EVIDENCE.md) to draft the body.
+The upstream [credits](references/upstream/CREDITS.md) identify the source of the visual guidance.
