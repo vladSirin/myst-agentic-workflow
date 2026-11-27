@@ -1,42 +1,42 @@
 ---
 name: weekly-report
-description: "Generate a VCS-agnostic (Perforce or Git) weekly team work report covering the last 7 days from the current hour, with optional local AI token usage & value estimation and a 90-day local archive."
+description: "Use when the user asks to generate a VCS-agnostic (Perforce or Git) weekly team work report covering the last 7 days from the current hour, with optional local AI token usage & value estimation and a 90-day local archive."
 argument-hint: "[optional: workspace, --days N, --since ..., audit, --no-tokens, --no-save]"
 disable-model-invocation: true
 ---
 
 Read [Myst's local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md)
 first (copy dependency: `agentic-workflow`) to resolve the target repository,
-VCS ownership, and project terminology. This skill is strictly read-only on
-version control and never mutates VCS state or publishes shared state.
+VCS ownership, and project terminology. This skill never mutates tracked files
+or publishes shared state; its Git collector uses `--no-optional-locks` to avoid
+index writes.
 
 ## 1. Determine scope, options, and mode
 
 - **Target workspace**: Use the target repository root resolved via the local integration contract (or pass `--workspace <path>`).
+- **VCS**: Resolve ownership via project instructions (`AGENTS.md` / `CLAUDE.md`) and workspace evidence first, then pass `--vcs p4` or `--vcs git` explicitly (`--vcs auto` refuses ambiguous dual-VCS workspaces while still handling Perforce repos with an uninitialized `.git` directory).
 - **Window**: Defaults to **7 days back from the start of the current local hour** (`--days 7`). Pass `--days <N>` or `--since "YYYY-MM-DD HH:MM"` if another range is requested.
-- **VCS**: Auto-detected (`--vcs auto`) from workspace bindings (`p4 info` + `git rev-parse`), keeping Perforce repositories as `p4` even when an uninitialized `.git` directory is present.
 - **Mode**:
   - **`team`** (default): Executive KPI snapshot + crisp takeaways, outcome-first deliverables, active WIP readiness, token usage & compute value, and next priorities. Condenses routine repo-hygiene/retirement batches into a compact line.
   - **`audit`**: Expands older parked/shelved/unmerged WIP and `default` / working-tree details.
 - **Optional flags**: Skip token telemetry when `--no-tokens` is requested; skip writing to the local archive when `--no-save` is requested.
 - **Language**: Match the user's requested language while keeping technical identifiers, tags, symbols, and VCS terms in English per project rules.
 
-## 2. Collect VCS history and token usage (read-only)
+## 2. Collect VCS history and token usage
 
-Run the bundled Python scripts relative to this skill directory (`scripts/`):
+Run the VCS collector first with the resolved `--vcs` flag, then pass both exact ISO bounds (`meta.window_start_iso` and `meta.window_end_iso`) and `--completed-count <counts.completed>` to the token collector so both run against the exact same window:
 
 ```bash
-python scripts/collect_weekly_work.py --workspace "<path>"
-python scripts/collect_token_usage.py --workspace "<path>" --days 7 --completed-count <N>
+python scripts/collect_weekly_work.py --workspace "<path>" --vcs <p4|git>
+python scripts/collect_token_usage.py --workspace "<path>" --since "<meta.window_start_iso>" --until "<meta.window_end_iso>" --completed-count <N>
 ```
 
-- Pass `--since "<meta.window_start_local>"` when a custom window is used so VCS and token windows match identically.
 - Never invent CLs, commits, verification results, or token counts; never expose raw internal model codenames in the report (always use the human-readable `tier` labels from `scripts/pricing.json` or `~/.myst/weekly-report-pricing.json`).
-- **Completion criterion**: Collector JSON parses cleanly and `counts.completed == len(completed)`.
+- **Completion criterion**: Both scripts exit `0`, JSON parses cleanly, `meta.complete` is `true`, and `counts.completed == counts.completed_ids_returned == len(completed)`. If a collector fails, stop and report incomplete coverage instead of archiving zero work.
 
-## 3. Synthesize and verify 100% coverage
+## 3. Synthesize and verify returned items
 
-- **Major Work Completed (`completed`)**: Group by feature/system workstream ordered by team impact. In `team` mode, collapse routine hygiene/retirement batches into one compact line. Verify every completed CL/commit ID is cited.
+- **Major Work Completed (`completed`)**: Group by feature/system workstream ordered by team impact. In `team` mode, collapse routine hygiene/retirement batches into one compact line. Account for every returned CL/commit ID in `completed`.
 - **Active WIP (`wip_active`)**: Classify each active item (`pending_cl`, `branch`, `working_tree`, `stash`) by readiness using `verification`, `summary`, `shelved_count`, and `last_touched_time`.
 - **Token Usage & Value Estimation** (unless `--no-tokens`): Present the `workspace` breakdown (`by_tier`, cache savings, per-deliverable efficiency) plus `all_machine` total if other repos were active, and include `caveats`.
 
@@ -48,7 +48,7 @@ Pipe the finished Markdown report into `scripts/save_weekly_report.py`:
 python scripts/save_weekly_report.py --project "<meta.project_name>" --vcs "<meta.vcs>" --window "<meta.window_start_local> to <meta.window_end_local>"
 ```
 
-- Writes `<project>_<YYYY-MM-DD>_<HHMM>.md` into the user's OS-local archive directory (`%LOCALAPPDATA%\myst-weekly-reports` on Windows, `~/.cache/myst-weekly-reports` on macOS/Linux, or `MYST_WEEKLY_REPORT_DIR`), auto-prunes reports older than **90 days**, and updates `INDEX.md`.
+- Writes `<project>_<YYYY-MM-DD>_<HHMM>.md` into the user's OS-local archive directory (`%LOCALAPPDATA%\myst-weekly-reports` on Windows, `~/.cache/myst-weekly-reports` on macOS/Linux, or `MYST_WEEKLY_REPORT_DIR`), auto-prunes only owned weekly-report files older than **90 days**, and updates an owned `INDEX.md`.
 
 ## 5. Present the report
 

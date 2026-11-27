@@ -7,40 +7,10 @@ import os
 import re
 import sqlite3
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
-from urllib.parse import unquote, urlparse
 
-
-def parse_dt(value: str, local_tz) -> datetime:
-    s = value.strip()
-    if s.endswith("Z"):
-        s = s[:-1] + "+00:00"
-    dt = datetime.fromisoformat(s)
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=local_tz)
-    return dt.astimezone(local_tz)
-
-
-def normalize_path(p: str) -> str:
-    if not p:
-        return ""
-    s = p.strip().strip('"').strip("'")
-    if s.lower().startswith("file://"):
-        parsed = urlparse(s)
-        path_part = unquote(parsed.path or "")
-        if re.match(r"^/[a-zA-Z]:", path_part):
-            path_part = path_part[1:]
-        s = path_part
-    else:
-        s = unquote(s)
-    return os.path.normcase(os.path.normpath(s)).rstrip("\\/")
-
-
-def path_matches_workspace(candidate_norm: str, ws_norm: str) -> bool:
-    if not candidate_norm or not ws_norm:
-        return False
-    return candidate_norm == ws_norm or candidate_norm.startswith(ws_norm + os.sep)
+from weekly_common import compute_window, is_same_or_subpath, normalize_path, parse_dt
 
 
 def resolve_pricing_path(explicit_pricing: str, script_dir: Path, home_dir: Path | None = None) -> Path:
@@ -138,7 +108,7 @@ def ag_conv_matches_ws(conv_id: str, conv_meta: dict, ws_norm: str) -> tuple[boo
         uris = info.get("uris") or []
         if uris:
             has_meta = True
-            if any(path_matches_workspace(u, ws_norm) for u in uris):
+            if any(is_same_or_subpath(u, ws_norm) for u in uris):
                 return True, True
             return False, True
         cur = info.get("parent") or ""
@@ -410,7 +380,7 @@ def collect_codex(
 
             if ws_agg is not None and ws_norm:
                 cwd_norm = normalize_path(cwd)
-                if path_matches_workspace(cwd_norm, ws_norm):
+                if is_same_or_subpath(cwd_norm, ws_norm):
                     ws_agg.record("codex", sid, model, turns_count, d_uncached, d_cached, d_out, d_reason)
 
     if compressed_skipped > 0:
@@ -431,6 +401,8 @@ def collect_claude_code(
         return
 
     since_ts = since_dt.timestamp()
+    # Deduplicate real requestIds across all scanned logs so repeated entries do not inflate totals.
+    requests: dict[str, tuple[str, str, int, int, int, str]] = {}
 
     for root, _, files in os.walk(projects_dir):
         for fn in files:
@@ -444,7 +416,7 @@ def collect_claude_code(
                 continue
 
             session_cwd = ""
-            requests: dict[str, tuple[str, int, int, int, str]] = {}
+            sid = str(fpath)
 
             try:
                 with open(fpath, "r", encoding="utf-8", errors="replace") as f:
@@ -483,19 +455,19 @@ def collect_claude_code(
                             continue
 
                         model = str(msg.get("model") or "unknown")
-                        req_id = str(obj.get("requestId") or f"line-{idx}")
+                        raw_req_id = obj.get("requestId")
+                        dedup_key = f"req:{raw_req_id}" if raw_req_id else f"file:{sid}:line:{idx}"
                         entry_cwd = str(obj.get("cwd") or session_cwd or "")
-                        requests[req_id] = (model, uncached, cached, output, entry_cwd)
+                        requests[dedup_key] = (sid, model, uncached, cached, output, entry_cwd)
             except OSError:
                 continue
 
-            sid = str(fpath)
-            for model, uncached, cached, output, entry_cwd in requests.values():
-                all_agg.record("claude_code", sid, model, 1, uncached, cached, output, 0)
-                if ws_agg is not None and ws_norm:
-                    cwd_norm = normalize_path(entry_cwd or session_cwd)
-                    if path_matches_workspace(cwd_norm, ws_norm):
-                        ws_agg.record("claude_code", sid, model, 1, uncached, cached, output, 0)
+    for sid, model, uncached, cached, output, entry_cwd in requests.values():
+        all_agg.record("claude_code", sid, model, 1, uncached, cached, output, 0)
+        if ws_agg is not None and ws_norm:
+            cwd_norm = normalize_path(entry_cwd)
+            if is_same_or_subpath(cwd_norm, ws_norm):
+                ws_agg.record("claude_code", sid, model, 1, uncached, cached, output, 0)
 
 
 def collect_all_usage(
@@ -593,15 +565,7 @@ def main():
     parser.add_argument("--completed-count", type=int, default=0, help="Completed CL/commit count for per-deliverable efficiency")
     args = parser.parse_args()
 
-    now_local = datetime.now().astimezone()
-    local_tz = now_local.tzinfo
-    until_dt = parse_dt(args.until, local_tz) if args.until else now_local
-    if args.since:
-        since_dt = parse_dt(args.since, local_tz)
-    else:
-        lookback = args.days if args.days > 0 else 7
-        current_hour = now_local.replace(minute=0, second=0, microsecond=0)
-        since_dt = current_hour - timedelta(days=lookback)
+    since_dt, until_dt = compute_window(days=args.days, since=args.since, until=args.until)
 
     out = collect_all_usage(
         since_dt=since_dt,

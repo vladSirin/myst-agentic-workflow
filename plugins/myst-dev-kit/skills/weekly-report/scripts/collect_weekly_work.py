@@ -11,6 +11,8 @@ import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+from weekly_common import compute_window, is_same_or_subpath, parse_dt
+
 
 def parse_offset_str(offset_str: str) -> timezone:
     m = re.match(r"^([+-])(\d{2}):?(\d{2})$", (offset_str or "").strip())
@@ -22,30 +24,8 @@ def parse_offset_str(offset_str: str) -> timezone:
     return timezone(timedelta(minutes=sign * (hours * 60 + mins)))
 
 
-def parse_local_dt(value: str, local_tz) -> datetime:
-    s = value.strip()
-    if s.endswith("Z"):
-        s = s[:-1] + "+00:00"
-    dt = datetime.fromisoformat(s)
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=local_tz)
-    return dt.astimezone(local_tz)
-
-
-def compute_window(days: int = 7, since: str = "", now: datetime | None = None) -> tuple[datetime, datetime]:
-    now_local = now if now is not None else datetime.now().astimezone()
-    local_tz = now_local.tzinfo
-    if since:
-        cutoff_local = parse_local_dt(since, local_tz)
-    else:
-        lookback = days if days > 0 else 7
-        current_hour = now_local.replace(minute=0, second=0, microsecond=0)
-        cutoff_local = current_hour - timedelta(days=lookback)
-    return cutoff_local, now_local
-
-
 def run_cmd(cmd: list[str], cwd: str | None = None, timeout: int = 60) -> tuple[int, str, str]:
-    env = dict(os.environ, GIT_TERMINAL_PROMPT="0")
+    env = dict(os.environ, GIT_TERMINAL_PROMPT="0", GIT_OPTIONAL_LOCKS="0")
     proc = subprocess.run(
         cmd,
         cwd=cwd,
@@ -59,14 +39,12 @@ def run_cmd(cmd: list[str], cwd: str | None = None, timeout: int = 60) -> tuple[
     return proc.returncode, proc.stdout, proc.stderr
 
 
-def normalize_path(p: str) -> str:
-    return os.path.normcase(os.path.normpath(p)).rstrip("\\/")
-
-
-def is_same_or_subpath(child: str, parent: str) -> bool:
-    c = normalize_path(child)
-    p = normalize_path(parent)
-    return c == p or c.startswith(p + os.sep)
+def run_cmd_checked(cmd: list[str], cwd: str | None = None, timeout: int = 60) -> str:
+    rc, out, err = run_cmd(cmd, cwd=cwd, timeout=timeout)
+    if rc != 0:
+        detail = (err or out or "").strip()
+        raise RuntimeError(f"Command failed ({rc}): {' '.join(cmd)} — {detail}")
+    return out
 
 
 def probe_perforce(resolved_root: str) -> dict:
@@ -120,18 +98,18 @@ def probe_perforce(resolved_root: str) -> dict:
 def probe_git(resolved_root: str) -> dict:
     if not shutil.which("git"):
         return {"available": False, "work_tree": False, "has_head": False, "has_remote": False}
-    rc, out, _ = run_cmd(["git", "rev-parse", "--is-inside-work-tree"], cwd=resolved_root, timeout=10)
+    rc, out, _ = run_cmd(["git", "--no-optional-locks", "rev-parse", "--is-inside-work-tree"], cwd=resolved_root, timeout=10)
     if rc != 0 or out.strip() != "true":
         return {"available": True, "work_tree": False, "has_head": False, "has_remote": False}
 
-    rc_head, _, _ = run_cmd(["git", "rev-parse", "--verify", "HEAD"], cwd=resolved_root, timeout=10)
+    rc_head, _, _ = run_cmd(["git", "--no-optional-locks", "rev-parse", "--verify", "HEAD"], cwd=resolved_root, timeout=10)
     has_head = rc_head == 0
 
-    _, rem_out, _ = run_cmd(["git", "remote"], cwd=resolved_root, timeout=10)
+    _, rem_out, _ = run_cmd(["git", "--no-optional-locks", "remote"], cwd=resolved_root, timeout=10)
     remotes = [r.strip() for r in rem_out.splitlines() if r.strip()]
 
-    _, top_out, _ = run_cmd(["git", "rev-parse", "--show-toplevel"], cwd=resolved_root, timeout=10)
-    _, br_out, _ = run_cmd(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=resolved_root, timeout=10)
+    _, top_out, _ = run_cmd(["git", "--no-optional-locks", "rev-parse", "--show-toplevel"], cwd=resolved_root, timeout=10)
+    _, br_out, _ = run_cmd(["git", "--no-optional-locks", "rev-parse", "--abbrev-ref", "HEAD"], cwd=resolved_root, timeout=10)
 
     return {
         "available": True,
@@ -142,6 +120,19 @@ def probe_git(resolved_root: str) -> dict:
         "repo_root": top_out.strip() or None,
         "branch": br_out.strip() or None,
     }
+
+
+def _docs_declare_perforce(root_path: Path) -> bool:
+    for doc_name in ("AGENTS.md", "CLAUDE.md"):
+        doc_file = root_path / doc_name
+        if doc_file.is_file():
+            try:
+                txt = doc_file.read_text(encoding="utf-8", errors="replace")
+                if re.search(r"Perforce.*only version control|Perforce.*VCS", txt, re.IGNORECASE):
+                    return True
+            except OSError:
+                pass
+    return False
 
 
 def detect_vcs(resolved_root: str, p4_probe: dict, git_probe: dict, requested_vcs: str = "auto") -> str:
@@ -161,18 +152,12 @@ def detect_vcs(resolved_root: str, p4_probe: dict, git_probe: dict, requested_vc
     if p4_bound and git_head:
         root_path = Path(resolved_root)
         has_p4_markers = any((root_path / m).exists() for m in (".p4config", ".p4ignore", ".p4ignore.txt"))
-        agents_says_p4 = False
-        agents_file = root_path / "AGENTS.md"
-        if agents_file.is_file():
-            try:
-                txt = agents_file.read_text(encoding="utf-8", errors="replace")
-                if re.search(r"Perforce.*only version control|Perforce.*VCS", txt, re.IGNORECASE):
-                    agents_says_p4 = True
-            except OSError:
-                pass
-        if has_p4_markers or agents_says_p4 or not git_probe.get("has_remote"):
+        if (has_p4_markers or _docs_declare_perforce(root_path)) and not git_probe.get("has_remote"):
             return "p4"
-        return "git"
+        raise RuntimeError(
+            f"Dual-VCS workspace detected at '{resolved_root}' (both active Perforce client and initialized Git HEAD). "
+            "Resolve ownership via project instructions and pass --vcs p4 or --vcs git explicitly."
+        )
     if git_tree:
         return "git"
     raise RuntimeError(
@@ -304,19 +289,27 @@ def collect_perforce(
     if not target_user:
         raise RuntimeError("Could not determine Perforce user from --user or p4 info.")
 
+    client_name = p4_probe.get("client")
+    if not client_name:
+        raise RuntimeError("Could not determine Perforce client from p4 info.")
+    client_root = p4_probe.get("client_root")
+    client_stream = p4_probe.get("client_stream")
+
     server_tz = p4_probe["server_tz"]
     cutoff_server = cutoff_local.astimezone(server_tz)
     server_cutoff_str = cutoff_server.strftime("%Y/%m/%d:%H:%M:%S")
 
-    _, sub_out, _ = run_cmd(
-        ["p4", "-ztag", "-F", "%change%", "changes", "-u", target_user, "-s", "submitted", f"@{server_cutoff_str},@now"],
+    # Scope submitted changes strictly to the target stream or client mapping.
+    scope_prefix = f"{client_stream.rstrip('/')}/..." if client_stream else f"//{client_name}/..."
+    sub_out = run_cmd_checked(
+        ["p4", "-ztag", "-F", "%change%", "changes", "-u", target_user, "-s", "submitted", f"{scope_prefix}@{server_cutoff_str},@now"],
         cwd=resolved_root,
     )
     submitted_ids = [x.strip() for x in sub_out.splitlines() if x.strip().isdigit()]
 
     completed_list = []
     for cl in submitted_ids:
-        _, desc_out, _ = run_cmd(["p4", "describe", "-s", cl], cwd=resolved_root)
+        desc_out = run_cmd_checked(["p4", "describe", "-s", cl], cwd=resolved_root)
         parsed = parse_p4_describe(desc_out, server_tz, local_tz)
         completed_list.append(
             {
@@ -331,16 +324,14 @@ def collect_perforce(
             }
         )
 
-    _, open_out, _ = run_cmd(
+    open_all_out = run_cmd_checked(
         ["p4", "-ztag", "-F", "%change%\t%action%\t%depotFile%\t%clientFile%", "opened"],
         cwd=resolved_root,
     )
     opened_by_change: dict[str, list[dict]] = {}
-    client_name = p4_probe.get("client")
-    client_root = p4_probe.get("client_root")
-    client_prefix = f"//{client_name}/" if client_name else None
+    client_prefix = f"//{client_name}/"
 
-    for row in open_out.splitlines():
+    for row in open_all_out.splitlines():
         if not row:
             continue
         parts = row.split("\t", 3)
@@ -349,7 +340,7 @@ def collect_perforce(
         chg_key, action, depot_file, client_file = (p.strip() for p in parts)
 
         local_path = None
-        if client_root and client_prefix and client_file.lower().startswith(client_prefix.lower()):
+        if client_root and client_file.lower().startswith(client_prefix.lower()):
             rel = client_file[len(client_prefix) :]
             local_path = os.path.join(client_root, *rel.split("/"))
         else:
@@ -376,8 +367,9 @@ def collect_perforce(
             }
         )
 
-    _, pend_out, _ = run_cmd(
-        ["p4", "-ztag", "-F", "%change%", "changes", "-u", target_user, "-s", "pending"],
+    # Scope pending changes strictly to the target client workspace.
+    pend_out = run_cmd_checked(
+        ["p4", "-ztag", "-F", "%change%", "changes", "-u", target_user, "-c", client_name, "-s", "pending"],
         cwd=resolved_root,
     )
     pending_ids = [x.strip() for x in pend_out.splitlines() if x.strip().isdigit()]
@@ -385,10 +377,10 @@ def collect_perforce(
     wip_active = []
     wip_older = []
     for cl in pending_ids:
-        _, desc_out, _ = run_cmd(["p4", "describe", "-s", cl], cwd=resolved_root)
+        desc_out = run_cmd_checked(["p4", "describe", "-s", cl], cwd=resolved_root)
         parsed = parse_p4_describe(desc_out, server_tz, local_tz)
 
-        _, sh_out, _ = run_cmd(["p4", "describe", "-s", "-S", cl], cwd=resolved_root)
+        sh_out = run_cmd_checked(["p4", "describe", "-s", "-S", cl], cwd=resolved_root)
         shelved_files = []
         in_shelved = False
         for sl in sh_out.splitlines():
@@ -458,14 +450,18 @@ def collect_perforce(
     return {
         "meta": {
             "vcs": "p4",
+            "complete": True,
             "project_name": project_name,
             "workspace_root": resolved_root,
             "user": target_user,
-            "branch_or_stream": p4_probe.get("client_stream"),
+            "branch_or_stream": client_stream,
             "window_start_local": cutoff_local.strftime("%Y-%m-%d %H:%M"),
             "window_end_local": now_local.strftime("%Y-%m-%d %H:%M"),
+            "window_start_iso": cutoff_local.isoformat(timespec="seconds"),
+            "window_end_iso": now_local.isoformat(timespec="seconds"),
             "vcs_details": {
                 "client": client_name,
+                "scope_filespec": scope_prefix,
                 "server_offset": p4_probe.get("server_offset_str"),
                 "window_start_server": server_cutoff_str,
                 "other_vcs_detected": "git (secondary/uninitialized)" if git_probe.get("work_tree") else None,
@@ -473,6 +469,7 @@ def collect_perforce(
         },
         "counts": {
             "completed": len(completed_list),
+            "completed_ids_returned": len(submitted_ids),
             "wip_active": len(wip_active),
             "wip_older": len(wip_older),
             "uncommitted_or_default": len(default_entries),
@@ -494,15 +491,15 @@ def collect_perforce(
 def resolve_git_default_ref(resolved_root: str, has_head: bool) -> str | None:
     if not has_head:
         return None
-    rc, sym_out, _ = run_cmd(["git", "symbolic-ref", "--quiet", "refs/remotes/origin/HEAD"], cwd=resolved_root)
+    rc, sym_out, _ = run_cmd(["git", "--no-optional-locks", "symbolic-ref", "--quiet", "refs/remotes/origin/HEAD"], cwd=resolved_root)
     if rc == 0 and sym_out.strip():
         return re.sub(r"^refs/remotes/", "", sym_out.strip())
     for cand in ("origin/main", "origin/master"):
-        rc, _, _ = run_cmd(["git", "show-ref", "--verify", "--quiet", f"refs/remotes/{cand}"], cwd=resolved_root)
+        rc, _, _ = run_cmd(["git", "--no-optional-locks", "show-ref", "--verify", "--quiet", f"refs/remotes/{cand}"], cwd=resolved_root)
         if rc == 0:
             return cand
     for cand in ("main", "master"):
-        rc, _, _ = run_cmd(["git", "show-ref", "--verify", "--quiet", f"refs/heads/{cand}"], cwd=resolved_root)
+        rc, _, _ = run_cmd(["git", "--no-optional-locks", "show-ref", "--verify", "--quiet", f"refs/heads/{cand}"], cwd=resolved_root)
         if rc == 0:
             return cand
     return "HEAD"
@@ -519,8 +516,8 @@ def collect_git(
 ) -> dict:
     local_tz = now_local.tzinfo
     repo_root = git_probe.get("repo_root") or resolved_root
-    _, u_name, _ = run_cmd(["git", "config", "user.name"], cwd=resolved_root)
-    _, u_email, _ = run_cmd(["git", "config", "user.email"], cwd=resolved_root)
+    _, u_name, _ = run_cmd(["git", "--no-optional-locks", "config", "user.name"], cwd=resolved_root)
+    _, u_email, _ = run_cmd(["git", "--no-optional-locks", "config", "user.email"], cwd=resolved_root)
     u_name = u_name.strip()
     u_email = u_email.strip()
 
@@ -532,6 +529,7 @@ def collect_git(
     if git_probe.get("has_head") and default_ref:
         cmd = [
             "git",
+            "--no-optional-locks",
             "log",
             default_ref,
             "--no-merges",
@@ -542,64 +540,69 @@ def collect_git(
         ]
         if author_filter:
             cmd.append(f"--author={author_filter}")
-        rc, log_out, _ = run_cmd(cmd, cwd=resolved_root)
-        if rc == 0 and log_out:
-            for rec in log_out.split("\x1e"):
-                rec_clean = rec.strip("\r\n")
-                if not rec_clean:
-                    continue
-                fields = rec_clean.split("\x1f", 4)
-                if len(fields) < 4:
-                    continue
-                full_hash, short_hash, ad_iso, subject = (f.strip() for f in fields[:4])
-                body = fields[4] if len(fields) >= 5 else ""
-                commit_dto = parse_local_dt(ad_iso, local_tz)
+        log_out = run_cmd_checked(cmd, cwd=resolved_root)
+        for rec in log_out.split("\x1e"):
+            rec_clean = rec.strip("\r\n")
+            if not rec_clean:
+                continue
+            fields = rec_clean.split("\x1f", 4)
+            if len(fields) < 4:
+                continue
+            full_hash, short_hash, ad_iso, subject = (f.strip() for f in fields[:4])
+            body = fields[4] if len(fields) >= 5 else ""
+            commit_dto = parse_dt(ad_iso, local_tz)
 
-                tags = []
-                m_cc = re.match(r"^([a-zA-Z0-9_-]+)(?:\(([^)]+)\))?:\s*(.+)$", subject)
-                if m_cc:
-                    tags.append(m_cc.group(1))
-                    if m_cc.group(2):
-                        tags.append(m_cc.group(2))
-                else:
-                    rest = subject
-                    while True:
-                        m_b = re.match(r"^\[([^\]]+)\]\s*(.*)$", rest)
-                        if not m_b:
-                            break
-                        tags.append(m_b.group(1))
-                        rest = m_b.group(2)
+            tags = []
+            m_cc = re.match(r"^([a-zA-Z0-9_-]+)(?:\(([^)]+)\))?:\s*(.+)$", subject)
+            if m_cc:
+                tags.append(m_cc.group(1))
+                if m_cc.group(2):
+                    tags.append(m_cc.group(2))
+            else:
+                rest = subject
+                while True:
+                    m_b = re.match(r"^\[([^\]]+)\]\s*(.*)$", rest)
+                    if not m_b:
+                        break
+                    tags.append(m_b.group(1))
+                    rest = m_b.group(2)
 
-                ticket = None
-                m_t = re.search(r"(?m)^\s*(?:Ticket|Closes|Refs):\s*(.+)$", body)
-                if m_t:
-                    ticket = m_t.group(1).strip()
-                else:
-                    m_num = re.search(r"(#\d+)", subject)
-                    if m_num:
-                        ticket = m_num.group(1)
+            ticket = None
+            m_t = re.search(r"(?m)^\s*(?:Ticket|Closes|Refs):\s*(.+)$", body)
+            if m_t:
+                ticket = m_t.group(1).strip()
+            else:
+                m_num = re.search(r"(#\d+)", subject)
+                if m_num:
+                    ticket = m_num.group(1)
 
-                summary = re.sub(r"\s+", " ", body).strip()
-                if len(summary) > 360:
-                    summary = summary[:357].rstrip() + "..."
+            summary = re.sub(r"\s+", " ", body).strip()
+            if len(summary) > 360:
+                summary = summary[:357].rstrip() + "..."
 
-                _, dt_out, _ = run_cmd(["git", "diff-tree", "--no-commit-id", "--name-only", "-r", full_hash], cwd=resolved_root)
-                diff_files = [x.strip() for x in dt_out.splitlines() if x.strip()]
+            dt_out = run_cmd_checked(
+                ["git", "--no-optional-locks", "diff-tree", "--no-commit-id", "--name-only", "-r", full_hash],
+                cwd=resolved_root,
+            )
+            diff_files = [x.strip() for x in dt_out.splitlines() if x.strip()]
 
-                completed_list.append(
-                    {
-                        "id": short_hash,
-                        "local_time": commit_dto.strftime("%Y-%m-%d %H:%M"),
-                        "title": subject,
-                        "tags": tags,
-                        "ticket": ticket,
-                        "summary": summary,
-                        "file_count": len(diff_files),
-                        "sample_files": diff_files[:5],
-                    }
-                )
+            completed_list.append(
+                {
+                    "id": short_hash,
+                    "local_time": commit_dto.strftime("%Y-%m-%d %H:%M"),
+                    "title": subject,
+                    "tags": tags,
+                    "ticket": ticket,
+                    "summary": summary,
+                    "file_count": len(diff_files),
+                    "sample_files": diff_files[:5],
+                }
+            )
 
-    _, st_out, _ = run_cmd(["git", "-c", "core.quotepath=false", "status", "--porcelain=v1"], cwd=resolved_root)
+    st_out = run_cmd_checked(
+        ["git", "--no-optional-locks", "-c", "core.quotepath=false", "status", "--porcelain=v1"],
+        cwd=resolved_root,
+    )
     wt_files = []
     wt_touched = []
     wt_latest = None
@@ -650,9 +653,10 @@ def collect_git(
 
     older_branch_total = 0
     if git_probe.get("has_head") and default_ref:
-        rc_ref, ref_out, _ = run_cmd(
+        ref_out = run_cmd_checked(
             [
                 "git",
+                "--no-optional-locks",
                 "for-each-ref",
                 f"--no-merged={default_ref}",
                 "--sort=-committerdate",
@@ -662,55 +666,54 @@ def collect_git(
             ],
             cwd=resolved_root,
         )
-        if rc_ref == 0:
-            for rl in ref_out.splitlines():
-                if not rl:
-                    continue
-                parts = rl.split("\t", 4)
-                if len(parts) < 5:
-                    continue
-                ref_name, c_date_iso, a_name, a_email, subj = (p.strip() for p in parts)
-                if ref_name in ("origin/HEAD", "origin", default_ref):
-                    continue
+        for rl in ref_out.splitlines():
+            if not rl:
+                continue
+            parts = rl.split("\t", 4)
+            if len(parts) < 5:
+                continue
+            ref_name, c_date_iso, a_name, a_email, subj = (p.strip() for p in parts)
+            if ref_name in ("origin/HEAD", "origin", default_ref):
+                continue
 
-                if author_filter:
-                    af = author_filter.lower()
-                    matched = (af in a_email.lower()) or (af in a_name.lower())
-                    if not matched:
-                        _, own_out, _ = run_cmd(
-                            ["git", "log", "-n", "1", f"--author={author_filter}", f"{default_ref}..{ref_name}", "--pretty=format:%h"],
-                            cwd=resolved_root,
-                        )
-                        matched = bool(own_out.strip())
-                    if not matched:
-                        continue
-
-                _, ahead_out, _ = run_cmd(["git", "rev-list", "--count", f"{default_ref}..{ref_name}"], cwd=resolved_root)
-                ahead_count = int(ahead_out.strip()) if ahead_out.strip().isdigit() else 0
-                if ahead_count <= 0:
+            if author_filter:
+                af = author_filter.lower()
+                matched = (af in a_email.lower()) or (af in a_name.lower())
+                if not matched:
+                    own_out = run_cmd_checked(
+                        ["git", "--no-optional-locks", "log", "-n", "1", f"--author={author_filter}", f"{default_ref}..{ref_name}", "--pretty=format:%h"],
+                        cwd=resolved_root,
+                    )
+                    matched = bool(own_out.strip())
+                if not matched:
                     continue
 
-                ref_dto = parse_local_dt(c_date_iso, local_tz)
-                b_item = {
-                    "id": ref_name,
-                    "kind": "branch",
-                    "last_touched_time": ref_dto.strftime("%Y-%m-%d %H:%M"),
-                    "title": f"{ref_name} (+{ahead_count} ahead of {default_ref}): {subj}",
-                    "summary": f"Author: {a_name}; latest commit: {subj}",
-                    "verification": "",
-                    "file_count": ahead_count,
-                    "shelved_count": 0,
-                    "sample_files": [],
-                }
-                if ref_dto >= cutoff_local:
-                    wip_active.append(b_item)
-                else:
-                    older_branch_total += 1
-                    if older_branch_total <= 20:
-                        wip_older.append(b_item)
+            ahead_out = run_cmd_checked(["git", "--no-optional-locks", "rev-list", "--count", f"{default_ref}..{ref_name}"], cwd=resolved_root)
+            ahead_count = int(ahead_out.strip()) if ahead_out.strip().isdigit() else 0
+            if ahead_count <= 0:
+                continue
 
-    _, st_list_out, _ = run_cmd(
-        ["git", "stash", "list", "--date=iso-strict", "--pretty=format:%gd%x1f%ad%x1f%gs"],
+            ref_dto = parse_dt(c_date_iso, local_tz)
+            b_item = {
+                "id": ref_name,
+                "kind": "branch",
+                "last_touched_time": ref_dto.strftime("%Y-%m-%d %H:%M"),
+                "title": f"{ref_name} (+{ahead_count} ahead of {default_ref}): {subj}",
+                "summary": f"Author: {a_name}; latest commit: {subj}",
+                "verification": "",
+                "file_count": ahead_count,
+                "shelved_count": 0,
+                "sample_files": [],
+            }
+            if ref_dto >= cutoff_local:
+                wip_active.append(b_item)
+            else:
+                older_branch_total += 1
+                if older_branch_total <= 20:
+                    wip_older.append(b_item)
+
+    st_list_out = run_cmd_checked(
+        ["git", "--no-optional-locks", "stash", "list", "--date=iso-strict", "--pretty=format:%gd%x1f%ad%x1f%gs"],
         cwd=resolved_root,
     )
     stashes_obj = []
@@ -721,7 +724,7 @@ def collect_git(
         if len(sp) < 3:
             continue
         s_ref, s_date_iso, s_msg = (p.strip() for p in sp)
-        s_dto = parse_local_dt(s_date_iso, local_tz)
+        s_dto = parse_dt(s_date_iso, local_tz)
         stashes_obj.append({"ref": s_ref, "local_time": s_dto.strftime("%Y-%m-%d %H:%M"), "message": s_msg})
         s_item = {
             "id": s_ref,
@@ -744,12 +747,15 @@ def collect_git(
     return {
         "meta": {
             "vcs": "git",
+            "complete": True,
             "project_name": project_name,
             "workspace_root": resolved_root,
             "user": display_user,
             "branch_or_stream": git_probe.get("branch"),
             "window_start_local": cutoff_local.strftime("%Y-%m-%d %H:%M"),
             "window_end_local": now_local.strftime("%Y-%m-%d %H:%M"),
+            "window_start_iso": cutoff_local.isoformat(timespec="seconds"),
+            "window_end_iso": now_local.isoformat(timespec="seconds"),
             "vcs_details": {
                 "repo_root": repo_root,
                 "default_ref": default_ref,
@@ -761,6 +767,7 @@ def collect_git(
         },
         "counts": {
             "completed": len(completed_list),
+            "completed_ids_returned": len(completed_list),
             "wip_active": len(wip_active),
             "wip_older": len(wip_older),
             "uncommitted_or_default": len(wt_files),
@@ -785,6 +792,7 @@ def main():
     parser.add_argument("--vcs", choices=("auto", "p4", "git"), default="auto")
     parser.add_argument("--days", type=int, default=7)
     parser.add_argument("--since", default="")
+    parser.add_argument("--until", default="")
     parser.add_argument("--user", default="")
     parser.add_argument("--workspace", default=".")
     parser.add_argument("--compact", action="store_true")
@@ -795,7 +803,7 @@ def main():
         raise SystemExit(f"Workspace does not exist: {resolved_root}")
 
     project_name = Path(resolved_root).name
-    cutoff_local, now_local = compute_window(days=args.days, since=args.since)
+    cutoff_local, now_local = compute_window(days=args.days, since=args.since, until=args.until)
 
     p4_probe = probe_perforce(resolved_root)
     git_probe = probe_git(resolved_root)

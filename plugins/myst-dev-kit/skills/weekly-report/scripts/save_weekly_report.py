@@ -9,6 +9,10 @@ import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
+REPORT_FILENAME_RE = re.compile(r"^.+_\d{4}-\d{2}-\d{2}_\d{4}(?:-\d{2})?\.md$")
+REPORT_MARKER = "<!-- myst-weekly-report -->"
+INDEX_HEADER = "# Weekly Report Local Archive"
+
 
 def default_archive_dir() -> Path:
     env_dir = os.environ.get("MYST_WEEKLY_REPORT_DIR", "").strip()
@@ -19,6 +23,30 @@ def default_archive_dir() -> Path:
         return Path(base) / "myst-weekly-reports"
     base = os.environ.get("XDG_CACHE_HOME", "").strip() or os.path.expanduser("~/.cache")
     return Path(base) / "myst-weekly-reports"
+
+
+def _is_owned_report(path: Path) -> bool:
+    if not path.is_file() or not REPORT_FILENAME_RE.match(path.name):
+        return False
+    try:
+        head = path.read_text(encoding="utf-8", errors="replace")[:512]
+        return REPORT_MARKER in head
+    except OSError:
+        return False
+
+
+def _ensure_owned_index(index_path: Path) -> None:
+    if not index_path.exists():
+        return
+    try:
+        first_line = index_path.read_text(encoding="utf-8", errors="replace").splitlines()[0].strip()
+    except (OSError, IndexError):
+        first_line = ""
+    if first_line != INDEX_HEADER:
+        raise RuntimeError(
+            f"Refusing to overwrite existing '{index_path}' because its ownership cannot be established "
+            f"(expected first line '{INDEX_HEADER}')."
+        )
 
 
 def save_report(
@@ -35,6 +63,8 @@ def save_report(
 
     target_dir = archive_dir or default_archive_dir()
     target_dir.mkdir(parents=True, exist_ok=True)
+    index_path = target_dir / "INDEX.md"
+    _ensure_owned_index(index_path)
 
     safe_project = re.sub(r"[^a-zA-Z0-9._-]", "-", project).strip("-") or "workspace"
     ts_now = now or datetime.now()
@@ -45,12 +75,13 @@ def save_report(
         filename = f"{safe_project}_{ts_now.strftime('%Y-%m-%d_%H%M-%S')}.md"
         out_path = target_dir / filename
 
-    out_path.write_text(content, encoding="utf-8")
+    body = content if REPORT_MARKER in content[:256] else f"{REPORT_MARKER}\n{content}"
+    out_path.write_text(body, encoding="utf-8")
 
     prune_cutoff = ts_now - timedelta(days=retention_days)
     pruned_files = []
     for f in target_dir.glob("*.md"):
-        if not f.is_file() or f.name == "INDEX.md" or f.resolve() == out_path.resolve():
+        if f.resolve() == out_path.resolve() or not _is_owned_report(f):
             continue
         mtime = datetime.fromtimestamp(f.stat().st_mtime)
         if mtime < prune_cutoff:
@@ -58,13 +89,13 @@ def save_report(
             f.unlink()
 
     retained = sorted(
-        (f for f in target_dir.glob("*.md") if f.is_file() and f.name != "INDEX.md"),
+        (f for f in target_dir.glob("*.md") if _is_owned_report(f)),
         key=lambda p: p.stat().st_mtime,
         reverse=True,
     )
 
     index_lines = [
-        "# Weekly Report Local Archive",
+        INDEX_HEADER,
         "",
         f"- **Location:** `{target_dir}`",
         f"- **Retention:** {retention_days} days (~3 months rolling auto-prune)",
@@ -81,7 +112,6 @@ def save_report(
         saved_col = datetime.fromtimestamp(rf.stat().st_mtime).strftime("%Y-%m-%d %H:%M")
         index_lines.append(f"| {saved_col} | {proj_col} | [{rf.name}](./{rf.name}) |")
 
-    index_path = target_dir / "INDEX.md"
     index_path.write_text("\n".join(index_lines) + "\n", encoding="utf-8")
 
     return {
