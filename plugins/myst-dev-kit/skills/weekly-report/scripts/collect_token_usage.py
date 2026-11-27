@@ -401,8 +401,9 @@ def collect_claude_code(
         return
 
     since_ts = since_dt.timestamp()
-    # Deduplicate real requestIds across all scanned logs so repeated entries do not inflate totals.
-    requests: dict[str, tuple[str, str, int, int, int, str]] = {}
+    # Deduplicate real requestIds deterministically across all scanned logs,
+    # keeping the most complete/latest snapshot and preserving workspace attribution.
+    requests: dict[str, tuple[float, int, int, str, str, int, int, int, str]] = {}
 
     for root, _, files in os.walk(projects_dir):
         for fn in files:
@@ -458,11 +459,30 @@ def collect_claude_code(
                         raw_req_id = obj.get("requestId")
                         dedup_key = f"req:{raw_req_id}" if raw_req_id else f"file:{sid}:line:{idx}"
                         entry_cwd = str(obj.get("cwd") or session_cwd or "")
-                        requests[dedup_key] = (sid, model, uncached, cached, output, entry_cwd)
+                        rank_ts = dt.timestamp()
+                        rank_total = uncached + cached + output
+
+                        prev = requests.get(dedup_key)
+                        if prev is None:
+                            requests[dedup_key] = (rank_ts, rank_total, output, sid, model, uncached, cached, output, entry_cwd)
+                        else:
+                            prev_cwd = prev[8]
+                            # Preserve workspace attribution if either snapshot carries it.
+                            if ws_norm and prev_cwd and is_same_or_subpath(normalize_path(prev_cwd), ws_norm):
+                                merged_cwd = prev_cwd
+                            elif ws_norm and entry_cwd and is_same_or_subpath(normalize_path(entry_cwd), ws_norm):
+                                merged_cwd = entry_cwd
+                            else:
+                                merged_cwd = entry_cwd or prev_cwd
+
+                            if (rank_ts, rank_total, output) >= (prev[0], prev[1], prev[2]):
+                                requests[dedup_key] = (rank_ts, rank_total, output, sid, model, uncached, cached, output, merged_cwd)
+                            else:
+                                requests[dedup_key] = (prev[0], prev[1], prev[2], prev[3], prev[4], prev[5], prev[6], prev[7], merged_cwd)
             except OSError:
                 continue
 
-    for sid, model, uncached, cached, output, entry_cwd in requests.values():
+    for _, _, _, sid, model, uncached, cached, output, entry_cwd in requests.values():
         all_agg.record("claude_code", sid, model, 1, uncached, cached, output, 0)
         if ws_agg is not None and ws_norm:
             cwd_norm = normalize_path(entry_cwd)

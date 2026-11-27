@@ -9,7 +9,7 @@ import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
-REPORT_FILENAME_RE = re.compile(r"^.+_\d{4}-\d{2}-\d{2}_\d{4}(?:-\d{2})?\.md$")
+REPORT_FILENAME_RE = re.compile(r"^.+_\d{4}-\d{2}-\d{2}_\d{4}(?:-\d{2}(?:-\d+)?)?\.md$")
 REPORT_MARKER = "<!-- myst-weekly-report -->"
 INDEX_HEADER = "# Weekly Report Local Archive"
 
@@ -69,14 +69,26 @@ def save_report(
     safe_project = re.sub(r"[^a-zA-Z0-9._-]", "-", project).strip("-") or "workspace"
     ts_now = now or datetime.now()
 
-    filename = f"{safe_project}_{ts_now.strftime('%Y-%m-%d_%H%M')}.md"
-    out_path = target_dir / filename
-    if out_path.exists():
-        filename = f"{safe_project}_{ts_now.strftime('%Y-%m-%d_%H%M-%S')}.md"
-        out_path = target_dir / filename
-
     body = content if REPORT_MARKER in content[:256] else f"{REPORT_MARKER}\n{content}"
-    out_path.write_text(body, encoding="utf-8")
+    candidates = [
+        f"{safe_project}_{ts_now.strftime('%Y-%m-%d_%H%M')}.md",
+        f"{safe_project}_{ts_now.strftime('%Y-%m-%d_%H%M-%S')}.md",
+        *(f"{safe_project}_{ts_now.strftime('%Y-%m-%d_%H%M-%S')}-{seq}.md" for seq in range(2, 100)),
+    ]
+
+    out_path = None
+    for cand in candidates:
+        cand_path = target_dir / cand
+        try:
+            with open(cand_path, "x", encoding="utf-8") as fh:
+                fh.write(body)
+            out_path = cand_path
+            break
+        except FileExistsError:
+            continue
+
+    if out_path is None:
+        raise RuntimeError(f"Could not allocate unique archive filename in '{target_dir}'.")
 
     prune_cutoff = ts_now - timedelta(days=retention_days)
     pruned_files = []
@@ -107,7 +119,7 @@ def save_report(
     ]
 
     for rf in retained:
-        m = re.match(r"^(.+?)_\d{4}-\d{2}-\d{2}_\d{4}(?:-\d{2})?\.md$", rf.name)
+        m = re.match(r"^(.+?)_\d{4}-\d{2}-\d{2}_\d{4}(?:-\d{2}(?:-\d+)?)?\.md$", rf.name)
         proj_col = m.group(1) if m else "unknown"
         saved_col = datetime.fromtimestamp(rf.stat().st_mtime).strftime("%Y-%m-%d %H:%M")
         index_lines.append(f"| {saved_col} | {proj_col} | [{rf.name}](./{rf.name}) |")

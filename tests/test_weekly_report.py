@@ -46,12 +46,19 @@ class WeeklyReportTests(unittest.TestCase):
             git_no_head = {"available": True, "work_tree": True, "has_head": False, "has_remote": False}
             self.assertEqual(cww.detect_vcs(tmp, p4_probe, git_no_head, "auto"), "p4")
 
-            # Dual VCS with initialized Git HEAD + remote must require explicit --vcs choice.
+            # Dual VCS with initialized Git HEAD (with or without remote) must require explicit --vcs choice.
             git_with_remote = {"available": True, "work_tree": True, "has_head": True, "has_remote": True}
+            git_no_remote = {"available": True, "work_tree": True, "has_head": True, "has_remote": False}
             with self.assertRaises(RuntimeError):
                 cww.detect_vcs(tmp, p4_probe, git_with_remote, "auto")
+            with self.assertRaises(RuntimeError):
+                cww.detect_vcs(tmp, p4_probe, git_no_remote, "auto")
             self.assertEqual(cww.detect_vcs(tmp, p4_probe, git_with_remote, "p4"), "p4")
             self.assertEqual(cww.detect_vcs(tmp, p4_probe, git_with_remote, "git"), "git")
+
+            # Explicit --vcs p4 must fail if workspace is not bound to the active P4 client.
+            with self.assertRaises(RuntimeError):
+                cww.detect_vcs(tmp, {"available": True, "bound": False, "client": "other", "client_root": "/other"}, git_with_remote, "p4")
 
             # Without p4 binding, git work_tree selects git.
             self.assertEqual(cww.detect_vcs(tmp, {"available": True, "bound": False}, git_with_remote, "auto"), "git")
@@ -80,30 +87,37 @@ class WeeklyReportTests(unittest.TestCase):
         self.assertEqual(parsed["file_count"], 2)
         self.assertEqual(parsed["sample_files"], ["//Depot/main/Foo.as", "//Depot/main/Bar.as"])
 
-    def test_collect_perforce_scopes_to_client_and_raises_on_query_failure(self):
-        cutoff, now_local = cww.compute_window(days=7)
+    def test_collect_perforce_scopes_end_bound_and_raises_on_query_failure(self):
+        tz = timezone.utc
+        cutoff = datetime(2026, 11, 16, 12, 0, tzinfo=tz)
+        now_local = datetime(2026, 11, 23, 12, 0, tzinfo=tz)
         seen_cmds = []
 
         def fake_ok(cmd, **kwargs):
             seen_cmds.append(cmd)
             if "submitted" in cmd:
-                return 0, "5122\n", ""
+                return 0, "5122\n5199\n", ""
             if "pending" in cmd:
                 return 0, "5124\n", ""
             if "describe" in cmd and "5122" in cmd:
-                return 0, "Change 5122 by u@wsA on 2026/11/26 10:00:00\n\n\t[design] A\n\nAffected files ...\n\n... //ProjA/main/F.as#1 edit\n", ""
+                return 0, "Change 5122 by u@wsA on 2026/11/22 10:00:00\n\n\t[design] A\n\nAffected files ...\n\n... //ProjA/main/F.as#1 edit\n", ""
+            if "describe" in cmd and "5199" in cmd:
+                # Out-of-window later submission must be excluded even if server returned it.
+                return 0, "Change 5199 by u@wsA on 2026/11/24 10:00:00\n\n\t[design] Later\n\nAffected files ...\n\n... //ProjA/main/L.as#1 edit\n", ""
             if "describe" in cmd and "5124" in cmd:
-                return 0, "Change 5124 by u@wsA on 2026/11/26 11:00:00 *pending*\n\n\t[design] B\n", ""
+                return 0, "Change 5124 by u@wsA on 2026/11/22 11:00:00 *pending*\n\n\t[design] B\n", ""
             return 0, "", ""
 
-        probe = {"user": "u", "client": "wsA", "client_root": "/wsA", "client_stream": "//ProjA/main", "server_tz": timezone.utc, "server_offset_str": "+0000"}
+        probe = {"user": "u", "client": "wsA", "client_root": "/wsA", "client_stream": "//ProjA/main", "server_tz": tz, "server_offset_str": "+0000"}
         with patch.object(cww, "run_cmd", side_effect=fake_ok):
             res = cww.collect_perforce(probe, "/wsA", "ProjA", "", cutoff, now_local, {})
         self.assertTrue(res["meta"]["complete"])
         self.assertEqual(res["counts"]["completed"], 1)
+        self.assertEqual(res["counts"]["completed_ids_returned"], 1)
+        self.assertEqual([c["id"] for c in res["completed"]], ["5122"])
         sub_cmd = next(c for c in seen_cmds if "submitted" in c)
         pend_cmd = next(c for c in seen_cmds if "pending" in c)
-        self.assertTrue(any(arg.startswith("//ProjA/main/...") for arg in sub_cmd))
+        self.assertTrue(any(arg == "//ProjA/main/...@2026/11/16:12:00:00,@2026/11/23:12:00:00" for arg in sub_cmd))
         self.assertIn("-c", pend_cmd)
         self.assertIn("wsA", pend_cmd)
 
@@ -115,6 +129,22 @@ class WeeklyReportTests(unittest.TestCase):
         with patch.object(cww, "run_cmd", side_effect=fake_fail):
             with self.assertRaises(RuntimeError):
                 cww.collect_perforce(probe, "/wsA", "ProjA", "", cutoff, now_local, {})
+
+    def test_collect_git_rejects_malformed_record(self):
+        start = datetime(2026, 11, 20, tzinfo=timezone.utc)
+        end = datetime(2026, 11, 27, tzinfo=timezone.utc)
+        valid_rec = ("a" * 40) + "\x1faaaaaaa\x1f2026-11-25T08:00:00+00:00\x1fSubject\x1fBody"
+
+        def fake_malformed(cmd, **kwargs):
+            if "rev-list" in cmd:
+                return 0, ("a" * 40) + "\n" + ("b" * 40) + "\n", ""
+            if "log" in cmd:
+                return 0, valid_rec + "\x1e" + ("b" * 40) + "\x1e", ""
+            return 0, "", ""
+
+        with patch.object(cww, "resolve_git_default_ref", return_value="main"), patch.object(cww, "run_cmd", side_effect=fake_malformed):
+            with self.assertRaises(RuntimeError):
+                cww.collect_git({"has_head": True}, ".", "GitRepo", "", start, end, {})
 
     def test_collect_git_end_to_end_and_index_untouched(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -215,17 +245,23 @@ class WeeklyReportTests(unittest.TestCase):
                 encoding="utf-8",
             )
 
-            # Claude Code: same requestId repeated in two different files must deduplicate globally.
+            # Claude Code: same requestId across files with partial vs final snapshot must produce identical totals regardless of order.
             claude_dir = base / "claude" / "projects" / "proj"
             claude_dir.mkdir(parents=True)
-            claude_row = json.dumps({
+            partial_row = json.dumps({
+                "cwd": "",
+                "timestamp": (now - timedelta(hours=3, minutes=1)).isoformat(),
+                "requestId": "req-1",
+                "message": {"model": "claude-sonnet-4", "usage": {"input_tokens": 10_000, "cache_creation_input_tokens": 5_000, "cache_read_input_tokens": 50_000, "output_tokens": 0}},
+            }) + "\n"
+            final_row = json.dumps({
                 "cwd": str(ws),
                 "timestamp": (now - timedelta(hours=3)).isoformat(),
                 "requestId": "req-1",
                 "message": {"model": "claude-sonnet-4", "usage": {"input_tokens": 10_000, "cache_creation_input_tokens": 5_000, "cache_read_input_tokens": 50_000, "output_tokens": 4_000}},
             }) + "\n"
-            (claude_dir / "c1.jsonl").write_text(claude_row, encoding="utf-8")
-            (claude_dir / "c2.jsonl").write_text(claude_row, encoding="utf-8")
+            (claude_dir / "a_final.jsonl").write_text(final_row, encoding="utf-8")
+            (claude_dir / "z_partial.jsonl").write_text(partial_row, encoding="utf-8")
 
             res = ctu.collect_all_usage(
                 since_dt=since,
@@ -292,6 +328,16 @@ class WeeklyReportTests(unittest.TestCase):
             idx = Path(res["index_path"]).read_text(encoding="utf-8")
             self.assertIn("My-Project_2026-11-27_1345.md", idx)
             self.assertNotIn("unrelated-notes.md", idx)
+
+            # Collision test: when both minute and seconds names exist, allocate unique -2 suffix without overwriting either.
+            occupied_min = arc / "Collide_2026-11-27_1345.md"
+            occupied_sec = arc / "Collide_2026-11-27_1345-00.md"
+            occupied_min.write_text("# Keep 1\n", encoding="utf-8")
+            occupied_sec.write_text("# Keep 2\n", encoding="utf-8")
+            col_res = swr.save_report("Collide", "git", "w", "# New\n", archive_dir=arc, now=now)
+            self.assertTrue(col_res["saved_path"].endswith("Collide_2026-11-27_1345-00-2.md"))
+            self.assertEqual(occupied_min.read_text(encoding="utf-8"), "# Keep 1\n")
+            self.assertEqual(occupied_sec.read_text(encoding="utf-8"), "# Keep 2\n")
 
             # Unowned INDEX.md must refuse overwrite.
             foreign_dir = arc / "foreign"

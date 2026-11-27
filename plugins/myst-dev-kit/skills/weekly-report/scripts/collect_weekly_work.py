@@ -122,23 +122,16 @@ def probe_git(resolved_root: str) -> dict:
     }
 
 
-def _docs_declare_perforce(root_path: Path) -> bool:
-    for doc_name in ("AGENTS.md", "CLAUDE.md"):
-        doc_file = root_path / doc_name
-        if doc_file.is_file():
-            try:
-                txt = doc_file.read_text(encoding="utf-8", errors="replace")
-                if re.search(r"Perforce.*only version control|Perforce.*VCS", txt, re.IGNORECASE):
-                    return True
-            except OSError:
-                pass
-    return False
-
-
 def detect_vcs(resolved_root: str, p4_probe: dict, git_probe: dict, requested_vcs: str = "auto") -> str:
     if requested_vcs != "auto":
-        if requested_vcs == "p4" and not p4_probe.get("available"):
-            raise RuntimeError("p4 requested but p4 CLI not found.")
+        if requested_vcs == "p4":
+            if not p4_probe.get("available"):
+                raise RuntimeError("p4 requested but p4 CLI not found.")
+            if not p4_probe.get("bound"):
+                raise RuntimeError(
+                    f"p4 requested but '{resolved_root}' is not bound to the active Perforce client "
+                    f"(client={p4_probe.get('client')}, client_root={p4_probe.get('client_root')})."
+                )
         if requested_vcs == "git" and not git_probe.get("work_tree"):
             raise RuntimeError(f"git requested but '{resolved_root}' is not a Git work tree.")
         return requested_vcs
@@ -150,10 +143,6 @@ def detect_vcs(resolved_root: str, p4_probe: dict, git_probe: dict, requested_vc
     if p4_bound and not git_head:
         return "p4"
     if p4_bound and git_head:
-        root_path = Path(resolved_root)
-        has_p4_markers = any((root_path / m).exists() for m in (".p4config", ".p4ignore", ".p4ignore.txt"))
-        if (has_p4_markers or _docs_declare_perforce(root_path)) and not git_probe.get("has_remote"):
-            return "p4"
         raise RuntimeError(
             f"Dual-VCS workspace detected at '{resolved_root}' (both active Perforce client and initialized Git HEAD). "
             "Resolve ownership via project instructions and pass --vcs p4 or --vcs git explicitly."
@@ -297,20 +286,26 @@ def collect_perforce(
 
     server_tz = p4_probe["server_tz"]
     cutoff_server = cutoff_local.astimezone(server_tz)
+    end_server = now_local.astimezone(server_tz)
     server_cutoff_str = cutoff_server.strftime("%Y/%m/%d:%H:%M:%S")
+    server_end_str = end_server.strftime("%Y/%m/%d:%H:%M:%S")
 
-    # Scope submitted changes strictly to the target stream or client mapping.
+    # Scope submitted changes strictly to the target stream/client and captured [cutoff, end] bounds.
     scope_prefix = f"{client_stream.rstrip('/')}/..." if client_stream else f"//{client_name}/..."
     sub_out = run_cmd_checked(
-        ["p4", "-ztag", "-F", "%change%", "changes", "-u", target_user, "-s", "submitted", f"{scope_prefix}@{server_cutoff_str},@now"],
+        ["p4", "-ztag", "-F", "%change%", "changes", "-u", target_user, "-s", "submitted", f"{scope_prefix}@{server_cutoff_str},@{server_end_str}"],
         cwd=resolved_root,
     )
     submitted_ids = [x.strip() for x in sub_out.splitlines() if x.strip().isdigit()]
 
     completed_list = []
+    reconciled_ids = []
     for cl in submitted_ids:
         desc_out = run_cmd_checked(["p4", "describe", "-s", cl], cwd=resolved_root)
         parsed = parse_p4_describe(desc_out, server_tz, local_tz)
+        if parsed["local_dto"] is not None and (parsed["local_dto"] < cutoff_local or parsed["local_dto"] > now_local):
+            continue
+        reconciled_ids.append(cl)
         completed_list.append(
             {
                 "id": cl,
@@ -464,12 +459,13 @@ def collect_perforce(
                 "scope_filespec": scope_prefix,
                 "server_offset": p4_probe.get("server_offset_str"),
                 "window_start_server": server_cutoff_str,
+                "window_end_server": server_end_str,
                 "other_vcs_detected": "git (secondary/uninitialized)" if git_probe.get("work_tree") else None,
             },
         },
         "counts": {
             "completed": len(completed_list),
-            "completed_ids_returned": len(submitted_ids),
+            "completed_ids_returned": len(reconciled_ids),
             "wip_active": len(wip_active),
             "wip_older": len(wip_older),
             "uncommitted_or_default": len(default_entries),
@@ -526,20 +522,37 @@ def collect_git(
     default_ref = resolve_git_default_ref(resolved_root, bool(git_probe.get("has_head")))
 
     completed_list = []
+    expected_hashes: list[str] = []
     if git_probe.get("has_head") and default_ref:
+        since_iso = cutoff_local.isoformat(timespec="seconds")
+        until_iso = now_local.isoformat(timespec="seconds")
+        rev_cmd = [
+            "git",
+            "--no-optional-locks",
+            "rev-list",
+            default_ref,
+            "--no-merges",
+            f"--since={since_iso}",
+            f"--until={until_iso}",
+        ]
         cmd = [
             "git",
             "--no-optional-locks",
             "log",
             default_ref,
             "--no-merges",
-            f"--since={cutoff_local.isoformat(timespec='seconds')}",
-            f"--until={now_local.isoformat(timespec='seconds')}",
+            f"--since={since_iso}",
+            f"--until={until_iso}",
             "--date=iso-strict",
             "--pretty=format:%H%x1f%h%x1f%ad%x1f%s%x1f%b%x1e",
         ]
         if author_filter:
+            rev_cmd.append(f"--author={author_filter}")
             cmd.append(f"--author={author_filter}")
+
+        rev_out = run_cmd_checked(rev_cmd, cwd=resolved_root)
+        expected_hashes = [h.strip() for h in rev_out.splitlines() if h.strip()]
+
         log_out = run_cmd_checked(cmd, cwd=resolved_root)
         for rec in log_out.split("\x1e"):
             rec_clean = rec.strip("\r\n")
@@ -547,8 +560,10 @@ def collect_git(
                 continue
             fields = rec_clean.split("\x1f", 4)
             if len(fields) < 4:
-                continue
+                raise RuntimeError(f"Malformed git log record encountered: {rec_clean[:80]!r}")
             full_hash, short_hash, ad_iso, subject = (f.strip() for f in fields[:4])
+            if not full_hash or not short_hash or not ad_iso:
+                raise RuntimeError(f"Incomplete git log record encountered: {rec_clean[:80]!r}")
             body = fields[4] if len(fields) >= 5 else ""
             commit_dto = parse_dt(ad_iso, local_tz)
 
@@ -597,6 +612,12 @@ def collect_git(
                     "file_count": len(diff_files),
                     "sample_files": diff_files[:5],
                 }
+            )
+
+        if len(completed_list) != len(expected_hashes):
+            raise RuntimeError(
+                f"Git commit reconciliation mismatch: rev-list returned {len(expected_hashes)} ID(s) "
+                f"but parsed {len(completed_list)} commit(s)."
             )
 
     st_out = run_cmd_checked(
@@ -767,7 +788,7 @@ def collect_git(
         },
         "counts": {
             "completed": len(completed_list),
-            "completed_ids_returned": len(completed_list),
+            "completed_ids_returned": len(expected_hashes),
             "wip_active": len(wip_active),
             "wip_older": len(wip_older),
             "uncommitted_or_default": len(wt_files),
