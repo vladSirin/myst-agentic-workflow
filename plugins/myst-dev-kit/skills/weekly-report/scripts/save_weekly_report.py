@@ -26,7 +26,7 @@ def default_archive_dir() -> Path:
 
 
 def _is_owned_report(path: Path) -> bool:
-    if not path.is_file() or not REPORT_FILENAME_RE.match(path.name):
+    if path.is_symlink() or not path.is_file() or not REPORT_FILENAME_RE.match(path.name):
         return False
     try:
         head = path.read_text(encoding="utf-8", errors="replace")[:512]
@@ -36,8 +36,12 @@ def _is_owned_report(path: Path) -> bool:
 
 
 def _ensure_owned_index(index_path: Path) -> None:
-    if not index_path.exists():
+    if index_path.is_symlink():
+        raise RuntimeError(f"Refusing to follow symlinked index '{index_path}'.")
+    if not os.path.lexists(index_path):
         return
+    if not index_path.is_file():
+        raise RuntimeError(f"Refusing to overwrite non-regular index path '{index_path}'.")
     try:
         first_line = index_path.read_text(encoding="utf-8", errors="replace").splitlines()[0].strip()
     except (OSError, IndexError):
@@ -79,8 +83,10 @@ def save_report(
     out_path = None
     for cand in candidates:
         cand_path = target_dir / cand
+        if cand_path.is_symlink():
+            continue
         try:
-            with open(cand_path, "x", encoding="utf-8") as fh:
+            with open(cand_path, "x", encoding="utf-8", newline="\n") as fh:
                 fh.write(body)
             out_path = cand_path
             break
@@ -124,7 +130,16 @@ def save_report(
         saved_col = datetime.fromtimestamp(rf.stat().st_mtime).strftime("%Y-%m-%d %H:%M")
         index_lines.append(f"| {saved_col} | {proj_col} | [{rf.name}](./{rf.name}) |")
 
-    index_path.write_text("\n".join(index_lines) + "\n", encoding="utf-8")
+    _ensure_owned_index(index_path)
+    index_text = "\n".join(index_lines) + "\n"
+    flags = os.O_WRONLY | getattr(os, "O_NOFOLLOW", 0)
+    if os.path.lexists(index_path):
+        flags |= os.O_TRUNC
+    else:
+        flags |= os.O_CREAT | os.O_EXCL
+    fd = os.open(str(index_path), flags, 0o666)
+    with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(index_text)
 
     return {
         "saved_path": str(out_path),

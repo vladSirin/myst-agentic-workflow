@@ -48,7 +48,7 @@ Pipe the finished Markdown report into `scripts/save_weekly_report.py`:
 python scripts/save_weekly_report.py --project "<meta.project_name>" --vcs "<meta.vcs>" --window "<meta.window_start_local> to <meta.window_end_local>"
 ```
 
-- Writes `<project>_<YYYY-MM-DD>_<HHMM>.md` into the user's OS-local archive directory (`%LOCALAPPDATA%\myst-weekly-reports` on Windows, `~/.cache/myst-weekly-reports` on macOS/Linux, or `MYST_WEEKLY_REPORT_DIR`), auto-prunes only owned weekly-report files older than **90 days**, and updates an owned `INDEX.md`.
+- Stores a UTF-8 report in the user's OS-local archive directory (`%LOCALAPPDATA%\myst-weekly-reports` on Windows, `~/.cache/myst-weekly-reports` on macOS/Linux, or `MYST_WEEKLY_REPORT_DIR`), using `<project>_<YYYY-MM-DD>_<HHMM>.md` as the first candidate (adding seconds/sequence suffixes on collision), auto-prunes only owned weekly-report files older than **90 days**, and updates an owned non-symlink `INDEX.md`. Always link the returned `saved_path` in the archive notice.
 
 ## 5. Present the report
 

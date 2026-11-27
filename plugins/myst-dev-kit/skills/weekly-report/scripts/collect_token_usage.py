@@ -387,6 +387,20 @@ def collect_codex(
         caveats.append(f"{compressed_skipped} compressed Codex .jsonl.zst session file(s) with recent mtime were not decompressed.")
 
 
+def _merge_cwd(prev_cwd: str, new_cwd: str, ws_norm: str) -> str:
+    if ws_norm:
+        p_match = bool(prev_cwd and is_same_or_subpath(normalize_path(prev_cwd), ws_norm))
+        n_match = bool(new_cwd and is_same_or_subpath(normalize_path(new_cwd), ws_norm))
+        if p_match and n_match:
+            return min(prev_cwd, new_cwd)
+        if p_match:
+            return prev_cwd
+        if n_match:
+            return new_cwd
+    candidates = [c for c in (prev_cwd, new_cwd) if c]
+    return min(candidates) if candidates else ""
+
+
 def collect_claude_code(
     since_dt: datetime,
     until_dt: datetime,
@@ -402,87 +416,81 @@ def collect_claude_code(
 
     since_ts = since_dt.timestamp()
     # Deduplicate real requestIds deterministically across all scanned logs,
-    # keeping the most complete/latest snapshot and preserving workspace attribution.
-    requests: dict[str, tuple[float, int, int, str, str, int, int, int, str]] = {}
+    # invariant to file traversal order for totals, workspace attribution, and session ID.
+    requests: dict[str, tuple[tuple[float, int, int, int, int, str], str, str, int, int, int, str]] = {}
 
-    for root, _, files in os.walk(projects_dir):
-        for fn in files:
-            if not fn.endswith(".jsonl"):
+    jsonl_paths = sorted(
+        (Path(root) / fn for root, _, files in os.walk(projects_dir) for fn in files if fn.endswith(".jsonl")),
+        key=str,
+    )
+
+    for fpath in jsonl_paths:
+        try:
+            if fpath.stat().st_mtime < since_ts:
                 continue
-            fpath = Path(root) / fn
-            try:
-                if fpath.stat().st_mtime < since_ts:
-                    continue
-            except OSError:
-                continue
+        except OSError:
+            continue
 
-            session_cwd = ""
-            sid = str(fpath)
+        session_cwd = ""
+        sid = str(fpath)
 
-            try:
-                with open(fpath, "r", encoding="utf-8", errors="replace") as f:
-                    for idx, line in enumerate(f):
-                        if '"usage"' not in line and '"cwd"' not in line:
-                            continue
-                        try:
-                            obj = json.loads(line)
-                        except Exception:
-                            continue
-                        if not session_cwd and obj.get("cwd"):
-                            session_cwd = str(obj.get("cwd"))
-                        msg = obj.get("message")
-                        if not isinstance(msg, dict):
-                            continue
-                        usage = msg.get("usage")
-                        if not isinstance(usage, dict):
-                            continue
-                        ts = obj.get("timestamp")
-                        if not ts:
-                            continue
-                        try:
-                            dt = parse_dt(str(ts), local_tz)
-                        except Exception:
-                            continue
-                        if dt < since_dt or dt > until_dt:
-                            continue
+        try:
+            with open(fpath, "r", encoding="utf-8", errors="replace") as f:
+                for idx, line in enumerate(f):
+                    if '"usage"' not in line and '"cwd"' not in line:
+                        continue
+                    try:
+                        obj = json.loads(line)
+                    except Exception:
+                        continue
+                    if not session_cwd and obj.get("cwd"):
+                        session_cwd = str(obj.get("cwd"))
+                    msg = obj.get("message")
+                    if not isinstance(msg, dict):
+                        continue
+                    usage = msg.get("usage")
+                    if not isinstance(usage, dict):
+                        continue
+                    ts = obj.get("timestamp")
+                    if not ts:
+                        continue
+                    try:
+                        dt = parse_dt(str(ts), local_tz)
+                    except Exception:
+                        continue
+                    if dt < since_dt or dt > until_dt:
+                        continue
 
-                        uncached = max(
-                            0,
-                            int(usage.get("input_tokens") or 0) + int(usage.get("cache_creation_input_tokens") or 0),
-                        )
-                        cached = max(0, int(usage.get("cache_read_input_tokens") or 0))
-                        output = max(0, int(usage.get("output_tokens") or 0))
-                        if uncached == 0 and cached == 0 and output == 0:
-                            continue
+                    uncached = max(
+                        0,
+                        int(usage.get("input_tokens") or 0) + int(usage.get("cache_creation_input_tokens") or 0),
+                    )
+                    cached = max(0, int(usage.get("cache_read_input_tokens") or 0))
+                    output = max(0, int(usage.get("output_tokens") or 0))
+                    if uncached == 0 and cached == 0 and output == 0:
+                        continue
 
-                        model = str(msg.get("model") or "unknown")
-                        raw_req_id = obj.get("requestId")
-                        dedup_key = f"req:{raw_req_id}" if raw_req_id else f"file:{sid}:line:{idx}"
-                        entry_cwd = str(obj.get("cwd") or session_cwd or "")
-                        rank_ts = dt.timestamp()
-                        rank_total = uncached + cached + output
+                    model = str(msg.get("model") or "unknown")
+                    raw_req_id = obj.get("requestId")
+                    dedup_key = f"req:{raw_req_id}" if raw_req_id else f"file:{sid}:line:{idx}"
+                    entry_cwd = str(obj.get("cwd") or session_cwd or "")
+                    rank_key = (dt.timestamp(), uncached + cached + output, output, cached, uncached, model)
 
-                        prev = requests.get(dedup_key)
-                        if prev is None:
-                            requests[dedup_key] = (rank_ts, rank_total, output, sid, model, uncached, cached, output, entry_cwd)
+                    prev = requests.get(dedup_key)
+                    if prev is None:
+                        requests[dedup_key] = (rank_key, sid, model, uncached, cached, output, entry_cwd)
+                    else:
+                        prev_rank, prev_sid, prev_model, prev_uncached, prev_cached, prev_out, prev_cwd = prev
+                        merged_sid = min(prev_sid, sid)
+                        merged_cwd = _merge_cwd(prev_cwd, entry_cwd, ws_norm)
+                        if rank_key > prev_rank:
+                            requests[dedup_key] = (rank_key, merged_sid, model, uncached, cached, output, merged_cwd)
                         else:
-                            prev_cwd = prev[8]
-                            # Preserve workspace attribution if either snapshot carries it.
-                            if ws_norm and prev_cwd and is_same_or_subpath(normalize_path(prev_cwd), ws_norm):
-                                merged_cwd = prev_cwd
-                            elif ws_norm and entry_cwd and is_same_or_subpath(normalize_path(entry_cwd), ws_norm):
-                                merged_cwd = entry_cwd
-                            else:
-                                merged_cwd = entry_cwd or prev_cwd
+                            requests[dedup_key] = (prev_rank, merged_sid, prev_model, prev_uncached, prev_cached, prev_out, merged_cwd)
+        except OSError:
+            continue
 
-                            if (rank_ts, rank_total, output) >= (prev[0], prev[1], prev[2]):
-                                requests[dedup_key] = (rank_ts, rank_total, output, sid, model, uncached, cached, output, merged_cwd)
-                            else:
-                                requests[dedup_key] = (prev[0], prev[1], prev[2], prev[3], prev[4], prev[5], prev[6], prev[7], merged_cwd)
-            except OSError:
-                continue
-
-    for _, _, _, sid, model, uncached, cached, output, entry_cwd in requests.values():
+    for _, sid, model, uncached, cached, output, entry_cwd in requests.values():
         all_agg.record("claude_code", sid, model, 1, uncached, cached, output, 0)
         if ws_agg is not None and ws_norm:
             cwd_norm = normalize_path(entry_cwd)

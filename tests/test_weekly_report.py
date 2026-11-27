@@ -98,7 +98,7 @@ class WeeklyReportTests(unittest.TestCase):
             if "submitted" in cmd:
                 return 0, "5122\n5199\n", ""
             if "pending" in cmd:
-                return 0, "5124\n", ""
+                return 0, "5124\n5125\n", ""
             if "describe" in cmd and "5122" in cmd:
                 return 0, "Change 5122 by u@wsA on 2026/11/22 10:00:00\n\n\t[design] A\n\nAffected files ...\n\n... //ProjA/main/F.as#1 edit\n", ""
             if "describe" in cmd and "5199" in cmd:
@@ -106,6 +106,9 @@ class WeeklyReportTests(unittest.TestCase):
                 return 0, "Change 5199 by u@wsA on 2026/11/24 10:00:00\n\n\t[design] Later\n\nAffected files ...\n\n... //ProjA/main/L.as#1 edit\n", ""
             if "describe" in cmd and "5124" in cmd:
                 return 0, "Change 5124 by u@wsA on 2026/11/22 11:00:00 *pending*\n\n\t[design] B\n", ""
+            if "describe" in cmd and "5125" in cmd:
+                # Post-until pending CL must be classified into wip_older, not wip_active.
+                return 0, "Change 5125 by u@wsA on 2026/11/24 11:00:00 *pending*\n\n\t[design] FuturePending\n", ""
             return 0, "", ""
 
         probe = {"user": "u", "client": "wsA", "client_root": "/wsA", "client_stream": "//ProjA/main", "server_tz": tz, "server_offset_str": "+0000"}
@@ -115,6 +118,8 @@ class WeeklyReportTests(unittest.TestCase):
         self.assertEqual(res["counts"]["completed"], 1)
         self.assertEqual(res["counts"]["completed_ids_returned"], 1)
         self.assertEqual([c["id"] for c in res["completed"]], ["5122"])
+        self.assertEqual([w["id"] for w in res["wip_active"]], ["5124"])
+        self.assertEqual([w["id"] for w in res["wip_older"]], ["5125"])
         sub_cmd = next(c for c in seen_cmds if "submitted" in c)
         pend_cmd = next(c for c in seen_cmds if "pending" in c)
         self.assertTrue(any(arg == "//ProjA/main/...@2026/11/16:12:00:00,@2026/11/23:12:00:00" for arg in sub_cmd))
@@ -130,12 +135,15 @@ class WeeklyReportTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 cww.collect_perforce(probe, "/wsA", "ProjA", "", cutoff, now_local, {})
 
-    def test_collect_git_rejects_malformed_record(self):
+    def test_collect_git_rejects_malformed_and_id_mismatch_and_bounds_wip_until(self):
         start = datetime(2026, 11, 20, tzinfo=timezone.utc)
-        end = datetime(2026, 11, 27, tzinfo=timezone.utc)
-        valid_rec = ("a" * 40) + "\x1faaaaaaa\x1f2026-11-25T08:00:00+00:00\x1fSubject\x1fBody"
+        end = datetime(2026, 11, 23, tzinfo=timezone.utc)
+        valid_rec = ("a" * 40) + "\x1faaaaaaa\x1f2026-11-22T08:00:00+00:00\x1fSubject\x1fBody"
+        other_rec = ("b" * 40) + "\x1fbbbbbbb\x1f2026-11-22T09:00:00+00:00\x1fOther\x1fBody"
 
         def fake_malformed(cmd, **kwargs):
+            if "rev-parse" in cmd:
+                return 0, ("a" * 40) + "\n", ""
             if "rev-list" in cmd:
                 return 0, ("a" * 40) + "\n" + ("b" * 40) + "\n", ""
             if "log" in cmd:
@@ -145,6 +153,31 @@ class WeeklyReportTests(unittest.TestCase):
         with patch.object(cww, "resolve_git_default_ref", return_value="main"), patch.object(cww, "run_cmd", side_effect=fake_malformed):
             with self.assertRaises(RuntimeError):
                 cww.collect_git({"has_head": True}, ".", "GitRepo", "", start, end, {})
+
+        def fake_id_mismatch(cmd, **kwargs):
+            if "rev-parse" in cmd:
+                return 0, ("a" * 40) + "\n", ""
+            if "rev-list" in cmd:
+                return 0, ("a" * 40) + "\n", ""
+            if "log" in cmd:
+                return 0, other_rec + "\x1e", ""
+            return 0, "", ""
+
+        with patch.object(cww, "resolve_git_default_ref", return_value="main"), patch.object(cww, "run_cmd", side_effect=fake_id_mismatch):
+            with self.assertRaises(RuntimeError):
+                cww.collect_git({"has_head": True}, ".", "GitRepo", "", start, end, {})
+
+        def fake_future_stash(cmd, **kwargs):
+            if "rev-parse" in cmd:
+                return 0, ("a" * 40) + "\n", ""
+            if "stash" in cmd:
+                return 0, "stash@{0}\x1f2026-11-24T08:00:00+00:00\x1fAfter until\n", ""
+            return 0, "", ""
+
+        with patch.object(cww, "resolve_git_default_ref", return_value="main"), patch.object(cww, "run_cmd", side_effect=fake_future_stash):
+            res = cww.collect_git({"has_head": True}, ".", "GitRepo", "", start, end, {})
+        self.assertEqual(res["counts"]["wip_active"], 0)
+        self.assertEqual([w["id"] for w in res["wip_older"]], ["stash@{0}"])
 
     def test_collect_git_end_to_end_and_index_untouched(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -345,6 +378,60 @@ class WeeklyReportTests(unittest.TestCase):
             (foreign_dir / "INDEX.md").write_text("# Existing Foreign Index\n", encoding="utf-8")
             with self.assertRaises(RuntimeError):
                 swr.save_report("P", "git", "w", "# R\n", archive_dir=foreign_dir, now=now)
+
+            # Dangling or linked INDEX.md symlink must be refused without creating external target.
+            link_dir = arc / "linked"
+            link_dir.mkdir()
+            sibling_target = arc / "outside_INDEX.md"
+            with patch.object(Path, "is_symlink", autospec=True, side_effect=lambda self: self.name == "INDEX.md"):
+                with self.assertRaises(RuntimeError):
+                    swr.save_report("P", "git", "w", "# R\n", archive_dir=link_dir, now=now)
+            self.assertFalse(sibling_target.exists())
+            try:
+                (link_dir / "INDEX.md").symlink_to(sibling_target)
+            except (OSError, NotImplementedError):
+                pass
+            else:
+                with self.assertRaises(RuntimeError):
+                    swr.save_report("P", "git", "w", "# R\n", archive_dir=link_dir, now=now)
+                self.assertFalse(sibling_target.exists())
+
+    def test_claude_tied_snapshots_are_order_invariant(self):
+        tz = timezone.utc
+        start = datetime(2026, 11, 20, tzinfo=tz)
+        end = datetime(2026, 11, 27, tzinfo=tz)
+        pricing = json.loads((SCRIPTS_DIR / "pricing.json").read_text(encoding="utf-8"))
+
+        def make_row(uncached, cached, cwd):
+            return json.dumps({
+                "cwd": cwd,
+                "timestamp": "2026-11-25T12:00:00+00:00",
+                "requestId": "req-tie",
+                "message": {"model": "claude-sonnet-4", "usage": {"input_tokens": uncached, "cache_read_input_tokens": cached, "output_tokens": 2000}},
+            }) + "\n"
+
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            ws = base / "TargetRepo"
+            ws.mkdir()
+            cdir = base / "claude" / "projects" / "p"
+            cdir.mkdir(parents=True)
+            (cdir / "a.jsonl").write_text(make_row(100_000, 0, ""), encoding="utf-8")
+            (cdir / "b.jsonl").write_text(make_row(0, 100_000, str(ws)), encoding="utf-8")
+
+            agg1 = ctu.ScopeAggregator(pricing)
+            ws1 = ctu.ScopeAggregator(pricing)
+            with patch.object(ctu.os, "walk", return_value=[(str(cdir), [], ["a.jsonl", "b.jsonl"])]):
+                ctu.collect_claude_code(start, end, tz, ctu.normalize_path(str(ws)), base / "claude", ws1, agg1)
+
+            agg2 = ctu.ScopeAggregator(pricing)
+            ws2 = ctu.ScopeAggregator(pricing)
+            with patch.object(ctu.os, "walk", return_value=[(str(cdir), [], ["b.jsonl", "a.jsonl"])]):
+                ctu.collect_claude_code(start, end, tz, ctu.normalize_path(str(ws)), base / "claude", ws2, agg2)
+
+            self.assertEqual(agg1.to_dict(), agg2.to_dict())
+            self.assertEqual(ws1.to_dict(), ws2.to_dict())
+            self.assertEqual(ws1.to_dict()["cached_input"], 100_000)
 
 
 if __name__ == "__main__":

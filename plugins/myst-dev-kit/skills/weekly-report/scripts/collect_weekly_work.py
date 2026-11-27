@@ -349,7 +349,7 @@ def collect_perforce(
         if local_path and os.path.exists(local_path):
             mtime_dto = datetime.fromtimestamp(os.path.getmtime(local_path), tz=local_tz)
             mtime_str = mtime_dto.strftime("%Y-%m-%d %H:%M")
-            if mtime_dto >= cutoff_local:
+            if cutoff_local <= mtime_dto <= now_local:
                 touched = True
 
         opened_by_change.setdefault(chg_key, []).append(
@@ -396,8 +396,8 @@ def collect_perforce(
             if entry["mtime_dto"] and (latest_mtime is None or entry["mtime_dto"] > latest_mtime):
                 latest_mtime = entry["mtime_dto"]
 
-        cl_in_win = parsed["local_dto"] is not None and parsed["local_dto"] >= cutoff_local
-        files_in_win = latest_mtime is not None and latest_mtime >= cutoff_local
+        cl_in_win = parsed["local_dto"] is not None and (cutoff_local <= parsed["local_dto"] <= now_local)
+        files_in_win = touched_count > 0
         touched_in_win = cl_in_win or files_in_win
 
         last_touched = parsed["local_dto"]
@@ -523,14 +523,19 @@ def collect_git(
 
     completed_list = []
     expected_hashes: list[str] = []
+    parsed_hashes: list[str] = []
     if git_probe.get("has_head") and default_ref:
+        pinned_ref = run_cmd_checked(
+            ["git", "--no-optional-locks", "rev-parse", "--verify", f"{default_ref}^{{commit}}"],
+            cwd=resolved_root,
+        ).strip()
         since_iso = cutoff_local.isoformat(timespec="seconds")
         until_iso = now_local.isoformat(timespec="seconds")
         rev_cmd = [
             "git",
             "--no-optional-locks",
             "rev-list",
-            default_ref,
+            pinned_ref,
             "--no-merges",
             f"--since={since_iso}",
             f"--until={until_iso}",
@@ -539,7 +544,7 @@ def collect_git(
             "git",
             "--no-optional-locks",
             "log",
-            default_ref,
+            pinned_ref,
             "--no-merges",
             f"--since={since_iso}",
             f"--until={until_iso}",
@@ -566,6 +571,7 @@ def collect_git(
                 raise RuntimeError(f"Incomplete git log record encountered: {rec_clean[:80]!r}")
             body = fields[4] if len(fields) >= 5 else ""
             commit_dto = parse_dt(ad_iso, local_tz)
+            parsed_hashes.append(full_hash)
 
             tags = []
             m_cc = re.match(r"^([a-zA-Z0-9_-]+)(?:\(([^)]+)\))?:\s*(.+)$", subject)
@@ -614,10 +620,10 @@ def collect_git(
                 }
             )
 
-        if len(completed_list) != len(expected_hashes):
+        if parsed_hashes != expected_hashes:
             raise RuntimeError(
                 f"Git commit reconciliation mismatch: rev-list returned {len(expected_hashes)} ID(s) "
-                f"but parsed {len(completed_list)} commit(s)."
+                f"but log parsed {len(parsed_hashes)} ID(s) with differing commit hashes."
             )
 
     st_out = run_cmd_checked(
@@ -645,7 +651,7 @@ def collect_git(
             mtime_str = mtime_dto.strftime("%Y-%m-%d %H:%M")
             if wt_latest is None or mtime_dto > wt_latest:
                 wt_latest = mtime_dto
-            if mtime_dto >= cutoff_local:
+            if cutoff_local <= mtime_dto <= now_local:
                 touched = True
 
         entry = {"status": xy, "path": path_part, "local_time": mtime_str, "touched": touched}
@@ -726,7 +732,7 @@ def collect_git(
                 "shelved_count": 0,
                 "sample_files": [],
             }
-            if ref_dto >= cutoff_local:
+            if cutoff_local <= ref_dto <= now_local:
                 wip_active.append(b_item)
             else:
                 older_branch_total += 1
@@ -758,7 +764,7 @@ def collect_git(
             "shelved_count": 1,
             "sample_files": [],
         }
-        if s_dto >= cutoff_local:
+        if cutoff_local <= s_dto <= now_local:
             wip_active.append(s_item)
         else:
             wip_older.append(s_item)
