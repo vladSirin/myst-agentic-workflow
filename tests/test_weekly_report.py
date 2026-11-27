@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import patch
@@ -234,6 +235,8 @@ class WeeklyReportTests(unittest.TestCase):
                         "... //ProjA/main/Pre.as#1 edit\n",
                         "",
                     )
+                if "describe" in cmd and "-S" in cmd:
+                    return 0, "Shelved files ...\n\n... //ProjA/main/Shelf.as#1 edit\n", ""
                 return 0, "", ""
 
             probe = {"user": "u", "client": "wsA", "client_root": str(ws), "client_stream": "//ProjA/main", "server_tz": tz, "server_offset_str": "+0000"}
@@ -248,7 +251,12 @@ class WeeklyReportTests(unittest.TestCase):
         self.assertEqual(item["cl_local_time"], "2026-11-12 09:00")
         self.assertEqual(item["latest_file_mtime"], "2026-11-14 10:00")
         self.assertEqual(item["last_touched_time"], "2026-11-14 10:00")
+        self.assertEqual(item["bounded_opened_files_count"], 1)
+        self.assertEqual(item["current_file_count"], 2)
+        self.assertEqual(item["current_shelved_count"], 1)
         self.assertEqual(item["post_window_files_count"], 1)
+        self.assertNotIn("file_count", item)
+        self.assertNotIn("shelved_count", item)
         self.assertEqual(item["sample_files"], ["//ProjA/main/Pre.as"])
 
     def test_collect_git_mixed_working_tree_bounds_evidence_to_window_end(self):
@@ -504,17 +512,18 @@ class WeeklyReportTests(unittest.TestCase):
             race_dir = arc / "race_first"
             race_dir.mkdir()
             race_index = race_dir / "INDEX.md"
-            real_open = swr.os.open
+            real_link = swr.os.link
 
-            def racing_open(path, flags, mode=0o777, *args, **kwargs):
-                if Path(path) == race_index and not race_index.exists():
-                    race_index.write_text("# Unrelated Race Index\n", encoding="utf-8")
-                return real_open(path, flags, mode, *args, **kwargs)
+            def racing_link(src, dst):
+                with race_index.open("x", encoding="utf-8") as fh:
+                    fh.write("# Unrelated Race Index\n")
+                real_link(src, dst)
 
-            with patch.object(swr.os, "open", side_effect=racing_open):
+            with patch.object(swr.os, "link", side_effect=racing_link):
                 with self.assertRaises(FileExistsError):
                     swr.save_report("RaceProj", "git", "w", "# R\n", archive_dir=race_dir, now=now)
             self.assertEqual(race_index.read_text(encoding="utf-8"), "# Unrelated Race Index\n")
+            self.assertEqual(list(race_dir.glob(".INDEX.*.tmp")), [])
 
             # Unowned INDEX.md must refuse overwrite.
             foreign_dir = arc / "foreign"
@@ -526,19 +535,85 @@ class WeeklyReportTests(unittest.TestCase):
             # Dangling or linked INDEX.md symlink must be refused without creating external target.
             link_dir = arc / "linked"
             link_dir.mkdir()
+            link_index = link_dir / "INDEX.md"
             sibling_target = arc / "outside_INDEX.md"
+            link_index.touch()
             with patch.object(Path, "is_symlink", autospec=True, side_effect=lambda self: self.name == "INDEX.md"):
-                with self.assertRaises(RuntimeError):
+                with self.assertRaisesRegex(RuntimeError, "symlinked index"):
                     swr.save_report("P", "git", "w", "# R\n", archive_dir=link_dir, now=now)
+            link_index.unlink()
             self.assertFalse(sibling_target.exists())
             try:
-                (link_dir / "INDEX.md").symlink_to(sibling_target)
+                link_index.symlink_to(sibling_target)
             except (OSError, NotImplementedError):
                 pass
             else:
                 with self.assertRaises(RuntimeError):
                     swr.save_report("P", "git", "w", "# R\n", archive_dir=link_dir, now=now)
                 self.assertFalse(sibling_target.exists())
+
+    def test_save_weekly_report_preserves_replacement_after_owned_index_disappears(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            arc = Path(tmp)
+            index_path = arc / "INDEX.md"
+            index_path.write_text(f"{swr.INDEX_HEADER}\n", encoding="utf-8")
+            real_fdopen = swr.os.fdopen
+            real_link = swr.os.link
+            unrelated_text = "# Unrelated Replacement\n"
+
+            @contextmanager
+            def remove_owned_index_after_write(*args, **kwargs):
+                with real_fdopen(*args, **kwargs) as fh:
+                    yield fh
+                index_path.unlink()
+
+            def racing_link(src, dst):
+                with index_path.open("x", encoding="utf-8") as fh:
+                    fh.write(unrelated_text)
+                real_link(src, dst)
+
+            with (
+                patch.object(swr.os, "fdopen", side_effect=remove_owned_index_after_write),
+                patch.object(swr.os, "link", side_effect=racing_link),
+            ):
+                with self.assertRaises(FileExistsError):
+                    swr.save_report("P", "git", "w", "# R\n", archive_dir=arc)
+
+            self.assertEqual(index_path.read_text(encoding="utf-8"), unrelated_text)
+            self.assertEqual(list(arc.glob(".INDEX.*.tmp")), [])
+
+    def test_save_weekly_report_retries_after_failed_first_index_write(self):
+        real_fdopen = swr.os.fdopen
+        real_link = swr.os.link
+        for fallback in (False, True):
+            with self.subTest(fallback=fallback), tempfile.TemporaryDirectory() as tmp:
+                arc = Path(tmp)
+                index_path = arc / "INDEX.md"
+
+                @contextmanager
+                def fail_index_write(*args, **kwargs):
+                    with real_fdopen(*args, **kwargs) as fh:
+                        if fallback and not index_path.exists():
+                            yield fh
+                            return
+                        fh.write("# Partial index")
+                        with patch.object(fh, "write", side_effect=OSError("index write failed")):
+                            yield fh
+
+                link_side_effect = NotImplementedError if fallback else real_link
+                with patch.object(swr.os, "link", side_effect=link_side_effect):
+                    with patch.object(swr.os, "fdopen", side_effect=fail_index_write):
+                        with self.assertRaisesRegex(OSError, "index write failed"):
+                            swr.save_report("P", "git", "w", "# R\n", archive_dir=arc)
+
+                    self.assertFalse(index_path.exists())
+                    self.assertEqual(list(arc.glob(".INDEX.*.tmp")), [])
+                    result = swr.save_report("P", "git", "w", "# R\n", archive_dir=arc)
+
+                index_text = index_path.read_text(encoding="utf-8")
+                self.assertEqual(index_text.splitlines()[0], swr.INDEX_HEADER)
+                self.assertIn(Path(result["saved_path"]).name, index_text)
+                self.assertEqual(list(arc.glob(".INDEX.*.tmp")), [])
 
     def test_claude_tied_snapshots_are_order_invariant(self):
         tz = timezone.utc

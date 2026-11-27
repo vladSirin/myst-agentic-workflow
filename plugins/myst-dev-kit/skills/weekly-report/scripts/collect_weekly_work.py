@@ -446,10 +446,13 @@ def collect_perforce(
             "ticket": parsed["ticket"],
             "summary": parsed["summary"],
             "verification": parsed["verification"],
-            "file_count": parsed["file_count"],
+            "current_file_count": parsed["file_count"],
+            "current_shelved_count": len(shelved_files),
+            "bounded_opened_files_count": sum(
+                1 for entry in opened_entries if entry["mtime_dto"] is not None and entry["mtime_dto"] <= now_local
+            ),
             "touched_files_count": touched_count,
             "post_window_files_count": len(post_window_files),
-            "shelved_count": len(shelved_files),
             "sample_files": item_samples,
         }
         if touched_in_win:

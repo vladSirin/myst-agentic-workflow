@@ -18,7 +18,7 @@ index writes.
 - **Window**: Defaults to **7 days back from the start of the current local hour** (`--days 7`). Pass `--days <N>` or `--since "YYYY-MM-DD HH:MM"` if another range is requested.
 - **Mode**:
   - **`team`** (default): Executive KPI snapshot + crisp takeaways, outcome-first deliverables, active WIP readiness, token usage & compute value, and next priorities. Condenses routine repo-hygiene/retirement batches into a compact line.
-  - **`audit`**: Expands older parked/shelved/unmerged WIP (`wip_older`) and `default` / working-tree details strictly bounded to `meta.window_end_local`, while keeping post-window observations (`wip_after_window`, `post_window_files_count`) separated from historical readiness.
+  - **`audit`** expands `wip_older` and `default` / working-tree details. Use available timestamps to bound historical timestamps and sample paths to `meta.window_end_local`. Report post-window observations (`wip_after_window`, `post_window_files_count`) separately. Perforce pending CL counts (`current_file_count`, `current_shelved_count`) describe the workspace at collection time. Historical shelf state is unknown.
 - **Optional flags**: Skip token telemetry when `--no-tokens` is requested; skip writing to the local archive when `--no-save` is requested.
 - **Language**: Match the user's requested language while keeping technical identifiers, tags, symbols, and VCS terms in English per project rules.
 
@@ -37,7 +37,7 @@ python scripts/collect_token_usage.py --workspace "<path>" --since "<meta.window
 ## 3. Synthesize and verify returned items
 
 - **Major Work Completed (`completed`)**: Group by feature/system workstream ordered by team impact. In `team` mode, collapse routine hygiene/retirement batches into one compact line. Account for every returned CL/commit ID in `completed`.
-- **Active WIP (`wip_active`)**: Classify each active item (`pending_cl`, `branch`, `working_tree`, `stash`) by readiness using `verification`, `summary`, `shelved_count`, and `last_touched_time`.
+- **Active WIP (`wip_active`)** includes `pending_cl`, `branch`, `working_tree`, and `stash` items. Classify readiness using `verification`, `summary`, and `last_touched_time`. Use `current_shelved_count` for Perforce pending CLs and `shelved_count` for Git items.
 - **Token Usage & Value Estimation** (omit when `--no-tokens` is active): Present the `workspace` breakdown (`by_tier`, cache savings, per-deliverable efficiency) plus `all_machine` total if other repos were active, and include `caveats`.
 
 ## 4. Save to the 90-day local archive (unless `--no-save`)

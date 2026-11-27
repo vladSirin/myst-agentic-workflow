@@ -2,11 +2,13 @@
 """Save a weekly report Markdown file into a rolling 90-day local archive and rebuild INDEX.md."""
 
 import argparse
+import errno
 import json
 import os
 import re
 import sys
 import tempfile
+from contextlib import suppress
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -36,11 +38,11 @@ def _is_owned_report(path: Path) -> bool:
         return False
 
 
-def _ensure_owned_index(index_path: Path) -> None:
+def _ensure_owned_index(index_path: Path) -> bool:
+    if not os.path.lexists(index_path):
+        return False
     if index_path.is_symlink():
         raise RuntimeError(f"Refusing to follow symlinked index '{index_path}'.")
-    if not os.path.lexists(index_path):
-        return
     if not index_path.is_file():
         raise RuntimeError(f"Refusing to overwrite non-regular index path '{index_path}'.")
     try:
@@ -52,13 +54,19 @@ def _ensure_owned_index(index_path: Path) -> None:
             f"Refusing to overwrite existing '{index_path}' because its ownership cannot be established "
             f"(expected first line '{INDEX_HEADER}')."
         )
+    return True
 
 
 def _write_index_exclusive(index_path: Path, index_text: str) -> None:
     flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0)
     fd = os.open(str(index_path), flags, 0o666)
-    with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
-        fh.write(index_text)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(index_text)
+    except BaseException:
+        with suppress(OSError):
+            index_path.unlink()
+        raise
 
 
 def save_report(
@@ -138,27 +146,26 @@ def save_report(
         saved_col = datetime.fromtimestamp(rf.stat().st_mtime).strftime("%Y-%m-%d %H:%M")
         index_lines.append(f"| {saved_col} | {proj_col} | [{rf.name}](./{rf.name}) |")
 
-    _ensure_owned_index(index_path)
     index_text = "\n".join(index_lines) + "\n"
-    if not os.path.lexists(index_path):
-        _write_index_exclusive(index_path, index_text)
-    else:
-        fd, tmp_name = tempfile.mkstemp(prefix=".INDEX.", suffix=".tmp", dir=str(target_dir))
-        try:
-            with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
-                fh.write(index_text)
-            _ensure_owned_index(index_path)
-            if os.path.lexists(index_path):
-                os.replace(tmp_name, str(index_path))
-            else:
-                os.unlink(tmp_name)
-                _write_index_exclusive(index_path, index_text)
-        except Exception:
+    fd, tmp_name = tempfile.mkstemp(prefix=".INDEX.", suffix=".tmp", dir=str(target_dir))
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(index_text)
+        owned_exists = _ensure_owned_index(index_path)
+        if owned_exists:
+            os.replace(tmp_name, str(index_path))
+        else:
             try:
-                os.unlink(tmp_name)
-            except OSError:
-                pass
-            raise
+                os.link(tmp_name, str(index_path))
+            except (NotImplementedError, OSError) as exc:
+                if isinstance(exc, OSError) and exc.errno not in (
+                    errno.EPERM, errno.EOPNOTSUPP, errno.ENOTSUP, errno.EXDEV, errno.EINVAL
+                ):
+                    raise
+                _write_index_exclusive(index_path, index_text)
+    finally:
+        with suppress(OSError):
+            os.unlink(tmp_name)
 
     return {
         "saved_path": str(out_path),
