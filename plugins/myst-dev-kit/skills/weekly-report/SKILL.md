@@ -18,7 +18,7 @@ index writes.
 - **Window**: Defaults to **7 days back from the start of the current local hour** (`--days 7`). Pass `--days <N>` or `--since "YYYY-MM-DD HH:MM"` if another range is requested.
 - **Mode**:
   - **`team`** (default): Executive KPI snapshot + crisp takeaways, outcome-first deliverables, active WIP readiness, token usage & compute value, and next priorities. Condenses routine repo-hygiene/retirement batches into a compact line.
-  - **`audit`**: Expands older parked/shelved/unmerged WIP and `default` / working-tree details.
+  - **`audit`**: Expands older parked/shelved/unmerged WIP (`wip_older`) and `default` / working-tree details strictly bounded to `meta.window_end_local`, while keeping post-window observations (`wip_after_window`, `post_window_files_count`) separated from historical readiness.
 - **Optional flags**: Skip token telemetry when `--no-tokens` is requested; skip writing to the local archive when `--no-save` is requested.
 - **Language**: Match the user's requested language while keeping technical identifiers, tags, symbols, and VCS terms in English per project rules.
 

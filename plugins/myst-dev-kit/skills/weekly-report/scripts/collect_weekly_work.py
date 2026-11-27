@@ -389,13 +389,22 @@ def collect_perforce(
                     shelved_files.append(m_sf.group(1).strip())
 
         opened_entries = opened_by_change.get(cl, [])
-        latest_mtime = None
+        latest_mtime_in_or_pre = None
+        latest_mtime_all = None
         touched_count = 0
+        post_window_files = []
         for entry in opened_entries:
             if entry["touched"]:
                 touched_count += 1
-            if entry["mtime_dto"] and (latest_mtime is None or entry["mtime_dto"] > latest_mtime):
-                latest_mtime = entry["mtime_dto"]
+            m_dto = entry["mtime_dto"]
+            if m_dto is not None:
+                if latest_mtime_all is None or m_dto > latest_mtime_all:
+                    latest_mtime_all = m_dto
+                if m_dto <= now_local:
+                    if latest_mtime_in_or_pre is None or m_dto > latest_mtime_in_or_pre:
+                        latest_mtime_in_or_pre = m_dto
+                else:
+                    post_window_files.append(entry["depot_file"])
 
         cl_in_win = parsed["local_dto"] is not None and (cutoff_local <= parsed["local_dto"] <= now_local)
         files_in_win = touched_count > 0
@@ -403,20 +412,35 @@ def collect_perforce(
         has_pre = (parsed["local_dto"] is not None and parsed["local_dto"] < cutoff_local) or any(
             entry["mtime_dto"] is not None and entry["mtime_dto"] < cutoff_local for entry in opened_entries
         )
-        has_post = (parsed["local_dto"] is not None and parsed["local_dto"] > now_local) or any(
-            entry["mtime_dto"] is not None and entry["mtime_dto"] > now_local for entry in opened_entries
-        )
+        has_post = (parsed["local_dto"] is not None and parsed["local_dto"] > now_local) or bool(post_window_files)
+        is_after_window = (not touched_in_win) and has_post and not has_pre
 
-        last_touched = parsed["local_dto"]
-        if latest_mtime is not None and (last_touched is None or latest_mtime > last_touched):
-            last_touched = latest_mtime
+        if is_after_window:
+            item_cl_time = parsed["local_time"]
+            item_latest_mtime = latest_mtime_all
+            last_touched = parsed["local_dto"]
+            if latest_mtime_all is not None and (last_touched is None or latest_mtime_all > last_touched):
+                last_touched = latest_mtime_all
+            item_samples = parsed["sample_files"] or shelved_files[:5]
+        else:
+            cl_dto_bounded = parsed["local_dto"] if (parsed["local_dto"] is not None and parsed["local_dto"] <= now_local) else None
+            item_cl_time = cl_dto_bounded.strftime("%Y-%m-%d %H:%M") if cl_dto_bounded else None
+            item_latest_mtime = latest_mtime_in_or_pre
+            last_touched = cl_dto_bounded
+            if latest_mtime_in_or_pre is not None and (last_touched is None or latest_mtime_in_or_pre > last_touched):
+                last_touched = latest_mtime_in_or_pre
+            post_window_file_set = set(post_window_files)
+            raw_samples = parsed["sample_files"] or shelved_files[:5]
+            item_samples = [f for f in raw_samples if f not in post_window_file_set]
+            if not item_samples:
+                item_samples = [e["depot_file"] for e in opened_entries if e["depot_file"] not in post_window_file_set][:5]
 
         item = {
             "id": cl,
             "kind": "pending_cl",
-            "cl_local_time": parsed["local_time"],
-            "latest_file_mtime": latest_mtime.strftime("%Y-%m-%d %H:%M") if latest_mtime else None,
-            "last_touched_time": last_touched.strftime("%Y-%m-%d %H:%M") if last_touched else parsed["local_time"],
+            "cl_local_time": item_cl_time,
+            "latest_file_mtime": item_latest_mtime.strftime("%Y-%m-%d %H:%M") if item_latest_mtime else None,
+            "last_touched_time": last_touched.strftime("%Y-%m-%d %H:%M") if last_touched else None,
             "title": parsed["title"],
             "tags": parsed["tags"],
             "ticket": parsed["ticket"],
@@ -424,20 +448,23 @@ def collect_perforce(
             "verification": parsed["verification"],
             "file_count": parsed["file_count"],
             "touched_files_count": touched_count,
+            "post_window_files_count": len(post_window_files),
             "shelved_count": len(shelved_files),
-            "sample_files": parsed["sample_files"] or shelved_files[:5],
+            "sample_files": item_samples,
         }
         if touched_in_win:
             wip_active.append(item)
-        elif has_post and not has_pre:
+        elif is_after_window:
             wip_after_window.append(item)
         else:
             wip_older.append(item)
 
     default_entries = opened_by_change.get("default", [])
+    default_in_or_pre = [e for e in default_entries if e["mtime_dto"] is None or e["mtime_dto"] <= now_local]
+    default_post = [e for e in default_entries if e["mtime_dto"] is not None and e["mtime_dto"] > now_local]
     default_touched = []
     default_latest = None
-    for entry in default_entries:
+    for entry in default_in_or_pre:
         if entry["mtime_dto"] and (default_latest is None or entry["mtime_dto"] > default_latest):
             default_latest = entry["mtime_dto"]
         if entry["touched"]:
@@ -478,7 +505,7 @@ def collect_perforce(
             "wip_active": len(wip_active),
             "wip_older": len(wip_older),
             "wip_after_window": len(wip_after_window),
-            "uncommitted_or_default": len(default_entries),
+            "uncommitted_or_default": len(default_in_or_pre),
         },
         "completed": completed_list,
         "wip_active": wip_active,
@@ -486,11 +513,12 @@ def collect_perforce(
         "wip_after_window": wip_after_window,
         "uncommitted_or_default": {
             "kind": "default_cl",
-            "opened_count": len(default_entries),
+            "opened_count": len(default_in_or_pre),
+            "post_window_count": len(default_post),
             "touched_in_window_count": len(default_touched),
             "latest_file_mtime": default_latest.strftime("%Y-%m-%d %H:%M") if default_latest else None,
             "touched_files": default_touched,
-            "sample_files": [e["depot_file"] for e in default_entries[:8]],
+            "sample_files": [e["depot_file"] for e in default_in_or_pre[:8]],
         },
     }
 
@@ -641,11 +669,11 @@ def collect_git(
         ["git", "--no-optional-locks", "-c", "core.quotepath=false", "status", "--porcelain=v1"],
         cwd=resolved_root,
     )
-    wt_files = []
+    wt_in_or_pre = []
+    wt_post = []
     wt_touched = []
-    wt_latest = None
-    wt_has_pre = False
-    wt_has_post = False
+    wt_latest_in_or_pre = None
+    wt_latest_post = None
     for line in st_out.splitlines():
         if len(line) < 4:
             continue
@@ -659,44 +687,61 @@ def collect_git(
         mtime_dto = None
         mtime_str = None
         touched = False
+        is_post = False
         if os.path.exists(full_path):
             mtime_dto = datetime.fromtimestamp(os.path.getmtime(full_path), tz=local_tz)
             mtime_str = mtime_dto.strftime("%Y-%m-%d %H:%M")
-            if wt_latest is None or mtime_dto > wt_latest:
-                wt_latest = mtime_dto
             if cutoff_local <= mtime_dto <= now_local:
                 touched = True
-            elif mtime_dto > now_local:
-                wt_has_post = True
+            if mtime_dto > now_local:
+                is_post = True
+                if wt_latest_post is None or mtime_dto > wt_latest_post:
+                    wt_latest_post = mtime_dto
             else:
-                wt_has_pre = True
+                if wt_latest_in_or_pre is None or mtime_dto > wt_latest_in_or_pre:
+                    wt_latest_in_or_pre = mtime_dto
 
         entry = {"status": xy, "path": path_part, "local_time": mtime_str, "touched": touched}
-        wt_files.append(entry)
-        if touched:
-            wt_touched.append(entry)
+        if is_post:
+            wt_post.append(entry)
+        else:
+            wt_in_or_pre.append(entry)
+            if touched:
+                wt_touched.append(entry)
 
     wip_active = []
     wip_older = []
     wip_after_window = []
-    if wt_files:
+    if wt_in_or_pre:
         wt_item = {
             "id": f"working-tree ({git_probe.get('branch')})",
             "kind": "working_tree",
-            "last_touched_time": (wt_latest or now_local).strftime("%Y-%m-%d %H:%M"),
-            "title": f"Working tree on '{git_probe.get('branch')}': {len(wt_files)} modified/untracked path(s)",
-            "summary": "; ".join(f"{e['status']} {e['path']}" for e in wt_files[:6]),
+            "last_touched_time": wt_latest_in_or_pre.strftime("%Y-%m-%d %H:%M") if wt_latest_in_or_pre else None,
+            "title": f"Working tree on '{git_probe.get('branch')}': {len(wt_in_or_pre)} modified/untracked path(s)",
+            "summary": "; ".join(f"{e['status']} {e['path']}" for e in wt_in_or_pre[:6]),
             "verification": "",
-            "file_count": len(wt_files),
+            "file_count": len(wt_in_or_pre),
+            "post_window_files_count": len(wt_post),
             "shelved_count": 0,
-            "sample_files": [e["path"] for e in wt_files[:5]],
+            "sample_files": [e["path"] for e in wt_in_or_pre[:5]],
         }
         if wt_touched:
             wip_active.append(wt_item)
-        elif wt_has_post and not wt_has_pre:
-            wip_after_window.append(wt_item)
         else:
             wip_older.append(wt_item)
+    if wt_post:
+        wt_post_item = {
+            "id": f"working-tree ({git_probe.get('branch')}) [after-window]" if wt_in_or_pre else f"working-tree ({git_probe.get('branch')})",
+            "kind": "working_tree",
+            "last_touched_time": wt_latest_post.strftime("%Y-%m-%d %H:%M") if wt_latest_post else None,
+            "title": f"Working tree on '{git_probe.get('branch')}': {len(wt_post)} post-window modified/untracked path(s)",
+            "summary": "; ".join(f"{e['status']} {e['path']}" for e in wt_post[:6]),
+            "verification": "",
+            "file_count": len(wt_post),
+            "shelved_count": 0,
+            "sample_files": [e["path"] for e in wt_post[:5]],
+        }
+        wip_after_window.append(wt_post_item)
 
     older_branch_total = 0
     if git_probe.get("has_head") and default_ref:
@@ -766,6 +811,7 @@ def collect_git(
         cwd=resolved_root,
     )
     stashes_obj = []
+    post_window_stashes = []
     for stl in st_list_out.splitlines():
         if not stl:
             continue
@@ -774,7 +820,7 @@ def collect_git(
             continue
         s_ref, s_date_iso, s_msg = (p.strip() for p in sp)
         s_dto = parse_dt(s_date_iso, local_tz)
-        stashes_obj.append({"ref": s_ref, "local_time": s_dto.strftime("%Y-%m-%d %H:%M"), "message": s_msg})
+        s_meta = {"ref": s_ref, "local_time": s_dto.strftime("%Y-%m-%d %H:%M"), "message": s_msg}
         s_item = {
             "id": s_ref,
             "kind": "stash",
@@ -787,10 +833,13 @@ def collect_git(
             "sample_files": [],
         }
         if cutoff_local <= s_dto <= now_local:
+            stashes_obj.append(s_meta)
             wip_active.append(s_item)
         elif s_dto > now_local:
+            post_window_stashes.append(s_meta)
             wip_after_window.append(s_item)
         else:
+            stashes_obj.append(s_meta)
             wip_older.append(s_item)
 
     wip_active.sort(key=lambda x: x["last_touched_time"] or "", reverse=True)
@@ -822,7 +871,7 @@ def collect_git(
             "wip_active": len(wip_active),
             "wip_older": len(wip_older),
             "wip_after_window": len(wip_after_window),
-            "uncommitted_or_default": len(wt_files),
+            "uncommitted_or_default": len(wt_in_or_pre),
         },
         "completed": completed_list,
         "wip_active": wip_active,
@@ -830,12 +879,14 @@ def collect_git(
         "wip_after_window": wip_after_window,
         "uncommitted_or_default": {
             "kind": "working_tree",
-            "modified_count": len(wt_files),
+            "modified_count": len(wt_in_or_pre),
+            "post_window_count": len(wt_post),
             "touched_in_window_count": len(wt_touched),
-            "latest_file_mtime": wt_latest.strftime("%Y-%m-%d %H:%M") if wt_latest else None,
+            "latest_file_mtime": wt_latest_in_or_pre.strftime("%Y-%m-%d %H:%M") if wt_latest_in_or_pre else None,
             "touched_files": wt_touched[:15],
-            "sample_files": [f"{e['status']} {e['path']}" for e in wt_files[:8]],
+            "sample_files": [f"{e['status']} {e['path']}" for e in wt_in_or_pre[:8]],
             "stashes": stashes_obj,
+            "post_window_stashes": post_window_stashes,
         },
     }
 

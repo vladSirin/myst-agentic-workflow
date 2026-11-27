@@ -54,6 +54,13 @@ def _ensure_owned_index(index_path: Path) -> None:
         )
 
 
+def _write_index_exclusive(index_path: Path, index_text: str) -> None:
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0)
+    fd = os.open(str(index_path), flags, 0o666)
+    with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(index_text)
+
+
 def save_report(
     project: str,
     vcs: str,
@@ -133,18 +140,25 @@ def save_report(
 
     _ensure_owned_index(index_path)
     index_text = "\n".join(index_lines) + "\n"
-    fd, tmp_name = tempfile.mkstemp(prefix=".INDEX.", suffix=".tmp", dir=str(target_dir))
-    try:
-        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
-            fh.write(index_text)
-        _ensure_owned_index(index_path)
-        os.replace(tmp_name, str(index_path))
-    except Exception:
+    if not os.path.lexists(index_path):
+        _write_index_exclusive(index_path, index_text)
+    else:
+        fd, tmp_name = tempfile.mkstemp(prefix=".INDEX.", suffix=".tmp", dir=str(target_dir))
         try:
-            os.unlink(tmp_name)
-        except OSError:
-            pass
-        raise
+            with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
+                fh.write(index_text)
+            _ensure_owned_index(index_path)
+            if os.path.lexists(index_path):
+                os.replace(tmp_name, str(index_path))
+            else:
+                os.unlink(tmp_name)
+                _write_index_exclusive(index_path, index_text)
+        except Exception:
+            try:
+                os.unlink(tmp_name)
+            except OSError:
+                pass
+            raise
 
     return {
         "saved_path": str(out_path),

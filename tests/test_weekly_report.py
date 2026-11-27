@@ -196,6 +196,107 @@ class WeeklyReportTests(unittest.TestCase):
         self.assertIn("future-01", after_ids)
         self.assertIn("future-20", after_ids)
 
+    def test_collect_perforce_mixed_wip_bounds_evidence_to_window_end(self):
+        tz = timezone.utc
+        cutoff = datetime(2026, 11, 16, 12, 0, tzinfo=tz)
+        now_local = datetime(2026, 11, 23, 12, 0, tzinfo=tz)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            ws = Path(tmp)
+            pre_file = ws / "Pre.as"
+            post_file = ws / "Post.as"
+            pre_file.write_text("pre\n", encoding="utf-8")
+            post_file.write_text("post\n", encoding="utf-8")
+            pre_ts = datetime(2026, 11, 14, 10, 0, tzinfo=tz).timestamp()
+            post_ts = datetime(2026, 11, 24, 10, 0, tzinfo=tz).timestamp()
+            os.utime(pre_file, (pre_ts, pre_ts))
+            os.utime(post_file, (post_ts, post_ts))
+
+            def fake_p4(cmd, **kwargs):
+                if "submitted" in cmd:
+                    return 0, "", ""
+                if "opened" in cmd:
+                    return (
+                        0,
+                        "5130\tedit\t//ProjA/main/Post.as\t//wsA/Post.as\n"
+                        "5130\tedit\t//ProjA/main/Pre.as\t//wsA/Pre.as\n",
+                        "",
+                    )
+                if "pending" in cmd:
+                    return 0, "5130\n", ""
+                if "describe" in cmd and "-S" not in cmd:
+                    return (
+                        0,
+                        "Change 5130 by u@wsA on 2026/11/12 09:00:00 *pending*\n\n"
+                        "\t[design] Mixed pending\n\n"
+                        "Affected files ...\n\n"
+                        "... //ProjA/main/Post.as#1 edit\n"
+                        "... //ProjA/main/Pre.as#1 edit\n",
+                        "",
+                    )
+                return 0, "", ""
+
+            probe = {"user": "u", "client": "wsA", "client_root": str(ws), "client_stream": "//ProjA/main", "server_tz": tz, "server_offset_str": "+0000"}
+            with patch.object(cww, "run_cmd", side_effect=fake_p4):
+                res = cww.collect_perforce(probe, str(ws), "ProjA", "", cutoff, now_local, {})
+
+        self.assertEqual(res["counts"]["wip_active"], 0)
+        self.assertEqual(res["counts"]["wip_older"], 1)
+        self.assertEqual(res["counts"]["wip_after_window"], 0)
+        item = res["wip_older"][0]
+        self.assertEqual(item["id"], "5130")
+        self.assertEqual(item["cl_local_time"], "2026-11-12 09:00")
+        self.assertEqual(item["latest_file_mtime"], "2026-11-14 10:00")
+        self.assertEqual(item["last_touched_time"], "2026-11-14 10:00")
+        self.assertEqual(item["post_window_files_count"], 1)
+        self.assertEqual(item["sample_files"], ["//ProjA/main/Pre.as"])
+
+    def test_collect_git_mixed_working_tree_bounds_evidence_to_window_end(self):
+        tz = timezone.utc
+        start = datetime(2026, 11, 20, 0, 0, tzinfo=tz)
+        end = datetime(2026, 11, 23, 0, 0, tzinfo=tz)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            pre_path = repo / "pre.txt"
+            post_path = repo / "post.txt"
+            pre_path.write_text("old\n", encoding="utf-8")
+            post_path.write_text("later\n", encoding="utf-8")
+            pre_ts = datetime(2026, 11, 18, 9, 0, tzinfo=tz).timestamp()
+            post_ts = datetime(2026, 11, 24, 9, 0, tzinfo=tz).timestamp()
+            os.utime(pre_path, (pre_ts, pre_ts))
+            os.utime(post_path, (post_ts, post_ts))
+
+            def fake_git(cmd, **kwargs):
+                if "rev-parse" in cmd:
+                    return 0, ("a" * 40) + "\n", ""
+                if "status" in cmd:
+                    return 0, "?? pre.txt\n?? post.txt\n", ""
+                return 0, "", ""
+
+            probe = {"has_head": True, "branch": "main", "repo_root": str(repo), "remotes": []}
+            with patch.object(cww, "resolve_git_default_ref", return_value="main"), patch.object(cww, "run_cmd", side_effect=fake_git):
+                res = cww.collect_git(probe, str(repo), "GitRepo", "", start, end, {})
+
+        self.assertEqual(res["counts"]["wip_active"], 0)
+        self.assertEqual(res["counts"]["wip_older"], 1)
+        self.assertEqual(res["counts"]["wip_after_window"], 1)
+        self.assertEqual(res["counts"]["uncommitted_or_default"], 1)
+        older = res["wip_older"][0]
+        self.assertEqual(older["last_touched_time"], "2026-11-18 09:00")
+        self.assertEqual(older["sample_files"], ["pre.txt"])
+        self.assertNotIn("post.txt", older["summary"])
+        self.assertEqual(older["post_window_files_count"], 1)
+        after = res["wip_after_window"][0]
+        self.assertIn("[after-window]", after["id"])
+        self.assertEqual(after["last_touched_time"], "2026-11-24 09:00")
+        self.assertEqual(after["sample_files"], ["post.txt"])
+        u = res["uncommitted_or_default"]
+        self.assertEqual(u["modified_count"], 1)
+        self.assertEqual(u["post_window_count"], 1)
+        self.assertEqual(u["latest_file_mtime"], "2026-11-18 09:00")
+        self.assertEqual(u["sample_files"], ["?? pre.txt"])
+
     def test_collect_git_end_to_end_and_index_untouched(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo = Path(tmp)
@@ -398,6 +499,22 @@ class WeeklyReportTests(unittest.TestCase):
             self.assertEqual(hardlink_backup.read_bytes(), before_bytes)
             self.assertNotEqual(index_path.read_bytes(), before_bytes)
             hardlink_backup.unlink()
+
+            # Concurrent first-time INDEX.md creation must fail with FileExistsError without overwriting the foreign file.
+            race_dir = arc / "race_first"
+            race_dir.mkdir()
+            race_index = race_dir / "INDEX.md"
+            real_open = swr.os.open
+
+            def racing_open(path, flags, mode=0o777, *args, **kwargs):
+                if Path(path) == race_index and not race_index.exists():
+                    race_index.write_text("# Unrelated Race Index\n", encoding="utf-8")
+                return real_open(path, flags, mode, *args, **kwargs)
+
+            with patch.object(swr.os, "open", side_effect=racing_open):
+                with self.assertRaises(FileExistsError):
+                    swr.save_report("RaceProj", "git", "w", "# R\n", archive_dir=race_dir, now=now)
+            self.assertEqual(race_index.read_text(encoding="utf-8"), "# Unrelated Race Index\n")
 
             # Unowned INDEX.md must refuse overwrite.
             foreign_dir = arc / "foreign"
