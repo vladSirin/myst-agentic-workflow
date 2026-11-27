@@ -1,67 +1,40 @@
 ---
 name: weekly-report
-description: "Use when the user asks to generate a VCS-agnostic (Perforce or Git) weekly team work report covering the last 7 days from the current hour, with optional local AI token usage & value estimation and a 90-day local archive."
+description: "Use for a 7-day VCS-agnostic (Perforce/Git) work report with optional token usage and local archive."
 argument-hint: "[optional: workspace, --days N, --since ..., audit, --no-tokens, --no-save]"
 disable-model-invocation: true
 ---
 
-Read [Myst's local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md)
-first (copy dependency: `agentic-workflow`) to resolve the target repository,
-VCS ownership, and project terminology. This skill never mutates tracked files
-or publishes shared state; its Git collector uses `--no-optional-locks` to avoid
-index writes.
+Read [Myst's local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md) (`copy dependency: agentic-workflow`) first to resolve the target repo, VCS ownership, and terminology. This skill is read-only on tracked repo state (`--no-optional-locks` in Git) and **user-invoked only** (for hosts ignoring invocation metadata like OpenCode, add `"weekly-report": "deny"` under `permission.skill` and invoke only via explicit user command).
 
-`weekly-report` is user-invoked only. Models and other skills must never
-dispatch it. On hosts that ignore invocation metadata, such as OpenCode, add
-`"weekly-report": "deny"` to local `permission.skill` settings and use an
-explicit user command that points to the installed skill.
+For `audit`-mode field rules, Perforce current-vs-bounded fields, and archive lock/retention semantics, read [references/DETAILS.md](references/DETAILS.md).
 
-## 1. Determine scope, options, and mode
+## 1. Collect Data
 
-- **Target workspace**: Use the target repository root resolved via the local integration contract (or pass `--workspace <path>`).
-- **VCS**: Resolve ownership via project instructions (`AGENTS.md` / `CLAUDE.md`) and workspace evidence first, then pass `--vcs p4` or `--vcs git` explicitly (`--vcs auto` refuses ambiguous dual-VCS workspaces while still handling Perforce repos with an uninitialized `.git` directory).
-- **Window**: Defaults to **7 days back from the start of the current local hour** (`--days 7`). Pass `--days <N>` or `--since "YYYY-MM-DD HH:MM"` if another range is requested.
-- **Mode**:
-  - **`team`** (default): Executive KPI snapshot + crisp takeaways, outcome-first deliverables, active WIP readiness, token usage & compute value, and next priorities. Condenses routine repo-hygiene/retirement batches into a compact line.
-  - **`audit`** expands `wip_older` and `default` / working-tree details. Bound historical timestamps and sample paths to `meta.window_end_local` where timestamps are available. Report post-window observations (`wip_after_window`, `post_window_files_count`) separately. Perforce pending CL fields `current_file_count`, `current_shelved_count`, and `current_shelved_sample_files` describe the workspace at collection time.
-- **Optional flags**: Skip token telemetry when `--no-tokens` is requested; skip writing to the local archive when `--no-save` is requested.
-- **Language**: Match the user's requested language while keeping technical identifiers, tags, symbols, and VCS terms in English per project rules.
-
-## 2. Collect VCS history and token usage
-
-Run the VCS collector first with the resolved `--vcs` flag. Unless `--no-tokens` is requested, also run the token collector using both exact ISO bounds (`meta.window_start_iso` and `meta.window_end_iso`) and `--completed-count <counts.completed>`:
+1. Resolve target workspace, `--vcs p4|git` (Git requires `2.37+`; pass explicit `--vcs` when both exist), window (default: `--days 7` from start of current local hour, or `--days <N>` / `--since "YYYY-MM-DD HH:MM"`), and synthesis mode (`team` default; read [DETAILS.md](references/DETAILS.md) for `audit`). Skill options `--no-tokens` and `--no-save` are not script CLI flags.
+2. Run `collect_weekly_work.py` first; skip `collect_token_usage.py` entirely when `--no-tokens` is set:
 
 ```bash
 python scripts/collect_weekly_work.py --workspace "<path>" --vcs <p4|git>
-python scripts/collect_token_usage.py --workspace "<path>" --since "<meta.window_start_iso>" --until "<meta.window_end_iso>" --completed-count <N>
+python scripts/collect_token_usage.py --workspace "<path>" --since "<meta.window_start_iso>" --until "<meta.window_end_iso>" --completed-count <counts.completed>
 ```
 
-- Never invent CLs, commits, verification results, or token counts; never expose raw internal model codenames in the report (always use the human-readable `tier` labels from `scripts/pricing.json` or `~/.myst/weekly-report-pricing.json`).
-- **Completion criterion**: Every enabled collector exits `0` and parses cleanly as JSON. For the VCS collector (`collect_weekly_work.py`), verify `meta.complete` is `true` and `counts.completed == counts.completed_ids_returned == len(completed)`. If an enabled collector fails, stop and report incomplete coverage instead of archiving zero work.
+3. **Completion gate:** Every enabled collector exits `0` with valid JSON; for VCS verify `meta.complete == true` and `counts.completed == counts.completed_ids_returned == len(completed)`. On failure, stop and report incomplete coverage instead of archiving.
 
-## 3. Synthesize and verify returned items
+## 2. Synthesize & Archive
 
-- **Major Work Completed (`completed`)**: Group by feature/system workstream ordered by team impact. In `team` mode, collapse routine hygiene/retirement batches into one compact line. Account for every returned CL/commit ID in `completed`.
-- **Active WIP (`wip_active`)** includes `pending_cl`, `branch`, `working_tree`, and `stash` items. Classify readiness using `verification`, `summary`, and `last_touched_time`. Use `current_shelved_count` for Perforce pending CLs and `shelved_count` for Git items.
-- **Perforce pending CL evidence**. In `wip_active` and `wip_older`, `bounded_opened_files_count` counts opened paths with a known modification time at or before `meta.window_end_local`. `sample_files` shows up to five of those paths. Treat `current_shelved_sample_files` as current shelf evidence only.
-- **Token Usage & Value Estimation** (omit when `--no-tokens` is active): Present the `workspace` breakdown (`by_tier`, cache savings, per-deliverable efficiency) plus `all_machine` total if other repos were active, and include `caveats`. Omit efficiency when workspace usage is zero.
-
-## 4. Save to the 90-day local archive (unless `--no-save`)
-
-Pipe the finished Markdown report into `scripts/save_weekly_report.py`:
+- Reply in the user's language while keeping identifiers, tags, symbols, and VCS terms in English. Ground every ID, count, and verification note in collector output; show `tier` labels only (never internal model codenames).
+- Write **3 concise Key Takeaways** (`<= 22 words` each). Group `completed` by workstream ordered by team impact (collapse routine hygiene in `team` mode) covering every ID, rate `wip_active` readiness via `verification`, `summary`, `current_shelved_count`/`shelved_count`, and `last_touched_time`, and give **numbered Next Priorities**.
+- Under tokens (`--no-tokens` omits all token KPIs and sections), present `workspace` (`by_tier`, cache savings, efficiency if workspace tokens > 0), `all_machine` if broader, and `caveats`.
+- Unless `--no-save`, pipe finished Markdown to a dedicated archive directory (details in [DETAILS.md](references/DETAILS.md)):
 
 ```bash
 python scripts/save_weekly_report.py --project "<meta.project_name>" --vcs "<meta.vcs>" --window "<meta.window_start_local> to <meta.window_end_local>"
 ```
 
-- Use a dedicated archive directory. The script stores UTF-8 reports in `%LOCALAPPDATA%\myst-weekly-reports` on Windows, `~/.cache/myst-weekly-reports` on macOS/Linux, or the path in `MYST_WEEKLY_REPORT_DIR`. It starts with `<project>_<YYYY-MM-DD>_<HHMM>.md`, adds seconds or a sequence suffix on collision, and prunes owned weekly report files older than **90 days**.
-- The OS lock on `.weekly-report.lock` serializes concurrent saves. The file stays in place, and the OS releases the lock when the process exits, including after a crash. The script removes expired reports only after it publishes the updated `INDEX.md`. It removes the new report if the index rebuild or publication fails.
-- The script refuses a symlinked or unowned `INDEX.md` and preserves external hard links when it refreshes an owned index. On filesystems without hard links, exclusive creation of the first `INDEX.md` can briefly expose a zero-byte index to concurrent readers.
-- Keep other writers out of the dedicated archive directory. `os.replace` cannot prevent an external writer from swapping `INDEX.md` between the ownership check and replacement in a shared folder. Always link the returned `saved_path` in the archive notice.
+## 3. Present Report
 
-## 5. Present the report
-
-When `--no-tokens` is active, omit the AI Compute / Cache Hit / Est. API-Equiv columns from the KPI snapshot and omit the `## Token Usage & Value Estimation` section.
+Omit AI Compute / Cache Hit / Est. API-Equiv columns and the Token section when `--no-tokens` is active.
 
 ```markdown
 # Weekly Work Summary — <project_name> (<window_start_local> – <window_end_local>)
@@ -71,16 +44,10 @@ When `--no-tokens` is active, omit the AI Compute / Cache Hit / Est. API-Equiv c
 | **<N> CLs/commits** (`<vcs>`) | **<M> active** (<k> ready) | **<X.XM> tokens** (<Y.YM> out) | **<P>%** | **`$<V>`** (saved `$<S>` cached) |
 
 > **Key Takeaways**
-> - **<Lead Theme 1>:** <1 crisp outcome line, <= 22 words>.
-> - **<Lead Theme 2>:** <1 crisp outcome line, <= 22 words>.
-> - **<Lead Theme 3>:** <1 crisp outcome line, <= 22 words>.
+> - **<Lead Theme>:** <1 crisp outcome line, <= 22 words>.
 
 ## Major Work Completed (<N>)
-...
-
 ## Active WIP & Readiness (<M>)
-...
-
 ## Token Usage & Value Estimation
 | Tool / Tier | Sessions / Convs | Turns | Fresh Input | Cached Input | Output | Cache Hit | Est. API-Equiv |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -89,4 +56,4 @@ When `--no-tokens` is active, omit the AI Compute / Cache Hit / Est. API-Equiv c
 1. ...
 ```
 
-When archived, end with an explicit **Local Archive** notice containing clickable `file://` links to `saved_path` and `index_path`, the archive directory path, retained count, and 90-day rolling retention status.
+If archived, end with a **Local Archive** notice containing `file://` links to `saved_path` and `index_path`, the archive directory path, retained count, and 90-day rolling retention.
