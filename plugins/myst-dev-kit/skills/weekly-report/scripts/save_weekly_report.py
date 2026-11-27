@@ -73,60 +73,52 @@ def _write_index_exclusive(index_path: Path, index_text: str) -> None:
 @contextmanager
 def _archive_lock(target_dir: Path, timeout_sec: float = 5.0):
     lock_path = target_dir / ".weekly-report.lock"
-    deadline = time.monotonic() + timeout_sec
-    while True:
+    if lock_path.is_symlink():
+        raise RuntimeError(f"Refusing to follow symlinked archive lock '{lock_path}'.")
+
+    windows = os.name == "nt"
+    retry_errnos = {errno.EACCES, errno.EAGAIN, errno.EWOULDBLOCK}
+    if windows:
+        import msvcrt
+
+        retry_errnos.add(errno.EDEADLK)
+    else:
+        import fcntl
+
+    fd = os.open(str(lock_path), os.O_CREAT | os.O_RDWR | getattr(os, "O_NOFOLLOW", 0), 0o666)
+    # Unbuffered writes let a concurrent first opener retry byte initialization.
+    with os.fdopen(fd, "r+b", buffering=0) as fh:
+        deadline = time.monotonic() + timeout_sec
+        while True:
+            try:
+                if windows:
+                    if fh.seek(0, os.SEEK_END) == 0:
+                        fh.write(b"\0")
+                        fh.flush()
+                    fh.seek(0)
+                    msvcrt.locking(fh.fileno(), msvcrt.LK_NBLCK, 1)
+                else:
+                    fcntl.flock(fh.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except OSError as exc:
+                if exc.errno not in retry_errnos:
+                    raise
+                if time.monotonic() >= deadline:
+                    raise RuntimeError(f"Timed out waiting for archive lock '{lock_path}'.") from exc
+                time.sleep(0.01)
         try:
-            fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o666)
-            break
-        except FileExistsError as exc:
-            if time.monotonic() >= deadline:
-                raise RuntimeError(f"Timed out waiting for archive lock '{lock_path}'.") from exc
-            time.sleep(0.01)
-    try:
-        os.close(fd)
-        yield
-    finally:
-        lock_path.unlink(missing_ok=True)
+            yield
+        finally:
+            with suppress(OSError):
+                if windows:
+                    fh.seek(0)
+                    msvcrt.locking(fh.fileno(), msvcrt.LK_UNLCK, 1)
+                else:
+                    fcntl.flock(fh.fileno(), fcntl.LOCK_UN)
 
 
-def _rebuild_index(index_path: Path, out_path: Path, ts_now: datetime, retention_days: int) -> tuple[int, list[str]]:
-    target_dir = index_path.parent
-    prune_cutoff = ts_now - timedelta(days=retention_days)
-    pruned_files = []
-    for f in target_dir.glob("*.md"):
-        if f.resolve() == out_path.resolve() or not _is_owned_report(f):
-            continue
-        mtime = datetime.fromtimestamp(f.stat().st_mtime)
-        if mtime < prune_cutoff:
-            pruned_files.append(f.name)
-            f.unlink()
-
-    retained = sorted(
-        (f for f in target_dir.glob("*.md") if _is_owned_report(f)),
-        key=lambda p: p.stat().st_mtime,
-        reverse=True,
-    )
-
-    index_lines = [
-        INDEX_HEADER,
-        "",
-        f"- **Location:** `{target_dir}`",
-        f"- **Retention:** {retention_days} days (~3 months rolling auto-prune)",
-        f"- **Retained Reports:** {len(retained)}",
-        f"- **Last Updated:** {ts_now.strftime('%Y-%m-%d %H:%M')}",
-        "",
-        "| Saved | Project | File |",
-        "| :--- | :--- | :--- |",
-    ]
-
-    for rf in retained:
-        m = re.match(r"^(.+?)_\d{4}-\d{2}-\d{2}_\d{4}(?:-\d{2}(?:-\d+)?)?\.md$", rf.name)
-        proj_col = m.group(1) if m else "unknown"
-        saved_col = datetime.fromtimestamp(rf.stat().st_mtime).strftime("%Y-%m-%d %H:%M")
-        index_lines.append(f"| {saved_col} | {proj_col} | [{rf.name}](./{rf.name}) |")
-
-    index_text = "\n".join(index_lines) + "\n"
-    fd, tmp_name = tempfile.mkstemp(prefix=".INDEX.", suffix=".tmp", dir=str(target_dir))
+def _publish_index(index_path: Path, index_text: str) -> None:
+    fd, tmp_name = tempfile.mkstemp(prefix=".INDEX.", suffix=".tmp", dir=str(index_path.parent))
     try:
         with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
             fh.write(index_text)
@@ -146,6 +138,55 @@ def _rebuild_index(index_path: Path, out_path: Path, ts_now: datetime, retention
         with suppress(OSError):
             os.unlink(tmp_name)
 
+
+def _rebuild_index(index_path: Path, out_path: Path, ts_now: datetime, retention_days: int) -> tuple[int, list[str]]:
+    target_dir = index_path.parent
+    expired_paths = []
+    retained = []
+    try:
+        prune_cutoff = ts_now - timedelta(days=retention_days)
+        saved_path = out_path.resolve()
+        for path in target_dir.glob("*.md"):
+            if not _is_owned_report(path):
+                continue
+            mtime = path.stat().st_mtime
+            if path.resolve() != saved_path and datetime.fromtimestamp(mtime) < prune_cutoff:
+                expired_paths.append(path)
+            else:
+                retained.append((mtime, path))
+        retained.sort(key=lambda entry: entry[0], reverse=True)
+
+        index_lines = [
+            INDEX_HEADER,
+            "",
+            f"- **Location:** `{target_dir}`",
+            f"- **Retention:** {retention_days} days (~3 months rolling auto-prune)",
+            f"- **Retained Reports:** {len(retained)}",
+            f"- **Last Updated:** {ts_now.strftime('%Y-%m-%d %H:%M')}",
+            "",
+            "| Saved | Project | File |",
+            "| :--- | :--- | :--- |",
+        ]
+        for mtime, path in retained:
+            match = re.match(r"^(.+?)_\d{4}-\d{2}-\d{2}_\d{4}(?:-\d{2}(?:-\d+)?)?\.md$", path.name)
+            proj_col = match.group(1) if match else "unknown"
+            saved_col = datetime.fromtimestamp(mtime).strftime("%Y-%m-%d %H:%M")
+            index_lines.append(f"| {saved_col} | {proj_col} | [{path.name}](./{path.name}) |")
+
+        _publish_index(index_path, "\n".join(index_lines) + "\n")
+    except BaseException:
+        with suppress(OSError):
+            out_path.unlink()
+        raise
+
+    pruned_files = []
+    for path in expired_paths:
+        try:
+            path.unlink(missing_ok=True)
+        except OSError as exc:
+            print(f"Could not prune expired report '{path}': {exc}", file=sys.stderr)
+        else:
+            pruned_files.append(path.name)
     return len(retained), pruned_files
 
 
@@ -190,11 +231,11 @@ def save_report(
         try:
             with report_file:
                 report_file.write(body)
-            retained_count, pruned_files = _rebuild_index(index_path, out_path, ts_now, retention_days)
         except BaseException:
             with suppress(OSError):
                 out_path.unlink()
             raise
+        retained_count, pruned_files = _rebuild_index(index_path, out_path, ts_now, retention_days)
 
     return {
         "saved_path": str(out_path),

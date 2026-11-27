@@ -576,7 +576,7 @@ def collect_git(
             "rev-list",
             pinned_ref,
             "--no-merges",
-            f"--since={since_iso}",
+            f"--since-as-filter={since_iso}",
             f"--until={until_iso}",
         ]
         cmd = [
@@ -585,7 +585,7 @@ def collect_git(
             "log",
             pinned_ref,
             "--no-merges",
-            f"--since={since_iso}",
+            f"--since-as-filter={since_iso}",
             f"--until={until_iso}",
             "--date=iso-strict",
             "--pretty=format:%H%x1f%h%x1f%cI%x1f%s%x1f%b%x1e",

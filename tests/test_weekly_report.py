@@ -392,6 +392,40 @@ class WeeklyReportTests(unittest.TestCase):
             {"Early author date": "2026-11-20 16:30", "Late author date": "2026-11-20 16:30"},
         )
 
+    def test_collect_git_traverses_older_commit_to_find_in_window_ancestor(self):
+        start = datetime(2026, 11, 18, tzinfo=timezone.utc)
+        end = datetime(2026, 11, 23, tzinfo=timezone.utc)
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            env = dict(
+                os.environ, GIT_AUTHOR_NAME="Test User", GIT_AUTHOR_EMAIL="test@example.com",
+                GIT_COMMITTER_NAME="Test User", GIT_COMMITTER_EMAIL="test@example.com",
+            )
+
+            def git(*args):
+                return subprocess.check_output(["git", *args], cwd=repo, env=env, text=True).strip()
+
+            git("init", "-b", "main")
+            tree = git("write-tree")
+            parent_args = []
+            for day, subject in ((20, "Ancestor"), (12, "Middle"), (21, "Tip")):
+                date = f"2026-11-{day:02d}T12:00:00+00:00"
+                env.update(GIT_AUTHOR_DATE=date, GIT_COMMITTER_DATE=date)
+                commit_id = git("commit-tree", tree, *parent_args, "-m", subject)
+                parent_args = ["-p", commit_id]
+            git("update-ref", "refs/heads/main", commit_id)
+
+            probe = cww.probe_git(str(repo))
+            res = cww.collect_git(probe, str(repo), repo.name, "test@example.com", start, end, {})
+
+        self.assertIs(res["meta"]["complete"], True)
+        self.assertEqual(res["counts"]["completed"], 2)
+        self.assertEqual(res["counts"]["completed_ids_returned"], 2)
+        self.assertEqual(
+            {item["title"]: item["local_time"] for item in res["completed"]},
+            {"Ancestor": "2026-11-20 12:00", "Tip": "2026-11-21 12:00"},
+        )
+
     def test_collect_git_end_to_end_and_index_untouched(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo = Path(tmp)
@@ -682,10 +716,11 @@ class WeeklyReportTests(unittest.TestCase):
             unrelated_text = "# Unrelated Replacement\n"
 
             @contextmanager
-            def remove_owned_index_after_write(*args, **kwargs):
-                with real_fdopen(*args, **kwargs) as fh:
+            def remove_owned_index_after_write(fd, mode, **kwargs):
+                with real_fdopen(fd, mode, **kwargs) as fh:
                     yield fh
-                index_path.unlink()
+                if mode == "w":
+                    index_path.unlink()
 
             def racing_link(src, dst):
                 with index_path.open("x", encoding="utf-8") as fh:
@@ -711,9 +746,9 @@ class WeeklyReportTests(unittest.TestCase):
                 index_path = arc / "INDEX.md"
 
                 @contextmanager
-                def fail_index_write(*args, **kwargs):
-                    with real_fdopen(*args, **kwargs) as fh:
-                        if fallback and not index_path.exists():
+                def fail_index_write(fd, mode, **kwargs):
+                    with real_fdopen(fd, mode, **kwargs) as fh:
+                        if mode == "r+b" or (fallback and not index_path.exists()):
                             yield fh
                             return
                         fh.write("# Partial index")
@@ -744,16 +779,12 @@ class WeeklyReportTests(unittest.TestCase):
             first_at_publish = Event()
             second_waiting = Event()
             release_first = Event()
-            real_open = swr.os.open
+            real_sleep = swr.time.sleep
             real_replace = swr.os.replace
 
-            def observe_lock(path, *args, **kwargs):
-                try:
-                    return real_open(path, *args, **kwargs)
-                except FileExistsError:
-                    if Path(path) == lock_path:
-                        second_waiting.set()
-                    raise
+            def observe_wait(delay):
+                second_waiting.set()
+                real_sleep(delay)
 
             def pause_first_publish(src, dst):
                 if not first_at_publish.is_set():
@@ -762,7 +793,7 @@ class WeeklyReportTests(unittest.TestCase):
                 real_replace(src, dst)
 
             with (
-                patch.object(swr.os, "open", side_effect=observe_lock),
+                patch.object(swr.time, "sleep", side_effect=observe_wait),
                 patch.object(swr.os, "replace", side_effect=pause_first_publish),
                 ThreadPoolExecutor(max_workers=2) as pool,
             ):
@@ -780,34 +811,103 @@ class WeeklyReportTests(unittest.TestCase):
             self.assertIn("**Retained Reports:** 2", index_text)
             for name in saved_names:
                 self.assertIn(f"[{name}](./{name})", index_text)
-            self.assertFalse(lock_path.exists())
+            self.assertTrue(lock_path.is_file())
+            self.assertNotIn(lock_path.name, index_text)
+
+    def test_save_weekly_report_can_acquire_archive_lock_after_process_exit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            arc = Path(tmp)
+            lock_path = arc / ".weekly-report.lock"
+            child_code = (
+                "import os, sys\n"
+                "from pathlib import Path\n"
+                "sys.path.insert(0, sys.argv[1])\n"
+                "from save_weekly_report import _archive_lock\n"
+                "with _archive_lock(Path(sys.argv[2])):\n"
+                "    print('locked', flush=True)\n"
+                "    os._exit(1)\n"
+            )
+            child = subprocess.run(
+                [sys.executable, "-B", "-c", child_code, str(SCRIPTS_DIR), str(arc)],
+                capture_output=True, text=True, timeout=10,
+            )
+            self.assertEqual(child.returncode, 1, child.stderr)
+            self.assertEqual(child.stdout.strip(), "locked")
+            self.assertTrue(lock_path.is_file())
+
+            result = swr.save_report("Project", "git", "w", "# Report\n", archive_dir=arc)
+            saved_path = Path(result["saved_path"])
+            self.assertTrue(saved_path.is_file())
+            self.assertIn(saved_path.name, (arc / "INDEX.md").read_text(encoding="utf-8"))
+            self.assertTrue(lock_path.is_file())
 
     def test_save_weekly_report_removes_new_report_when_publication_fails(self):
         with tempfile.TemporaryDirectory() as tmp:
             arc = Path(tmp)
             index_path = arc / "INDEX.md"
-            original_index = f"{swr.INDEX_HEADER}\n"
+            now = datetime(2026, 11, 27, 13, 45)
+            expired = arc / "Old_2026-08-01_1000.md"
+            expired.write_text(f"{swr.REPORT_MARKER}\n# Old report\n", encoding="utf-8")
+            expired_ts = (now - timedelta(days=95)).timestamp()
+            os.utime(expired, (expired_ts, expired_ts))
+            original_index = f"{swr.INDEX_HEADER}\n\n[{expired.name}](./{expired.name})\n"
             index_path.write_text(original_index, encoding="utf-8")
 
             def fail_publication(src, dst):
                 self.assertEqual(Path(dst), index_path)
                 self.assertEqual(len(list(arc.glob("Project_*.md"))), 1)
+                self.assertTrue(expired.is_file())
                 raise PermissionError("cannot publish index")
 
             with patch.object(swr.os, "replace", side_effect=fail_publication):
                 with self.assertRaisesRegex(PermissionError, "cannot publish index"):
-                    swr.save_report("Project", "git", "w", "# Report\n", archive_dir=arc)
+                    swr.save_report("Project", "git", "w", "# Report\n", archive_dir=arc, now=now)
 
             self.assertEqual(list(arc.glob("Project_*.md")), [])
             self.assertEqual(list(arc.glob(".INDEX.*.tmp")), [])
             self.assertEqual(index_path.read_text(encoding="utf-8"), original_index)
-            self.assertFalse((arc / ".weekly-report.lock").exists())
+            self.assertTrue(expired.is_file())
+            self.assertTrue((arc / ".weekly-report.lock").is_file())
 
-            result = swr.save_report("Project", "git", "w", "# Report\n", archive_dir=arc)
+            result = swr.save_report("Project", "git", "w", "# Report\n", archive_dir=arc, now=now)
             report = Path(result["saved_path"])
             self.assertEqual(list(arc.glob("Project_*.md")), [report])
             self.assertEqual(result["retained_count"], 1)
-            self.assertIn(report.name, index_path.read_text(encoding="utf-8"))
+            self.assertEqual(result["pruned_files"], [expired.name])
+            self.assertFalse(expired.exists())
+            index_text = index_path.read_text(encoding="utf-8")
+            self.assertIn(report.name, index_text)
+            self.assertNotIn(expired.name, index_text)
+
+    def test_save_weekly_report_keeps_published_report_if_pruning_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            arc = Path(tmp)
+            now = datetime(2026, 11, 27, 13, 45)
+            expired = arc / "Old_2026-08-01_1000.md"
+            expired.write_text(f"{swr.REPORT_MARKER}\n# Old report\n", encoding="utf-8")
+            expired_ts = (now - timedelta(days=95)).timestamp()
+            os.utime(expired, (expired_ts, expired_ts))
+            index_path = arc / "INDEX.md"
+            real_unlink = Path.unlink
+
+            def refuse_expired_unlink(path, *args, **kwargs):
+                if path == expired:
+                    self.assertTrue(index_path.is_file())
+                    raise PermissionError("expired report is busy")
+                real_unlink(path, *args, **kwargs)
+
+            stderr = io.StringIO()
+            with patch.object(Path, "unlink", refuse_expired_unlink), patch.object(sys, "stderr", stderr):
+                result = swr.save_report("Project", "git", "w", "# Report\n", archive_dir=arc, now=now)
+
+            saved_path = Path(result["saved_path"])
+            self.assertTrue(saved_path.is_file())
+            self.assertTrue(expired.is_file())
+            self.assertEqual(result["pruned_files"], [])
+            self.assertIn("expired report is busy", stderr.getvalue())
+            index_text = index_path.read_text(encoding="utf-8")
+            self.assertIn(saved_path.name, index_text)
+            self.assertNotIn(expired.name, index_text)
 
     def test_claude_tied_snapshots_are_order_invariant(self):
         tz = timezone.utc

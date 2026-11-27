@@ -55,7 +55,8 @@ python scripts/save_weekly_report.py --project "<meta.project_name>" --vcs "<met
 ```
 
 - Use a dedicated archive directory. The script stores UTF-8 reports in `%LOCALAPPDATA%\myst-weekly-reports` on Windows, `~/.cache/myst-weekly-reports` on macOS/Linux, or the path in `MYST_WEEKLY_REPORT_DIR`. It starts with `<project>_<YYYY-MM-DD>_<HHMM>.md`, adds seconds or a sequence suffix on collision, and prunes owned weekly report files older than **90 days**.
-- The `.weekly-report.lock` lockfile serializes concurrent archive saves. The script removes the new report if the index rebuild or publication fails. It refuses a symlinked or unowned `INDEX.md` and preserves external hard links when it refreshes an owned index.
+- The OS lock on `.weekly-report.lock` serializes concurrent saves. The file stays in place, and the OS releases the lock when the process exits, including after a crash. The script removes expired reports only after it publishes the updated `INDEX.md`. It removes the new report if the index rebuild or publication fails.
+- The script refuses a symlinked or unowned `INDEX.md` and preserves external hard links when it refreshes an owned index. On filesystems without hard links, exclusive creation of the first `INDEX.md` can briefly expose a zero-byte index to concurrent readers.
 - Keep other writers out of the dedicated archive directory. `os.replace` cannot prevent an external writer from swapping `INDEX.md` between the ownership check and replacement in a shared folder. Always link the returned `saved_path` in the archive notice.
 
 ## 5. Present the report
