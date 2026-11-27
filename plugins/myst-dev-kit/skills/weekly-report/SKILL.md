@@ -11,6 +11,11 @@ VCS ownership, and project terminology. This skill never mutates tracked files
 or publishes shared state; its Git collector uses `--no-optional-locks` to avoid
 index writes.
 
+`weekly-report` is user-invoked only. Models and other skills must never
+dispatch it. On hosts that ignore invocation metadata, such as OpenCode, add
+`"weekly-report": "deny"` to local `permission.skill` settings and use an
+explicit user command that points to the installed skill.
+
 ## 1. Determine scope, options, and mode
 
 - **Target workspace**: Use the target repository root resolved via the local integration contract (or pass `--workspace <path>`).
@@ -18,7 +23,7 @@ index writes.
 - **Window**: Defaults to **7 days back from the start of the current local hour** (`--days 7`). Pass `--days <N>` or `--since "YYYY-MM-DD HH:MM"` if another range is requested.
 - **Mode**:
   - **`team`** (default): Executive KPI snapshot + crisp takeaways, outcome-first deliverables, active WIP readiness, token usage & compute value, and next priorities. Condenses routine repo-hygiene/retirement batches into a compact line.
-  - **`audit`** expands `wip_older` and `default` / working-tree details. Use available timestamps to bound historical timestamps and sample paths to `meta.window_end_local`. Report post-window observations (`wip_after_window`, `post_window_files_count`) separately. Perforce pending CL counts (`current_file_count`, `current_shelved_count`) describe the workspace at collection time. Historical shelf state is unknown.
+  - **`audit`** expands `wip_older` and `default` / working-tree details. Bound historical timestamps and sample paths to `meta.window_end_local` where timestamps are available. Report post-window observations (`wip_after_window`, `post_window_files_count`) separately. Perforce pending CL fields `current_file_count`, `current_shelved_count`, and `current_shelved_sample_files` describe the workspace at collection time.
 - **Optional flags**: Skip token telemetry when `--no-tokens` is requested; skip writing to the local archive when `--no-save` is requested.
 - **Language**: Match the user's requested language while keeping technical identifiers, tags, symbols, and VCS terms in English per project rules.
 
@@ -38,7 +43,8 @@ python scripts/collect_token_usage.py --workspace "<path>" --since "<meta.window
 
 - **Major Work Completed (`completed`)**: Group by feature/system workstream ordered by team impact. In `team` mode, collapse routine hygiene/retirement batches into one compact line. Account for every returned CL/commit ID in `completed`.
 - **Active WIP (`wip_active`)** includes `pending_cl`, `branch`, `working_tree`, and `stash` items. Classify readiness using `verification`, `summary`, and `last_touched_time`. Use `current_shelved_count` for Perforce pending CLs and `shelved_count` for Git items.
-- **Token Usage & Value Estimation** (omit when `--no-tokens` is active): Present the `workspace` breakdown (`by_tier`, cache savings, per-deliverable efficiency) plus `all_machine` total if other repos were active, and include `caveats`.
+- **Perforce pending CL evidence**. In `wip_active` and `wip_older`, `bounded_opened_files_count` counts opened paths with a known modification time at or before `meta.window_end_local`. `sample_files` shows up to five of those paths. Treat `current_shelved_sample_files` as current shelf evidence only.
+- **Token Usage & Value Estimation** (omit when `--no-tokens` is active): Present the `workspace` breakdown (`by_tier`, cache savings, per-deliverable efficiency) plus `all_machine` total if other repos were active, and include `caveats`. Omit efficiency when workspace usage is zero.
 
 ## 4. Save to the 90-day local archive (unless `--no-save`)
 
@@ -48,7 +54,9 @@ Pipe the finished Markdown report into `scripts/save_weekly_report.py`:
 python scripts/save_weekly_report.py --project "<meta.project_name>" --vcs "<meta.vcs>" --window "<meta.window_start_local> to <meta.window_end_local>"
 ```
 
-- Stores a UTF-8 report in the user's OS-local archive directory (`%LOCALAPPDATA%\myst-weekly-reports` on Windows, `~/.cache/myst-weekly-reports` on macOS/Linux, or `MYST_WEEKLY_REPORT_DIR`), using `<project>_<YYYY-MM-DD>_<HHMM>.md` as the first candidate (adding seconds/sequence suffixes on collision), auto-prunes only owned weekly-report files older than **90 days**, and updates an owned non-symlink `INDEX.md`. Always link the returned `saved_path` in the archive notice.
+- Use a dedicated archive directory. The script stores UTF-8 reports in `%LOCALAPPDATA%\myst-weekly-reports` on Windows, `~/.cache/myst-weekly-reports` on macOS/Linux, or the path in `MYST_WEEKLY_REPORT_DIR`. It starts with `<project>_<YYYY-MM-DD>_<HHMM>.md`, adds seconds or a sequence suffix on collision, and prunes owned weekly report files older than **90 days**.
+- The `.weekly-report.lock` lockfile serializes concurrent archive saves. The script removes the new report if the index rebuild or publication fails. It refuses a symlinked or unowned `INDEX.md` and preserves external hard links when it refreshes an owned index.
+- Keep other writers out of the dedicated archive directory. `os.replace` cannot prevent an external writer from swapping `INDEX.md` between the ownership check and replacement in a shared folder. Always link the returned `saved_path` in the archive notice.
 
 ## 5. Present the report
 

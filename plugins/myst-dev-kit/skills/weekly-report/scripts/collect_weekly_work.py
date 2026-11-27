@@ -392,6 +392,7 @@ def collect_perforce(
         latest_mtime_in_or_pre = None
         latest_mtime_all = None
         touched_count = 0
+        bounded_opened_files = []
         post_window_files = []
         for entry in opened_entries:
             if entry["touched"]:
@@ -401,6 +402,7 @@ def collect_perforce(
                 if latest_mtime_all is None or m_dto > latest_mtime_all:
                     latest_mtime_all = m_dto
                 if m_dto <= now_local:
+                    bounded_opened_files.append(entry["depot_file"])
                     if latest_mtime_in_or_pre is None or m_dto > latest_mtime_in_or_pre:
                         latest_mtime_in_or_pre = m_dto
                 else:
@@ -429,11 +431,7 @@ def collect_perforce(
             last_touched = cl_dto_bounded
             if latest_mtime_in_or_pre is not None and (last_touched is None or latest_mtime_in_or_pre > last_touched):
                 last_touched = latest_mtime_in_or_pre
-            post_window_file_set = set(post_window_files)
-            raw_samples = parsed["sample_files"] or shelved_files[:5]
-            item_samples = [f for f in raw_samples if f not in post_window_file_set]
-            if not item_samples:
-                item_samples = [e["depot_file"] for e in opened_entries if e["depot_file"] not in post_window_file_set][:5]
+            item_samples = bounded_opened_files[:5]
 
         item = {
             "id": cl,
@@ -448,12 +446,11 @@ def collect_perforce(
             "verification": parsed["verification"],
             "current_file_count": parsed["file_count"],
             "current_shelved_count": len(shelved_files),
-            "bounded_opened_files_count": sum(
-                1 for entry in opened_entries if entry["mtime_dto"] is not None and entry["mtime_dto"] <= now_local
-            ),
+            "bounded_opened_files_count": len(bounded_opened_files),
             "touched_files_count": touched_count,
             "post_window_files_count": len(post_window_files),
             "sample_files": item_samples,
+            "current_shelved_sample_files": shelved_files[:5],
         }
         if touched_in_win:
             wip_active.append(item)
@@ -591,7 +588,7 @@ def collect_git(
             f"--since={since_iso}",
             f"--until={until_iso}",
             "--date=iso-strict",
-            "--pretty=format:%H%x1f%h%x1f%ad%x1f%s%x1f%b%x1e",
+            "--pretty=format:%H%x1f%h%x1f%cI%x1f%s%x1f%b%x1e",
         ]
         if author_filter:
             rev_cmd.append(f"--author={author_filter}")
@@ -608,11 +605,11 @@ def collect_git(
             fields = rec_clean.split("\x1f", 4)
             if len(fields) < 4:
                 raise RuntimeError(f"Malformed git log record encountered: {rec_clean[:80]!r}")
-            full_hash, short_hash, ad_iso, subject = (f.strip() for f in fields[:4])
-            if not full_hash or not short_hash or not ad_iso:
+            full_hash, short_hash, committer_iso, subject = (f.strip() for f in fields[:4])
+            if not full_hash or not short_hash or not committer_iso:
                 raise RuntimeError(f"Incomplete git log record encountered: {rec_clean[:80]!r}")
             body = fields[4] if len(fields) >= 5 else ""
-            commit_dto = parse_dt(ad_iso, local_tz)
+            commit_dto = parse_dt(committer_iso, local_tz)
             parsed_hashes.append(full_hash)
 
             tags = []
@@ -669,7 +666,7 @@ def collect_git(
             )
 
     st_out = run_cmd_checked(
-        ["git", "--no-optional-locks", "-c", "core.quotepath=false", "status", "--porcelain=v1"],
+        ["git", "--no-optional-locks", "-c", "core.quotepath=false", "status", "--porcelain=v1", "-z", "-uall"],
         cwd=resolved_root,
     )
     wt_in_or_pre = []
@@ -677,14 +674,18 @@ def collect_git(
     wt_touched = []
     wt_latest_in_or_pre = None
     wt_latest_post = None
-    for line in st_out.splitlines():
-        if len(line) < 4:
+    tokens = st_out.split("\x00")
+    i = 0
+    while i < len(tokens):
+        tok = tokens[i]
+        i += 1
+        if not tok:
             continue
-        xy = line[:2].strip()
-        path_part = line[3:].strip()
-        if " -> " in path_part:
-            path_part = path_part.split(" -> ")[-1].strip()
-        path_part = path_part.strip('"')
+        xy_raw = tok[:2]
+        xy = xy_raw.strip()
+        path_part = tok[3:]
+        if "R" in xy_raw or "C" in xy_raw:
+            i += 1  # In -z output the original path follows the destination.
         full_path = os.path.join(repo_root, *path_part.split("/"))
 
         mtime_dto = None
@@ -912,8 +913,12 @@ def main():
     project_name = Path(resolved_root).name
     cutoff_local, now_local = compute_window(days=args.days, since=args.since, until=args.until)
 
-    p4_probe = probe_perforce(resolved_root)
-    git_probe = probe_git(resolved_root)
+    p4_probe = {"available": False, "bound": False}
+    git_probe = {"available": False, "work_tree": False}
+    if args.vcs != "git":
+        p4_probe = probe_perforce(resolved_root)
+    if args.vcs != "p4":
+        git_probe = probe_git(resolved_root)
     selected_vcs = detect_vcs(resolved_root, p4_probe, git_probe, requested_vcs=args.vcs)
 
     if selected_vcs == "p4":

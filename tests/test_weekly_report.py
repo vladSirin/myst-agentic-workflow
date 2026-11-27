@@ -1,5 +1,6 @@
 """Unit tests for the weekly-report skill scripts."""
 
+import io
 import json
 import os
 import sqlite3
@@ -7,9 +8,11 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from threading import Event
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -63,6 +66,30 @@ class WeeklyReportTests(unittest.TestCase):
 
             # Without p4 binding, git work_tree selects git.
             self.assertEqual(cww.detect_vcs(tmp, {"available": True, "bound": False}, git_with_remote, "auto"), "git")
+
+    def test_main_explicit_vcs_skips_unselected_probe(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = str(Path(tmp).resolve())
+            timeout = subprocess.TimeoutExpired(cmd="unselected probe", timeout=1)
+            for vcs, selected_probe, other_probe, selected_state, other_state, collector in (
+                ("git", "probe_git", "probe_perforce", {"available": True, "work_tree": True},
+                 {"available": False, "bound": False}, "collect_git"),
+                ("p4", "probe_perforce", "probe_git", {"available": True, "bound": True},
+                 {"available": False, "work_tree": False}, "collect_perforce"),
+            ):
+                with (
+                    self.subTest(vcs=vcs),
+                    patch.object(sys, "argv", ["collect_weekly_work.py", "--workspace", tmp, "--vcs", vcs]),
+                    patch.object(sys, "stdout", io.StringIO()),
+                    patch.object(cww, selected_probe, return_value=selected_state) as selected,
+                    patch.object(cww, other_probe, side_effect=timeout) as unselected,
+                    patch.object(cww, collector, return_value={}) as collect,
+                ):
+                    cww.main()
+                    selected.assert_called_once_with(root)
+                    unselected.assert_not_called()
+                    collect.assert_called_once()
+                    self.assertEqual(collect.call_args.args[-1], other_state)
 
     def test_parse_p4_describe_and_offset(self):
         tz_utc = cww.parse_offset_str("+0000")
@@ -220,6 +247,7 @@ class WeeklyReportTests(unittest.TestCase):
                     return (
                         0,
                         "5130\tedit\t//ProjA/main/Post.as\t//wsA/Post.as\n"
+                        "5130\tedit\t//ProjA/main/Undated.as\t//wsA/Undated.as\n"
                         "5130\tedit\t//ProjA/main/Pre.as\t//wsA/Pre.as\n",
                         "",
                     )
@@ -232,6 +260,7 @@ class WeeklyReportTests(unittest.TestCase):
                         "\t[design] Mixed pending\n\n"
                         "Affected files ...\n\n"
                         "... //ProjA/main/Post.as#1 edit\n"
+                        "... //ProjA/main/Undated.as#1 edit\n"
                         "... //ProjA/main/Pre.as#1 edit\n",
                         "",
                     )
@@ -252,12 +281,13 @@ class WeeklyReportTests(unittest.TestCase):
         self.assertEqual(item["latest_file_mtime"], "2026-11-14 10:00")
         self.assertEqual(item["last_touched_time"], "2026-11-14 10:00")
         self.assertEqual(item["bounded_opened_files_count"], 1)
-        self.assertEqual(item["current_file_count"], 2)
+        self.assertEqual(item["current_file_count"], 3)
         self.assertEqual(item["current_shelved_count"], 1)
         self.assertEqual(item["post_window_files_count"], 1)
         self.assertNotIn("file_count", item)
         self.assertNotIn("shelved_count", item)
         self.assertEqual(item["sample_files"], ["//ProjA/main/Pre.as"])
+        self.assertEqual(item["current_shelved_sample_files"], ["//ProjA/main/Shelf.as"])
 
     def test_collect_git_mixed_working_tree_bounds_evidence_to_window_end(self):
         tz = timezone.utc
@@ -279,7 +309,9 @@ class WeeklyReportTests(unittest.TestCase):
                 if "rev-parse" in cmd:
                     return 0, ("a" * 40) + "\n", ""
                 if "status" in cmd:
-                    return 0, "?? pre.txt\n?? post.txt\n", ""
+                    self.assertEqual(cmd[-3:], ["--porcelain=v1", "-z", "-uall"])
+                    # The literal arrow path is valid in Git output but cannot exist on Windows.
+                    return 0, "?? pre.txt\x00?? post.txt\x00?? notes -> draft.txt\x00R  renamed.txt\x00old.txt\x00", ""
                 return 0, "", ""
 
             probe = {"has_head": True, "branch": "main", "repo_root": str(repo), "remotes": []}
@@ -289,10 +321,10 @@ class WeeklyReportTests(unittest.TestCase):
         self.assertEqual(res["counts"]["wip_active"], 0)
         self.assertEqual(res["counts"]["wip_older"], 1)
         self.assertEqual(res["counts"]["wip_after_window"], 1)
-        self.assertEqual(res["counts"]["uncommitted_or_default"], 1)
+        self.assertEqual(res["counts"]["uncommitted_or_default"], 3)
         older = res["wip_older"][0]
         self.assertEqual(older["last_touched_time"], "2026-11-18 09:00")
-        self.assertEqual(older["sample_files"], ["pre.txt"])
+        self.assertEqual(older["sample_files"], ["pre.txt", "notes -> draft.txt", "renamed.txt"])
         self.assertNotIn("post.txt", older["summary"])
         self.assertEqual(older["post_window_files_count"], 1)
         after = res["wip_after_window"][0]
@@ -300,10 +332,65 @@ class WeeklyReportTests(unittest.TestCase):
         self.assertEqual(after["last_touched_time"], "2026-11-24 09:00")
         self.assertEqual(after["sample_files"], ["post.txt"])
         u = res["uncommitted_or_default"]
-        self.assertEqual(u["modified_count"], 1)
+        self.assertEqual(u["modified_count"], 3)
         self.assertEqual(u["post_window_count"], 1)
         self.assertEqual(u["latest_file_mtime"], "2026-11-18 09:00")
-        self.assertEqual(u["sample_files"], ["?? pre.txt"])
+        self.assertEqual(u["sample_files"], ["?? pre.txt", "?? notes -> draft.txt", "R renamed.txt"])
+
+    def test_collect_git_uses_child_mtime_for_untracked_directory(self):
+        start = datetime(2026, 11, 20, tzinfo=timezone.utc)
+        end = datetime(2026, 11, 23, tzinfo=timezone.utc)
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            subprocess.run(["git", "init", "-b", "main"], cwd=repo, check=True, capture_output=True)
+            folder = repo / "nested"
+            folder.mkdir()
+            child = folder / "post.txt"
+            child.write_text("after the window\n", encoding="utf-8")
+            post_ts = datetime(2026, 11, 24, 9, 0, tzinfo=timezone.utc).timestamp()
+            os.utime(child, (post_ts, post_ts))
+            os.utime(folder, (start.timestamp(), start.timestamp()))
+
+            probe = cww.probe_git(str(repo))
+            res = cww.collect_git(probe, str(repo), repo.name, "", start, end, {})
+
+        self.assertEqual(res["uncommitted_or_default"]["modified_count"], 0)
+        self.assertEqual(res["uncommitted_or_default"]["post_window_count"], 1)
+        self.assertEqual(res["wip_after_window"][0]["sample_files"], ["nested/post.txt"])
+        self.assertEqual(res["wip_after_window"][0]["last_touched_time"], "2026-11-24 09:00")
+
+    def test_collect_git_reports_committer_time_for_commits_in_window(self):
+        tz = timezone(timedelta(hours=8))
+        start = datetime(2026, 11, 19, tzinfo=tz)
+        end = datetime(2026, 11, 23, tzinfo=tz)
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            env = dict(
+                os.environ, GIT_AUTHOR_NAME="Test User", GIT_AUTHOR_EMAIL="test@example.com",
+                GIT_COMMITTER_NAME="Test User", GIT_COMMITTER_EMAIL="test@example.com",
+                GIT_COMMITTER_DATE="2026-11-20T08:30:00+00:00",
+            )
+
+            def git(*args):
+                return subprocess.check_output(["git", *args], cwd=repo, env=env, text=True).strip()
+
+            git("init", "-b", "main")
+            tree = git("write-tree")
+            env["GIT_AUTHOR_DATE"] = "2026-11-01T08:30:00+00:00"
+            first = git("commit-tree", tree, "-m", "Early author date")
+            env["GIT_AUTHOR_DATE"] = "2026-11-25T08:30:00+00:00"
+            second = git("commit-tree", tree, "-p", first, "-m", "Late author date")
+            git("update-ref", "refs/heads/main", second)
+
+            probe = cww.probe_git(str(repo))
+            res = cww.collect_git(probe, str(repo), repo.name, "test@example.com", start, end, {})
+
+        self.assertEqual(res["counts"]["completed"], 2)
+        self.assertEqual(res["counts"]["completed_ids_returned"], 2)
+        self.assertEqual(
+            {item["title"]: item["local_time"] for item in res["completed"]},
+            {"Early author date": "2026-11-20 16:30", "Late author date": "2026-11-20 16:30"},
+        )
 
     def test_collect_git_end_to_end_and_index_untouched(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -440,12 +527,45 @@ class WeeklyReportTests(unittest.TestCase):
             self.assertEqual(ws_data["by_tool"]["claude_code"]["turns"], 1)
             self.assertGreater(ws_data["cache_savings_usd"], 0)
             self.assertEqual(res["efficiency"]["completed_count"], 2)
+            self.assertEqual(res["efficiency"]["scope"], "workspace")
 
             home_dir = base / "home"
             (home_dir / ".myst").mkdir(parents=True)
             override = home_dir / ".myst" / "weekly-report-pricing.json"
             override.write_text("{}", encoding="utf-8")
             self.assertEqual(ctu.resolve_pricing_path("", SCRIPTS_DIR, home_dir=home_dir), override)
+
+    def test_collect_all_usage_keeps_efficiency_within_selected_workspace(self):
+        start = datetime(2026, 11, 20, tzinfo=timezone.utc)
+        end = datetime(2026, 11, 23, tzinfo=timezone.utc)
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            claude_root = root / "claude"
+            claude_project = claude_root / "projects" / "other"
+            claude_project.mkdir(parents=True)
+            (claude_project / "session.jsonl").write_text(
+                json.dumps({
+                    "cwd": str(root / "OtherRepo"),
+                    "timestamp": "2026-11-22T12:00:00+00:00",
+                    "requestId": "req-other",
+                    "message": {"model": "claude-sonnet-4", "usage": {"input_tokens": 120, "output_tokens": 20}},
+                }) + "\n",
+                encoding="utf-8",
+            )
+            options = {
+                "since_dt": start, "until_dt": end,
+                "pricing_path": SCRIPTS_DIR / "pricing.json", "completed_count": 2,
+                "ag_root": root / "ag", "codex_root": root / "codex", "claude_root": claude_root,
+            }
+            scoped = ctu.collect_all_usage(workspace=str(root / "TargetRepo"), **options)
+            unscoped = ctu.collect_all_usage(workspace="", **options)
+
+        self.assertEqual(scoped["workspace"]["total_tokens"], 0)
+        self.assertEqual(scoped["all_machine"]["total_tokens"], 140)
+        self.assertIsNone(scoped["efficiency"])
+        self.assertIsNone(unscoped["workspace"])
+        self.assertEqual(unscoped["efficiency"]["scope"], "all_machine")
+        self.assertEqual(unscoped["efficiency"]["tokens_per_deliverable"], 70)
 
     def test_save_weekly_report_protects_unrelated_files_and_unowned_index(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -614,6 +734,80 @@ class WeeklyReportTests(unittest.TestCase):
                 self.assertEqual(index_text.splitlines()[0], swr.INDEX_HEADER)
                 self.assertIn(Path(result["saved_path"]).name, index_text)
                 self.assertEqual(list(arc.glob(".INDEX.*.tmp")), [])
+
+    def test_save_weekly_report_serializes_concurrent_index_updates(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            arc = Path(tmp)
+            index_path = arc / "INDEX.md"
+            index_path.write_text(f"{swr.INDEX_HEADER}\n", encoding="utf-8")
+            lock_path = arc / ".weekly-report.lock"
+            first_at_publish = Event()
+            second_waiting = Event()
+            release_first = Event()
+            real_open = swr.os.open
+            real_replace = swr.os.replace
+
+            def observe_lock(path, *args, **kwargs):
+                try:
+                    return real_open(path, *args, **kwargs)
+                except FileExistsError:
+                    if Path(path) == lock_path:
+                        second_waiting.set()
+                    raise
+
+            def pause_first_publish(src, dst):
+                if not first_at_publish.is_set():
+                    first_at_publish.set()
+                    self.assertTrue(release_first.wait(5), "First save was not released")
+                real_replace(src, dst)
+
+            with (
+                patch.object(swr.os, "open", side_effect=observe_lock),
+                patch.object(swr.os, "replace", side_effect=pause_first_publish),
+                ThreadPoolExecutor(max_workers=2) as pool,
+            ):
+                first = pool.submit(swr.save_report, "First", "git", "w", "# Report\n", archive_dir=arc)
+                try:
+                    self.assertTrue(first_at_publish.wait(5), "First save did not reach publication")
+                    second = pool.submit(swr.save_report, "Second", "git", "w", "# Report\n", archive_dir=arc)
+                    self.assertTrue(second_waiting.wait(5), "Second save did not wait for the lock")
+                    self.assertEqual(list(arc.glob("Second_*.md")), [])
+                finally:
+                    release_first.set()
+                saved_names = [Path(job.result(timeout=5)["saved_path"]).name for job in (first, second)]
+
+            index_text = index_path.read_text(encoding="utf-8")
+            self.assertIn("**Retained Reports:** 2", index_text)
+            for name in saved_names:
+                self.assertIn(f"[{name}](./{name})", index_text)
+            self.assertFalse(lock_path.exists())
+
+    def test_save_weekly_report_removes_new_report_when_publication_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            arc = Path(tmp)
+            index_path = arc / "INDEX.md"
+            original_index = f"{swr.INDEX_HEADER}\n"
+            index_path.write_text(original_index, encoding="utf-8")
+
+            def fail_publication(src, dst):
+                self.assertEqual(Path(dst), index_path)
+                self.assertEqual(len(list(arc.glob("Project_*.md"))), 1)
+                raise PermissionError("cannot publish index")
+
+            with patch.object(swr.os, "replace", side_effect=fail_publication):
+                with self.assertRaisesRegex(PermissionError, "cannot publish index"):
+                    swr.save_report("Project", "git", "w", "# Report\n", archive_dir=arc)
+
+            self.assertEqual(list(arc.glob("Project_*.md")), [])
+            self.assertEqual(list(arc.glob(".INDEX.*.tmp")), [])
+            self.assertEqual(index_path.read_text(encoding="utf-8"), original_index)
+            self.assertFalse((arc / ".weekly-report.lock").exists())
+
+            result = swr.save_report("Project", "git", "w", "# Report\n", archive_dir=arc)
+            report = Path(result["saved_path"])
+            self.assertEqual(list(arc.glob("Project_*.md")), [report])
+            self.assertEqual(result["retained_count"], 1)
+            self.assertIn(report.name, index_path.read_text(encoding="utf-8"))
 
     def test_claude_tied_snapshots_are_order_invariant(self):
         tz = timezone.utc

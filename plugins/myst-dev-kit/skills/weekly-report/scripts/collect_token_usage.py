@@ -555,12 +555,11 @@ def collect_all_usage(
     all_dict = all_agg.to_dict()
 
     efficiency = None
-    if completed_count > 0:
-        basis = ws_dict if (ws_dict is not None and ws_dict["total_tokens"] > 0) else all_dict
-        basis_scope = "workspace" if (ws_dict is not None and ws_dict["total_tokens"] > 0) else "all_machine"
+    basis = ws_dict if ws_dict is not None else all_dict
+    if completed_count > 0 and basis["total_tokens"] > 0:
         n = completed_count
         efficiency = {
-            "scope": basis_scope,
+            "scope": "workspace" if ws_dict is not None else "all_machine",
             "completed_count": n,
             "tokens_per_deliverable": round(basis["total_tokens"] / n),
             "fresh_input_per_deliverable": round(basis["uncached_input"] / n),

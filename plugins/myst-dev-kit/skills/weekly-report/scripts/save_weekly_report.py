@@ -8,7 +8,8 @@ import os
 import re
 import sys
 import tempfile
-from contextlib import suppress
+import time
+from contextlib import contextmanager, suppress
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -69,49 +70,27 @@ def _write_index_exclusive(index_path: Path, index_text: str) -> None:
         raise
 
 
-def save_report(
-    project: str,
-    vcs: str,
-    window: str,
-    content: str,
-    archive_dir: Path | None = None,
-    retention_days: int = 90,
-    now: datetime | None = None,
-) -> dict:
-    if not content or not content.strip():
-        raise ValueError("Report content is empty.")
-
-    target_dir = archive_dir or default_archive_dir()
-    target_dir.mkdir(parents=True, exist_ok=True)
-    index_path = target_dir / "INDEX.md"
-    _ensure_owned_index(index_path)
-
-    safe_project = re.sub(r"[^a-zA-Z0-9._-]", "-", project).strip("-") or "workspace"
-    ts_now = now or datetime.now()
-
-    body = content if REPORT_MARKER in content[:256] else f"{REPORT_MARKER}\n{content}"
-    candidates = [
-        f"{safe_project}_{ts_now.strftime('%Y-%m-%d_%H%M')}.md",
-        f"{safe_project}_{ts_now.strftime('%Y-%m-%d_%H%M-%S')}.md",
-        *(f"{safe_project}_{ts_now.strftime('%Y-%m-%d_%H%M-%S')}-{seq}.md" for seq in range(2, 100)),
-    ]
-
-    out_path = None
-    for cand in candidates:
-        cand_path = target_dir / cand
-        if cand_path.is_symlink():
-            continue
+@contextmanager
+def _archive_lock(target_dir: Path, timeout_sec: float = 5.0):
+    lock_path = target_dir / ".weekly-report.lock"
+    deadline = time.monotonic() + timeout_sec
+    while True:
         try:
-            with open(cand_path, "x", encoding="utf-8", newline="\n") as fh:
-                fh.write(body)
-            out_path = cand_path
+            fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o666)
             break
-        except FileExistsError:
-            continue
+        except FileExistsError as exc:
+            if time.monotonic() >= deadline:
+                raise RuntimeError(f"Timed out waiting for archive lock '{lock_path}'.") from exc
+            time.sleep(0.01)
+    try:
+        os.close(fd)
+        yield
+    finally:
+        lock_path.unlink(missing_ok=True)
 
-    if out_path is None:
-        raise RuntimeError(f"Could not allocate unique archive filename in '{target_dir}'.")
 
+def _rebuild_index(index_path: Path, out_path: Path, ts_now: datetime, retention_days: int) -> tuple[int, list[str]]:
+    target_dir = index_path.parent
     prune_cutoff = ts_now - timedelta(days=retention_days)
     pruned_files = []
     for f in target_dir.glob("*.md"):
@@ -167,12 +146,62 @@ def save_report(
         with suppress(OSError):
             os.unlink(tmp_name)
 
+    return len(retained), pruned_files
+
+
+def save_report(
+    project: str,
+    vcs: str,
+    window: str,
+    content: str,
+    archive_dir: Path | None = None,
+    retention_days: int = 90,
+    now: datetime | None = None,
+) -> dict:
+    if not content or not content.strip():
+        raise ValueError("Report content is empty.")
+
+    target_dir = archive_dir or default_archive_dir()
+    target_dir.mkdir(parents=True, exist_ok=True)
+    index_path = target_dir / "INDEX.md"
+    safe_project = re.sub(r"[^a-zA-Z0-9._-]", "-", project).strip("-") or "workspace"
+    body = content if REPORT_MARKER in content[:256] else f"{REPORT_MARKER}\n{content}"
+
+    with _archive_lock(target_dir):
+        _ensure_owned_index(index_path)
+        ts_now = now or datetime.now()
+        candidates = [
+            f"{safe_project}_{ts_now.strftime('%Y-%m-%d_%H%M')}.md",
+            f"{safe_project}_{ts_now.strftime('%Y-%m-%d_%H%M-%S')}.md",
+            *(f"{safe_project}_{ts_now.strftime('%Y-%m-%d_%H%M-%S')}-{seq}.md" for seq in range(2, 100)),
+        ]
+        for cand in candidates:
+            out_path = target_dir / cand
+            if out_path.is_symlink():
+                continue
+            try:
+                report_file = open(out_path, "x", encoding="utf-8", newline="\n")
+            except FileExistsError:
+                continue
+            break
+        else:
+            raise RuntimeError(f"Could not allocate unique archive filename in '{target_dir}'.")
+
+        try:
+            with report_file:
+                report_file.write(body)
+            retained_count, pruned_files = _rebuild_index(index_path, out_path, ts_now, retention_days)
+        except BaseException:
+            with suppress(OSError):
+                out_path.unlink()
+            raise
+
     return {
         "saved_path": str(out_path),
         "index_path": str(index_path),
         "archive_dir": str(target_dir),
         "retention_days": retention_days,
-        "retained_count": len(retained),
+        "retained_count": retained_count,
         "pruned_count": len(pruned_files),
         "pruned_files": sorted(pruned_files),
         "vcs": vcs,
