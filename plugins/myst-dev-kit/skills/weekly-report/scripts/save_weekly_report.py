@@ -6,6 +6,7 @@ import json
 import os
 import re
 import sys
+import tempfile
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -132,14 +133,18 @@ def save_report(
 
     _ensure_owned_index(index_path)
     index_text = "\n".join(index_lines) + "\n"
-    flags = os.O_WRONLY | getattr(os, "O_NOFOLLOW", 0)
-    if os.path.lexists(index_path):
-        flags |= os.O_TRUNC
-    else:
-        flags |= os.O_CREAT | os.O_EXCL
-    fd = os.open(str(index_path), flags, 0o666)
-    with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
-        fh.write(index_text)
+    fd, tmp_name = tempfile.mkstemp(prefix=".INDEX.", suffix=".tmp", dir=str(target_dir))
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(index_text)
+        _ensure_owned_index(index_path)
+        os.replace(tmp_name, str(index_path))
+    except Exception:
+        try:
+            os.unlink(tmp_name)
+        except OSError:
+            pass
+        raise
 
     return {
         "saved_path": str(out_path),

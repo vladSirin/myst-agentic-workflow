@@ -371,6 +371,7 @@ def collect_perforce(
 
     wip_active = []
     wip_older = []
+    wip_after_window = []
     for cl in pending_ids:
         desc_out = run_cmd_checked(["p4", "describe", "-s", cl], cwd=resolved_root)
         parsed = parse_p4_describe(desc_out, server_tz, local_tz)
@@ -399,6 +400,12 @@ def collect_perforce(
         cl_in_win = parsed["local_dto"] is not None and (cutoff_local <= parsed["local_dto"] <= now_local)
         files_in_win = touched_count > 0
         touched_in_win = cl_in_win or files_in_win
+        has_pre = (parsed["local_dto"] is not None and parsed["local_dto"] < cutoff_local) or any(
+            entry["mtime_dto"] is not None and entry["mtime_dto"] < cutoff_local for entry in opened_entries
+        )
+        has_post = (parsed["local_dto"] is not None and parsed["local_dto"] > now_local) or any(
+            entry["mtime_dto"] is not None and entry["mtime_dto"] > now_local for entry in opened_entries
+        )
 
         last_touched = parsed["local_dto"]
         if latest_mtime is not None and (last_touched is None or latest_mtime > last_touched):
@@ -422,6 +429,8 @@ def collect_perforce(
         }
         if touched_in_win:
             wip_active.append(item)
+        elif has_post and not has_pre:
+            wip_after_window.append(item)
         else:
             wip_older.append(item)
 
@@ -468,11 +477,13 @@ def collect_perforce(
             "completed_ids_returned": len(reconciled_ids),
             "wip_active": len(wip_active),
             "wip_older": len(wip_older),
+            "wip_after_window": len(wip_after_window),
             "uncommitted_or_default": len(default_entries),
         },
         "completed": completed_list,
         "wip_active": wip_active,
         "wip_older": wip_older,
+        "wip_after_window": wip_after_window,
         "uncommitted_or_default": {
             "kind": "default_cl",
             "opened_count": len(default_entries),
@@ -633,6 +644,8 @@ def collect_git(
     wt_files = []
     wt_touched = []
     wt_latest = None
+    wt_has_pre = False
+    wt_has_post = False
     for line in st_out.splitlines():
         if len(line) < 4:
             continue
@@ -653,6 +666,10 @@ def collect_git(
                 wt_latest = mtime_dto
             if cutoff_local <= mtime_dto <= now_local:
                 touched = True
+            elif mtime_dto > now_local:
+                wt_has_post = True
+            else:
+                wt_has_pre = True
 
         entry = {"status": xy, "path": path_part, "local_time": mtime_str, "touched": touched}
         wt_files.append(entry)
@@ -661,6 +678,7 @@ def collect_git(
 
     wip_active = []
     wip_older = []
+    wip_after_window = []
     if wt_files:
         wt_item = {
             "id": f"working-tree ({git_probe.get('branch')})",
@@ -675,6 +693,8 @@ def collect_git(
         }
         if wt_touched:
             wip_active.append(wt_item)
+        elif wt_has_post and not wt_has_pre:
+            wip_after_window.append(wt_item)
         else:
             wip_older.append(wt_item)
 
@@ -734,6 +754,8 @@ def collect_git(
             }
             if cutoff_local <= ref_dto <= now_local:
                 wip_active.append(b_item)
+            elif ref_dto > now_local:
+                wip_after_window.append(b_item)
             else:
                 older_branch_total += 1
                 if older_branch_total <= 20:
@@ -766,6 +788,8 @@ def collect_git(
         }
         if cutoff_local <= s_dto <= now_local:
             wip_active.append(s_item)
+        elif s_dto > now_local:
+            wip_after_window.append(s_item)
         else:
             wip_older.append(s_item)
 
@@ -797,11 +821,13 @@ def collect_git(
             "completed_ids_returned": len(expected_hashes),
             "wip_active": len(wip_active),
             "wip_older": len(wip_older),
+            "wip_after_window": len(wip_after_window),
             "uncommitted_or_default": len(wt_files),
         },
         "completed": completed_list,
         "wip_active": wip_active,
         "wip_older": wip_older,
+        "wip_after_window": wip_after_window,
         "uncommitted_or_default": {
             "kind": "working_tree",
             "modified_count": len(wt_files),

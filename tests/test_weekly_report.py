@@ -107,7 +107,7 @@ class WeeklyReportTests(unittest.TestCase):
             if "describe" in cmd and "5124" in cmd:
                 return 0, "Change 5124 by u@wsA on 2026/11/22 11:00:00 *pending*\n\n\t[design] B\n", ""
             if "describe" in cmd and "5125" in cmd:
-                # Post-until pending CL must be classified into wip_older, not wip_active.
+                # Post-until pending CL must be classified into wip_after_window, not wip_active or wip_older.
                 return 0, "Change 5125 by u@wsA on 2026/11/24 11:00:00 *pending*\n\n\t[design] FuturePending\n", ""
             return 0, "", ""
 
@@ -119,7 +119,8 @@ class WeeklyReportTests(unittest.TestCase):
         self.assertEqual(res["counts"]["completed_ids_returned"], 1)
         self.assertEqual([c["id"] for c in res["completed"]], ["5122"])
         self.assertEqual([w["id"] for w in res["wip_active"]], ["5124"])
-        self.assertEqual([w["id"] for w in res["wip_older"]], ["5125"])
+        self.assertEqual([w["id"] for w in res["wip_older"]], [])
+        self.assertEqual([w["id"] for w in res["wip_after_window"]], ["5125"])
         sub_cmd = next(c for c in seen_cmds if "submitted" in c)
         pend_cmd = next(c for c in seen_cmds if "pending" in c)
         self.assertTrue(any(arg == "//ProjA/main/...@2026/11/16:12:00:00,@2026/11/23:12:00:00" for arg in sub_cmd))
@@ -167,17 +168,33 @@ class WeeklyReportTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 cww.collect_git({"has_head": True}, ".", "GitRepo", "", start, end, {})
 
-        def fake_future_stash(cmd, **kwargs):
+        future_branches = [
+            f"future-{i:02d}\t2026-11-24T08:00:00+00:00\tDev\tdev@example.com\tFuture {i}" for i in range(1, 21)
+        ]
+        pre_branch = "older-01\t2026-11-18T08:00:00+00:00\tDev\tdev@example.com\tOlder pre-window branch"
+
+        def fake_future_and_capped(cmd, **kwargs):
             if "rev-parse" in cmd:
                 return 0, ("a" * 40) + "\n", ""
+            if "for-each-ref" in cmd:
+                return 0, "\n".join([*future_branches, pre_branch]) + "\n", ""
+            if "rev-list" in cmd and "--count" in cmd:
+                return 0, "2\n", ""
             if "stash" in cmd:
                 return 0, "stash@{0}\x1f2026-11-24T08:00:00+00:00\x1fAfter until\n", ""
             return 0, "", ""
 
-        with patch.object(cww, "resolve_git_default_ref", return_value="main"), patch.object(cww, "run_cmd", side_effect=fake_future_stash):
+        with patch.object(cww, "resolve_git_default_ref", return_value="main"), patch.object(cww, "run_cmd", side_effect=fake_future_and_capped):
             res = cww.collect_git({"has_head": True}, ".", "GitRepo", "", start, end, {})
         self.assertEqual(res["counts"]["wip_active"], 0)
-        self.assertEqual([w["id"] for w in res["wip_older"]], ["stash@{0}"])
+        self.assertEqual(res["counts"]["wip_older"], 1)
+        self.assertEqual(res["counts"]["wip_after_window"], 21)
+        self.assertEqual(res["meta"]["vcs_details"]["older_unmerged_branches"], 1)
+        self.assertEqual([w["id"] for w in res["wip_older"]], ["older-01"])
+        after_ids = [w["id"] for w in res["wip_after_window"]]
+        self.assertIn("stash@{0}", after_ids)
+        self.assertIn("future-01", after_ids)
+        self.assertIn("future-20", after_ids)
 
     def test_collect_git_end_to_end_and_index_untouched(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -371,6 +388,16 @@ class WeeklyReportTests(unittest.TestCase):
             self.assertTrue(col_res["saved_path"].endswith("Collide_2026-11-27_1345-00-2.md"))
             self.assertEqual(occupied_min.read_text(encoding="utf-8"), "# Keep 1\n")
             self.assertEqual(occupied_sec.read_text(encoding="utf-8"), "# Keep 2\n")
+
+            # Hard-linked backup of INDEX.md must retain original bytes across updates (atomic replace, no O_TRUNC).
+            index_path = Path(res["index_path"])
+            before_bytes = index_path.read_bytes()
+            hardlink_backup = arc / "INDEX_hardlink_backup.md"
+            os.link(index_path, hardlink_backup)
+            swr.save_report("HardLinkCheck", "git", "w", "# HL\n", archive_dir=arc, now=now)
+            self.assertEqual(hardlink_backup.read_bytes(), before_bytes)
+            self.assertNotEqual(index_path.read_bytes(), before_bytes)
+            hardlink_backup.unlink()
 
             # Unowned INDEX.md must refuse overwrite.
             foreign_dir = arc / "foreign"
