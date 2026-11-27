@@ -1,0 +1,135 @@
+#!/usr/bin/env python3
+"""Save a weekly report Markdown file into a rolling 90-day local archive and rebuild INDEX.md."""
+
+import argparse
+import json
+import os
+import re
+import sys
+from datetime import datetime, timedelta
+from pathlib import Path
+
+
+def default_archive_dir() -> Path:
+    env_dir = os.environ.get("MYST_WEEKLY_REPORT_DIR", "").strip()
+    if env_dir:
+        return Path(env_dir)
+    if os.name == "nt":
+        base = os.environ.get("LOCALAPPDATA", "").strip() or os.path.expanduser("~/AppData/Local")
+        return Path(base) / "myst-weekly-reports"
+    base = os.environ.get("XDG_CACHE_HOME", "").strip() or os.path.expanduser("~/.cache")
+    return Path(base) / "myst-weekly-reports"
+
+
+def save_report(
+    project: str,
+    vcs: str,
+    window: str,
+    content: str,
+    archive_dir: Path | None = None,
+    retention_days: int = 90,
+    now: datetime | None = None,
+) -> dict:
+    if not content or not content.strip():
+        raise ValueError("Report content is empty.")
+
+    target_dir = archive_dir or default_archive_dir()
+    target_dir.mkdir(parents=True, exist_ok=True)
+
+    safe_project = re.sub(r"[^a-zA-Z0-9._-]", "-", project).strip("-") or "workspace"
+    ts_now = now or datetime.now()
+
+    filename = f"{safe_project}_{ts_now.strftime('%Y-%m-%d_%H%M')}.md"
+    out_path = target_dir / filename
+    if out_path.exists():
+        filename = f"{safe_project}_{ts_now.strftime('%Y-%m-%d_%H%M-%S')}.md"
+        out_path = target_dir / filename
+
+    out_path.write_text(content, encoding="utf-8")
+
+    prune_cutoff = ts_now - timedelta(days=retention_days)
+    pruned_files = []
+    for f in target_dir.glob("*.md"):
+        if not f.is_file() or f.name == "INDEX.md" or f.resolve() == out_path.resolve():
+            continue
+        mtime = datetime.fromtimestamp(f.stat().st_mtime)
+        if mtime < prune_cutoff:
+            pruned_files.append(f.name)
+            f.unlink()
+
+    retained = sorted(
+        (f for f in target_dir.glob("*.md") if f.is_file() and f.name != "INDEX.md"),
+        key=lambda p: p.stat().st_mtime,
+        reverse=True,
+    )
+
+    index_lines = [
+        "# Weekly Report Local Archive",
+        "",
+        f"- **Location:** `{target_dir}`",
+        f"- **Retention:** {retention_days} days (~3 months rolling auto-prune)",
+        f"- **Retained Reports:** {len(retained)}",
+        f"- **Last Updated:** {ts_now.strftime('%Y-%m-%d %H:%M')}",
+        "",
+        "| Saved | Project | File |",
+        "| :--- | :--- | :--- |",
+    ]
+
+    for rf in retained:
+        m = re.match(r"^(.+?)_\d{4}-\d{2}-\d{2}_\d{4}(?:-\d{2})?\.md$", rf.name)
+        proj_col = m.group(1) if m else "unknown"
+        saved_col = datetime.fromtimestamp(rf.stat().st_mtime).strftime("%Y-%m-%d %H:%M")
+        index_lines.append(f"| {saved_col} | {proj_col} | [{rf.name}](./{rf.name}) |")
+
+    index_path = target_dir / "INDEX.md"
+    index_path.write_text("\n".join(index_lines) + "\n", encoding="utf-8")
+
+    return {
+        "saved_path": str(out_path),
+        "index_path": str(index_path),
+        "archive_dir": str(target_dir),
+        "retention_days": retention_days,
+        "retained_count": len(retained),
+        "pruned_count": len(pruned_files),
+        "pruned_files": sorted(pruned_files),
+        "vcs": vcs,
+        "window": window,
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Save a weekly report to a rolling 90-day local archive.")
+    parser.add_argument("--project", required=True)
+    parser.add_argument("--vcs", required=True)
+    parser.add_argument("--window", required=True)
+    parser.add_argument("--content", default="")
+    parser.add_argument("--content-file", default="")
+    parser.add_argument("--archive-dir", default="")
+    parser.add_argument("--retention-days", type=int, default=90)
+    args = parser.parse_args()
+
+    content = args.content
+    if not content:
+        if args.content_file:
+            p = Path(args.content_file)
+            if not p.is_file():
+                raise SystemExit(f"Content file does not exist: {p}")
+            content = p.read_text(encoding="utf-8")
+        else:
+            content = sys.stdin.read()
+
+    res = save_report(
+        project=args.project,
+        vcs=args.vcs,
+        window=args.window,
+        content=content,
+        archive_dir=Path(args.archive_dir) if args.archive_dir else None,
+        retention_days=args.retention_days,
+    )
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+    print(json.dumps(res, indent=2, ensure_ascii=False))
+
+
+if __name__ == "__main__":
+    main()

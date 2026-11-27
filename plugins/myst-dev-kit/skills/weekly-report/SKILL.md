@@ -1,0 +1,81 @@
+---
+name: weekly-report
+description: "Generate a VCS-agnostic (Perforce or Git) weekly team work report covering the last 7 days from the current hour, with optional local AI token usage & value estimation and a 90-day local archive."
+argument-hint: "[optional: workspace, --days N, --since ..., audit, --no-tokens, --no-save]"
+disable-model-invocation: true
+---
+
+Read [Myst's local integration contract](../agentic-workflow/LOCAL-INTEGRATION.md)
+first (copy dependency: `agentic-workflow`) to resolve the target repository,
+VCS ownership, and project terminology. This skill is strictly read-only on
+version control and never mutates VCS state or publishes shared state.
+
+## 1. Determine scope, options, and mode
+
+- **Target workspace**: Use the target repository root resolved via the local integration contract (or pass `--workspace <path>`).
+- **Window**: Defaults to **7 days back from the start of the current local hour** (`--days 7`). Pass `--days <N>` or `--since "YYYY-MM-DD HH:MM"` if another range is requested.
+- **VCS**: Auto-detected (`--vcs auto`) from workspace bindings (`p4 info` + `git rev-parse`), keeping Perforce repositories as `p4` even when an uninitialized `.git` directory is present.
+- **Mode**:
+  - **`team`** (default): Executive KPI snapshot + crisp takeaways, outcome-first deliverables, active WIP readiness, token usage & compute value, and next priorities. Condenses routine repo-hygiene/retirement batches into a compact line.
+  - **`audit`**: Expands older parked/shelved/unmerged WIP and `default` / working-tree details.
+- **Optional flags**: Skip token telemetry when `--no-tokens` is requested; skip writing to the local archive when `--no-save` is requested.
+- **Language**: Match the user's requested language while keeping technical identifiers, tags, symbols, and VCS terms in English per project rules.
+
+## 2. Collect VCS history and token usage (read-only)
+
+Run the bundled Python scripts relative to this skill directory (`scripts/`):
+
+```bash
+python scripts/collect_weekly_work.py --workspace "<path>"
+python scripts/collect_token_usage.py --workspace "<path>" --days 7 --completed-count <N>
+```
+
+- Pass `--since "<meta.window_start_local>"` when a custom window is used so VCS and token windows match identically.
+- Never invent CLs, commits, verification results, or token counts; never expose raw internal model codenames in the report (always use the human-readable `tier` labels from `scripts/pricing.json` or `~/.myst/weekly-report-pricing.json`).
+- **Completion criterion**: Collector JSON parses cleanly and `counts.completed == len(completed)`.
+
+## 3. Synthesize and verify 100% coverage
+
+- **Major Work Completed (`completed`)**: Group by feature/system workstream ordered by team impact. In `team` mode, collapse routine hygiene/retirement batches into one compact line. Verify every completed CL/commit ID is cited.
+- **Active WIP (`wip_active`)**: Classify each active item (`pending_cl`, `branch`, `working_tree`, `stash`) by readiness using `verification`, `summary`, `shelved_count`, and `last_touched_time`.
+- **Token Usage & Value Estimation** (unless `--no-tokens`): Present the `workspace` breakdown (`by_tier`, cache savings, per-deliverable efficiency) plus `all_machine` total if other repos were active, and include `caveats`.
+
+## 4. Save to the 90-day local archive (unless `--no-save`)
+
+Pipe the finished Markdown report into `scripts/save_weekly_report.py`:
+
+```bash
+python scripts/save_weekly_report.py --project "<meta.project_name>" --vcs "<meta.vcs>" --window "<meta.window_start_local> to <meta.window_end_local>"
+```
+
+- Writes `<project>_<YYYY-MM-DD>_<HHMM>.md` into the user's OS-local archive directory (`%LOCALAPPDATA%\myst-weekly-reports` on Windows, `~/.cache/myst-weekly-reports` on macOS/Linux, or `MYST_WEEKLY_REPORT_DIR`), auto-prunes reports older than **90 days**, and updates `INDEX.md`.
+
+## 5. Present the report
+
+```markdown
+# Weekly Work Summary — <project_name> (<window_start_local> – <window_end_local>)
+
+| Shipped | Active WIP | AI Compute (Workspace) | Cache Hit | Est. API-Equiv Value |
+| :--- | :--- | :--- | :--- | :--- |
+| **<N> CLs/commits** (`<vcs>`) | **<M> active** (<k> ready) | **<X.XM> tokens** (<Y.YM> out) | **<P>%** | **`$<V>`** (saved `$<S>` cached) |
+
+> **Key Takeaways**
+> - **<Lead Theme 1>:** <1 crisp outcome line, <= 22 words>.
+> - **<Lead Theme 2>:** <1 crisp outcome line, <= 22 words>.
+> - **<Lead Theme 3>:** <1 crisp outcome line, <= 22 words>.
+
+## Major Work Completed (<N>)
+...
+
+## Active WIP & Readiness (<M>)
+...
+
+## Token Usage & Value Estimation
+| Tool / Tier | Sessions / Convs | Turns | Fresh Input | Cached Input | Output | Cache Hit | Est. API-Equiv |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+
+## Next Priorities / Needs From Team
+1. ...
+```
+
+When archived, end with an explicit **Local Archive** notice containing clickable `file://` links to `saved_path` and `index_path`, the archive directory path, retained count, and 90-day rolling retention status.

@@ -1,0 +1,4 @@
+interface:
+  short_description: "Generate a VCS-agnostic weekly team report and token summary"
+policy:
+  allow_implicit_invocation: false
