@@ -1,0 +1,96 @@
+{
+  "currency": "USD",
+  "note": "Editable API-equivalent reference rates (USD per 1M tokens) for estimating compute value across local agent logs. Actual billing depends on seat/subscription plans. Override via ~/.myst/weekly-report-pricing.json.",
+  "rules": [
+    {
+      "pattern": "gemini-4-neon",
+      "label": "Antigravity · Gemini (High/Planning)",
+      "input": 2.50,
+      "cached_input": 0.25,
+      "output": 15.00
+    },
+    {
+      "pattern": "gemini-4-hydrogen-xhigh",
+      "label": "Antigravity · Gemini (Execution High)",
+      "input": 2.00,
+      "cached_input": 0.20,
+      "output": 12.00
+    },
+    {
+      "pattern": "gemini-4-hydrogen-high",
+      "label": "Antigravity · Gemini (Execution High)",
+      "input": 2.00,
+      "cached_input": 0.20,
+      "output": 12.00
+    },
+    {
+      "pattern": "gemini-4-hydrogen",
+      "label": "Antigravity · Gemini (Execution Std)",
+      "input": 1.25,
+      "cached_input": 0.125,
+      "output": 10.00
+    },
+    {
+      "pattern": "claude-opus",
+      "label": "Claude · Opus",
+      "input": 15.00,
+      "cached_input": 1.50,
+      "output": 75.00
+    },
+    {
+      "pattern": "claude-sonnet",
+      "label": "Claude · Sonnet",
+      "input": 3.00,
+      "cached_input": 0.30,
+      "output": 15.00
+    },
+    {
+      "pattern": "claude-haiku",
+      "label": "Claude · Haiku",
+      "input": 0.80,
+      "cached_input": 0.08,
+      "output": 4.00
+    },
+    {
+      "pattern": "codex-auto-review",
+      "label": "Codex CLI · Auto-Review",
+      "input": 0.50,
+      "cached_input": 0.05,
+      "output": 2.00
+    },
+    {
+      "pattern": "o4-mini",
+      "label": "Codex CLI · Reasoning Mini",
+      "input": 1.10,
+      "cached_input": 0.275,
+      "output": 4.40
+    },
+    {
+      "pattern": "o3",
+      "label": "Codex CLI · Reasoning",
+      "input": 2.00,
+      "cached_input": 0.50,
+      "output": 8.00
+    },
+    {
+      "pattern": "gpt-6",
+      "label": "Codex CLI · Frontier",
+      "input": 2.50,
+      "cached_input": 0.25,
+      "output": 10.00
+    },
+    {
+      "pattern": "gpt-5",
+      "label": "Codex CLI · Frontier",
+      "input": 2.50,
+      "cached_input": 0.25,
+      "output": 10.00
+    }
+  ],
+  "default": {
+    "label": "Other / Unclassified",
+    "input": 2.00,
+    "cached_input": 0.20,
+    "output": 10.00
+  }
+}

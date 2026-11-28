@@ -4,7 +4,8 @@
     "changelist-verification",
     "design",
     "p4-description",
-    "review-and-submit"
+    "review-and-submit",
+    "weekly-report"
   ],
   "pendingImports": []
 }

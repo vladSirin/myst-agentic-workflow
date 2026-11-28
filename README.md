@@ -140,6 +140,7 @@ User-invoked:
 - **[to-questionnaire](plugins/myst-dev-kit/skills/to-questionnaire/SKILL.md)** — intact Matt Pocock send interview and discovery-questionnaire method, with Myst project/destination/authority routing. User-only; copy installs need agentic-workflow ([evidence](docs/to-questionnaire-wrapper-2026-10-09.md)).
 - **[handoff](plugins/myst-dev-kit/skills/handoff/SKILL.md)** — compact the conversation into an OS-temporary handoff file. Unchanged upstream bytes in plain references, read through a user-invoked local entry; [conversion evidence and host limits](docs/handoff-plain-source-2026-10-08.md).
 - **[wait-what](plugins/myst-dev-kit/skills/wait-what/SKILL.md)** — Matt Pocock source with Myst glossary routing; re-explain with context and simple project terms. User-only; OpenCode needs its local invocation rule ([evidence](docs/wait-what-wrapper-2026-10-08.md)).
+- **[weekly-report](plugins/myst-dev-kit/skills/weekly-report/SKILL.md)** — local-origin, VCS-agnostic (Perforce and Git) weekly team summary over a rolling 7-day window from the current hour, with optional local AI token usage/value estimation and 90-day local archive. User-only; read-only on VCS. Copy installs need agentic-workflow.
 
 Imported content comes from [mattpocock/skills](https://github.com/mattpocock/skills)
 and the Hammer app's advanced-capability bundle
